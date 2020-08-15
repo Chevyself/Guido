@@ -216,13 +216,29 @@ public class EloCommands {
         .sorted(Map.Entry.comparingByValue())
         .forEach(entry -> members.add(entry.getKey()));
     Collections.reverse(members);
-    List<Member> toSee = new Pagination<>(members).getPage(page, 10);
-    StringBuilder builder = Strings.getBuilder();
-    builder.append("Leaderboard:").append("\n");
-    for (int i = 0; i < toSee.size(); i++) {
-      builder.append(i + 1).append(". ").append(members.get(i).getAsMention()).append("\n");
+    int limit = 10;
+    Pagination<Member> pagination = new Pagination<>(members);
+    int maxPage = pagination.maxPage(limit);
+    if (page < 1) {
+      return new Result("La pagina tiene que ser 1 o mayor");
+    } else {
+      if (page <= maxPage) {
+        List<Member> toSee = pagination.getPage(page, limit);
+        StringBuilder builder = Strings.getBuilder();
+        builder.append("Leaderboard:").append("\n");
+        builder.append("**").append(page).append("**/").append(maxPage).append("\n");
+        toSee.forEach(
+            member ->
+                builder
+                    .append(pagination.getIndex(member) + 1)
+                    .append(". ")
+                    .append(member.getAsMention())
+                    .append("\n"));
+        return new Result(builder.toString());
+      } else {
+        return new Result("La pagina maxima es " + maxPage);
+      }
     }
-    return new Result(builder.toString());
   }
 
   /**
