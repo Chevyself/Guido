@@ -3,6 +3,8 @@ package com.starfishst.guido.api.lang;
 import com.starfishst.core.utils.Strings;
 import java.io.File;
 import java.util.HashMap;
+
+import com.starfishst.core.utils.maps.MapBuilder;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -43,6 +45,19 @@ public interface LocaleFile extends Localizable {
    */
   @NotNull
   default String get(@NotNull String path, @NotNull HashMap<String, String> placeholders) {
+    return Strings.buildMessage(this.get(path), placeholders);
+  }
+
+  /**
+   * Get the string and build it with placeholders using a builder. It will replace the placeholders that are inside
+   * a "%" character
+   *
+   * @param path the path that leads to the string
+   * @param placeholders the string to build the string
+   * @return the built string
+   */
+  @NotNull
+  default String get(@NotNull String path, @NotNull MapBuilder<String, String> placeholders) {
     return Strings.buildMessage(this.get(path), placeholders);
   }
 

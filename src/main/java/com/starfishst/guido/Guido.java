@@ -2,7 +2,6 @@ package com.starfishst.guido;
 
 import com.starfishst.commands.CommandManager;
 import com.starfishst.commands.ManagerOptions;
-import com.starfishst.commands.PermissionChecker;
 import com.starfishst.commands.providers.registry.ProvidersRegistryJDA;
 import com.starfishst.core.utils.maps.Maps;
 import com.starfishst.guido.api.data.loader.DataLoader;
@@ -10,6 +9,7 @@ import com.starfishst.guido.commands.DeveloperCommands;
 import com.starfishst.guido.commands.EloCommands;
 import com.starfishst.guido.commands.TeamCommands;
 import com.starfishst.guido.data.loader.GuidoFileLoader;
+import com.starfishst.guido.lang.GuidoLanguageHandler;
 import com.starfishst.utils.events.Cancellable;
 import com.starfishst.utils.events.Event;
 import com.starfishst.utils.events.ListenerManager;
@@ -21,16 +21,19 @@ import net.dv8tion.jda.api.hooks.AnnotatedEventManager;
 import org.jetbrains.annotations.NotNull;
 
 /** El bot para las rankeds de radiator springs */
-// TODO separate the jda init method
 public class Guido {
 
   /** The connection of guido with discord */
   @NotNull private static final GuidoJdaConnection connection = new GuidoJdaConnection();
   /** The listener manager for calling events */
   @NotNull private static final ListenerManager listenerManager = new ListenerManager();
-
   /** The data loader */
-  @NotNull private static DataLoader dataLoader = new GuidoFileLoader();
+  @NotNull private static GuidoFileLoader guidoFileLoader = new GuidoFileLoader();
+  /**
+   * The language handler for the bot
+   */
+  @NotNull
+  private static  GuidoLanguageHandler languageHandler = new GuidoLanguageHandler(guidoFileLoader);
 
   /**
    * The main method of the bot.
@@ -48,22 +51,19 @@ public class Guido {
     JDA jda = connection.createConnection(argsMaps.getOrDefault("token", ""));
     jda.getPresence().setPresence(OnlineStatus.DO_NOT_DISTURB, Activity.playing("A los pits"));
     jda.setEventManager(new AnnotatedEventManager());
-
-    GuidoMessagesProvider messagesProvider = new GuidoMessagesProvider();
-    PermissionChecker permissionChecker = () -> messagesProvider; // TODO
     CommandManager manager =
         new CommandManager(
             jda,
             argsMaps.getOrDefault("prefix", argsMaps.getOrDefault("prefix", "$")),
             new ManagerOptions(),
-            messagesProvider,
-            new ProvidersRegistryJDA(messagesProvider),
-            permissionChecker);
+            languageHandler,
+            new ProvidersRegistryJDA(languageHandler),
+            new GuidoPermissionChecker(languageHandler));
     manager.registerCommand(new EloCommands());
     manager.registerCommand(new DeveloperCommands(jda));
     manager.registerCommand(new TeamCommands());
-
-    listenerManager.registerListeners(dataLoader);
+    languageHandler.load("en", "es");
+    listenerManager.registerListeners(guidoFileLoader);
   }
 
   /**
@@ -93,6 +93,6 @@ public class Guido {
    */
   @NotNull
   public static DataLoader getDataLoader() {
-    return dataLoader;
+    return guidoFileLoader;
   }
 }

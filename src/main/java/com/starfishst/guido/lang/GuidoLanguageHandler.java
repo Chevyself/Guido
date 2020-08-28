@@ -1,0 +1,218 @@
+package com.starfishst.guido.lang;
+
+import com.starfishst.commands.context.CommandContext;
+import com.starfishst.commands.messages.MessagesProvider;
+import com.starfishst.commands.result.ResultType;
+import com.starfishst.core.fallback.Fallback;
+import com.starfishst.core.utils.files.CoreFiles;
+import com.starfishst.core.utils.maps.Maps;
+import com.starfishst.core.utils.time.Time;
+import com.starfishst.guido.data.loader.GuidoFileLoader;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.HashSet;
+import java.util.Set;
+
+/**
+ * Handles the language for guido messages
+ */
+public class GuidoLanguageHandler implements MessagesProvider {
+
+    /**
+     * The files that this handler is using
+     */
+    @NotNull
+    private final Set<GuidoLocaleFile> files = new HashSet<>();
+
+    /**
+     * The loader to get the localization
+     */
+    @NotNull
+    private final GuidoFileLoader guidoFileLoader;
+
+    /**
+     * Create the guido localization handler
+     *
+     * @param guidoFileLoader the file loader to get the user data
+     */
+    public GuidoLanguageHandler(@NotNull GuidoFileLoader guidoFileLoader) {
+        this.guidoFileLoader = guidoFileLoader;
+    }
+
+    /**
+     * Loads the locale files queried
+     *
+     * @param toLoad the locale files to load
+     */
+    public void load(String... toLoad) {
+        for (String lang : toLoad) {
+            try {
+                files.add(new GuidoLocaleFile(CoreFiles.getFileOrResource(CoreFiles.currentDirectory() + "/assets/lang/" + lang + ".properties", CoreFiles.getResource("/lang/" + lang + ".properties"))));
+            } catch (IOException e) {
+                Fallback.addError("IOException: File for the language " + lang + " could not be gotten");
+                e.printStackTrace();
+            }
+        }
+    }
+
+    /**
+     * Get the file for certain lang
+     *
+     * @param lang the lang to get the file for
+     * @return the file from the lang
+     */
+    @NotNull
+    public GuidoLocaleFile getFile(@NotNull String lang){
+        for (GuidoLocaleFile file : this.files) {
+            if (file.getLang().equalsIgnoreCase(lang)) {
+                return file;
+            }
+        }
+        return this.getFile("en");
+    }
+
+    /**
+     * Get the file for certain context. This will get the lang from the context
+     * and then the file
+     *
+     * @param context the context to get the lang and the file
+     * @return the file or "en" if not found
+     */
+    @NotNull
+    public GuidoLocaleFile getFile(@Nullable CommandContext context){
+        GuidoLocaleFile file;
+        if (context == null) {
+            file = this.getFile("en");
+        } else {
+            file = this.getFile(this.getLang(context));
+        }
+        return file;
+    }
+
+    /**
+     * Get the language for certain context. This will get the user and get its data to load and get its locale
+     * @param context the context to get the language form
+     * @return the locale for the user
+     */
+    @NotNull
+    public String getLang(@NotNull CommandContext context){
+        return this.guidoFileLoader.getUserData(context.getSender().getIdLong()).getLang();
+    }
+
+    @Override
+    public @NotNull String invalidLong(@NotNull String s, @NotNull CommandContext context) {
+        return this.getFile(context).get("invalid.number", Maps.singleton("string", s));
+    }
+
+    @Override
+    public @NotNull String invalidInteger(@NotNull String s, @NotNull CommandContext context) {
+        return this.getFile(context).get("invalid.number", Maps.singleton("string", s));
+
+    }
+
+    @Override
+    public @NotNull String invalidDouble(@NotNull String s, @NotNull CommandContext context) {
+        return this.getFile(context).get("invalid.double", Maps.singleton("string", s));
+    }
+
+    @Override
+    public @NotNull String invalidBoolean(@NotNull String s, @NotNull CommandContext context) {
+        return this.getFile(context).get("invalid.boolean", Maps.singleton("string", s));
+    }
+
+    @Override
+    public @NotNull String invalidTime(@NotNull String s, @NotNull CommandContext context) {
+        return this.getFile(context).get("invalid.time", Maps.singleton("string", s));
+    }
+
+    @Override
+    public @NotNull String missingArgument(@NotNull String s, @NotNull String s1, int i, CommandContext context) {
+        return this.getFile(context).get("missing-argument", Maps.builder("name", s).append("description", s1).append("position", String.valueOf(i)));
+    }
+
+    @Override
+    public @NotNull String invalidNumber(@NotNull String s, @NotNull CommandContext context) {
+        return this.getFile(context).get("invalid.number", Maps.singleton("string", s));
+    }
+
+    @Override
+    public @NotNull String emptyDouble(@NotNull CommandContext context) {
+        return this.getFile(context).get("invalid.double-empty");
+    }
+
+    @Override
+    public @NotNull String commandNotFound(@NotNull String s, @NotNull CommandContext commandContext) {
+        return this.getFile(commandContext).get("command-not-found", Maps.builder("name", s));
+    }
+
+    @Override
+    public @NotNull String footer(@Nullable CommandContext commandContext) {
+        return this.getFile(commandContext).get("footer");
+    }
+
+    @Override
+    public @NotNull String getTitle(@NotNull ResultType resultType, @Nullable CommandContext commandContext) {
+        GuidoLocaleFile file = this.getFile(commandContext);
+        switch (resultType) {
+            case UNKNOWN:
+                return file.get("title.unknown");
+            case PERMISSION:
+                return file.get("title.permission");
+            case GENERIC:
+                return file.get("title.generic");
+            case USAGE:
+                return file.get("title.usage");
+            case ERROR:
+                return file.get("title.error");
+        }
+        throw new IllegalArgumentException(resultType + " is not a valid result");
+    }
+
+    @Override
+    public @NotNull String response(@NotNull String s, @NotNull String s1, @Nullable CommandContext commandContext) {
+        return this.getFile(commandContext).get("response", Maps.builder("title", s).append("description", s1));
+    }
+
+    @Override
+    public @NotNull String notAllowed(@NotNull CommandContext commandContext) {
+        return this.getFile(commandContext).get("not-allowed");
+    }
+
+    @Override
+    public @NotNull String guildOnly(@NotNull CommandContext commandContext) {
+        return this.getFile(commandContext).get("guild-only");
+    }
+
+    @Override
+    public @NotNull String thumbnailUrl(@Nullable CommandContext commandContext) {
+        return this.getFile(commandContext).get("thumbnail-url");
+    }
+
+    @Override
+    public @NotNull String cooldown(@NotNull Time time, @Nullable CommandContext commandContext) {
+        return this.getFile(commandContext).get("cooldown", Maps.singleton("left", time.toEffectiveString()));
+    }
+
+    @Override
+    public @NotNull String invalidUser(@NotNull String s, @NotNull CommandContext commandContext) {
+        return this.getFile(commandContext).get("invalid.user", Maps.singleton("string", s));
+    }
+
+    @Override
+    public @NotNull String invalidMember(@NotNull String s, @NotNull CommandContext commandContext) {
+        return this.getFile(commandContext).get("invalid.member", Maps.singleton("string", s));
+    }
+
+    @Override
+    public @NotNull String invalidRole(@NotNull String s, @NotNull CommandContext commandContext) {
+        return this.getFile(commandContext).get("invalid.role", Maps.singleton("string", s));
+    }
+
+    @Override
+    public @NotNull String invalidTextChannel(String s, CommandContext commandContext) {
+        return this.getFile(commandContext).get("invalid.channel", Maps.singleton("string", s));
+    }
+}

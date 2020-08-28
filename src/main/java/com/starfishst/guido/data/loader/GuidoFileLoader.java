@@ -1,6 +1,7 @@
 package com.starfishst.guido.data.loader;
 
 import com.starfishst.core.fallback.Fallback;
+import com.starfishst.core.utils.cache.Cache;
 import com.starfishst.core.utils.files.CoreFiles;
 import com.starfishst.guido.api.data.GuildData;
 import com.starfishst.guido.api.data.MemberData;
@@ -120,7 +121,11 @@ public class GuidoFileLoader implements DataLoader {
    * @return the data of the guild or null if not found
    */
   @Override
-  public @Nullable GuildData getGuildData(long id) {
+  public @NotNull GuildData getGuildData(long id) {
+    GuidoGuild guild = Cache.getCatchable(catchable -> catchable instanceof GuidoGuild && ((GuidoGuild) catchable).getId() == id, GuidoGuild.class);
+    if (guild != null) {
+      return guild;
+    }
     File file = CoreFiles.getFile(CoreFiles.currentDirectory() + "/data/" + id + "/info.json");
     if (file != null) {
       try {
@@ -147,7 +152,11 @@ public class GuidoFileLoader implements DataLoader {
    * @return the data of the member or null if not found
    */
   @Override
-  public @Nullable MemberData getMemberData(long id, @NotNull Guild guild) {
+  public @NotNull MemberData getMemberData(long id, @NotNull Guild guild) {
+    GuidoMember member = Cache.getCatchable(catchable -> catchable instanceof GuidoMember && ((GuidoMember) catchable).getId() == id && ((GuidoMember) catchable).getGuildId() == guild.getIdLong(), GuidoMember.class);
+    if (member != null) {
+      return member;
+    }
     File file =
         CoreFiles.getFile(
             CoreFiles.currentDirectory() + "/data/" + guild.getId() + "/members/" + id + ".json");
@@ -180,7 +189,11 @@ public class GuidoFileLoader implements DataLoader {
    * @return the data of the role or null if not found
    */
   @Override
-  public @Nullable RoleData getRoleData(long id, @NotNull Guild guild) {
+  public @NotNull RoleData getRoleData(long id, @NotNull Guild guild) {
+    GuidoRole role = Cache.getCatchable(catchable -> catchable instanceof GuidoRole && ((GuidoRole) catchable).getId() == id && ((GuidoRole) catchable).getGuildId() == guild.getIdLong(), GuidoRole.class);
+    if (role != null) {
+      return role;
+    }
     File file =
         CoreFiles.getFile(
             CoreFiles.currentDirectory() + "/data/" + guild.getId() + "/roles/" + id + ".json");
@@ -206,7 +219,11 @@ public class GuidoFileLoader implements DataLoader {
   }
 
   @Override
-  public @Nullable UserData getUserData(long id) {
+  public @NotNull UserData getUserData(long id) {
+    GuidoUser user = Cache.getCatchable(catchable -> catchable instanceof GuidoUser && ((GuidoUser) catchable).getId() == id, GuidoUser.class);
+    if (user != null) {
+      return user;
+    }
     File file = CoreFiles.getFile(CoreFiles.currentDirectory() + "/users/" + id + ".json");
     if (file != null) {
       try {
