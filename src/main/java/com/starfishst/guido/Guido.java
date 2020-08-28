@@ -48,9 +48,11 @@ public class Guido {
    */
   public static void main(String[] args) {
     HashMap<String, String> argsMaps = Maps.fromStringArray("=", args);
+
     JDA jda = connection.createConnection(argsMaps.getOrDefault("token", ""));
     jda.getPresence().setPresence(OnlineStatus.DO_NOT_DISTURB, Activity.playing("A los pits"));
     jda.setEventManager(new AnnotatedEventManager());
+
     CommandManager manager =
         new CommandManager(
             jda,
@@ -58,10 +60,11 @@ public class Guido {
             new ManagerOptions(),
             languageHandler,
             new ProvidersRegistryJDA(languageHandler),
-            new GuidoPermissionChecker(languageHandler));
+            new GuidoPermissionChecker(languageHandler, guidoFileLoader));
     manager.registerCommand(new EloCommands());
     manager.registerCommand(new DeveloperCommands(jda));
     manager.registerCommand(new TeamCommands());
+
     languageHandler.load("en", "es");
     listenerManager.registerListeners(guidoFileLoader);
   }

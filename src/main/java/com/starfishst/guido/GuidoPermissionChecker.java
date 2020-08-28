@@ -7,7 +7,12 @@ import com.starfishst.commands.context.GuildCommandContext;
 import com.starfishst.commands.messages.MessagesProvider;
 import com.starfishst.commands.result.Result;
 import com.starfishst.commands.result.ResultType;
+import com.starfishst.guido.api.data.MemberData;
+import com.starfishst.guido.api.data.RoleData;
+import com.starfishst.guido.api.data.UserData;
+import com.starfishst.guido.data.loader.GuidoFileLoader;
 import net.dv8tion.jda.api.Permission;
+import net.dv8tion.jda.api.entities.Role;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -18,12 +23,19 @@ public class GuidoPermissionChecker implements PermissionChecker {
   @NotNull private final MessagesProvider messagesProvider;
 
   /**
+   * The file loader to get the permissions
+   */
+  @NotNull private final GuidoFileLoader guidoFileLoader;
+
+  /**
    * Create the permission checker
    *
    * @param messagesProvider the messages provider in case it has to return a result
+   * @param guidoFileLoader the file loader to get the permissions from the user
    */
-  public GuidoPermissionChecker(@NotNull MessagesProvider messagesProvider) {
+  public GuidoPermissionChecker(@NotNull MessagesProvider messagesProvider, @NotNull GuidoFileLoader guidoFileLoader) {
     this.messagesProvider = messagesProvider;
+    this.guidoFileLoader = guidoFileLoader;
   }
 
   @Override
@@ -33,10 +45,23 @@ public class GuidoPermissionChecker implements PermissionChecker {
     }
     if (!perm.node().isEmpty()) {
       if (context instanceof GuildCommandContext) {
-
+        MemberData member = this.guidoFileLoader.getMemberData(((GuildCommandContext) context).getMember().getIdLong(), ((GuildCommandContext) context).getGuild());
+        if (member.hasPermission(perm.node())){
+          return null;
+        }
+        for (Role role : ((GuildCommandContext) context).getMember().getRoles()) {
+          RoleData roleData = this.guidoFileLoader.getRoleData(role.getIdLong(), ((GuildCommandContext) context).getGuild());
+          if (roleData.hasPermission(perm.node())) {
+            return null;
+          }
+        }
       } else {
-
+        UserData userData = this.guidoFileLoader.getUserData(context.getSender().getIdLong());
+        if (userData.hasPermission(perm.node())) {
+          return null;
+        }
       }
+      return new Result(ResultType.PERMISSION, this.messagesProvider.notAllowed(context));
     }
     return null;
   }
