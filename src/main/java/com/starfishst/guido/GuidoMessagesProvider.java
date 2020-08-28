@@ -8,6 +8,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 /** The messages provider for the guido bot */
+@Deprecated
 public class GuidoMessagesProvider implements MessagesProvider {
   @Override
   public @NotNull String invalidLong(@NotNull String s, @NotNull CommandContext commandContext) {
@@ -35,7 +36,8 @@ public class GuidoMessagesProvider implements MessagesProvider {
   }
 
   @Override
-  public @NotNull String missingArgument(@NotNull String s, @NotNull String s1, int i, @NotNull CommandContext context) {
+  public @NotNull String missingArgument(
+      @NotNull String s, @NotNull String s1, int i, @NotNull CommandContext context) {
     return "Te falta " + s + ": " + s1 + " en la posicion: " + i;
   }
 

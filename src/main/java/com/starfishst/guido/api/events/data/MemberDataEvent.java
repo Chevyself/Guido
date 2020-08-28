@@ -9,28 +9,25 @@ import org.jetbrains.annotations.NotNull;
  */
 public class MemberDataEvent implements GuidoEvent {
 
-    /**
-     * The data of the member involved
-     */
-    @NotNull
-    private final MemberData data;
+  /** The data of the member involved */
+  @NotNull private final MemberData data;
 
-    /**
-     * Create the event
-     *
-     * @param data the data involved in the event
-     */
-    public MemberDataEvent(@NotNull MemberData data) {
-        this.data = data;
-    }
+  /**
+   * Create the event
+   *
+   * @param data the data involved in the event
+   */
+  public MemberDataEvent(@NotNull MemberData data) {
+    this.data = data;
+  }
 
-    /**
-     * Get the member data involved in the event
-     *
-     * @return the member data involved in the event
-     */
-    @NotNull
-    public MemberData getData() {
-        return data;
-    }
+  /**
+   * Get the member data involved in the event
+   *
+   * @return the member data involved in the event
+   */
+  @NotNull
+  public MemberData getData() {
+    return data;
+  }
 }

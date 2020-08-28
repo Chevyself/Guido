@@ -1,17 +1,12 @@
 package com.starfishst.guido.api.data;
 
-/**
- * This object represents the data for a guild
- */
+/** This object represents the data for a guild */
 public interface GuildData {
 
-    /**
-     * Get the unique id of the guild. This is an object in discord that must
-     * have its unique id
-     *
-     * @return the unique id of the guild
-     */
-    long getId();
-
-
+  /**
+   * Get the unique id of the guild. This is an object in discord that must have its unique id
+   *
+   * @return the unique id of the guild
+   */
+  long getId();
 }

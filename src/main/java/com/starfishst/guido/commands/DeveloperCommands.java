@@ -89,5 +89,4 @@ public class DeveloperCommands {
 
     return new Result("Script has been executed " + (out == null ? "" : out.toString()));
   }
-
 }
