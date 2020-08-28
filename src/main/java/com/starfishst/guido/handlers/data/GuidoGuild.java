@@ -1,4 +1,4 @@
-package com.starfishst.guido.data;
+package com.starfishst.guido.handlers.data;
 
 import com.starfishst.core.utils.cache.Catchable;
 import com.starfishst.core.utils.time.Time;

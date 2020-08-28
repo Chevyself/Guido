@@ -83,4 +83,14 @@ public class GuidoJdaConnection {
         "Discord took " + Time.fromMillis(millis).toEffectiveString() + " to connect");
     return jda;
   }
+
+  /**
+   * Get the connection with jda
+   *
+   * @return the connection with jda
+   */
+  @Nullable
+  public JDA getJda() {
+    return jda;
+  }
 }

@@ -1,4 +1,4 @@
-package com.starfishst.guido.data.loader;
+package com.starfishst.guido.handlers.data.loader;
 
 import com.starfishst.core.fallback.Fallback;
 import com.starfishst.core.utils.cache.Cache;
@@ -11,10 +11,12 @@ import com.starfishst.guido.api.data.loader.DataLoader;
 import com.starfishst.guido.api.events.data.GuildDataUnloadedEvent;
 import com.starfishst.guido.api.events.data.MemberDataUnloadedEvent;
 import com.starfishst.guido.api.events.data.RoleDataUnloadedEvent;
-import com.starfishst.guido.data.GuidoGuild;
-import com.starfishst.guido.data.GuidoMember;
-import com.starfishst.guido.data.GuidoRole;
-import com.starfishst.guido.data.GuidoUser;
+import com.starfishst.guido.api.events.data.UserDataUnloadedEvent;
+import com.starfishst.guido.handlers.GuidoEventHandler;
+import com.starfishst.guido.handlers.data.GuidoGuild;
+import com.starfishst.guido.handlers.data.GuidoMember;
+import com.starfishst.guido.handlers.data.GuidoRole;
+import com.starfishst.guido.handlers.data.GuidoUser;
 import com.starfishst.utils.events.ListenPriority;
 import com.starfishst.utils.events.Listener;
 import com.starfishst.utils.gson.GsonProvider;
@@ -26,13 +28,12 @@ import java.util.HashMap;
 import java.util.HashSet;
 import net.dv8tion.jda.api.entities.Guild;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 /**
  * This loader will attempt to get the data from files if it fails it will create a new instance of
  * the data required
  */
-public class GuidoFileLoader implements DataLoader {
+public class GuidoFileLoader implements DataLoader, GuidoEventHandler {
   /**
    * This will listen to when the guild data gets unloaded to save it
    *
@@ -115,6 +116,27 @@ public class GuidoFileLoader implements DataLoader {
   }
 
   /**
+   * This will listen to when the user data gets unloaded to save it
+   *
+   * @param event the event of the data being unloaded
+   */
+  @Listener(priority = ListenPriority.HIGHEST)
+  public void onUserDataUnloaded(@NotNull UserDataUnloadedEvent event) {
+    try {
+      File file =
+          CoreFiles.getOrCreate(
+              CoreFiles.currentDirectory() + "/users/" + event.getData().getId() + ".json");
+      FileWriter writer = new FileWriter(file);
+      GsonProvider.GSON.toJson(event.getData(), writer);
+      writer.close();
+    } catch (IOException e) {
+      Fallback.addError(
+          "IOException: Data for user " + event.getData().getId() + " could not be saved");
+      e.printStackTrace();
+    }
+  }
+
+  /**
    * Load the data of a guild
    *
    * @param id the id of the guild
@@ -122,7 +144,10 @@ public class GuidoFileLoader implements DataLoader {
    */
   @Override
   public @NotNull GuildData getGuildData(long id) {
-    GuidoGuild guild = Cache.getCatchable(catchable -> catchable instanceof GuidoGuild && ((GuidoGuild) catchable).getId() == id, GuidoGuild.class);
+    GuidoGuild guild =
+        Cache.getCatchable(
+            catchable -> catchable instanceof GuidoGuild && ((GuidoGuild) catchable).getId() == id,
+            GuidoGuild.class);
     if (guild != null) {
       return guild;
     }
@@ -153,7 +178,13 @@ public class GuidoFileLoader implements DataLoader {
    */
   @Override
   public @NotNull MemberData getMemberData(long id, @NotNull Guild guild) {
-    GuidoMember member = Cache.getCatchable(catchable -> catchable instanceof GuidoMember && ((GuidoMember) catchable).getId() == id && ((GuidoMember) catchable).getGuildId() == guild.getIdLong(), GuidoMember.class);
+    GuidoMember member =
+        Cache.getCatchable(
+            catchable ->
+                catchable instanceof GuidoMember
+                    && ((GuidoMember) catchable).getId() == id
+                    && ((GuidoMember) catchable).getGuildId() == guild.getIdLong(),
+            GuidoMember.class);
     if (member != null) {
       return member;
     }
@@ -190,7 +221,13 @@ public class GuidoFileLoader implements DataLoader {
    */
   @Override
   public @NotNull RoleData getRoleData(long id, @NotNull Guild guild) {
-    GuidoRole role = Cache.getCatchable(catchable -> catchable instanceof GuidoRole && ((GuidoRole) catchable).getId() == id && ((GuidoRole) catchable).getGuildId() == guild.getIdLong(), GuidoRole.class);
+    GuidoRole role =
+        Cache.getCatchable(
+            catchable ->
+                catchable instanceof GuidoRole
+                    && ((GuidoRole) catchable).getId() == id
+                    && ((GuidoRole) catchable).getGuildId() == guild.getIdLong(),
+            GuidoRole.class);
     if (role != null) {
       return role;
     }
@@ -220,7 +257,10 @@ public class GuidoFileLoader implements DataLoader {
 
   @Override
   public @NotNull UserData getUserData(long id) {
-    GuidoUser user = Cache.getCatchable(catchable -> catchable instanceof GuidoUser && ((GuidoUser) catchable).getId() == id, GuidoUser.class);
+    GuidoUser user =
+        Cache.getCatchable(
+            catchable -> catchable instanceof GuidoUser && ((GuidoUser) catchable).getId() == id,
+            GuidoUser.class);
     if (user != null) {
       return user;
     }

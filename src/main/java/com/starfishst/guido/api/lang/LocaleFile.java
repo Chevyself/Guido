@@ -1,10 +1,9 @@
 package com.starfishst.guido.api.lang;
 
 import com.starfishst.core.utils.Strings;
+import com.starfishst.core.utils.maps.MapBuilder;
 import java.io.File;
 import java.util.HashMap;
-
-import com.starfishst.core.utils.maps.MapBuilder;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -49,8 +48,8 @@ public interface LocaleFile extends Localizable {
   }
 
   /**
-   * Get the string and build it with placeholders using a builder. It will replace the placeholders that are inside
-   * a "%" character
+   * Get the string and build it with placeholders using a builder. It will replace the placeholders
+   * that are inside a "%" character
    *
    * @param path the path that leads to the string
    * @param placeholders the string to build the string
