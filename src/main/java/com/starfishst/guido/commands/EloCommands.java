@@ -1,6 +1,7 @@
 package com.starfishst.guido.commands;
 
 import com.starfishst.commands.annotations.Command;
+import com.starfishst.commands.annotations.Perm;
 import com.starfishst.commands.result.Result;
 import com.starfishst.core.annotations.Optional;
 import com.starfishst.core.annotations.Required;
@@ -10,15 +11,20 @@ import com.starfishst.core.utils.Pagination;
 import com.starfishst.core.utils.Strings;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import com.starfishst.guido.data.GuidoMember;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
+import net.dv8tion.jda.api.entities.TextChannel;
 import org.jetbrains.annotations.NotNull;
 
 /** Elo commands for a server */
@@ -56,7 +62,7 @@ public class EloCommands {
   @Command(
       aliases = "match",
       description = "Muestra como una match termina",
-      permission = Permission.ADMINISTRATOR)
+      permission = @Perm(permission = Permission.ADMINISTRATOR))
   public Result match(
       Message message,
       @Required(name = "jugadores", description = "Los jugadores por team") int size,

@@ -2,18 +2,20 @@ package com.starfishst.guido;
 
 import com.starfishst.commands.CommandManager;
 import com.starfishst.commands.ManagerOptions;
+import com.starfishst.commands.PermissionChecker;
 import com.starfishst.commands.providers.registry.ProvidersRegistryJDA;
 import com.starfishst.commands.utils.responsive.ResponsiveMessage;
 import com.starfishst.core.utils.Lots;
 import com.starfishst.core.utils.maps.Maps;
 import com.starfishst.core.utils.time.Time;
+import com.starfishst.guido.api.data.loader.DataLoader;
 import com.starfishst.guido.commands.DeveloperCommands;
 import com.starfishst.guido.commands.EloCommands;
 import com.starfishst.guido.commands.TeamCommands;
-import com.starfishst.guido.responsive.ResponsiveMessageListener;
-import com.starfishst.guido.responsive.adapter.ResponsiveMessageAdapter;
-import com.starfishst.guido.responsive.role.RoleGiver;
-import com.starfishst.guido.responsive.role.adapter.RoleGiverAdapter;
+import com.starfishst.guido.data.loader.GuidoFileLoader;
+import com.starfishst.utils.events.Cancellable;
+import com.starfishst.utils.events.Event;
+import com.starfishst.utils.events.ListenerManager;
 import com.starfishst.utils.gson.GsonProvider;
 import com.starfishst.utils.gson.adapters.jda.GuildAdapter;
 import java.util.HashMap;
@@ -29,7 +31,20 @@ import net.dv8tion.jda.api.requests.GatewayIntent;
 import org.jetbrains.annotations.NotNull;
 
 /** El bot para las rankeds de radiator springs */
+// TODO separate the jda init method
 public class Guido {
+
+  /**
+   * The listener manager for calling events
+   */
+  @NotNull
+  private static final ListenerManager listenerManager = new ListenerManager();
+
+  /**
+   * The data loader
+   */
+  @NotNull
+  private static DataLoader dataLoader = new GuidoFileLoader();
 
   /**
    * The main method of the bot.
@@ -52,23 +67,20 @@ public class Guido {
     JDA jda = createConnection(token, scanner);
     jda.getPresence().setPresence(OnlineStatus.DO_NOT_DISTURB, Activity.playing("A los pits"));
     jda.setEventManager(new AnnotatedEventManager());
-    jda.addEventListener(new ResponsiveMessageListener());
     GuidoMessagesProvider messagesProvider = new GuidoMessagesProvider();
+    PermissionChecker permissionChecker = () -> messagesProvider; // TODO
     CommandManager manager =
         new CommandManager(
             jda,
             argsMaps.getOrDefault("prefix", "$"),
             new ManagerOptions(),
             messagesProvider,
-            new ProvidersRegistryJDA(messagesProvider));
+            new ProvidersRegistryJDA(messagesProvider), permissionChecker);
     manager.registerCommand(new EloCommands());
     manager.registerCommand(new DeveloperCommands(jda));
     manager.registerCommand(new TeamCommands());
 
-    GsonProvider.addAdapter(Guild.class, new GuildAdapter(jda));
-    GsonProvider.addAdapter(ResponsiveMessage.class, new ResponsiveMessageAdapter());
-    GsonProvider.addAdapter(RoleGiver.class, new RoleGiverAdapter());
-    GsonProvider.refresh();
+    listenerManager.registerListeners(dataLoader);
   }
 
   /**
@@ -137,5 +149,35 @@ public class Guido {
     System.out.println(
         "Discord took " + Time.fromMillis(millis).toEffectiveString() + " to connect");
     return jda;
+  }
+
+  /**
+   * Calls an event. This will get all the listeners for the event and call it for each of them
+   *
+   * @param event the event to be called
+   */
+  public static void call(@NotNull Event event) {
+    listenerManager.call(event);
+  }
+
+  /**
+   * Calls an event. As in {@link #call(Event)} but returns whether it was cancelled
+   *
+   * @param cancellable the event to be called
+   * @return true if the event was cancelled
+   * @throws IllegalArgumentException cancellable is not an instance of {@link Event}
+   */
+  public static boolean call(@NotNull Cancellable cancellable) {
+    return listenerManager.call(cancellable);
+  }
+
+  /**
+   * Get the data loader that guido is using
+   *
+   * @return the data loader that guido is using
+   */
+  @NotNull
+  public static DataLoader getDataLoader() {
+    return dataLoader;
   }
 }

@@ -26,7 +26,7 @@ public class GuidoMessagesProvider implements MessagesProvider {
 
   @Override
   public @NotNull String invalidBoolean(@NotNull String s, @NotNull CommandContext commandContext) {
-    return s + " no es un numero";
+    return s + " no es un boolean";
   }
 
   @Override
@@ -35,7 +35,7 @@ public class GuidoMessagesProvider implements MessagesProvider {
   }
 
   @Override
-  public @NotNull String missingArgument(@NotNull String s, @NotNull String s1, int i) {
+  public @NotNull String missingArgument(@NotNull String s, @NotNull String s1, int i, @NotNull CommandContext context) {
     return "Te falta " + s + ": " + s1 + " en la posicion: " + i;
   }
 
