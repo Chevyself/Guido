@@ -37,7 +37,7 @@ public class LangChangeResponsiveMessage extends Catchable implements GuidoRespo
   public LangChangeResponsiveMessage(@NotNull User toChange, @NotNull Message message) {
     super(Time.fromString("30s"));
     this.id = message.getIdLong();
-    this.channelId = message.getIdLong();
+    this.channelId = message.getChannel().getIdLong();
     UserData userData = Guido.getDataLoader().getUserData(toChange.getIdLong());
     for (GuidoLocaleFile file : Guido.getLanguageHandler().getFiles()) {
       if (!file.getLang().equalsIgnoreCase(userData.getLang())) {
