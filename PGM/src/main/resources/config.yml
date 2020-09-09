@@ -1,0 +1,6 @@
+## The list of commands that can be enabled:
+## - fly
+## - ping
+enabled-commands:
+  - fly
+  - ping

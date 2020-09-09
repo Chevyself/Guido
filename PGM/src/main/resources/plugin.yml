@@ -1,0 +1,4 @@
+main: com.starfishst.guido.pgm.Guido
+name: Guido
+description: An implementation for the Guido bot to use PGM
+version: 1.0.0-0-0

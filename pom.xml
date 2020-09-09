@@ -13,6 +13,8 @@
  <modules>
      <module>Bot</module>
      <module>API</module>
+     <module>Implementations</module>
+     <module>PGM</module>
  </modules>
 
 <build>

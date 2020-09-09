@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xmlns="http://maven.apache.org/POM/4.0.0"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+
+    <parent>
+        <groupId>com.starfishst.guido</groupId>
+        <artifactId>Guido</artifactId>
+        <version>1.0.0</version>
+    </parent>
+
+    <groupId>com.starfishst.guido.pgm</groupId>
+    <artifactId>PGM</artifactId>
+    <version>1.0.0-SNAPSHOT-0</version>
+    <description>An implementation with PGM</description>
+
+    <build>
+        <plugins>
+            <!-- Maven jar shade plugin -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-shade-plugin</artifactId>
+                <version>3.2.1</version>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>shade</goal>
+                        </goals>
+                        <configuration>
+                            <createDependencyReducedPom>false</createDependencyReducedPom>
+                            <outputFile>Guido-${project.artifactId}.jar</outputFile>
+                            <artifactSet>
+                                <excludes>
+                                    <exclude>META-INF/*.SF</exclude>
+                                    <exclude>META-INF/*.DSA</exclude>
+                                    <exclude>META-INF/*.RSA</exclude>
+                                </excludes>
+                                <includes>
+                                    <include>com.starfishst.guido.implementations:Implementations</include>
+                                    <include>com.starfishst.bukkit:Bukkit</include>
+                                    <include>com.starfishst.core:core</include>
+                                    <include>com.starfishst.utils:core-utils</include>
+                                </includes>
+                            </artifactSet>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+
+    <dependencies>
+        <!-- Paper -->
+        <dependency>
+            <groupId>org.github.paperspigot</groupId>
+            <artifactId>paperspigot-api</artifactId>
+            <version>1.8.8-R0.1-SNAPSHOT</version>
+        </dependency>
+        <!-- Implementation -->
+        <dependency>
+            <groupId>com.starfishst.guido.implementations</groupId>
+            <artifactId>Implementations</artifactId>
+            <version>1.0.0-SNAPSHOT-0</version>
+            <scope>compile</scope>
+        </dependency>
+        <!-- The bukkit command framework -->
+        <dependency>
+            <groupId>com.starfishst.bukkit</groupId>
+            <artifactId>Bukkit</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
+    </dependencies>
+    
+</project>
