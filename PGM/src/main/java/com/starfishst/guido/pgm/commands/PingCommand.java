@@ -24,7 +24,8 @@ public class PingCommand implements GuidoCommand {
       Player player,
       @Optional(name = "player", description = "The player to get the ping from") Player optional) {
     if (optional != null && optional != player) {
-      return new Result("&a" + optional.getName() + " &eping is &a" + optional.spigot().getPing() + "ms");
+      return new Result(
+          "&a" + optional.getName() + " &eping is &a" + optional.spigot().getPing() + "ms");
     } else {
       return new Result("&eYour ping is &a" + player.spigot().getPing() + "ms");
     }
