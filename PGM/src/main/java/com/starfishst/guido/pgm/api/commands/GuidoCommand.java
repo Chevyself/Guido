@@ -1,4 +1,4 @@
-package com.starfishst.guido.pgm.commands;
+package com.starfishst.guido.pgm.api.commands;
 
 import org.jetbrains.annotations.NotNull;
 

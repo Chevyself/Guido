@@ -1,4 +1,4 @@
-main: com.starfishst.guido.pgm.Guido
+main: com.starfishst.guido.pgm.GuidoPlugin
 name: Guido
-description: An implementation for the Guido bot to use PGM
+description: An implementation for the GuidoPlugin bot to use PGM
 version: 1.0.0-0-0

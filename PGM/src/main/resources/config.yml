@@ -1,6 +1,25 @@
 ## The list of commands that can be enabled:
-## - fly
-## - ping
+## - fly: allows players to fly
+## - ping: allows players to see their ping
+## - gamemode: allows players to change their gamemode
 enabled-commands:
   - fly
   - ping
+  - gamemode
+## The settings for certain listeners
+listener-settings:
+  ## Listener for command executions. To print what others are doing with commands!
+  command-execution:
+    ## Whether this listener is enabled
+    enabled: true
+    ## What's the permission that allows players to see who's executing a command
+    permission: pgm.adminchat
+    ## How is it displayed for those who posses the permission
+    ## Placeholders are:
+    ## %player% for the name of the player
+    ## %player_display%% for the player display name
+    ##  %command% for the command that the player executed
+    chat: "[&6A&r] %player_display% &6executed &r%command%"
+  ## A listener for testing. This will print guido events
+  test:
+    enabled: true

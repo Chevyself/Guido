@@ -3,6 +3,7 @@ package com.starfishst.guido.pgm.commands;
 import com.starfishst.bukkit.annotations.Command;
 import com.starfishst.bukkit.result.Result;
 import com.starfishst.core.annotations.Optional;
+import com.starfishst.guido.pgm.api.commands.GuidoCommand;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
