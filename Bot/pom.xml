@@ -79,6 +79,7 @@
             <artifactId>core-utils</artifactId>
             <version>1.0-SNAPSHOT</version>
         </dependency>
+        <!-- Dependency to the API -->
         <dependency>
             <groupId>com.starfishst.guido.api</groupId>
             <artifactId>API</artifactId>

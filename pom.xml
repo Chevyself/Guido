@@ -6,7 +6,7 @@
 
 <groupId>com.starfishst.guido</groupId>
 <artifactId>Guido</artifactId>
-<version>1.0.0</version>
+<version>1.1.0</version>
 <description>A bot for elo and match making</description>
 <packaging>pom</packaging>
 
@@ -15,6 +15,8 @@
      <module>API</module>
      <module>Implementations</module>
      <module>PGM</module>
+     <module>Bukkit</module>
+     <module>Bungee</module>
  </modules>
 
 <build>

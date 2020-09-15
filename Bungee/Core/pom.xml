@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xmlns="http://maven.apache.org/POM/4.0.0"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>com.starfishst.guido.bungee</groupId>
+        <artifactId>Bungee</artifactId>
+        <version>1.0.0</version>
+    </parent>
+
+    <groupId>com.starfishst.guido.bungee.core</groupId>
+    <artifactId>Core</artifactId>
+    <version>1.0.0</version>
+    <description>The core of the bungee implementation</description>
+
+    <repositories>
+        <repository>
+            <id>bungeecord-repo</id>
+            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+        </repository>
+    </repositories>
+
+    <dependencies>
+        <!-- Dependency to the bungee api -->
+        <dependency>
+            <groupId>net.md-5</groupId>
+            <artifactId>bungeecord-api</artifactId>
+            <version>1.16-R0.3</version>
+            <type>jar</type>
+            <scope>provided</scope>
+        </dependency>
+        <!-- Dependency to the bungee command framework -->
+        <dependency>
+            <groupId>com.starfishst.bungee</groupId>
+            <artifactId>bungee</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
+    </dependencies>
+
+</project>
