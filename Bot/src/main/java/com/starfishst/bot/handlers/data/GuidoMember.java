@@ -1,11 +1,11 @@
 package com.starfishst.bot.handlers.data;
 
-import com.starfishst.bot.api.Permission;
 import com.starfishst.bot.api.data.BotMember;
 import com.starfishst.bot.api.events.data.BotMemberLoadedEvent;
 import com.starfishst.bot.api.events.data.BotMemberUnloadedEvent;
 import com.starfishst.core.utils.cache.Catchable;
 import com.starfishst.core.utils.time.Time;
+import com.starfishst.guido.api.data.PermissionStack;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
@@ -24,7 +24,7 @@ public class GuidoMember extends Catchable implements BotMember {
   private final long guildId;
 
   /** The permissions that the member posses */
-  @NotNull private final Set<Permission> permissions;
+  @NotNull private final Set<PermissionStack> permissions;
 
   /** The stats of the member */
   @NotNull private final HashMap<String, Double> stats;
@@ -40,7 +40,7 @@ public class GuidoMember extends Catchable implements BotMember {
   public GuidoMember(
       long id,
       long guildId,
-      @NotNull Set<Permission> permissions,
+      @NotNull Set<PermissionStack> permissions,
       @NotNull HashMap<String, Double> stats) {
     super(Time.fromString("3m"));
     this.id = id;
@@ -67,7 +67,7 @@ public class GuidoMember extends Catchable implements BotMember {
   }
 
   @Override
-  public @NotNull Set<Permission> getPermissions() {
+  public @NotNull Set<PermissionStack> getPermissions() {
     return this.permissions;
   }
 

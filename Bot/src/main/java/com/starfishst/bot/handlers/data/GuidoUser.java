@@ -1,12 +1,12 @@
 package com.starfishst.bot.handlers.data;
 
-import com.starfishst.bot.api.Permission;
 import com.starfishst.bot.api.data.BotUser;
 import com.starfishst.bot.api.events.data.BotUserLangUpdatedEvent;
 import com.starfishst.bot.api.events.data.BotUserLoadedEvent;
 import com.starfishst.bot.api.events.data.BotUserUnloadedEvent;
 import com.starfishst.core.utils.cache.Catchable;
 import com.starfishst.core.utils.time.Time;
+import com.starfishst.guido.api.data.PermissionStack;
 import java.util.HashSet;
 import java.util.Set;
 import org.jetbrains.annotations.NotNull;
@@ -17,7 +17,7 @@ public class GuidoUser extends Catchable implements BotUser {
   /** The unique id of the discord user */
   private final long id;
   /** The permissions that the user has */
-  @NotNull private final Set<Permission> permissions;
+  @NotNull private final Set<PermissionStack> permissions;
   /** The language that the user is using */
   @NotNull private String lang;
 
@@ -28,7 +28,7 @@ public class GuidoUser extends Catchable implements BotUser {
    * @param lang the language that the user is using
    * @param permissions the permissions of the user
    */
-  public GuidoUser(long id, @NotNull String lang, @NotNull Set<Permission> permissions) {
+  public GuidoUser(long id, @NotNull String lang, @NotNull Set<PermissionStack> permissions) {
     super(Time.fromString("3m"));
     this.id = id;
     this.lang = lang;
@@ -68,7 +68,7 @@ public class GuidoUser extends Catchable implements BotUser {
   }
 
   @Override
-  public @NotNull Set<Permission> getPermissions() {
+  public @NotNull Set<PermissionStack> getPermissions() {
     return this.permissions;
   }
 }

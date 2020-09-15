@@ -24,10 +24,5 @@ public class TestListener implements GuidoListener {
   }
 
   @Override
-  public boolean isEnabled() {
-    return this.getSettings().getSettingOr(this.getName(), Boolean.class, true);
-  }
-
-  @Override
   public void onUnload() {}
 }

@@ -1,11 +1,11 @@
 package com.starfishst.bot.handlers.data;
 
-import com.starfishst.bot.api.Permission;
 import com.starfishst.bot.api.data.BotRole;
 import com.starfishst.bot.api.events.data.BotRoleLoadedEvent;
 import com.starfishst.bot.api.events.data.BotRoleUnloadedEvent;
 import com.starfishst.core.utils.cache.Catchable;
 import com.starfishst.core.utils.time.Time;
+import com.starfishst.guido.api.data.PermissionStack;
 import java.util.HashSet;
 import java.util.Set;
 import org.jetbrains.annotations.NotNull;
@@ -23,7 +23,7 @@ public class GuidoRole extends Catchable implements BotRole {
   private final long guildId;
 
   /** The set of permission that the role possess */
-  @NotNull private final Set<Permission> permissions;
+  @NotNull private final Set<PermissionStack> permissions;
 
   /**
    * Create the guido role
@@ -32,7 +32,7 @@ public class GuidoRole extends Catchable implements BotRole {
    * @param guildId the unique id of the guild where this role exists
    * @param permissions the permission that the role posses
    */
-  public GuidoRole(long id, long guildId, @NotNull Set<Permission> permissions) {
+  public GuidoRole(long id, long guildId, @NotNull Set<PermissionStack> permissions) {
     super(Time.fromString("3m"));
     this.id = id;
     this.guildId = guildId;
@@ -57,7 +57,7 @@ public class GuidoRole extends Catchable implements BotRole {
   }
 
   @Override
-  public @NotNull Set<Permission> getPermissions() {
+  public @NotNull Set<PermissionStack> getPermissions() {
     return this.permissions;
   }
 

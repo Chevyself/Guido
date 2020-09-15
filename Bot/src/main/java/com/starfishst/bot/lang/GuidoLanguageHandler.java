@@ -177,6 +177,24 @@ public class GuidoLanguageHandler implements MessagesProvider {
   }
 
   @Override
+  public @NotNull String missingStrings(
+      @NotNull String s,
+      @NotNull String s1,
+      int i,
+      int i1,
+      int i2,
+      @NotNull CommandContext context) {
+    return this.getFile(context)
+        .get(
+            "invalid.strings",
+            Maps.builder("name", s)
+                .append("description", s1)
+                .append("position", String.valueOf(i))
+                .append("min", String.valueOf(i1))
+                .append("max", String.valueOf(i2)));
+  }
+
+  @Override
   public @NotNull String commandNotFound(
       @NotNull String s, @NotNull CommandContext commandContext) {
     return this.getFile(commandContext).get("command-not-found", Maps.builder("name", s));

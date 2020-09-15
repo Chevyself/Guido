@@ -148,6 +148,6 @@ public class PermissionListener implements GuidoListener {
 
   @Override
   public void onUnload() {
-    // TODO
+    this.attachments.clear();
   }
 }

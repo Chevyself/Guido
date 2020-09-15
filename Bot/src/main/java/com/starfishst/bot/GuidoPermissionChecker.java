@@ -48,20 +48,20 @@ public class GuidoPermissionChecker implements PermissionChecker {
             this.dataLoader.getMemberData(
                 ((GuildCommandContext) context).getMember().getIdLong(),
                 ((GuildCommandContext) context).getGuild().getIdLong());
-        if (member.hasPermission(perm.node())) {
+        if (member.hasPermission(perm.node(), "discord")) {
           return null;
         }
         for (Role role : ((GuildCommandContext) context).getMember().getRoles()) {
           BotRole roleData =
               this.dataLoader.getRoleData(
                   role.getIdLong(), ((GuildCommandContext) context).getGuild().getIdLong());
-          if (roleData.hasPermission(perm.node())) {
+          if (roleData.hasPermission(perm.node(), "discord")) {
             return null;
           }
         }
       } else {
         BotUser userData = this.dataLoader.getUserData(context.getSender().getIdLong());
-        if (userData.hasPermission(perm.node())) {
+        if (userData.hasPermission(perm.node(), "discord")) {
           return null;
         }
       }

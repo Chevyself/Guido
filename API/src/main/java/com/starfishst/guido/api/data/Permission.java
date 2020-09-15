@@ -1,4 +1,4 @@
-package com.starfishst.bot.api;
+package com.starfishst.guido.api.data;
 
 import org.jetbrains.annotations.NotNull;
 

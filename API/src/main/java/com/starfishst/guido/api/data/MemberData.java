@@ -24,7 +24,17 @@ public interface MemberData {
   long getGuildId();
 
   /**
-   * Get the stats of the member inside the server
+   * Get the stats of the member inside the server.
+   *
+   * <p>Stats must be given like this:
+   *
+   * <p>- Kills, wins and deaths for a gamemode:
+   *
+   * <p>gamemode-kills: amount gamemode-deaths: amount gamemode-wins: amount
+   *
+   * <p>- Elo for a ladder:
+   *
+   * <p>ladder-elo: elo
    *
    * @return the stats of the member
    */

@@ -6,6 +6,7 @@ import com.starfishst.guido.pgm.api.config.Configuration;
 import com.starfishst.guido.pgm.api.config.DataLoader;
 import com.starfishst.guido.pgm.api.config.PlayerData;
 import com.starfishst.guido.pgm.api.events.GuidoEvent;
+import com.starfishst.guido.pgm.api.events.GuidoListener;
 import java.util.UUID;
 import org.bukkit.Bukkit;
 import org.jetbrains.annotations.NotNull;
@@ -16,6 +17,26 @@ public class Guido {
 
   /** The instance of the guido plugin */
   @Nullable private static GuidoPlugin plugin;
+
+  /**
+   * Get a listener using its class
+   *
+   * @param clazz the class of the listener
+   * @param <T> the type of the listener class
+   * @return the listener if found null if it might not have been registered
+   */
+  public static <T extends GuidoListener> @Nullable T getListener(@NotNull Class<T> clazz) {
+    return validated().getListener(clazz);
+  }
+
+  /**
+   * Get whether pgm is connected with the plugin
+   *
+   * @return true if pgm is connected
+   */
+  public static boolean isPgmConnected() {
+    return validated().getDependencies().getDependency("PGM").isEnabled();
+  }
 
   /**
    * Calls an event using the guido plugin
@@ -77,5 +98,14 @@ public class Guido {
   @NotNull
   public static Configuration getConfiguration() {
     return validated().getConfiguration();
+  }
+
+  /**
+   * Get whether protocol lib is connected with the plugin
+   *
+   * @return true if protocol lib is connected
+   */
+  public static boolean isProtocolLibConnected() {
+    return validated().getDependencies().getDependency("ProtocolLib").isEnabled();
   }
 }

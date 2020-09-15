@@ -2,13 +2,19 @@ package com.starfishst.guido.pgm.api.config;
 
 import com.starfishst.guido.pgm.api.events.GuidoListener;
 import com.starfishst.guido.pgm.api.events.GuidoListenerSettings;
+import java.util.HashMap;
 import java.util.List;
 import org.jetbrains.annotations.NotNull;
 
 /** The configuration for the guido implementation of pgm */
 public interface Configuration {
 
-  // todo
+  /**
+   * Get the settings for a listener
+   *
+   * @param listener the listener that requires the settings
+   * @return the settings of the listener
+   */
   @NotNull
   default GuidoListenerSettings getListenerSettings(@NotNull GuidoListener listener) {
     for (GuidoListenerSettings listenerSettings : this.getListenersSettings()) {
@@ -16,7 +22,17 @@ public interface Configuration {
         return listenerSettings;
       }
     }
-    throw new IllegalArgumentException(listener + " is not applicable for settings");
+    return new GuidoListenerSettings() {
+      @Override
+      public @NotNull String getName() {
+        return listener.getName();
+      }
+
+      @Override
+      public @NotNull HashMap<String, Object> getSettings() {
+        return new HashMap<>();
+      }
+    };
   }
 
   /**

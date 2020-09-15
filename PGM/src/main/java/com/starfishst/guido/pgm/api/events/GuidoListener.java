@@ -40,7 +40,9 @@ public interface GuidoListener extends Listener {
    *
    * @return true if the listener is enabled
    */
-  boolean isEnabled();
+  default boolean isEnabled() {
+    return this.getSettings().getSettingOr("enabled", Boolean.class, false);
+  }
 
   /**
    * Get the settings of this listener

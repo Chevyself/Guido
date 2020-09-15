@@ -23,10 +23,9 @@ public class CommandExecutionListener implements GuidoListener {
   @EventHandler(priority = EventPriority.MONITOR)
   public void onPlayerCommandPreprocessEvent(PlayerCommandPreprocessEvent event) {
     Player player = event.getPlayer();
-    System.out.println(event);
     for (Player onlinePlayer : Bukkit.getOnlinePlayers()) {
       if (onlinePlayer.hasPermission(
-          this.getSettings().getSettingOr("permission", String.class, "pgm.adminchat"))) {
+          this.getSettings().getSettingOr("permission", String.class, "guido.adminchat"))) {
         String msg =
             BukkitUtils.build(
                 this.getSettings()
@@ -45,11 +44,6 @@ public class CommandExecutionListener implements GuidoListener {
   @Override
   public @NotNull String getName() {
     return "command-execution";
-  }
-
-  @Override
-  public boolean isEnabled() {
-    return this.getSettings().getSettingOr(this.getName(), Boolean.class, true);
   }
 
   @Override
