@@ -20,6 +20,10 @@ listener-settings:
     ## %player_display%% for the player display name
     ##  %command% for the command that the player executed
     chat: "[&6A&r] %player_display% &6executed &r%command%"
+    ## Commands that are not sent
+    banned:
+      - tell
+      - msg
   ## A listener for testing. This will print guido events
   test:
     enabled: true

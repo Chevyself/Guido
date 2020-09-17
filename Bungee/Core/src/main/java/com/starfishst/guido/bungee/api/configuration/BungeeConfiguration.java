@@ -1,12 +1,12 @@
-package com.starfishst.guido.pgm.api.config;
+package com.starfishst.guido.bungee.api.configuration;
 
-import com.starfishst.guido.pgm.api.events.GuidoListener;
+import com.starfishst.guido.bungee.api.events.GuidoListener;
 import java.util.HashMap;
 import java.util.List;
 import org.jetbrains.annotations.NotNull;
 
 /** The configuration for the guido implementation of pgm */
-public interface Configuration {
+public interface BungeeConfiguration {
 
   /**
    * Get the settings for a listener
@@ -33,14 +33,6 @@ public interface Configuration {
       }
     };
   }
-
-  /**
-   * Get the name of the commands that are enabled
-   *
-   * @return the enabled commands
-   */
-  @NotNull
-  List<String> getEnabledCommands();
 
   /**
    * Get the settings for listeners

@@ -1,7 +1,9 @@
-package com.starfishst.guido.pgm.api.events;
+package com.starfishst.guido.bungee.api.configuration;
 
 import com.starfishst.core.utils.Validate;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -24,6 +26,22 @@ public interface GuidoListenerSettings {
     } else {
       return null;
     }
+  }
+
+  /**
+   * Get a setting that happens to be a list
+   *
+   * @param name the name of the setting
+   * @param <T> the type of the class
+   * @return the list or empty if the setting does not exist
+   */
+  @SuppressWarnings("unchecked")
+  @NotNull
+  default <T> List<T> getListSetting(@NotNull String name) {
+    List<T> list = new ArrayList<>();
+    Class<List<T>> aClass = (Class<List<T>>) list.getClass();
+    list.addAll(this.getSettingOr(name, aClass, new ArrayList<>()));
+    return list;
   }
 
   /**

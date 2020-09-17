@@ -4,6 +4,7 @@ import com.starfishst.bukkit.utils.BukkitUtils;
 import com.starfishst.core.utils.Strings;
 import com.starfishst.core.utils.maps.Maps;
 import com.starfishst.guido.pgm.api.events.GuidoListener;
+import java.util.List;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -23,6 +24,7 @@ public class CommandExecutionListener implements GuidoListener {
   @EventHandler(priority = EventPriority.MONITOR)
   public void onPlayerCommandPreprocessEvent(PlayerCommandPreprocessEvent event) {
     Player player = event.getPlayer();
+    if (this.isBanned(event.getMessage().split(" ")[0].replace("/", ""))) return;
     for (Player onlinePlayer : Bukkit.getOnlinePlayers()) {
       if (onlinePlayer.hasPermission(
           this.getSettings().getSettingOr("permission", String.class, "guido.adminchat"))) {
@@ -39,6 +41,19 @@ public class CommandExecutionListener implements GuidoListener {
                     .append("command", event.getMessage())));
       }
     }
+  }
+
+  public boolean isBanned(@NotNull String commandName) {
+    for (String bannedName : this.getBanned()) {
+      if (bannedName.equalsIgnoreCase(commandName)) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  public List<String> getBanned() {
+    return this.getSettings().getListSetting("banned", String.class);
   }
 
   @Override

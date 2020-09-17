@@ -22,6 +22,42 @@
         </repository>
     </repositories>
 
+    <build>
+        <plugins>
+            <!-- Maven jar shade plugin -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-shade-plugin</artifactId>
+                <version>3.2.1</version>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>shade</goal>
+                        </goals>
+                        <configuration>
+                            <createDependencyReducedPom>false</createDependencyReducedPom>
+                            <outputFile>Guido-Bungee-${project.artifactId}.jar</outputFile>
+                            <artifactSet>
+                                <excludes>
+                                    <exclude>META-INF/*.SF</exclude>
+                                    <exclude>META-INF/*.DSA</exclude>
+                                    <exclude>META-INF/*.RSA</exclude>
+                                </excludes>
+                                <includes>
+                                    <include>com.starfishst.guido.implementations:Implementations</include>
+                                    <include>com.starfishst.bungee:bungee</include>
+                                    <include>com.starfishst.core:core</include>
+                                    <include>com.starfishst.utils:core-utils</include>
+                                </includes>
+                            </artifactSet>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+
     <dependencies>
         <!-- Dependency to the bungee api -->
         <dependency>

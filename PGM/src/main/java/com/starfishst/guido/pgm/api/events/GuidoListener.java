@@ -1,6 +1,7 @@
 package com.starfishst.guido.pgm.api.events;
 
 import com.starfishst.guido.pgm.api.Guido;
+import com.starfishst.guido.pgm.api.config.GuidoListenerSettings;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.Plugin;

@@ -1,7 +1,7 @@
 package com.starfishst.guido.pgm.configuration;
 
 import com.starfishst.guido.pgm.api.config.Configuration;
-import com.starfishst.guido.pgm.api.events.GuidoListenerSettings;
+import com.starfishst.guido.pgm.api.config.GuidoListenerSettings;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;

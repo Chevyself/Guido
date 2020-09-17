@@ -1,0 +1,8 @@
+listeners:
+  motd:
+    descriptions:
+      - Join the googas clan right now
+      - Ananin
+      - Minecraft
+    players:
+      - ["Welcome to", "Googas", "LMAO"]
