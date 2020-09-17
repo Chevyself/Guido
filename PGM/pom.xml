@@ -86,6 +86,12 @@
             <artifactId>ProtocolLib</artifactId>
             <version>4.5.0</version>
         </dependency>
+        <!-- PGM -->
+        <dependency>
+            <groupId>tc.oc.pgm</groupId>
+            <artifactId>core</artifactId>
+            <version>0.9-SNAPSHOT</version>
+        </dependency>
     </dependencies>
     
 </project>

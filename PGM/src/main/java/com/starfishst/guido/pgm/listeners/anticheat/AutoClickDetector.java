@@ -6,9 +6,11 @@ import com.comphenix.protocol.events.PacketEvent;
 import com.comphenix.protocol.wrappers.EnumWrappers;
 import com.starfishst.core.utils.Lots;
 import com.starfishst.guido.pgm.api.events.anticheat.SuspectDetectedEvent;
+import com.starfishst.guido.pgm.api.events.anticheat.SuspectLevel;
 import java.util.HashMap;
 import java.util.UUID;
 import org.bukkit.GameMode;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.player.PlayerGameModeChangeEvent;
 import org.bukkit.plugin.Plugin;
@@ -18,7 +20,7 @@ import org.jetbrains.annotations.NotNull;
 public class AutoClickDetector extends PacketAdapter implements AntiCheatDetector {
 
   /** The tick tracker to get the delay between hits */
-  @NotNull private final TicksTracker tracker;
+  @NotNull private final AutoClickTicksTracker tracker;
 
   /**
    * The uuid and the list containing the clicks of a player. This is the amount of times that the
@@ -49,7 +51,7 @@ public class AutoClickDetector extends PacketAdapter implements AntiCheatDetecto
   public AutoClickDetector(@NotNull Plugin plugin) {
     super(
         plugin, Lots.list(PacketType.Play.Client.ARM_ANIMATION, PacketType.Play.Client.BLOCK_DIG));
-    this.tracker = new TicksTracker(plugin);
+    this.tracker = new AutoClickTicksTracker(plugin, this);
     this.tracker.register(plugin);
   }
 
@@ -74,14 +76,17 @@ public class AutoClickDetector extends PacketAdapter implements AntiCheatDetecto
           if (event.getPlayer().getGameMode() != GameMode.CREATIVE) {
             this.digging.put(uniqueId, true);
           }
+          this.tracker.ticksOnStopped.put(uniqueId, -1);
+          break;
+        case ABORT_DESTROY_BLOCK:
+          this.digging.put(uniqueId, false);
           break;
         case DROP_ITEM:
         case DROP_ALL_ITEMS:
         case SWAP_HELD_ITEMS:
         case RELEASE_USE_ITEM:
         case STOP_DESTROY_BLOCK:
-        case ABORT_DESTROY_BLOCK:
-          this.digging.put(uniqueId, false);
+          this.tracker.ticksOnStopped.put(uniqueId, 0);
           break;
       }
     } else if (type == PacketType.Play.Client.ARM_ANIMATION) {
@@ -91,7 +96,8 @@ public class AutoClickDetector extends PacketAdapter implements AntiCheatDetecto
         this.time.put(uniqueId, 0);
         this.averageSpeed.put(uniqueId, 0.0);
       } else {
-        if (!this.digging.getOrDefault(uniqueId, false)) {
+        if (!this.digging.getOrDefault(uniqueId, false)
+            || event.getPlayer().getGameMode() == GameMode.CREATIVE) {
           this.time.put(uniqueId, this.time.getOrDefault(uniqueId, 0) + ticks);
           this.clicks.put(uniqueId, this.clicks.getOrDefault(uniqueId, 0) + 1);
           double secs = this.time.get(uniqueId) / 20.0;
@@ -107,7 +113,8 @@ public class AutoClickDetector extends PacketAdapter implements AntiCheatDetecto
               new SuspectDetectedEvent(
                       event.getPlayer(),
                       this,
-                      "clicking " + String.format("%.2f", cps) + "/cps | maximum: " + maxCps)
+                      "clicking " + String.format("%.2f", cps) + "/cps | maximum: " + maxCps,
+                      SuspectLevel.MEDIUM)
                   .call();
             }
             Double averageDeviation = this.averageDeviation.get(uniqueId);
@@ -120,7 +127,8 @@ public class AutoClickDetector extends PacketAdapter implements AntiCheatDetecto
                       "deviation "
                           + String.format("%.2f", averageDeviation)
                           + " | min: "
-                          + minDeviation)
+                          + minDeviation,
+                      SuspectLevel.LOW)
                   .call();
             }
           }
@@ -130,10 +138,53 @@ public class AutoClickDetector extends PacketAdapter implements AntiCheatDetecto
   }
 
   @Override
-  public void onUnload() {}
+  public void onUnload() {
+    this.tracker.unregister();
+    this.clicks.clear();
+    this.time.clear();
+    this.digging.clear();
+    this.averageSpeed.clear();
+    this.averageDeviation.clear();
+  }
 
   @Override
   public @NotNull String getName() {
     return "auto-click-detector";
+  }
+
+  /** The ticks tracker for the auto click detector */
+  static class AutoClickTicksTracker extends TicksTracker {
+
+    /**
+     * The amount of ticks a player did after stopping digging. This to archive detect the extra
+     * animations when a player stopped digging
+     */
+    @NotNull private final HashMap<UUID, Integer> ticksOnStopped = new HashMap<>();
+
+    /** The auto click detector that is using this tracker */
+    @NotNull private final AutoClickDetector detector;
+
+    /**
+     * Create the ticks tracker
+     *
+     * @param plugin the plugin that requires track ticks
+     * @param detector the auto click detector that is using this tracker
+     */
+    public AutoClickTicksTracker(@NotNull Plugin plugin, @NotNull AutoClickDetector detector) {
+      super(plugin);
+      this.detector = detector;
+    }
+
+    @Override
+    void onIncrease(@NotNull Player player, int amount) {
+      UUID uniqueId = player.getUniqueId();
+      if (this.ticksOnStopped.getOrDefault(uniqueId, -1) >= 0) {
+        this.ticksOnStopped.put(uniqueId, this.ticksOnStopped.get(uniqueId) + amount);
+        if (this.ticksOnStopped.get(uniqueId) >= 6) {
+          this.ticksOnStopped.put(uniqueId, -1);
+          this.detector.digging.put(uniqueId, false);
+        }
+      }
+    }
   }
 }

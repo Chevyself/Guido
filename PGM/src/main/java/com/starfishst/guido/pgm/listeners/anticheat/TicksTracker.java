@@ -12,7 +12,7 @@ import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
 
 /** Tracks the ticks for players */
-public class TicksTracker extends PacketAdapter implements GuidoPacketListener {
+public abstract class TicksTracker extends PacketAdapter implements GuidoPacketListener {
 
   /** The amount of ticks that have been sent from the player */
   @NotNull private final HashMap<UUID, Integer> ticks = new HashMap<>();
@@ -42,6 +42,14 @@ public class TicksTracker extends PacketAdapter implements GuidoPacketListener {
   }
 
   /**
+   * Called when {@link #increase(Player, int)} is invoked
+   *
+   * @param player the player which got its ticks increased
+   * @param amount the amount of ticks that got increased
+   */
+  abstract void onIncrease(@NotNull Player player, int amount);
+
+  /**
    * Increase the ticks that were sent by the player for certain amount. This will get the UUID of
    * the player an execute {@link #increase(UUID, int)}
    *
@@ -49,6 +57,7 @@ public class TicksTracker extends PacketAdapter implements GuidoPacketListener {
    * @param amount the amount of ticks to increase
    */
   public void increase(@NotNull Player player, int amount) {
+    this.onIncrease(player, amount);
     this.increase(player.getUniqueId(), amount);
   }
 

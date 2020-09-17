@@ -20,15 +20,23 @@ public class SuspectDetectedEvent extends GuidoEvent {
   /** The reason to which the player might be cheating */
   @NotNull private final String reason;
 
+  /** The level to which the player is suspected to be cheating */
+  @NotNull private final SuspectLevel suspectLevel;
+
   /**
    * Called when a player is suspected to be cheating
    *
    * @param player the player who might be cheating
    * @param detector the detector who's suspecting of the player
    * @param reason the reason that is player is suspected to be cheating
+   * @param suspectLevel the level to which the player is suspected to be cheating
    */
   public SuspectDetectedEvent(
-      @NotNull Player player, @NotNull AntiCheatDetector detector, @NotNull String reason) {
+      @NotNull Player player,
+      @NotNull AntiCheatDetector detector,
+      @NotNull String reason,
+      SuspectLevel suspectLevel) {
+    this.suspectLevel = suspectLevel;
     this.sentAt = System.currentTimeMillis();
     this.player = player;
     this.detector = detector;
@@ -69,7 +77,18 @@ public class SuspectDetectedEvent extends GuidoEvent {
    *
    * @return the reason as a string
    */
+  @NotNull
   public String getReason() {
     return reason;
+  }
+
+  /**
+   * Get the level to which a player is suspected to be cheating
+   *
+   * @return the level of suspect
+   */
+  @NotNull
+  public SuspectLevel getSuspectLevel() {
+    return suspectLevel;
   }
 }
