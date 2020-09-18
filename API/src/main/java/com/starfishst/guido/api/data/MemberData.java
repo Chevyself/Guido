@@ -7,7 +7,7 @@ import org.jetbrains.annotations.NotNull;
  * The data for a member. This class represents all the data for certain discord user that is inside
  * a guild. This is called a member
  */
-public interface MemberData {
+public interface MemberData extends Linkable {
 
   /**
    * Get the unique id of the discord user

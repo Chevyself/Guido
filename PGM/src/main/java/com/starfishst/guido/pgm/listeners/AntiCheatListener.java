@@ -47,13 +47,11 @@ public class AntiCheatListener implements GuidoListener {
                   this.getSettings()
                       .getSettingOr(
                           "chat", String.class, "[&6A&r] %player_display% &6cheats &r%command%"));
-          MapBuilder<String, String> placeholders = Maps.builder("player", event.getPlayer().getName())
+          MapBuilder<String, String> placeholders =
+              Maps.builder("player", event.getPlayer().getName())
                   .append("player_display", event.getPlayer().getDisplayName())
                   .append("reason", event.getReason());
-          player.sendMessage(
-              Strings.buildMessage(
-                  msg,
-                      placeholders));
+          player.sendMessage(Strings.buildMessage(msg, placeholders));
         }
       }
     }
