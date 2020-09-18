@@ -79,8 +79,6 @@ public class AutoClickDetector extends PacketAdapter implements AntiCheatDetecto
           this.tracker.ticksOnStopped.put(uniqueId, -1);
           break;
         case ABORT_DESTROY_BLOCK:
-          this.digging.put(uniqueId, false);
-          break;
         case DROP_ITEM:
         case DROP_ALL_ITEMS:
         case SWAP_HELD_ITEMS:
@@ -157,7 +155,11 @@ public class AutoClickDetector extends PacketAdapter implements AntiCheatDetecto
 
     /**
      * The amount of ticks a player did after stopping digging. This to archive detect the extra
-     * animations when a player stopped digging
+     * animations when a player stopped digging.
+     *
+     * <p>If ticks on stopped
+     *
+     * <p>= -1 the player is not digging = -2 the player has aborted digging
      */
     @NotNull private final HashMap<UUID, Integer> ticksOnStopped = new HashMap<>();
 
