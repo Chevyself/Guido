@@ -20,4 +20,15 @@ public interface Permission {
    * @return whether the permission is enabled
    */
   boolean isEnabled();
+
+  /**
+   * Get node with the {@link #isEnabled()} appended. This will get '-' + the node if {@link
+   * #isEnabled()} happens to be false
+   *
+   * @return the node with the string appended
+   */
+  @NotNull
+  default String getNodeAppended() {
+    return this.isEnabled() ? this.getNode() : "-" + this.getNode();
+  }
 }

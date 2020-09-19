@@ -12,7 +12,7 @@
 
     <groupId>com.starfishst.guido.api</groupId>
     <artifactId>API</artifactId>
-    <version>1.0.0-SNAPSHOT-1</version>
+    <version>1.0.0-SNAPSHOT-2</version>
 
     <dependencies>
         <!-- Dependency on the framework core -->

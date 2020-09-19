@@ -15,7 +15,8 @@ public interface Permissible {
    * @return true if the entity posses the permission and it is enabled
    */
   default boolean hasPermission(@NotNull String node, @NotNull String context) {
-    return this.getPermissions(context).hasPermission(node);
+    PermissionStack stack = this.getPermissions(context);
+    return stack != null && stack.hasPermission(node);
   }
 
   /**
