@@ -95,7 +95,7 @@ public class AutoClickDetector extends PacketAdapter implements AntiCheatDetecto
         this.averageSpeed.put(uniqueId, 0.0);
       } else {
         if (!this.digging.getOrDefault(uniqueId, false)
-            || event.getPlayer().getGameMode() == GameMode.CREATIVE) {
+            && event.getPlayer().getGameMode() == GameMode.SURVIVAL) {
           this.time.put(uniqueId, this.time.getOrDefault(uniqueId, 0) + ticks);
           this.clicks.put(uniqueId, this.clicks.getOrDefault(uniqueId, 0) + 1);
           double secs = this.time.get(uniqueId) / 20.0;
