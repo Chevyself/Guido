@@ -2,6 +2,7 @@ package com.starfishst.bot.commands;
 
 import com.starfishst.commands.annotations.Command;
 import com.starfishst.commands.annotations.Perm;
+import com.starfishst.commands.context.CommandContext;
 import com.starfishst.commands.context.GuildCommandContext;
 import com.starfishst.commands.result.Result;
 import com.starfishst.commands.result.ResultType;
@@ -12,7 +13,6 @@ import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;
 import net.dv8tion.jda.api.JDA;
-import net.dv8tion.jda.api.Permission;
 import org.jetbrains.annotations.NotNull;
 
 /** Commands made for the developer */
@@ -63,10 +63,10 @@ public class DeveloperCommands {
    */
   @Command(
       aliases = "eval",
-      permission = @Perm(permission = Permission.ADMINISTRATOR),
+      permission = @Perm(node = "user:guido.admin"),
       description = "Evalua codigo JavaScript")
   public Result eval(
-      GuildCommandContext context,
+      CommandContext context,
       @Multiple @Required(name = "code", description = "El codigo para analizar")
           JoinedStrings strings) {
     this.engine.put("event", context.getEvent());
@@ -74,9 +74,10 @@ public class DeveloperCommands {
     this.engine.put("channel", context.getChannel());
     this.engine.put("args", context.getStrings());
     this.engine.put("api", this.api);
-    this.engine.put("guild", context.getGuild());
-    this.engine.put("member", context.getMember());
-
+    if (context instanceof GuildCommandContext) {
+      this.engine.put("guild", ((GuildCommandContext) context).getGuild());
+      this.engine.put("member", ((GuildCommandContext) context).getMember());
+    }
     final String script =
         "(function() {" + "with (imports) {" + strings.getString() + "}" + "})();";
 

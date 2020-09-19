@@ -21,7 +21,7 @@ public class GuidoLanguageHandler implements MessagesProvider {
   @NotNull private final Set<GuidoLocaleFile> files = new HashSet<>();
 
   /** The loader to get the localization */
-  @NotNull private final BotDataLoader dataLoader;
+  @NotNull private BotDataLoader dataLoader;
 
   /**
    * Create the guido localization handler
@@ -38,13 +38,14 @@ public class GuidoLanguageHandler implements MessagesProvider {
    * @param toLoad the locale files to load
    */
   public void load(String... toLoad) {
+    ClassLoader resourceLoader = this.getClass().getClassLoader();
     for (String lang : toLoad) {
       try {
         files.add(
             new GuidoLocaleFile(
                 CoreFiles.getFileOrResource(
                     CoreFiles.currentDirectory() + "/assets/lang/" + lang + ".properties",
-                    CoreFiles.getResource("/lang/" + lang + ".properties"))));
+                    CoreFiles.getResource("lang/" + lang + ".properties"))));
       } catch (IOException e) {
         Fallback.addError("IOException: File for the language " + lang + " could not be gotten");
         e.printStackTrace();
@@ -176,22 +177,13 @@ public class GuidoLanguageHandler implements MessagesProvider {
     return this.getFile(context).get("invalid.double-empty");
   }
 
-  @Override
-  public @NotNull String missingStrings(
-      @NotNull String s,
-      @NotNull String s1,
-      int i,
-      int i1,
-      int i2,
-      @NotNull CommandContext context) {
-    return this.getFile(context)
-        .get(
-            "invalid.strings",
-            Maps.builder("name", s)
-                .append("description", s1)
-                .append("position", String.valueOf(i))
-                .append("min", String.valueOf(i1))
-                .append("max", String.valueOf(i2)));
+  /**
+   * Set the data loader for the language handler
+   *
+   * @param dataLoader the new data loader
+   */
+  public void setDataLoader(@NotNull BotDataLoader dataLoader) {
+    this.dataLoader = dataLoader;
   }
 
   @Override
@@ -270,5 +262,23 @@ public class GuidoLanguageHandler implements MessagesProvider {
   @Override
   public @NotNull String invalidTextChannel(String s, CommandContext commandContext) {
     return this.getFile(commandContext).get("invalid.channel", Maps.singleton("string", s));
+  }
+
+  @Override
+  public @NotNull String missingStrings(
+      @NotNull String s,
+      @NotNull String s1,
+      int i,
+      int i1,
+      int i2,
+      @NotNull CommandContext context) {
+    return this.getFile(context)
+        .get(
+            "invalid.strings",
+            Maps.builder("name", s)
+                .append("description", s1)
+                .append("position", String.valueOf(i))
+                .append("min", String.valueOf(i1))
+                .append("missing", String.valueOf(i2)));
   }
 }

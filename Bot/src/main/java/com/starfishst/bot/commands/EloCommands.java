@@ -63,6 +63,8 @@ public class EloCommands {
       @Required(name = "jugadores", description = "Los jugadores por team") int size,
       @Optional(name = "empate", description = "En caso de que haya sido un empate") boolean tie) {
     List<Member> mentioned = message.getMentionedMembers();
+    System.out.println(size);
+    System.out.println(mentioned);
     if (size * 2 != mentioned.size()) {
       return new Result(
           "El numero de jugadores mencionados no es igual al numero de jugadores por team");

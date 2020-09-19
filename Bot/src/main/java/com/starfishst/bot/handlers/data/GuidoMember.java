@@ -29,6 +29,9 @@ public class GuidoMember extends Catchable implements BotMember {
   /** The stats of the member */
   @NotNull private final HashMap<String, Double> stats;
 
+  /** the links that are associated with this member */
+  @NotNull private final HashMap<String, String> links;
+
   /**
    * Create the guido member
    *
@@ -36,24 +39,37 @@ public class GuidoMember extends Catchable implements BotMember {
    * @param guildId the guild where this member is member in
    * @param permissions the permissions that the member posses
    * @param stats the stats of the member
+   * @param links the links that are associated with this member
    */
   public GuidoMember(
       long id,
       long guildId,
       @NotNull Set<PermissionStack> permissions,
-      @NotNull HashMap<String, Double> stats) {
+      @NotNull HashMap<String, Double> stats,
+      @NotNull HashMap<String, String> links) {
     super(Time.fromString("3m"));
     this.id = id;
     this.guildId = guildId;
     this.permissions = permissions;
     this.stats = stats;
+    this.links = links;
     new BotMemberLoadedEvent(this).call();
   }
 
   /** Create the guido member. This is deprecated because only GSON may use it */
   @Deprecated
   public GuidoMember() {
-    this(0, 0, new HashSet<>(), new HashMap<>());
+    this(0, 0, new HashSet<>(), new HashMap<>(), new HashMap<>());
+  }
+
+  /**
+   * This map contains anything to which this data is linked to
+   *
+   * @return the links for this data
+   */
+  @Override
+  public @NotNull HashMap<String, String> getLinks() {
+    return this.links;
   }
 
   @Override

@@ -204,10 +204,10 @@ public class GuidoFileLoader implements BotDataLoader, GuidoEventHandler {
                 + guildId
                 + " could not be loaded. Created a fallback");
         e.printStackTrace();
-        return new GuidoMember(id, guildId, new HashSet<>(), new HashMap<>());
+        return new GuidoMember(id, guildId, new HashSet<>(), new HashMap<>(), new HashMap<>());
       }
     } else {
-      return new GuidoMember(id, guildId, new HashSet<>(), new HashMap<>());
+      return new GuidoMember(id, guildId, new HashSet<>(), new HashMap<>(), new HashMap<>());
     }
   }
 

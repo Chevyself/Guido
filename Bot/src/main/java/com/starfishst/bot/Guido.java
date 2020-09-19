@@ -7,11 +7,13 @@ import com.starfishst.bot.commands.LangCommands;
 import com.starfishst.bot.commands.TeamCommands;
 import com.starfishst.bot.handlers.data.GuidoHandler;
 import com.starfishst.bot.handlers.data.loader.GuidoFileLoader;
+import com.starfishst.bot.handlers.data.loader.MongoDataLoader;
 import com.starfishst.bot.handlers.responsive.GuidoMessagesController;
 import com.starfishst.bot.lang.GuidoLanguageHandler;
 import com.starfishst.commands.CommandManager;
 import com.starfishst.commands.ManagerOptions;
 import com.starfishst.commands.providers.registry.ProvidersRegistryJDA;
+import com.starfishst.core.fallback.Fallback;
 import com.starfishst.core.utils.Lots;
 import com.starfishst.core.utils.maps.Maps;
 import com.starfishst.utils.events.Cancellable;
@@ -52,6 +54,14 @@ public class Guido {
    *
    * <p>'prefix' the prefix for the commands
    *
+   * <p>'loader' waits for a data loader but is none is provided the default json is used
+   *
+   * <p>For the mongo loader you need these two:
+   *
+   * <p>'uri' the connection uri for mongo
+   *
+   * <p>'database' the database to use
+   *
    * @param args the desired arguments for the bot
    */
   public static void main(String[] args) {
@@ -60,6 +70,22 @@ public class Guido {
     JDA jda = connection.createConnection(argsMaps.getOrDefault("token", ""));
     jda.getPresence().setPresence(OnlineStatus.DO_NOT_DISTURB, Activity.playing("A los pits"));
     jda.setEventManager(new AnnotatedEventManager());
+
+    if (argsMaps.get("loader") != null) {
+      if (argsMaps.get("loader").equalsIgnoreCase("mongo")) {
+        try {
+          dataLoader =
+              new MongoDataLoader(
+                  argsMaps.getOrDefault("uri", "none"),
+                  argsMaps.getOrDefault("database", "testing-database"));
+          languageHandler.setDataLoader(dataLoader);
+        } catch (Exception e) {
+          Fallback.addError("Mongo loader could not be initialized");
+          e.printStackTrace();
+        }
+      }
+      System.out.println("Using data loader: " + dataLoader.getClass());
+    }
 
     CommandManager manager =
         new CommandManager(

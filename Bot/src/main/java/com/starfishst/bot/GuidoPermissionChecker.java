@@ -42,8 +42,9 @@ public class GuidoPermissionChecker implements PermissionChecker {
     if (perm.permission() != Permission.UNKNOWN) {
       return new Result(ResultType.ERROR, "This operation is not supported by this bot");
     }
+    // If a node starts with user: it will check for user permissions not member
     if (!perm.node().isEmpty()) {
-      if (context instanceof GuildCommandContext) {
+      if (context instanceof GuildCommandContext && !perm.node().startsWith("user:")) {
         BotMember member =
             this.dataLoader.getMemberData(
                 ((GuildCommandContext) context).getMember().getIdLong(),
@@ -60,8 +61,9 @@ public class GuidoPermissionChecker implements PermissionChecker {
           }
         }
       } else {
+        String node = perm.node().startsWith("user:") ? perm.node().substring(5) : perm.node();
         BotUser userData = this.dataLoader.getUserData(context.getSender().getIdLong());
-        if (userData.hasPermission(perm.node(), "discord")) {
+        if (userData.hasPermission(node, "discord")) {
           return null;
         }
       }
