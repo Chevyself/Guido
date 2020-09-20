@@ -97,6 +97,7 @@ public class GuidoPlugin extends JavaPlugin implements Implementation {
         manager.registerCommand(command);
       }
     }
+    this.manager.registerPlugin();
   }
 
   /** Load the config.yml. This can be used also to reload the guidoConfiguration */
