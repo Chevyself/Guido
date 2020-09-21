@@ -14,4 +14,10 @@ public interface GuidoHandler {
   default void register(@NotNull JDA jda) {
     jda.addEventListener(this);
   }
+
+  /** Closes the handler */
+  void close();
+
+  /** Unregisters a guido handler */
+  void unregister();
 }

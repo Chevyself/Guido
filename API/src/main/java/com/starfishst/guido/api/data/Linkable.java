@@ -26,6 +26,15 @@ public interface Linkable {
   }
 
   /**
+   * Add an unlinked member to this member
+   *
+   * @param unlinked the unlinked member
+   */
+  default void addLink(@NotNull UnlinkedMember unlinked) {
+    this.getLinks().put(unlinked.getKey(), unlinked.getValue());
+  }
+
+  /**
    * This map contains anything to which this data is linked to
    *
    * @return the links for this data

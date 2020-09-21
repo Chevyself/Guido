@@ -40,6 +40,9 @@ public class GuidoMessagesController implements ResponsiveMessageController, Gui
     }
   }
 
+  @Override
+  public void close() {}
+
   @SubscribeEvent
   @Override
   public void onMessageReactionAdd(MessageReactionAddEvent event) {

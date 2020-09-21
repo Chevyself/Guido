@@ -6,6 +6,7 @@ import com.starfishst.bot.api.events.data.member.BotMemberUnloadedEvent;
 import com.starfishst.core.utils.cache.Catchable;
 import com.starfishst.core.utils.time.Time;
 import com.starfishst.guido.api.data.PermissionStack;
+import com.starfishst.guido.api.data.UnlinkedMember;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
@@ -47,7 +48,7 @@ public class GuidoMember extends Catchable implements BotMember {
       @NotNull Set<PermissionStack> permissions,
       @NotNull HashMap<String, Double> stats,
       @NotNull HashMap<String, String> links) {
-    super(Time.fromString("3m"));
+    super(Time.fromString("30m"));
     this.id = id;
     this.guildId = guildId;
     this.permissions = permissions;
@@ -94,6 +95,12 @@ public class GuidoMember extends Catchable implements BotMember {
 
   @Override
   public void onSecondsPassed() {}
+
+  @Override
+  public void addLink(@NotNull UnlinkedMember unlinked) {
+    BotMember.super.addLink(unlinked);
+    if (unlinked instanceof GuidoUnlinkedMember) {}
+  }
 
   @Override
   public void onRemove() {

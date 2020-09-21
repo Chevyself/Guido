@@ -91,7 +91,7 @@ public class UserCommands {
   @Command(
       aliases = {"remove", "remPerm"},
       description = "cmd.users.remove.desc",
-      permission = @Perm(node = "user:guido.users.add"))
+      permission = @Perm(node = "user:guido.users.remove"))
   public Result remove(
       CommandContext commandContext,
       @Required(

@@ -12,4 +12,7 @@ public class TestHandler implements GuidoEventHandler {
   public void onGuidoEvent(@NotNull GuidoEvent event) {
     System.out.println(event);
   }
+
+  @Override
+  public void close() {}
 }

@@ -1,5 +1,6 @@
 package com.starfishst.bot.commands;
 
+import com.starfishst.bot.Guido;
 import com.starfishst.commands.annotations.Command;
 import com.starfishst.commands.annotations.Perm;
 import com.starfishst.commands.context.CommandContext;
@@ -89,5 +90,19 @@ public class DeveloperCommands {
     }
 
     return new Result("Script has been executed " + (out == null ? "" : out.toString()));
+  }
+
+  /**
+   * Stop the bot
+   *
+   * @return the result of the bot stopping
+   */
+  @Command(
+      aliases = "stop",
+      description = "Stops the bot",
+      permission = @Perm(node = "user:guido.admin"))
+  public Result stop() {
+    Guido.stop();
+    return new Result("Bot has been stopped");
   }
 }

@@ -7,22 +7,26 @@ import com.mongodb.client.MongoDatabase;
 import com.starfishst.bot.api.data.BotGuild;
 import com.starfishst.bot.api.data.BotMember;
 import com.starfishst.bot.api.data.BotRole;
+import com.starfishst.bot.api.data.BotUnlinkedMember;
 import com.starfishst.bot.api.data.BotUser;
 import com.starfishst.bot.api.data.loader.BotDataLoader;
 import com.starfishst.bot.api.events.data.guild.BotGuildUnloadedEvent;
 import com.starfishst.bot.api.events.data.member.BotMemberUnloadedEvent;
 import com.starfishst.bot.api.events.data.role.BotRoleUnloadedEvent;
+import com.starfishst.bot.api.events.data.unlinked.BotUnlinkedMemberUnloadedEvent;
 import com.starfishst.bot.api.events.data.user.BotUserUnloadedEvent;
 import com.starfishst.bot.handlers.data.GuidoGuild;
 import com.starfishst.bot.handlers.data.GuidoMember;
 import com.starfishst.bot.handlers.data.GuidoPermission;
 import com.starfishst.bot.handlers.data.GuidoPermissionStack;
 import com.starfishst.bot.handlers.data.GuidoRole;
+import com.starfishst.bot.handlers.data.GuidoUnlinkedMember;
 import com.starfishst.bot.handlers.data.GuidoUser;
 import com.starfishst.core.utils.cache.Cache;
 import com.starfishst.guido.api.data.Permissible;
 import com.starfishst.guido.api.data.Permission;
 import com.starfishst.guido.api.data.PermissionStack;
+import com.starfishst.guido.api.data.UnlinkedMember;
 import com.starfishst.utils.events.ListenPriority;
 import com.starfishst.utils.events.Listener;
 import java.util.ArrayList;
@@ -32,6 +36,7 @@ import java.util.List;
 import java.util.Set;
 import org.bson.Document;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /** Loads the data from a mongo database */
 public class MongoDataLoader implements BotDataLoader {
@@ -166,8 +171,42 @@ public class MongoDataLoader implements BotDataLoader {
     }
   }
 
+  /**
+   * Listens to an unlinked member being unloaded to save it to the database
+   *
+   * @param event the event of the member being unloaded
+   */
+  @Listener(priority = ListenPriority.HIGHEST)
+  public void onUnlinkedMemberUnloaded(@NotNull BotUnlinkedMemberUnloadedEvent event) {
+    BotUnlinkedMember member = event.getMember();
+    Document query =
+        new Document("guildId", member.getGuildId())
+            .append("key", member.getKey())
+            .append("value", member.getValue());
+    Document first = this.members.find(query).first();
+    Document stats = new Document("stats", new Document());
+    stats.putAll(member.getStats());
+    Document document =
+        new Document("guildId", member.getGuildId())
+            .append("key", member.getKey())
+            .append("value", member.getValue())
+            .append("permissions", this.getPermissionStacksDocument(member))
+            .append("stats", stats);
+    if (first != null) {
+      this.members.replaceOne(query, document);
+    } else {
+      this.members.insertOne(document);
+    }
+  }
+
+  /**
+   * Get the map of links from a document
+   *
+   * @param document the document to get the map
+   * @return the map of links
+   */
   @NotNull
-  private HashMap<String, String> getLinks(Document document) {
+  private HashMap<String, String> getLinks(@NotNull Document document) {
     HashMap<String, String> links = new HashMap<>();
     if (document.get("links") instanceof Document) {
       document
@@ -229,6 +268,11 @@ public class MongoDataLoader implements BotDataLoader {
       }
     }
     return permissions;
+  }
+
+  @Override
+  public void close() {
+    this.client.close();
   }
 
   @Override
@@ -309,5 +353,62 @@ public class MongoDataLoader implements BotDataLoader {
           id, (String) document.getOrDefault("lang", "en"), this.getPermissionStacks(document));
     }
     return new GuidoUser(id, "en", new HashSet<>());
+  }
+
+  @Override
+  public @Nullable BotMember getMemberByLink(
+      long guildId, @NotNull String key, @NotNull String value) {
+    GuidoMember member =
+        Cache.getCatchable(
+            catchable -> {
+              if (catchable instanceof GuidoMember) {
+                String link = ((GuidoMember) catchable).getLinks().get(key);
+                return ((GuidoMember) catchable).getGuildId() == guildId
+                    && link != null
+                    && link.equalsIgnoreCase(value);
+              }
+              return false;
+            },
+            GuidoMember.class);
+    if (member != null) {
+      return member;
+    }
+    GuidoUnlinkedMember unlinkedMember =
+        Cache.getCatchable(
+            catchable ->
+                catchable instanceof GuidoUnlinkedMember
+                    && ((GuidoUnlinkedMember) catchable).getKey().equalsIgnoreCase(key)
+                    && ((GuidoUnlinkedMember) catchable).getValue().equalsIgnoreCase(value),
+            GuidoUnlinkedMember.class);
+    if (unlinkedMember != null) {
+      return unlinkedMember;
+    }
+    Document query = new Document("guildId", guildId).append("links." + key, value);
+    Document first = this.members.find(query).first();
+    if (first != null) {
+      return new GuidoMember(
+          first.getLong("id"),
+          guildId,
+          this.getPermissionStacks(first),
+          this.getStats(first),
+          this.getLinks(first));
+    }
+    query = new Document("guildId", guildId).append("key", key).append("value", value);
+    first = this.members.find(query).first();
+
+    if (first != null) {
+      return new GuidoUnlinkedMember(
+          key, value, guildId, this.getPermissionStacks(first), this.getStats(first));
+    }
+    return null;
+  }
+
+  @Override
+  public void deleteUnlinked(@NotNull UnlinkedMember member) {
+    Document query =
+        new Document("guildId", member.getGuildId())
+            .append("key", member.getKey())
+            .append("value", member.getValue());
+    this.members.deleteOne(query);
   }
 }

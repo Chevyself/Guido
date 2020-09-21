@@ -13,4 +13,9 @@ public interface GuidoEventHandler extends GuidoHandler {
     jda.addEventListener(this);
     Guido.getListenerManager().registerListeners(this);
   }
+
+  @Override
+  default void unregister() {
+    Guido.getListenerManager().unregister(this);
+  }
 }

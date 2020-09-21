@@ -1,5 +1,6 @@
 package com.starfishst.guido.api.data;
 
+import java.util.Collection;
 import java.util.HashMap;
 import org.jetbrains.annotations.NotNull;
 
@@ -7,7 +8,7 @@ import org.jetbrains.annotations.NotNull;
  * The data for a member. This class represents all the data for certain discord user that is inside
  * a guild. This is called a member
  */
-public interface MemberData extends Linkable {
+public interface MemberData extends Linkable, Permissible {
 
   /**
    * Get the unique id of the discord user
@@ -40,4 +41,29 @@ public interface MemberData extends Linkable {
    */
   @NotNull
   HashMap<String, Double> getStats();
+
+  @Override
+  default void addLink(@NotNull UnlinkedMember unlinked) {
+    Linkable.super.addLink(unlinked);
+    for (PermissionStack stack : unlinked.getPermissions()) {
+      PermissionStack permissions = this.getPermissions(stack.getContext());
+      if (permissions == null) {
+        permissions =
+            new PermissionStack() {
+              @Override
+              public @NotNull String getContext() {
+                return stack.getContext();
+              }
+
+              @Override
+              public @NotNull Collection<Permission> getPermissions() {
+                return stack.getPermissions();
+              }
+            };
+        this.getPermissions().add(permissions);
+      } else {
+        permissions.getPermissions().addAll(permissions.getPermissions());
+      }
+    }
+  }
 }

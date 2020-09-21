@@ -9,7 +9,6 @@ import com.starfishst.bot.api.events.data.guild.BotGuildUnloadedEvent;
 import com.starfishst.bot.api.events.data.member.BotMemberUnloadedEvent;
 import com.starfishst.bot.api.events.data.role.BotRoleUnloadedEvent;
 import com.starfishst.bot.api.events.data.user.BotUserUnloadedEvent;
-import com.starfishst.bot.handlers.GuidoEventHandler;
 import com.starfishst.bot.handlers.data.GuidoGuild;
 import com.starfishst.bot.handlers.data.GuidoMember;
 import com.starfishst.bot.handlers.data.GuidoRole;
@@ -17,6 +16,7 @@ import com.starfishst.bot.handlers.data.GuidoUser;
 import com.starfishst.core.fallback.Fallback;
 import com.starfishst.core.utils.cache.Cache;
 import com.starfishst.core.utils.files.CoreFiles;
+import com.starfishst.guido.api.data.UnlinkedMember;
 import com.starfishst.utils.events.ListenPriority;
 import com.starfishst.utils.events.Listener;
 import com.starfishst.utils.gson.GsonProvider;
@@ -32,7 +32,7 @@ import org.jetbrains.annotations.NotNull;
  * This loader will attempt to get the data from files if it fails it will create a new instance of
  * the data required
  */
-public class GuidoFileLoader implements BotDataLoader, GuidoEventHandler {
+public class GuidoFileLoader implements BotDataLoader {
   /**
    * This will listen to when the guild data gets unloaded to save it
    *
@@ -134,6 +134,9 @@ public class GuidoFileLoader implements BotDataLoader, GuidoEventHandler {
       e.printStackTrace();
     }
   }
+
+  @Override
+  public void close() {}
 
   /**
    * Load the data of a guild
@@ -279,5 +282,16 @@ public class GuidoFileLoader implements BotDataLoader, GuidoEventHandler {
     } else {
       return new GuidoUser(id, "en", new HashSet<>());
     }
+  }
+
+  @Override
+  public @NotNull BotMember getMemberByLink(
+      long guild, @NotNull String key, @NotNull String value) {
+    throw new UnsupportedOperationException("Unlinked members cannot be find using file loader");
+  }
+
+  @Override
+  public void deleteUnlinked(@NotNull UnlinkedMember member) {
+    throw new UnsupportedOperationException("Unlinked members cannot be find using file loader");
   }
 }

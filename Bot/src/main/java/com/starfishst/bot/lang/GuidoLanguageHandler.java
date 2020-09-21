@@ -274,4 +274,11 @@ public class GuidoLanguageHandler implements MessagesProvider {
                 .append("min", String.valueOf(i1))
                 .append("missing", String.valueOf(i2)));
   }
+
+  /** Stops the language handler */
+  public void stop() {
+    for (GuidoLocaleFile file : this.files) {
+      file.save();
+    }
+  }
 }

@@ -19,12 +19,16 @@ import com.starfishst.commands.ManagerOptions;
 import com.starfishst.commands.providers.registry.ProvidersRegistryJDA;
 import com.starfishst.core.fallback.Fallback;
 import com.starfishst.core.utils.Lots;
+import com.starfishst.core.utils.cache.Cache;
+import com.starfishst.core.utils.cache.Catchable;
 import com.starfishst.core.utils.maps.Maps;
+import com.starfishst.guido.api.data.loader.DataLoader;
 import com.starfishst.guido.api.implementations.messaging.Server;
 import com.starfishst.utils.events.Cancellable;
 import com.starfishst.utils.events.Event;
 import com.starfishst.utils.events.ListenerManager;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import net.dv8tion.jda.api.JDA;
@@ -40,12 +44,14 @@ public class Guido {
   @NotNull private static final GuidoJdaConnection connection = new GuidoJdaConnection();
   /** The listener manager for calling events */
   @NotNull private static final ListenerManager listenerManager = new ListenerManager();
-  /** The list of handlers that the bot is using */
-  @NotNull
-  private static final List<GuidoHandler> handlers = Lots.list(new GuidoMessagesController());
 
   /** The data loader for the bot */
   @NotNull private static BotDataLoader dataLoader = new GuidoFileLoader();
+
+  /** The list of handlers that the bot is using */
+  @NotNull
+  private static final List<GuidoHandler> handlers =
+      Lots.list(new GuidoMessagesController(), dataLoader);
 
   /** The language handler for the bot */
   @NotNull
@@ -71,6 +77,10 @@ public class Guido {
    *
    * <p>'database' the database to use
    *
+   * <p>'port' the port of the socket
+   *
+   * <p>'timeout' the time out for requests
+   *
    * @param args the desired arguments for the bot
    */
   public static void main(String[] args) {
@@ -81,12 +91,15 @@ public class Guido {
     jda.setEventManager(new AnnotatedEventManager());
 
     if (argsMaps.get("loader") != null) {
+      DataLoader oldLoader = dataLoader;
       if (argsMaps.get("loader").equalsIgnoreCase("mongo")) {
         try {
           dataLoader =
               new MongoDataLoader(
                   argsMaps.getOrDefault("uri", "none"),
                   argsMaps.getOrDefault("database", "testing-database"));
+          System.out.println(handlers.remove(oldLoader));
+          System.out.println(handlers.add(dataLoader));
           languageHandler.setDataLoader(dataLoader);
         } catch (Exception e) {
           Fallback.addError("Mongo loader could not be initialized");
@@ -123,11 +136,33 @@ public class Guido {
     manager.registerCommand(new UserCommands());
 
     languageHandler.load("en", "es", "fr");
-    listenerManager.registerListeners(dataLoader);
-
     for (GuidoHandler handler : handlers) {
       handler.register(jda);
     }
+  }
+
+  /** Stops the bot */
+  public static void stop() {
+    List<Catchable> copy = new ArrayList<>(Cache.getCache());
+    for (Catchable catchable : copy) {
+      catchable.onRemove();
+      catchable.unload();
+    }
+    try {
+      server.close();
+    } catch (IOException e) {
+      Fallback.addError("Server could not be closed properly");
+      e.printStackTrace();
+    }
+    languageHandler.stop();
+    for (GuidoHandler handler : handlers) {
+      handler.unregister();
+    }
+    JDA jda = connection.getJda();
+    if (jda != null) {
+      jda.shutdown();
+    }
+    System.exit(0);
   }
 
   /**
