@@ -2,6 +2,7 @@ package com.starfishst.bot;
 
 import com.starfishst.core.fallback.Fallback;
 import com.starfishst.core.utils.Lots;
+import com.starfishst.core.utils.Validate;
 import com.starfishst.core.utils.time.Time;
 import java.util.Scanner;
 import javax.security.auth.login.LoginException;
@@ -92,5 +93,15 @@ public class GuidoJdaConnection {
   @Nullable
   public JDA getJda() {
     return jda;
+  }
+
+  /**
+   * Validate the connection with jda to not be null
+   *
+   * @return the validated connection
+   */
+  @NotNull
+  public JDA validatedJda() {
+    return Validate.notNull(this.jda, "Bot is not connected with discord!");
   }
 }

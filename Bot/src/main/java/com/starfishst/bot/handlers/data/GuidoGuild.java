@@ -1,8 +1,8 @@
 package com.starfishst.bot.handlers.data;
 
 import com.starfishst.bot.api.data.BotGuild;
-import com.starfishst.bot.api.events.data.BotGuildLoadedEvent;
-import com.starfishst.bot.api.events.data.BotGuildUnloadedEvent;
+import com.starfishst.bot.api.events.data.guild.BotGuildLoadedEvent;
+import com.starfishst.bot.api.events.data.guild.BotGuildUnloadedEvent;
 import com.starfishst.core.utils.cache.Catchable;
 import com.starfishst.core.utils.time.Time;
 

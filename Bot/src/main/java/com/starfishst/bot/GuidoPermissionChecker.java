@@ -49,7 +49,7 @@ public class GuidoPermissionChecker implements PermissionChecker {
             this.dataLoader.getMemberData(
                 ((GuildCommandContext) context).getMember().getIdLong(),
                 ((GuildCommandContext) context).getGuild().getIdLong());
-        if (member.hasPermission(perm.node(), "discord")) {
+        if (member.hasPermission(perm.node(), "discord") || member.hasPermission("*", "discord")) {
           return null;
         }
         for (Role role : ((GuildCommandContext) context).getMember().getRoles()) {
@@ -63,7 +63,7 @@ public class GuidoPermissionChecker implements PermissionChecker {
       } else {
         String node = perm.node().startsWith("user:") ? perm.node().substring(5) : perm.node();
         BotUser userData = this.dataLoader.getUserData(context.getSender().getIdLong());
-        if (userData.hasPermission(node, "discord")) {
+        if (userData.hasPermission(node, "discord") || userData.hasPermission("*", "discord")) {
           return null;
         }
       }

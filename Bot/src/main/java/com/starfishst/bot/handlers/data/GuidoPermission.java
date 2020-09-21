@@ -37,4 +37,9 @@ public class GuidoPermission implements Permission {
   public boolean isEnabled() {
     return this.enabled;
   }
+
+  @Override
+  public String toString() {
+    return "GuidoPermission{" + "node='" + node + '\'' + ", enabled=" + enabled + '}';
+  }
 }

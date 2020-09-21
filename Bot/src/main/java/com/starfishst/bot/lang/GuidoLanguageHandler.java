@@ -38,7 +38,6 @@ public class GuidoLanguageHandler implements MessagesProvider {
    * @param toLoad the locale files to load
    */
   public void load(String... toLoad) {
-    ClassLoader resourceLoader = this.getClass().getClassLoader();
     for (String lang : toLoad) {
       try {
         files.add(
@@ -156,14 +155,8 @@ public class GuidoLanguageHandler implements MessagesProvider {
     return this.getFile(context)
         .get(
             "missing-argument",
-            Maps.builder(
-                    "name",
-                    this.getFile(context)
-                        .get("cmd. " + context.getCommandName() + ".param." + s + ".name"))
-                .append(
-                    "description",
-                    this.getFile(context)
-                        .get("cmd. " + context.getCommandName() + ".param." + s1 + ".desc"))
+            Maps.builder("name", this.getFile(context).get(s))
+                .append("description", this.getFile(context).get(s1))
                 .append("position", String.valueOf(i)));
   }
 

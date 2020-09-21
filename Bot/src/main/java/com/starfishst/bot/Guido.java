@@ -5,20 +5,26 @@ import com.starfishst.bot.commands.DeveloperCommands;
 import com.starfishst.bot.commands.EloCommands;
 import com.starfishst.bot.commands.LangCommands;
 import com.starfishst.bot.commands.TeamCommands;
+import com.starfishst.bot.commands.UserCommands;
+import com.starfishst.bot.commands.providers.BotUserProvider;
 import com.starfishst.bot.handlers.data.GuidoHandler;
 import com.starfishst.bot.handlers.data.loader.GuidoFileLoader;
 import com.starfishst.bot.handlers.data.loader.MongoDataLoader;
 import com.starfishst.bot.handlers.responsive.GuidoMessagesController;
 import com.starfishst.bot.lang.GuidoLanguageHandler;
+import com.starfishst.bot.server.GuidoFallbackServer;
+import com.starfishst.bot.server.GuidoServer;
 import com.starfishst.commands.CommandManager;
 import com.starfishst.commands.ManagerOptions;
 import com.starfishst.commands.providers.registry.ProvidersRegistryJDA;
 import com.starfishst.core.fallback.Fallback;
 import com.starfishst.core.utils.Lots;
 import com.starfishst.core.utils.maps.Maps;
+import com.starfishst.guido.api.implementations.messaging.Server;
 import com.starfishst.utils.events.Cancellable;
 import com.starfishst.utils.events.Event;
 import com.starfishst.utils.events.ListenerManager;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import net.dv8tion.jda.api.JDA;
@@ -44,6 +50,9 @@ public class Guido {
   /** The language handler for the bot */
   @NotNull
   private static GuidoLanguageHandler languageHandler = new GuidoLanguageHandler(dataLoader);
+
+  /** The server to receive implementations */
+  @NotNull private static Server server = new GuidoFallbackServer();
 
   /**
    * The main method of the bot.
@@ -87,18 +96,31 @@ public class Guido {
       System.out.println("Using data loader: " + dataLoader.getClass());
     }
 
+    try {
+      server =
+          new GuidoServer(
+              Integer.parseInt(argsMaps.getOrDefault("port", "3000")),
+              Long.parseLong(argsMaps.getOrDefault("timeout", "3000")));
+    } catch (IOException e) {
+      Fallback.addError("");
+      e.printStackTrace();
+    }
+
+    ProvidersRegistryJDA registry = new ProvidersRegistryJDA(languageHandler);
+    registry.addProvider(new BotUserProvider(dataLoader));
     CommandManager manager =
         new CommandManager(
             jda,
             argsMaps.getOrDefault("prefix", argsMaps.getOrDefault("prefix", "$")),
             new ManagerOptions(),
             languageHandler,
-            new ProvidersRegistryJDA(languageHandler),
+            registry,
             new GuidoPermissionChecker(languageHandler, dataLoader));
     manager.registerCommand(new EloCommands());
     manager.registerCommand(new DeveloperCommands(jda));
     manager.registerCommand(new TeamCommands());
     manager.registerCommand(new LangCommands());
+    manager.registerCommand(new UserCommands());
 
     languageHandler.load("en", "es", "fr");
     listenerManager.registerListeners(dataLoader);

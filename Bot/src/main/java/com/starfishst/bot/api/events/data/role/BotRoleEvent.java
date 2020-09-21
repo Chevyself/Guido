@@ -1,4 +1,4 @@
-package com.starfishst.bot.api.events.data;
+package com.starfishst.bot.api.events.data.role;
 
 import com.starfishst.bot.api.data.BotRole;
 import com.starfishst.bot.api.events.GuidoEvent;

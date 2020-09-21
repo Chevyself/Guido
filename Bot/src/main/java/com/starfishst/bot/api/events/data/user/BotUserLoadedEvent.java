@@ -1,4 +1,4 @@
-package com.starfishst.bot.api.events.data;
+package com.starfishst.bot.api.events.data.user;
 
 import com.starfishst.bot.api.data.BotUser;
 import org.jetbrains.annotations.NotNull;

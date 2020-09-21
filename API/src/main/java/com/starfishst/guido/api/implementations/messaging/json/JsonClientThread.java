@@ -3,8 +3,8 @@ package com.starfishst.guido.api.implementations.messaging.json;
 import com.starfishst.core.fallback.Fallback;
 import com.starfishst.guido.api.implementations.messaging.AwaitingRequest;
 import com.starfishst.guido.api.implementations.messaging.ResponseGiver;
-import com.starfishst.guido.api.implementations.messaging.exception.MessengerListenFailException;
 import com.starfishst.guido.api.implementations.messaging.json.response.DisconnectResponse;
+import com.starfishst.guido.api.implementations.messaging.json.response.MultiResponse;
 import com.starfishst.guido.api.implementations.messaging.json.response.PingResponse;
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -38,8 +38,6 @@ public class JsonClientThread extends Thread implements JsonMessenger {
   private final long timeout;
   /** The request that are waiting for a response */
   @NotNull private final HashMap<AwaitingRequest<?>, Long> requests = new HashMap<>();
-  /** Whether this client got its connection closed */
-  private boolean stopped = false;
 
   /**
    * Create the client thread
@@ -52,12 +50,13 @@ public class JsonClientThread extends Thread implements JsonMessenger {
   public JsonClientThread(Socket socket, @NotNull JsonSocketServer server, long timeout)
       throws IOException {
     this.socket = socket;
-    this.output = new PrintWriter(socket.getOutputStream());
+    this.output = new PrintWriter(socket.getOutputStream(), true);
     this.input = new BufferedReader(new InputStreamReader(socket.getInputStream()));
     this.server = server;
     this.timeout = timeout;
     this.responseMap.put("ping", new PingResponse());
     this.responseMap.put("disconnect", new DisconnectResponse(this.server));
+    this.responseMap.put("multi", new MultiResponse(this));
   }
 
   /**
@@ -106,16 +105,6 @@ public class JsonClientThread extends Thread implements JsonMessenger {
     return this.timeout;
   }
 
-  /**
-   * Whether this messenger has stopped listening
-   *
-   * @return true if the messenger is no longer listening
-   */
-  @Override
-  public boolean isStopped() {
-    return this.stopped;
-  }
-
   /** Closes the messenger */
   @Override
   public void close() {
@@ -135,24 +124,10 @@ public class JsonClientThread extends Thread implements JsonMessenger {
       e.printStackTrace();
     }
     this.server.remove(this);
-    this.stopped = true;
   }
 
   @Override
   public void run() {
-    while (true) {
-      if (this.isStopped()) {
-        break;
-      } else {
-        try {
-          this.listen();
-        } catch (MessengerListenFailException e) {
-          Fallback.addError(e.getMessage());
-          e.printStackTrace();
-          this.close();
-          break;
-        }
-      }
-    }
+    JsonMessenger.super.run();
   }
 }

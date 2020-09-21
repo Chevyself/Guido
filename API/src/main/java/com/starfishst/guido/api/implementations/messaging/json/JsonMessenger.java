@@ -1,10 +1,12 @@
 package com.starfishst.guido.api.implementations.messaging.json;
 
 import com.google.gson.JsonObject;
+import com.starfishst.core.fallback.Fallback;
 import com.starfishst.core.utils.Strings;
 import com.starfishst.guido.api.implementations.messaging.AwaitingRequest;
 import com.starfishst.guido.api.implementations.messaging.Messenger;
 import com.starfishst.guido.api.implementations.messaging.Request;
+import com.starfishst.guido.api.implementations.messaging.Response;
 import com.starfishst.guido.api.implementations.messaging.ResponseGiver;
 import com.starfishst.guido.api.implementations.messaging.VoidRequest;
 import com.starfishst.guido.api.implementations.messaging.exception.MessengerListenFailException;
@@ -25,7 +27,7 @@ import org.jetbrains.annotations.Nullable;
  * A {@link com.starfishst.guido.api.implementations.messaging.Messenger} that works with json
  * messages
  */
-public interface JsonMessenger extends Messenger {
+public interface JsonMessenger extends Messenger, Runnable {
 
   /**
    * Prints a line in the output stream
@@ -34,7 +36,6 @@ public interface JsonMessenger extends Messenger {
    */
   default void printLine(@NotNull String line) {
     this.getOutput().println(line);
-    this.getOutput().flush();
   }
 
   /**
@@ -103,13 +104,6 @@ public interface JsonMessenger extends Messenger {
    */
   long getTimeout();
 
-  /**
-   * Whether this messenger has stopped listening
-   *
-   * @return true if the messenger is no longer listening
-   */
-  boolean isStopped();
-
   @Override
   default <T> void sendRequest(
       @NotNull Request request, @NotNull Class<T> clazz, @NotNull Consumer<T> consumer) {
@@ -123,29 +117,40 @@ public interface JsonMessenger extends Messenger {
     this.printLine(GsonProvider.GSON.toJson(request));
   }
 
+  default void acceptRequest(@NotNull JsonObject object) {
+    Request request = GsonProvider.GSON.fromJson(object, Request.class);
+    ResponseGiver<?> giver = this.getResponseGiver(request);
+    if (giver != null) {
+      Response<?> response = giver.getResponse(request, this);
+      if (response != null && !request.getMethod().startsWith("void")) {
+        this.printLine(GsonProvider.GSON.toJson(response));
+      }
+    }
+  }
+
+  @Nullable
+  default ResponseGiver<?> getResponseGiver(@NotNull Request request) {
+    return this.getResponseGiver(
+        request.getMethod().startsWith("void")
+            ? request.getMethod().substring(4)
+            : request.getMethod());
+  }
+
   @Override
   default void listen() throws MessengerListenFailException {
-    if (this.isStopped()) return;
     try {
       StringBuilder builder = Strings.getBuilder();
-      while (this.getInput().ready()) {
-        String line = this.getInput().readLine();
+      String line;
+      while ((line = this.getInput().readLine()) != null) {
         builder.append(line).append("\n");
+        if (!this.getInput().ready()) {
+          break;
+        }
       }
       if (builder.length() != 0) {
         JsonObject object = GsonProvider.GSON.fromJson(builder.toString(), JsonObject.class);
         if (object.get("method") != null) {
-          Request request = GsonProvider.GSON.fromJson(object, Request.class);
-          ResponseGiver<?> giver =
-              this.getResponseGiver(
-                  request.getMethod().startsWith("void")
-                      ? request.getMethod().substring(4)
-                      : request.getMethod());
-          if (giver != null && !request.getMethod().startsWith("void")) {
-            this.printLine(GsonProvider.GSON.toJson(giver.getResponse(request, this)));
-          } else if (giver != null) {
-            giver.getResponse(request, this);
-          }
+          this.acceptRequest(object);
         } else if (object.get("object") != null) {
           AwaitingRequest<?> awaitingRequest =
               this.getRequest(UUID.fromString(object.get("id").getAsString()));
@@ -173,9 +178,19 @@ public interface JsonMessenger extends Messenger {
     if (!toRemove.isEmpty()) {
       throw new MessengerListenFailException("Requests timed out! \n " + toRemove);
     }
-    try {
-      Thread.sleep(100);
-    } catch (InterruptedException ignored) {
+  }
+
+  @Override
+  default void run() {
+    while (true) {
+      try {
+        this.listen();
+      } catch (MessengerListenFailException e) {
+        Fallback.addError(e.getMessage());
+        e.printStackTrace();
+        this.close();
+        break;
+      }
     }
   }
 }

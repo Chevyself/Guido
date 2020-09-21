@@ -1,6 +1,7 @@
 package com.starfishst.guido.api.implementations.messaging.json;
 
 import com.starfishst.core.fallback.Fallback;
+import com.starfishst.guido.api.implementations.messaging.Server;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -9,7 +10,7 @@ import java.util.Set;
 import org.jetbrains.annotations.NotNull;
 
 /** An implementation for socket servers for guido */
-public class JsonSocketServer extends Thread implements Runnable {
+public class JsonSocketServer extends Thread implements Runnable, Server {
 
   /** The actual server socket */
   @NotNull private final ServerSocket server;
@@ -56,8 +57,17 @@ public class JsonSocketServer extends Thread implements Runnable {
    * @return the set of clients connected to the server
    */
   @NotNull
+  @Override
   public Set<JsonClientThread> getClients() {
     return clients;
+  }
+
+  @Override
+  public void close() throws IOException {
+    for (JsonClientThread client : this.getClients()) {
+      this.disconnect(client);
+    }
+    this.server.close();
   }
 
   @Override

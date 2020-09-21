@@ -1,6 +1,8 @@
 package com.starfishst.guido.api.implementations.messaging;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.UUID;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -86,6 +88,22 @@ public class Request implements Message {
   @NotNull
   public HashMap<String, Object> getParameters() {
     return parameters;
+  }
+
+  /**
+   * Get a parameter that happens to be a list
+   *
+   * @param name the name of the parameter
+   * @param <T> the type of the class
+   * @return the list or empty if the setting does not exist
+   */
+  @SuppressWarnings("unchecked")
+  @NotNull
+  public <T> List<T> getListParameter(@NotNull String name) {
+    List<T> list = new ArrayList<>();
+    Class<List<T>> aClass = (Class<List<T>>) list.getClass();
+    list.addAll(this.getParameterOr(name, aClass, new ArrayList<>()));
+    return list;
   }
 
   @Override

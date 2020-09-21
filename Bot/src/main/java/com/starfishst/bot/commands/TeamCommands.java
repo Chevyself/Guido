@@ -76,7 +76,11 @@ public class TeamCommands {
   public Result capitanes(
       CommandContext context,
       Member sender,
-      @Optional(name = "number", description = "number", suggestions = "2") int number) {
+      @Optional(
+              name = "cmd.leaders.param.number.name",
+              description = "cmd.leaders.param.number.desc",
+              suggestions = "2")
+          int number) {
     GuildVoiceState voiceState = sender.getVoiceState();
     if (voiceState != null && voiceState.getChannel() != null) {
       VoiceChannel channel = voiceState.getChannel();

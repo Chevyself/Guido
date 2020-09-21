@@ -45,4 +45,15 @@ public class GuidoPermissionStack implements PermissionStack {
   public @NotNull Collection<Permission> getPermissions() {
     return this.permissions;
   }
+
+  @Override
+  public String toString() {
+    return "GuidoPermissionStack{"
+        + "context='"
+        + context
+        + '\''
+        + ", permissions="
+        + permissions
+        + '}';
+  }
 }

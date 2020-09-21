@@ -1,8 +1,8 @@
 package com.starfishst.bot.handlers.data;
 
 import com.starfishst.bot.api.data.BotRole;
-import com.starfishst.bot.api.events.data.BotRoleLoadedEvent;
-import com.starfishst.bot.api.events.data.BotRoleUnloadedEvent;
+import com.starfishst.bot.api.events.data.role.BotRoleLoadedEvent;
+import com.starfishst.bot.api.events.data.role.BotRoleUnloadedEvent;
 import com.starfishst.core.utils.cache.Catchable;
 import com.starfishst.core.utils.time.Time;
 import com.starfishst.guido.api.data.PermissionStack;
