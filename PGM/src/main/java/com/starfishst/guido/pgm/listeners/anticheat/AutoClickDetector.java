@@ -79,6 +79,9 @@ public class AutoClickDetector extends PacketAdapter implements AntiCheatDetecto
           this.tracker.ticksOnStopped.put(uniqueId, -1);
           break;
         case ABORT_DESTROY_BLOCK:
+          this.digging.put(uniqueId, false);
+          this.tracker.ticksOnStopped.put(uniqueId, -1);
+          break;
         case DROP_ITEM:
         case DROP_ALL_ITEMS:
         case SWAP_HELD_ITEMS:
@@ -94,8 +97,8 @@ public class AutoClickDetector extends PacketAdapter implements AntiCheatDetecto
         this.time.put(uniqueId, 0);
         this.averageSpeed.put(uniqueId, 0.0);
       } else {
-        if (!this.digging.getOrDefault(uniqueId, false)
-            && event.getPlayer().getGameMode() == GameMode.SURVIVAL) {
+        if (event.getPlayer().getGameMode() == GameMode.SURVIVAL
+            && !this.digging.getOrDefault(uniqueId, false)) {
           this.time.put(uniqueId, this.time.getOrDefault(uniqueId, 0) + ticks);
           this.clicks.put(uniqueId, this.clicks.getOrDefault(uniqueId, 0) + 1);
           double secs = this.time.get(uniqueId) / 20.0;
