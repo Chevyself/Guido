@@ -79,8 +79,7 @@ public class AutoClickDetector extends PacketAdapter implements AntiCheatDetecto
           this.tracker.ticksOnStopped.put(uniqueId, -1);
           break;
         case ABORT_DESTROY_BLOCK:
-          this.digging.put(uniqueId, false);
-          this.tracker.ticksOnStopped.put(uniqueId, -1);
+          this.tracker.ticksOnStopped.put(uniqueId, 4);
           break;
         case DROP_ITEM:
         case DROP_ALL_ITEMS:

@@ -4,6 +4,7 @@ import com.starfishst.core.utils.Lots;
 import com.starfishst.guido.pgm.api.dependencies.Dependency;
 import com.starfishst.guido.pgm.api.events.GuidoListener;
 import com.starfishst.guido.pgm.listeners.anticheat.AutoClickDetector;
+import com.starfishst.guido.pgm.listeners.anticheat.ReachDetector;
 import java.util.Collection;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
@@ -30,6 +31,6 @@ public class ProtocolLibDependency implements Dependency {
 
   @Override
   public @NotNull Collection<GuidoListener> getListeners(@NotNull Plugin plugin) {
-    return Lots.list(new AutoClickDetector(plugin));
+    return Lots.list(new AutoClickDetector(plugin), new ReachDetector(plugin));
   }
 }

@@ -53,3 +53,7 @@ listener-settings:
     ## The minimum deviation to which a player might get banned
     ## This means the difference between click speeds
     min-deviation: 0.01
+  ## Detect people using reach hacks
+  reach-detector:
+    ## Whether this detector should be enabled
+    enable: true

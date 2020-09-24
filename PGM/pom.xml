@@ -13,7 +13,7 @@
 
     <groupId>com.starfishst.guido.pgm</groupId>
     <artifactId>PGM</artifactId>
-    <version>1.0.0-SNAPSHOT-4</version>
+    <version>1.0.0-SNAPSHOT-5</version>
     <description>An implementation with PGM</description>
 
     <build>
