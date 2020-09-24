@@ -1,4 +1,4 @@
-package com.starfishst.bot.lang;
+package com.starfishst.bot.handlers.lang;
 
 import com.starfishst.bot.api.data.loader.BotDataLoader;
 import com.starfishst.commands.context.CommandContext;

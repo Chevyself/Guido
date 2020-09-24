@@ -4,7 +4,7 @@ import com.starfishst.bot.Guido;
 import com.starfishst.bot.api.data.BotUser;
 import com.starfishst.bot.api.events.responsive.ResponsiveMessageUnloadedEvent;
 import com.starfishst.bot.handlers.responsive.types.GuidoResponsiveMessage;
-import com.starfishst.bot.lang.GuidoLocaleFile;
+import com.starfishst.bot.handlers.lang.GuidoLocaleFile;
 import com.starfishst.commands.utils.responsive.ReactionResponse;
 import com.starfishst.core.utils.cache.Catchable;
 import com.starfishst.core.utils.time.Time;

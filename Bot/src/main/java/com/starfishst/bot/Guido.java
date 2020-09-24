@@ -11,7 +11,7 @@ import com.starfishst.bot.handlers.data.GuidoHandler;
 import com.starfishst.bot.handlers.data.loader.GuidoFileLoader;
 import com.starfishst.bot.handlers.data.loader.MongoDataLoader;
 import com.starfishst.bot.handlers.responsive.GuidoMessagesController;
-import com.starfishst.bot.lang.GuidoLanguageHandler;
+import com.starfishst.bot.handlers.lang.GuidoLanguageHandler;
 import com.starfishst.bot.server.GuidoFallbackServer;
 import com.starfishst.bot.server.GuidoServer;
 import com.starfishst.commands.CommandManager;
