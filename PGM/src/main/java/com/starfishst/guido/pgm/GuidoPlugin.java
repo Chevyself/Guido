@@ -134,7 +134,10 @@ public class GuidoPlugin extends JavaPlugin implements Implementation {
     this.listeners.addAll(this.getDefaultListeners());
     for (GuidoListener listener : this.listeners) {
       if (listener.isEnabled()) {
+        this.getLogger().info(listener.getName() + " has been registered");
         listener.register(this);
+      } else {
+        this.getLogger().info(listener.getName() + " was not enabled");
       }
     }
   }

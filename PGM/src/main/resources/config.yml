@@ -56,4 +56,4 @@ listener-settings:
   ## Detect people using reach hacks
   reach-detector:
     ## Whether this detector should be enabled
-    enable: true
+    enabled: true

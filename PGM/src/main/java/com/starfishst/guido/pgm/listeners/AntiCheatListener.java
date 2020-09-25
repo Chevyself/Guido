@@ -7,9 +7,7 @@ import com.starfishst.core.utils.maps.Maps;
 import com.starfishst.core.utils.time.Time;
 import com.starfishst.guido.pgm.api.events.GuidoListener;
 import com.starfishst.guido.pgm.api.events.anticheat.SuspectDetectedEvent;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.UUID;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -20,8 +18,8 @@ import org.jetbrains.annotations.NotNull;
 /** Listens for warning calls from anti-cheat detectors */
 public class AntiCheatListener implements GuidoListener {
 
-  /** The calls that a player has had */
-  @NotNull private final HashMap<UUID, List<SuspectDetectedEvent>> calls = new HashMap<>();
+  // /** The calls that a player has had */
+  // @NotNull private final HashMap<UUID, List<SuspectDetectedEvent>> calls = new HashMap<>();
 
   /** The calls that have been printed */
   @NotNull private final HashMap<UUID, SuspectDetectedEvent> printed = new HashMap<>();
@@ -55,19 +53,20 @@ public class AntiCheatListener implements GuidoListener {
         }
       }
     }
-    this.getCalls(uniqueId).add(event);
+    // this.getCalls(uniqueId).add(event);
   }
 
+  /*
   /**
    * Get the calls for certain player using its unique id
    *
    * @param uniqueId the unique id of the player
    * @return the suspicions calls of the player
-   */
   @NotNull
   public List<SuspectDetectedEvent> getCalls(@NotNull UUID uniqueId) {
     return this.calls.computeIfAbsent(uniqueId, k -> new ArrayList<>());
   }
+  */
 
   /**
    * Get the delay between calls
@@ -81,7 +80,7 @@ public class AntiCheatListener implements GuidoListener {
 
   @Override
   public void onUnload() {
-    calls.clear();
+    // calls.clear();
   }
 
   @Override

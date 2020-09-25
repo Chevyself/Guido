@@ -28,7 +28,8 @@ public abstract class TicksTracker extends PacketAdapter implements GuidoPacketL
         Lots.list(
             PacketType.Play.Client.FLYING,
             PacketType.Play.Client.POSITION,
-            PacketType.Play.Client.POSITION_LOOK));
+            PacketType.Play.Client.POSITION_LOOK,
+            PacketType.Play.Client.LOOK));
   }
 
   /**

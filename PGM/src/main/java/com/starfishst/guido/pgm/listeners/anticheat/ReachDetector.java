@@ -10,6 +10,7 @@ import com.starfishst.core.utils.math.geometry.Point;
 import com.starfishst.guido.pgm.api.events.anticheat.SuspectDetectedEvent;
 import com.starfishst.guido.pgm.api.events.anticheat.SuspectLevel;
 import org.bukkit.Bukkit;
+import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
@@ -60,31 +61,35 @@ public class ReachDetector extends PacketAdapter implements AntiCheatDetector {
     PacketContainer packet = event.getPacket();
     EnumWrappers.EntityUseAction action = packet.getEntityUseActions().read(0);
     if (action == EnumWrappers.EntityUseAction.ATTACK) {
+      Player attacker = event.getPlayer();
       Player attacked = this.getPlayer(packet.getIntegers().read(0));
-      if (attacked != null) {
-        Player attacker = event.getPlayer();
+      if (attacker.getGameMode() != GameMode.CREATIVE && attacked != null) {
         Point attackerEyes = this.getPoint(attacker.getEyeLocation());
         Point attackerFeet = this.getPoint(attacker.getLocation());
         Point attackedFeet = this.getPoint(attacked.getLocation());
         double pitch = attacker.getLocation().getPitch() + 90; // + 90 fixes notches pitch
-        double hypotenuse = attackerEyes.distance(attackedFeet);
-        double feetToFeet = attackerFeet.distance(attackedFeet);
-        double headToFeet = attackerEyes.distance(attackedFeet);
+        double hypotenuse = attackerEyes.distance(attackedFeet) - 0.6;
+        double feetToFeet = attackerFeet.distance(attackedFeet) - 0.6;
+        double headToFeet = attackerEyes.distance(attackerFeet);
         double k =
-            MathUtils.square(feetToFeet)
-                - MathUtils.square(headToFeet)
-                - MathUtils.square(hypotenuse);
-        double theta = Math.acos(k * -1 / hypotenuse * headToFeet);
-        double omega = pitch - theta;
-        double beta = 180 - theta;
-        double alpha = 180 - omega - theta;
-        double distance = Math.sin(alpha) * hypotenuse / Math.sin(beta);
-        if (distance > 4.0) {
+            MathUtils.square(headToFeet)
+                - MathUtils.square(feetToFeet)
+                + MathUtils.square(hypotenuse);
+        double theta = Math.toDegrees(Math.acos(k / (2 * headToFeet * hypotenuse)));
+        double omega = 180 - pitch - theta;
+        double alpha = 180 - omega - pitch;
+        double distance =
+            Math.sin(Math.toRadians(alpha)) * hypotenuse / Math.sin(Math.toRadians(pitch));
+        System.out.println(distance);
+        if (distance > 4f) {
           new SuspectDetectedEvent(
                   attacker,
                   this,
-                  "Hit " + attacked.getName() + " from a distance out of bounds: " + distance,
-                  SuspectLevel.MEDIUM)
+                  "Hit "
+                      + attacked.getName()
+                      + " from a distance out of bounds: ~"
+                      + String.format("%.2f", distance),
+                  SuspectLevel.LOW)
               .call();
         }
       }

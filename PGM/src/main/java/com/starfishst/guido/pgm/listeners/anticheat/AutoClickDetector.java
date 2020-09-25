@@ -38,10 +38,10 @@ public class AutoClickDetector extends PacketAdapter implements AntiCheatDetecto
   @NotNull private final HashMap<UUID, Boolean> digging = new HashMap<>();
 
   /** The average speed to which a player is clicking given in clicks per second */
-  @NotNull private final HashMap<UUID, Double> averageSpeed = new HashMap<>();
+  @NotNull private final HashMap<UUID, Float> averageSpeed = new HashMap<>();
 
   /** The average deviation to which a player is clicking given in clicks per second */
-  @NotNull private final HashMap<UUID, Double> averageDeviation = new HashMap<>();
+  @NotNull private final HashMap<UUID, Float> averageDeviation = new HashMap<>();
 
   /**
    * Create the detector
@@ -94,37 +94,37 @@ public class AutoClickDetector extends PacketAdapter implements AntiCheatDetecto
       if (ticks > this.getSettings().getSettingOr("reset-delay", Integer.class, 50)) {
         this.clicks.put(uniqueId, 0);
         this.time.put(uniqueId, 0);
-        this.averageSpeed.put(uniqueId, 0.0);
+        this.averageSpeed.put(uniqueId, 0f);
       } else {
         if (event.getPlayer().getGameMode() == GameMode.SURVIVAL
             && !this.digging.getOrDefault(uniqueId, false)) {
           this.time.put(uniqueId, this.time.getOrDefault(uniqueId, 0) + ticks);
           this.clicks.put(uniqueId, this.clicks.getOrDefault(uniqueId, 0) + 1);
-          double secs = this.time.get(uniqueId) / 20.0;
-          double cps = clicks.get(uniqueId) / secs;
-          double deviation = this.averageSpeed.get(uniqueId) - cps;
+          float secs = this.time.get(uniqueId) / 20f;
+          float cps = clicks.get(uniqueId) / secs;
+          float deviation = this.averageSpeed.get(uniqueId) - cps;
           this.averageSpeed.put(uniqueId, cps);
           this.averageDeviation.put(
               uniqueId,
-              Math.abs(this.averageDeviation.getOrDefault(uniqueId, 0.0) + deviation / cps));
+              Math.abs(this.averageDeviation.getOrDefault(uniqueId, 0f) + deviation / cps));
           if (secs > 1) {
             Double maxCps = this.getSettings().getSettingOr("max-cps", Double.class, 12.0);
             if (cps >= maxCps) {
               new SuspectDetectedEvent(
                       event.getPlayer(),
                       this,
-                      "clicking " + String.format("%.2f", cps) + "/cps | maximum: " + maxCps,
+                      "clicking ~" + String.format("%.2f", cps) + "/cps | maximum: " + maxCps,
                       SuspectLevel.MEDIUM)
                   .call();
             }
-            Double averageDeviation = this.averageDeviation.get(uniqueId);
+            float averageDeviation = this.averageDeviation.get(uniqueId);
             Double minDeviation =
                 this.getSettings().getSettingOr("min-deviation", Double.class, 0.01);
             if (averageDeviation < minDeviation) {
               new SuspectDetectedEvent(
                       event.getPlayer(),
                       this,
-                      "deviation "
+                      "deviation ~"
                           + String.format("%.2f", averageDeviation)
                           + " | min: "
                           + minDeviation,
