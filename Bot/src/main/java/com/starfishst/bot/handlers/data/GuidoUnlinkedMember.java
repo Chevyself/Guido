@@ -1,5 +1,6 @@
 package com.starfishst.bot.handlers.data;
 
+import com.starfishst.bot.Guido;
 import com.starfishst.bot.api.data.BotUnlinkedMember;
 import com.starfishst.bot.api.events.data.unlinked.BotUnlinkedMemberLoadedEvent;
 import com.starfishst.bot.api.events.data.unlinked.BotUnlinkedMemberUnloadedEvent;
@@ -52,6 +53,28 @@ public class GuidoUnlinkedMember extends Catchable implements BotUnlinkedMember 
     new BotUnlinkedMemberLoadedEvent(this);
   }
 
+  /**
+   * Create a copy of a unlinked member. This will not add it to cache or call {@link
+   * BotUnlinkedMemberLoadedEvent}
+   *
+   * @param member the member that is being copied
+   */
+  public GuidoUnlinkedMember(@NotNull GuidoUnlinkedMember member) {
+    super(Time.fromString("0s"));
+    this.unload(false);
+    this.key = member.getKey();
+    this.value = member.getValue();
+    this.guildId = member.getGuildId();
+    this.permissions = member.getPermissions();
+    this.stats = member.getStats();
+  }
+
+  @NotNull
+  @Override
+  public GuidoUnlinkedMember copy() {
+    return new GuidoUnlinkedMember(this);
+  }
+
   @Override
   public void onSecondsPassed() {}
 
@@ -63,6 +86,12 @@ public class GuidoUnlinkedMember extends Catchable implements BotUnlinkedMember 
   @Override
   public @NotNull Set<PermissionStack> getPermissions() {
     return this.permissions;
+  }
+
+  @Override
+  public void delete() {
+    this.unload(false);
+    Guido.getDataLoader().deleteUnlinked(this);
   }
 
   @Override

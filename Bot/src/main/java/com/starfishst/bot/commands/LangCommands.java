@@ -1,9 +1,9 @@
 package com.starfishst.bot.commands;
 
 import com.starfishst.bot.Guido;
+import com.starfishst.bot.handlers.lang.GuidoLanguageHandler;
 import com.starfishst.bot.handlers.responsive.GuidoMessagesController;
 import com.starfishst.bot.handlers.responsive.types.lang.LangChangeResponsiveMessage;
-import com.starfishst.bot.handlers.lang.GuidoLanguageHandler;
 import com.starfishst.commands.annotations.Command;
 import com.starfishst.commands.context.CommandContext;
 import com.starfishst.commands.result.Result;

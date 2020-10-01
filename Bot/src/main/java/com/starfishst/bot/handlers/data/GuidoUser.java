@@ -7,6 +7,7 @@ import com.starfishst.bot.api.events.data.user.BotUserUnloadedEvent;
 import com.starfishst.core.utils.cache.Catchable;
 import com.starfishst.core.utils.time.Time;
 import com.starfishst.guido.api.data.PermissionStack;
+import com.starfishst.guido.api.data.ValuesMap;
 import java.util.HashSet;
 import java.util.Set;
 import org.jetbrains.annotations.NotNull;
@@ -18,28 +19,30 @@ public class GuidoUser extends Catchable implements BotUser {
   private final long id;
   /** The permissions that the user has */
   @NotNull private final Set<PermissionStack> permissions;
-  /** The language that the user is using */
-  @NotNull private String lang;
+
+  /** The preferences of the user */
+  @NotNull private final GuidoValuesMap preferences;
 
   /**
    * Create the guido user
    *
    * @param id the discord id
-   * @param lang the language that the user is using
    * @param permissions the permissions of the user
+   * @param preferences the preferences of the user
    */
-  public GuidoUser(long id, @NotNull String lang, @NotNull Set<PermissionStack> permissions) {
+  public GuidoUser(
+      long id, @NotNull Set<PermissionStack> permissions, @NotNull GuidoValuesMap preferences) {
     super(Time.fromString("3m"));
     this.id = id;
-    this.lang = lang;
     this.permissions = permissions;
+    this.preferences = preferences;
     new BotUserLoadedEvent(this).call();
   }
 
   /** Create the guido user. This is deprecated because only gson may use it */
   @Deprecated
   public GuidoUser() {
-    this(0, "en", new HashSet<>());
+    this(0, new HashSet<>(), new GuidoValuesMap());
   }
 
   @Override
@@ -56,14 +59,14 @@ public class GuidoUser extends Catchable implements BotUser {
   }
 
   @Override
-  public @NotNull String getLang() {
-    return this.lang;
+  public @NotNull ValuesMap getPreferences() {
+    return this.preferences;
   }
 
   @Override
   public void setLang(@NotNull String lang) {
     if (!new BotUserLangUpdatedEvent(this, lang).callAndGet()) {
-      this.lang = lang;
+      BotUser.super.setLang(lang);
     }
   }
 

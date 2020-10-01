@@ -8,7 +8,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 /** A request given to get a {@link Response} but it can also be a {@link Void} */
-public class Request implements Message {
+public abstract class Request<O> implements Message {
 
   /** The id of the request */
   @NotNull private final UUID id = UUID.randomUUID();
@@ -110,4 +110,11 @@ public class Request implements Message {
   public @NotNull UUID getId() {
     return this.id;
   }
+
+  /**
+   * Get the class that the request is requesting
+   *
+   * @return the class requested
+   */
+  public abstract @NotNull Class<O> getClazz();
 }

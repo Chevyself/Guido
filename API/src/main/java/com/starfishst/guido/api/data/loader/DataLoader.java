@@ -1,5 +1,6 @@
 package com.starfishst.guido.api.data.loader;
 
+import com.starfishst.guido.api.data.AuthToken;
 import com.starfishst.guido.api.data.GuildData;
 import com.starfishst.guido.api.data.MemberData;
 import com.starfishst.guido.api.data.RoleData;
@@ -59,6 +60,15 @@ public interface DataLoader {
    */
   @Nullable
   MemberData getMemberByLink(long guild, @NotNull String key, @NotNull String value);
+
+  /**
+   * Get an auth token using its unique string
+   *
+   * @param token the unique string of the token
+   * @return the token if found else null
+   */
+  @Nullable
+  AuthToken getAuthToken(@NotNull String token);
 
   /**
    * Delete an unlinked member

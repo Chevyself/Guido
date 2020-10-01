@@ -2,6 +2,7 @@ package com.starfishst.guido.api.implementations.messaging.json.response;
 
 import com.google.gson.JsonObject;
 import com.google.gson.internal.LinkedTreeMap;
+import com.starfishst.guido.api.data.AuthLevel;
 import com.starfishst.guido.api.implementations.messaging.Messenger;
 import com.starfishst.guido.api.implementations.messaging.Request;
 import com.starfishst.guido.api.implementations.messaging.Response;
@@ -16,15 +17,21 @@ import org.jetbrains.annotations.Nullable;
 /** A response for an stack of requests */
 public class MultiResponse implements ResponseGiver<List<Response<?>>> {
 
+  /** The messenger using this response */
   @NotNull private final JsonMessenger messenger;
 
+  /**
+   * Create the response
+   *
+   * @param messenger the messenger using this response
+   */
   public MultiResponse(@NotNull JsonMessenger messenger) {
     this.messenger = messenger;
   }
 
   @Override
   public @Nullable Response<List<Response<?>>> getResponse(
-      @NotNull Request queryRequest, @NotNull Messenger messenger) {
+      @NotNull Request<?> queryRequest, @NotNull Messenger messenger) {
     List<LinkedTreeMap<?, ?>> requests = queryRequest.getListParameter("requests");
     List<Response<?>> responses = new ArrayList<>();
     for (LinkedTreeMap<?, ?> requestMap : requests) {
@@ -39,5 +46,10 @@ public class MultiResponse implements ResponseGiver<List<Response<?>>> {
       }
     }
     return new Response<>(queryRequest.getId(), responses);
+  }
+
+  @Override
+  public @NotNull AuthLevel getLevel() {
+    return AuthLevel.NONE;
   }
 }

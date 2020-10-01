@@ -1,5 +1,6 @@
 package com.starfishst.guido.api.data;
 
+import com.starfishst.core.utils.cache.ICatchable;
 import java.util.Collection;
 import java.util.HashMap;
 import org.jetbrains.annotations.NotNull;
@@ -8,7 +9,7 @@ import org.jetbrains.annotations.NotNull;
  * The data for a member. This class represents all the data for certain discord user that is inside
  * a guild. This is called a member
  */
-public interface MemberData extends Linkable, Permissible {
+public interface MemberData extends Linkable, Permissible, ICatchable {
 
   /**
    * Get the unique id of the discord user

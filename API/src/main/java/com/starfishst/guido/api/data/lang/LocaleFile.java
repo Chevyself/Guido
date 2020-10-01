@@ -1,4 +1,4 @@
-package com.starfishst.bot.api.lang;
+package com.starfishst.guido.api.data.lang;
 
 import com.starfishst.core.utils.Strings;
 import com.starfishst.core.utils.maps.MapBuilder;

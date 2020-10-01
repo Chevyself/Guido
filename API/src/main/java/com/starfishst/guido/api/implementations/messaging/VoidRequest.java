@@ -4,7 +4,7 @@ import java.util.HashMap;
 import org.jetbrains.annotations.NotNull;
 
 /** A request that does not expect a response */
-public class VoidRequest extends Request {
+public class VoidRequest extends Request<Void> {
 
   /**
    * Create the request
@@ -23,5 +23,10 @@ public class VoidRequest extends Request {
    */
   public VoidRequest(@NotNull String method) {
     super("void" + method);
+  }
+
+  @Override
+  public @NotNull Class<Void> getClazz() {
+    return Void.class;
   }
 }

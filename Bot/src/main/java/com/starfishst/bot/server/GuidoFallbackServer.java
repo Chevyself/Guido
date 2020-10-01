@@ -15,5 +15,16 @@ public class GuidoFallbackServer implements Server {
   }
 
   @Override
+  public boolean requiresAuthentication() {
+    return false;
+  }
+
+  @Override
+  public void setRequiresAuthentication(boolean bol) {}
+
+  @Override
+  public void start() {}
+
+  @Override
   public void close() {}
 }

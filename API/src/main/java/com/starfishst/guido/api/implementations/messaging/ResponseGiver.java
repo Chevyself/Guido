@@ -1,5 +1,6 @@
 package com.starfishst.guido.api.implementations.messaging;
 
+import com.starfishst.guido.api.data.AuthLevel;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -14,5 +15,13 @@ public interface ResponseGiver<T> {
    * @return the response
    */
   @Nullable
-  Response<T> getResponse(@NotNull Request request, @NotNull Messenger messenger);
+  Response<T> getResponse(@NotNull Request<?> request, @NotNull Messenger messenger);
+
+  /**
+   * Get the authentication level required to give a response
+   *
+   * @return the level required
+   */
+  @NotNull
+  AuthLevel getLevel();
 }

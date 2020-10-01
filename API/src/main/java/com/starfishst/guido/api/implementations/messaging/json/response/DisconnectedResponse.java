@@ -1,5 +1,6 @@
 package com.starfishst.guido.api.implementations.messaging.json.response;
 
+import com.starfishst.guido.api.data.AuthLevel;
 import com.starfishst.guido.api.implementations.messaging.Messenger;
 import com.starfishst.guido.api.implementations.messaging.Request;
 import com.starfishst.guido.api.implementations.messaging.Response;
@@ -11,7 +12,7 @@ import org.jetbrains.annotations.Nullable;
 /** A response for a client when it gets disconnected by the server */
 public class DisconnectedResponse implements ResponseGiver<Void> {
 
-  /** The client waiting for disconnetion */
+  /** The client waiting for disconnection */
   @NotNull private final JsonClient client;
 
   /**
@@ -32,8 +33,13 @@ public class DisconnectedResponse implements ResponseGiver<Void> {
    */
   @Override
   public @Nullable Response<Void> getResponse(
-      @NotNull Request request, @NotNull Messenger messenger) {
+      @NotNull Request<?> request, @NotNull Messenger messenger) {
     client.close();
     return null;
+  }
+
+  @Override
+  public @NotNull AuthLevel getLevel() {
+    return AuthLevel.NONE;
   }
 }

@@ -10,8 +10,8 @@ import com.starfishst.bot.commands.providers.BotUserProvider;
 import com.starfishst.bot.handlers.data.GuidoHandler;
 import com.starfishst.bot.handlers.data.loader.GuidoFileLoader;
 import com.starfishst.bot.handlers.data.loader.MongoDataLoader;
-import com.starfishst.bot.handlers.responsive.GuidoMessagesController;
 import com.starfishst.bot.handlers.lang.GuidoLanguageHandler;
+import com.starfishst.bot.handlers.responsive.GuidoMessagesController;
 import com.starfishst.bot.server.GuidoFallbackServer;
 import com.starfishst.bot.server.GuidoServer;
 import com.starfishst.commands.CommandManager;
@@ -20,9 +20,8 @@ import com.starfishst.commands.providers.registry.ProvidersRegistryJDA;
 import com.starfishst.core.fallback.Fallback;
 import com.starfishst.core.utils.Lots;
 import com.starfishst.core.utils.cache.Cache;
-import com.starfishst.core.utils.cache.Catchable;
+import com.starfishst.core.utils.cache.ICatchable;
 import com.starfishst.core.utils.maps.Maps;
-import com.starfishst.guido.api.data.loader.DataLoader;
 import com.starfishst.guido.api.implementations.messaging.Server;
 import com.starfishst.utils.events.Cancellable;
 import com.starfishst.utils.events.Event;
@@ -91,15 +90,12 @@ public class Guido {
     jda.setEventManager(new AnnotatedEventManager());
 
     if (argsMaps.get("loader") != null) {
-      DataLoader oldLoader = dataLoader;
       if (argsMaps.get("loader").equalsIgnoreCase("mongo")) {
         try {
           dataLoader =
               new MongoDataLoader(
                   argsMaps.getOrDefault("uri", "none"),
                   argsMaps.getOrDefault("database", "testing-database"));
-          System.out.println(handlers.remove(oldLoader));
-          System.out.println(handlers.add(dataLoader));
           languageHandler.setDataLoader(dataLoader);
         } catch (Exception e) {
           Fallback.addError("Mongo loader could not be initialized");
@@ -113,7 +109,9 @@ public class Guido {
       server =
           new GuidoServer(
               Integer.parseInt(argsMaps.getOrDefault("port", "3000")),
-              Long.parseLong(argsMaps.getOrDefault("timeout", "3000")));
+              Long.parseLong(argsMaps.getOrDefault("timeout", "3000")),
+              dataLoader);
+      server.start();
     } catch (IOException e) {
       Fallback.addError("");
       e.printStackTrace();
@@ -143,8 +141,8 @@ public class Guido {
 
   /** Stops the bot */
   public static void stop() {
-    List<Catchable> copy = new ArrayList<>(Cache.getCache());
-    for (Catchable catchable : copy) {
+    List<ICatchable> copy = new ArrayList<>(Cache.getCache());
+    for (ICatchable catchable : copy) {
       catchable.onRemove();
       catchable.unload();
     }

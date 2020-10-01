@@ -1,6 +1,9 @@
 package com.starfishst.guido.bungee.core;
 
+import com.starfishst.bungee.CommandManager;
+import com.starfishst.bungee.messages.DefaultMessagesProvider;
 import com.starfishst.core.fallback.Fallback;
+import com.starfishst.core.providers.registry.ProvidersRegistry;
 import com.starfishst.core.utils.files.CoreFiles;
 import com.starfishst.guido.bungee.api.Guido;
 import com.starfishst.guido.bungee.api.configuration.BungeeConfiguration;
@@ -15,6 +18,11 @@ import org.jetbrains.annotations.NotNull;
 
 /** The guido plugin for Bungee */
 public class GuidoPlugin extends Plugin {
+
+  /** The command manager */
+  @NotNull
+  private final CommandManager manager =
+      new CommandManager(this, new DefaultMessagesProvider(), new ProvidersRegistry<>());
 
   /** The bungeeConfiguration that the plugin will use */
   @NotNull private BungeeConfiguration bungeeConfiguration = new GuidoBungeeConfiguration();

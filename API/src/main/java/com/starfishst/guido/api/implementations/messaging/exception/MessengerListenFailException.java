@@ -28,13 +28,4 @@ public class MessengerListenFailException extends Exception {
   public MessengerListenFailException(@Nullable String message, @NotNull Throwable cause) {
     super(message, cause);
   }
-
-  /**
-   * Create the exception
-   *
-   * @param cause the throwable that made if fail
-   */
-  public MessengerListenFailException(@NotNull Throwable cause) {
-    super(cause);
-  }
 }

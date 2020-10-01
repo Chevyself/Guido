@@ -104,21 +104,12 @@ public interface JsonMessenger extends Messenger, Runnable {
    */
   long getTimeout();
 
-  @Override
-  default <T> void sendRequest(
-      @NotNull Request request, @NotNull Class<T> clazz, @NotNull Consumer<T> consumer) {
-    this.getRequests()
-        .put(new AwaitingRequest<>(request, clazz, consumer), System.currentTimeMillis());
-    this.printLine(GsonProvider.GSON.toJson(request));
-  }
-
-  @Override
-  default void sendRequest(@NotNull VoidRequest request) {
-    this.printLine(GsonProvider.GSON.toJson(request));
-  }
-
-  default void acceptRequest(@NotNull JsonObject object) {
-    Request request = GsonProvider.GSON.fromJson(object, Request.class);
+  /**
+   * Accepts a request
+   *
+   * @param request the request to be accepted
+   */
+  default void acceptRequest(@NotNull Request request) {
     ResponseGiver<?> giver = this.getResponseGiver(request);
     if (giver != null) {
       Response<?> response = giver.getResponse(request, this);
@@ -128,12 +119,46 @@ public interface JsonMessenger extends Messenger, Runnable {
     }
   }
 
+  @Override
+  default void sendRequest(@NotNull VoidRequest request) {
+    this.printLine(GsonProvider.GSON.toJson(request));
+  }
+
+  /**
+   * Get the response giver for a request
+   *
+   * @param request the request that requires the giver
+   * @return the request giver if found and matches the method else null
+   */
   @Nullable
   default ResponseGiver<?> getResponseGiver(@NotNull Request request) {
     return this.getResponseGiver(
         request.getMethod().startsWith("void")
             ? request.getMethod().substring(4)
             : request.getMethod());
+  }
+
+  /**
+   * Set whether this messenger is closed
+   *
+   * @param bol the new value of closed
+   */
+  void setClosed(boolean bol);
+
+  /**
+   * Get whether this messenger is closed
+   *
+   * @return true if the messenger is closed
+   */
+  boolean isClosed();
+
+  @Override
+  default <T> void sendRequest(@NotNull Request<T> request, @NotNull Consumer<T> consumer) {
+    this.getRequests()
+        .put(
+            new AwaitingRequest<>(request, request.getClazz(), consumer),
+            System.currentTimeMillis());
+    this.printLine(GsonProvider.GSON.toJson(request));
   }
 
   @Override
@@ -150,7 +175,7 @@ public interface JsonMessenger extends Messenger, Runnable {
       if (builder.length() != 0) {
         JsonObject object = GsonProvider.GSON.fromJson(builder.toString(), JsonObject.class);
         if (object.get("method") != null) {
-          this.acceptRequest(object);
+          this.acceptRequest(GsonProvider.GSON.fromJson(object, Request.class));
         } else if (object.get("object") != null) {
           AwaitingRequest<?> awaitingRequest =
               this.getRequest(UUID.fromString(object.get("id").getAsString()));
@@ -184,7 +209,11 @@ public interface JsonMessenger extends Messenger, Runnable {
   default void run() {
     while (true) {
       try {
-        this.listen();
+        if (this.isClosed()) {
+          break;
+        } else {
+          this.listen();
+        }
       } catch (MessengerListenFailException e) {
         Fallback.addError(e.getMessage());
         e.printStackTrace();

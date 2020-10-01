@@ -1,7 +1,9 @@
 package com.starfishst.guido.api.implementations.messaging.json;
 
 import com.starfishst.core.fallback.Fallback;
+import com.starfishst.guido.api.data.AuthLevel;
 import com.starfishst.guido.api.implementations.messaging.AwaitingRequest;
+import com.starfishst.guido.api.implementations.messaging.Request;
 import com.starfishst.guido.api.implementations.messaging.ResponseGiver;
 import com.starfishst.guido.api.implementations.messaging.json.response.DisconnectResponse;
 import com.starfishst.guido.api.implementations.messaging.json.response.MultiResponse;
@@ -38,6 +40,11 @@ public class JsonClientThread extends Thread implements JsonMessenger {
   private final long timeout;
   /** The request that are waiting for a response */
   @NotNull private final HashMap<AwaitingRequest<?>, Long> requests = new HashMap<>();
+  /** The level to which this client is authenticated */
+  @NotNull private AuthLevel level = AuthLevel.NONE;
+
+  /** Whether the messenger is closed */
+  private boolean closed;
 
   /**
    * Create the client thread
@@ -105,9 +112,44 @@ public class JsonClientThread extends Thread implements JsonMessenger {
     return this.timeout;
   }
 
+  /**
+   * Set the authentication level of this client
+   *
+   * @param level the authentication level
+   */
+  public void setLevel(@NotNull AuthLevel level) {
+    this.level = level;
+  }
+
+  @Override
+  public void run() {
+    JsonMessenger.super.run();
+  }
+
+  /**
+   * Get the authentication level of this client
+   *
+   * @return the authentication level
+   */
+  @NotNull
+  public AuthLevel getLevel() {
+    return level;
+  }
+
+  /**
+   * Get the server to which the thread is connected
+   *
+   * @return the socket server
+   */
+  @NotNull
+  public JsonSocketServer getServer() {
+    return server;
+  }
+
   /** Closes the messenger */
   @Override
   public void close() {
+    this.setClosed(true);
     this.responseMap.clear();
     this.requests.clear();
     this.output.close();
@@ -127,7 +169,25 @@ public class JsonClientThread extends Thread implements JsonMessenger {
   }
 
   @Override
-  public void run() {
-    JsonMessenger.super.run();
+  public boolean isClosed() {
+    return this.closed;
+  }
+
+  @Override
+  public void setClosed(boolean bol) {
+    this.closed = bol;
+  }
+
+  @Override
+  public void acceptRequest(@NotNull Request request) {
+    if (this.server.requiresAuthentication()) {
+      ResponseGiver<?> responseGiver = this.getResponseGiver(request);
+      if (responseGiver != null
+          && responseGiver.getLevel().getPermission() >= this.level.getPermission()) {
+        JsonMessenger.super.acceptRequest(request);
+      }
+    } else {
+      JsonMessenger.super.acceptRequest(request);
+    }
   }
 }

@@ -13,8 +13,10 @@ import com.starfishst.bot.api.data.loader.BotDataLoader;
 import com.starfishst.bot.api.events.data.guild.BotGuildUnloadedEvent;
 import com.starfishst.bot.api.events.data.member.BotMemberUnloadedEvent;
 import com.starfishst.bot.api.events.data.role.BotRoleUnloadedEvent;
+import com.starfishst.bot.api.events.data.token.AuthTokenUnloadedEvent;
 import com.starfishst.bot.api.events.data.unlinked.BotUnlinkedMemberUnloadedEvent;
 import com.starfishst.bot.api.events.data.user.BotUserUnloadedEvent;
+import com.starfishst.bot.handlers.data.GuidoAuthToken;
 import com.starfishst.bot.handlers.data.GuidoGuild;
 import com.starfishst.bot.handlers.data.GuidoMember;
 import com.starfishst.bot.handlers.data.GuidoPermission;
@@ -22,7 +24,10 @@ import com.starfishst.bot.handlers.data.GuidoPermissionStack;
 import com.starfishst.bot.handlers.data.GuidoRole;
 import com.starfishst.bot.handlers.data.GuidoUnlinkedMember;
 import com.starfishst.bot.handlers.data.GuidoUser;
+import com.starfishst.bot.handlers.data.GuidoValuesMap;
 import com.starfishst.core.utils.cache.Cache;
+import com.starfishst.guido.api.data.AuthLevel;
+import com.starfishst.guido.api.data.AuthToken;
 import com.starfishst.guido.api.data.Permissible;
 import com.starfishst.guido.api.data.Permission;
 import com.starfishst.guido.api.data.PermissionStack;
@@ -56,6 +61,9 @@ public class MongoDataLoader implements BotDataLoader {
   /** The collection containing users data */
   @NotNull private final MongoCollection<Document> users;
 
+  /** The collection containing tokens data */
+  @NotNull private final MongoCollection<Document> tokens;
+
   /**
    * Create the mongo data loader
    *
@@ -69,6 +77,7 @@ public class MongoDataLoader implements BotDataLoader {
     this.members = database.getCollection("guilds");
     this.roles = database.getCollection("roles");
     this.users = database.getCollection("users");
+    this.tokens = database.getCollection("tokens");
   }
 
   /**
@@ -85,6 +94,27 @@ public class MongoDataLoader implements BotDataLoader {
       this.guilds.replaceOne(query, document);
     } else {
       this.guilds.insertOne(document);
+    }
+  }
+
+  /**
+   * Listen to an auth token being unloaded to save it
+   *
+   * @param event the event of an auth token being unloaded
+   */
+  @Listener(priority = ListenPriority.HIGHEST)
+  public void onAuthTokenUnloaded(@NotNull AuthTokenUnloadedEvent event) {
+    AuthToken token = event.getToken();
+    Document document =
+        new Document("token", token.getToken())
+            .append("level", token.getLevel())
+            .append("user", token.getUser().getId());
+    Document query = new Document("token", token.getToken());
+    Document first = this.tokens.find(query).first();
+    if (first != null) {
+      this.tokens.replaceOne(query, document);
+    } else {
+      this.tokens.insertOne(document);
     }
   }
 
@@ -275,6 +305,122 @@ public class MongoDataLoader implements BotDataLoader {
     this.client.close();
   }
 
+  /**
+   * Get the data of a guild using a query
+   *
+   * @param query the query to get the guild data
+   * @return the guild data
+   */
+  public @Nullable GuidoGuild getGuildData(@NotNull Document query) {
+    Document document = this.guilds.find(query).first();
+    if (document != null) {
+      return new GuidoGuild(document.getLong("id"));
+    }
+    return null;
+  }
+
+  /**
+   * Get the data of a member using a query
+   *
+   * @param query the query to get the member data
+   * @return the member data
+   */
+  public @Nullable GuidoMember getMemberData(@NotNull Document query) {
+    Document document = this.members.find(query).first();
+    if (document != null) {
+      return new GuidoMember(
+          document.getLong("id"),
+          document.getLong("guildId"),
+          this.getPermissionStacks(document),
+          this.getStats(document),
+          this.getLinks(document));
+    }
+    return null;
+  }
+
+  /**
+   * Get the data of a member using a query
+   *
+   * @param query the query to get the member data
+   * @return the member data
+   */
+  public @Nullable GuidoUnlinkedMember getUnlinkeedMemberData(@NotNull Document query) {
+    Document document = this.members.find(query).first();
+    if (document != null) {
+      return new GuidoUnlinkedMember(
+          document.getString("key"),
+          document.getString("value"),
+          document.getLong("guildId"),
+          this.getPermissionStacks(document),
+          this.getStats(document));
+    }
+    return null;
+  }
+
+  /**
+   * Get the data of a role using a query
+   *
+   * @param query the query to get the role data
+   * @return the role data
+   */
+  public @Nullable GuidoRole getRoleData(@NotNull Document query) {
+    Document document = this.roles.find(query).first();
+    if (document != null) {
+      return new GuidoRole(
+          document.getLong("id"), document.getLong("guildId"), this.getPermissionStacks(document));
+    }
+    return null;
+  }
+
+  /**
+   * Get the data of an user using a query
+   *
+   * @param query the query to get the user data
+   * @return the user data
+   */
+  public @Nullable GuidoUser getUserData(@NotNull Document query) {
+    Document document = this.users.find(query).first();
+    if (document != null) {
+      return new GuidoUser(
+          document.getLong("id"),
+          this.getPermissionStacks(document),
+          this.getPreferences(document));
+    }
+    return null;
+  }
+
+  /**
+   * Get the values map from a document
+   *
+   * @param document the document to get the values from
+   * @return the values
+   */
+  @NotNull
+  private GuidoValuesMap getPreferences(@NotNull Document document) {
+    GuidoValuesMap map = new GuidoValuesMap();
+    if (document.get("preferences") != null) {
+      map.addValues(document.get("preferences", Document.class));
+    }
+    return map;
+  }
+
+  /**
+   * Get an auth token using a query
+   *
+   * @param query the query to get the token
+   * @return the token if found in the database else null
+   */
+  public @Nullable AuthToken getAuthToken(@NotNull Document query) {
+    Document document = this.tokens.find(query).first();
+    if (document != null) {
+      return new GuidoAuthToken(
+          document.getString("token"),
+          AuthLevel.valueOf(document.getString("level")),
+          this.getUserData(document.getLong("user")));
+    }
+    return null;
+  }
+
   @Override
   public @NotNull BotGuild getGuildData(long id) {
     GuidoGuild guild =
@@ -284,10 +430,9 @@ public class MongoDataLoader implements BotDataLoader {
     if (guild != null) {
       return guild;
     }
-    Document query = new Document("id", id);
-    Document document = this.guilds.find(query).first();
-    if (document != null) {
-      return new GuidoGuild(id);
+    guild = this.getGuildData(new Document("id", id));
+    if (guild != null) {
+      return guild;
     }
     return new GuidoGuild(id);
   }
@@ -304,15 +449,9 @@ public class MongoDataLoader implements BotDataLoader {
     if (member != null) {
       return member;
     }
-    Document query = new Document("id", id).append("guildId", guildId);
-    Document document = this.members.find(query).first();
-    if (document != null) {
-      return new GuidoMember(
-          id,
-          guildId,
-          this.getPermissionStacks(document),
-          this.getStats(document),
-          this.getLinks(document));
+    member = this.getMemberData(new Document("id", id).append("guildId", guildId));
+    if (member != null) {
+      return member;
     }
     return new GuidoMember(id, guildId, new HashSet<>(), new HashMap<>(), new HashMap<>());
   }
@@ -329,10 +468,9 @@ public class MongoDataLoader implements BotDataLoader {
     if (role != null) {
       return role;
     }
-    Document query = new Document("id", id).append("guildId", guildId);
-    Document document = this.roles.find(query).first();
-    if (document != null) {
-      return new GuidoRole(id, guildId, this.getPermissionStacks(document));
+    role = this.getRoleData(new Document("id", id).append("guildId", guildId));
+    if (role != null) {
+      return role;
     }
     return new GuidoRole(id, guildId, new HashSet<>());
   }
@@ -346,13 +484,11 @@ public class MongoDataLoader implements BotDataLoader {
     if (user != null) {
       return user;
     }
-    Document query = new Document("id", id);
-    Document document = this.users.find(query).first();
-    if (document != null) {
-      return new GuidoUser(
-          id, (String) document.getOrDefault("lang", "en"), this.getPermissionStacks(document));
+    user = this.getUserData(new Document("id", id));
+    if (user != null) {
+      return user;
     }
-    return new GuidoUser(id, "en", new HashSet<>());
+    return new GuidoUser(id, new HashSet<>(), new GuidoValuesMap());
   }
 
   @Override
@@ -383,24 +519,17 @@ public class MongoDataLoader implements BotDataLoader {
     if (unlinkedMember != null) {
       return unlinkedMember;
     }
-    Document query = new Document("guildId", guildId).append("links." + key, value);
-    Document first = this.members.find(query).first();
-    if (first != null) {
-      return new GuidoMember(
-          first.getLong("id"),
-          guildId,
-          this.getPermissionStacks(first),
-          this.getStats(first),
-          this.getLinks(first));
+    member = this.getMemberData(new Document("guildId", guildId).append("links." + key, value));
+    if (member != null) {
+      return member;
     }
-    query = new Document("guildId", guildId).append("key", key).append("value", value);
-    first = this.members.find(query).first();
+    return this.getUnlinkeedMemberData(
+        new Document("guildId", guildId).append("key", key).append("value", value));
+  }
 
-    if (first != null) {
-      return new GuidoUnlinkedMember(
-          key, value, guildId, this.getPermissionStacks(first), this.getStats(first));
-    }
-    return null;
+  @Override
+  public @Nullable AuthToken getAuthToken(@NotNull String token) {
+    return this.getAuthToken(new Document("token", token));
   }
 
   @Override

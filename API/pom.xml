@@ -12,16 +12,14 @@
 
     <groupId>com.starfishst.guido.api</groupId>
     <artifactId>API</artifactId>
-    <version>1.0.0-SNAPSHOT-4</version>
+    <version>1.0.0-SNAPSHOT-5</version>
 
     <dependencies>
-        <!-- Dependency on the framework core -->
         <dependency>
             <groupId>com.starfishst.core</groupId>
             <artifactId>core</artifactId>
-            <version>1.0.0-PRE1</version>
+            <version>1.0.0-PRE2</version>
         </dependency>
-        <!-- Utils -->
         <dependency>
             <groupId>com.starfishst.utils</groupId>
             <artifactId>core-utils</artifactId>

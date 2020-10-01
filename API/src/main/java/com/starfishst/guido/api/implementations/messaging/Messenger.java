@@ -11,12 +11,10 @@ public interface Messenger {
    * Sends a request to this messenger
    *
    * @param request the request that was send and must be processed by this messenger
-   * @param clazz the clazz that the request requested
    * @param consumer the consumer to provide the object when the request gets a response
    * @param <T> the type of object that the request expects
    */
-  <T> void sendRequest(
-      @NotNull Request request, @NotNull Class<T> clazz, @NotNull Consumer<T> consumer);
+  <T> void sendRequest(@NotNull Request<T> request, @NotNull Consumer<T> consumer);
 
   /**
    * Sends a void request

@@ -1,4 +1,4 @@
-package com.starfishst.bot.api.lang;
+package com.starfishst.guido.api.data.lang;
 
 import org.jetbrains.annotations.NotNull;
 

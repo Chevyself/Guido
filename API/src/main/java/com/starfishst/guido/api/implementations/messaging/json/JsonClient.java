@@ -3,6 +3,7 @@ package com.starfishst.guido.api.implementations.messaging.json;
 import com.starfishst.core.fallback.Fallback;
 import com.starfishst.guido.api.implementations.messaging.AwaitingRequest;
 import com.starfishst.guido.api.implementations.messaging.ResponseGiver;
+import com.starfishst.guido.api.implementations.messaging.json.response.DisconnectedResponse;
 import com.starfishst.guido.api.implementations.messaging.json.response.MultiResponse;
 import com.starfishst.guido.api.implementations.messaging.json.response.PingResponse;
 import java.io.BufferedReader;
@@ -32,6 +33,8 @@ public class JsonClient extends Thread implements JsonMessenger {
   /** The request that are waiting for a response */
   @NotNull private final HashMap<AwaitingRequest<?>, Long> requests = new HashMap<>();
 
+  /** Whether the messenger is closed */
+  private boolean closed;
   /**
    * Create the guido client with a given socket
    *
@@ -46,11 +49,13 @@ public class JsonClient extends Thread implements JsonMessenger {
     this.in = new BufferedReader(new InputStreamReader(this.socket.getInputStream()));
     this.responseMap.put("ping", new PingResponse());
     this.responseMap.put("multi", new MultiResponse(this));
+    this.responseMap.put("disconnected", new DisconnectedResponse(this));
   }
 
   /** Closes the messenger */
   @Override
   public void close() {
+    this.setClosed(true);
     this.responseMap.clear();
     this.out.close();
     try {
@@ -116,5 +121,15 @@ public class JsonClient extends Thread implements JsonMessenger {
   @Override
   public void run() {
     JsonMessenger.super.run();
+  }
+
+  @Override
+  public boolean isClosed() {
+    return this.closed;
+  }
+
+  @Override
+  public void setClosed(boolean bol) {
+    this.closed = bol;
   }
 }

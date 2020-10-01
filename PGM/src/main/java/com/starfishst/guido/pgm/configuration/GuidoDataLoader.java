@@ -2,7 +2,7 @@ package com.starfishst.guido.pgm.configuration;
 
 import com.starfishst.core.fallback.Fallback;
 import com.starfishst.core.utils.cache.Cache;
-import com.starfishst.core.utils.cache.Catchable;
+import com.starfishst.core.utils.cache.ICatchable;
 import com.starfishst.core.utils.files.CoreFiles;
 import com.starfishst.guido.pgm.GuidoPlugin;
 import com.starfishst.guido.pgm.api.config.DataLoader;
@@ -80,7 +80,7 @@ public class GuidoDataLoader implements DataLoader, GuidoListener {
 
   @Override
   public void onUnload() {
-    for (Catchable catchable : Cache.getCache()) {
+    for (ICatchable catchable : Cache.getCache()) {
       if (catchable instanceof PlayerData) {
         this.onPlayerDataUnloaded(new PlayerDataUnloadedEvent((PlayerData) catchable));
       }

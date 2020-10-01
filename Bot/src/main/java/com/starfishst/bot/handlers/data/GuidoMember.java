@@ -1,6 +1,7 @@
 package com.starfishst.bot.handlers.data;
 
 import com.starfishst.bot.api.data.BotMember;
+import com.starfishst.bot.api.data.BotUnlinkedMember;
 import com.starfishst.bot.api.events.data.member.BotMemberLoadedEvent;
 import com.starfishst.bot.api.events.data.member.BotMemberUnloadedEvent;
 import com.starfishst.core.utils.cache.Catchable;
@@ -57,10 +58,31 @@ public class GuidoMember extends Catchable implements BotMember {
     new BotMemberLoadedEvent(this).call();
   }
 
+  /**
+   * Create a copy of a guido member. This will not add the member to the cache or call {@link
+   * BotMemberLoadedEvent}
+   *
+   * @param member the member to copy
+   */
+  public GuidoMember(@NotNull GuidoMember member) {
+    super(Time.fromString("0s"));
+    this.unload(false);
+    this.id = member.getId();
+    this.guildId = member.getGuildId();
+    this.permissions = member.getPermissions();
+    this.stats = member.getStats();
+    this.links = member.getLinks();
+  }
   /** Create the guido member. This is deprecated because only GSON may use it */
   @Deprecated
   public GuidoMember() {
     this(0, 0, new HashSet<>(), new HashMap<>(), new HashMap<>());
+  }
+
+  @NotNull
+  @Override
+  public GuidoMember copy() {
+    return new GuidoMember(this);
   }
 
   /**
@@ -99,7 +121,9 @@ public class GuidoMember extends Catchable implements BotMember {
   @Override
   public void addLink(@NotNull UnlinkedMember unlinked) {
     BotMember.super.addLink(unlinked);
-    if (unlinked instanceof GuidoUnlinkedMember) {}
+    if (unlinked instanceof BotUnlinkedMember) {
+      unlinked.delete();
+    }
   }
 
   @Override

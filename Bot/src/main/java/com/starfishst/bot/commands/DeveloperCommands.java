@@ -70,7 +70,6 @@ public class DeveloperCommands {
       CommandContext context,
       @Multiple @Required(name = "code", description = "El codigo para analizar")
           JoinedStrings strings) {
-    this.engine.put("event", context.getEvent());
     this.engine.put("message", context.getMessage());
     this.engine.put("channel", context.getChannel());
     this.engine.put("args", context.getStrings());

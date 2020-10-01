@@ -13,9 +13,11 @@ import com.starfishst.bot.handlers.data.GuidoGuild;
 import com.starfishst.bot.handlers.data.GuidoMember;
 import com.starfishst.bot.handlers.data.GuidoRole;
 import com.starfishst.bot.handlers.data.GuidoUser;
+import com.starfishst.bot.handlers.data.GuidoValuesMap;
 import com.starfishst.core.fallback.Fallback;
 import com.starfishst.core.utils.cache.Cache;
 import com.starfishst.core.utils.files.CoreFiles;
+import com.starfishst.guido.api.data.AuthToken;
 import com.starfishst.guido.api.data.UnlinkedMember;
 import com.starfishst.utils.events.ListenPriority;
 import com.starfishst.utils.events.Listener;
@@ -27,6 +29,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.HashSet;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * This loader will attempt to get the data from files if it fails it will create a new instance of
@@ -277,10 +280,10 @@ public class GuidoFileLoader implements BotDataLoader {
         Fallback.addError(
             "IOException: Data for user " + id + " could not be loaded. Created a fallback");
         e.printStackTrace();
-        return new GuidoUser(id, "en", new HashSet<>());
+        return new GuidoUser(id, new HashSet<>(), new GuidoValuesMap());
       }
     } else {
-      return new GuidoUser(id, "en", new HashSet<>());
+      return new GuidoUser(id, new HashSet<>(), new GuidoValuesMap());
     }
   }
 
@@ -288,6 +291,11 @@ public class GuidoFileLoader implements BotDataLoader {
   public @NotNull BotMember getMemberByLink(
       long guild, @NotNull String key, @NotNull String value) {
     throw new UnsupportedOperationException("Unlinked members cannot be find using file loader");
+  }
+
+  @Override
+  public @Nullable AuthToken getAuthToken(@NotNull String token) {
+    throw new UnsupportedOperationException("Auth tokens cannot be find using file loader");
   }
 
   @Override

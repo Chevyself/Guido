@@ -1,9 +1,9 @@
 package com.starfishst.bot.handlers.lang;
 
-import com.starfishst.bot.api.lang.LocaleFile;
 import com.starfishst.core.fallback.Fallback;
 import com.starfishst.core.utils.Validate;
 import com.starfishst.core.utils.files.CoreFiles;
+import com.starfishst.guido.api.data.lang.LocaleFile;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
