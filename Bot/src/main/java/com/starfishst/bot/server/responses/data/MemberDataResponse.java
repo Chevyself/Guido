@@ -2,7 +2,7 @@ package com.starfishst.bot.server.responses.data;
 
 import com.starfishst.bot.api.data.BotMember;
 import com.starfishst.bot.api.data.loader.BotDataLoader;
-import com.starfishst.bot.handlers.data.GuidoUnlinkedMember;
+import com.starfishst.bot.handlers.data.GuidoUnlinkedMemberData;
 import com.starfishst.guido.api.data.AuthLevel;
 import com.starfishst.guido.api.data.MemberData;
 import com.starfishst.guido.api.implementations.messaging.Messenger;
@@ -35,16 +35,18 @@ public class MemberDataResponse implements ResponseGiver<MemberData> {
       @NotNull Request<?> request, @NotNull Messenger messenger) {
     MemberDataRequest.RequestType type =
         MemberDataRequest.RequestType.valueOf(request.getParameter("type", String.class));
-    long guildId = request.getParameterOr("guildId", Long.class, -1L);
+    long guildId = request.getParameterOr("guildId", Double.class, -1D).longValue();
     BotMember member;
     if (type == MemberDataRequest.RequestType.ID) {
-      member = loader.getMemberData(request.getParameterOr("id", Long.class, -1L), guildId);
+      member =
+          loader.getMemberData(
+              request.getParameterOr("id", Double.class, -1D).longValue(), guildId);
     } else {
       String key = request.getParameterOr("key", String.class, "0");
       String value = request.getParameterOr("value", String.class, "0");
       member = loader.getMemberByLink(guildId, key, key);
       if (member == null) {
-        member = new GuidoUnlinkedMember(key, value, guildId, new HashSet<>(), new HashMap<>());
+        member = new GuidoUnlinkedMemberData(key, value, guildId, new HashSet<>(), new HashMap<>());
       }
     }
     BotMember copy = member.copy();

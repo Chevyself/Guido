@@ -12,7 +12,7 @@
 
     <groupId>com.starfishst.guido.bungee</groupId>
     <artifactId>Bungee</artifactId>
-    <version>1.0.0</version>
+    <version>1.0.0-SNAPSHOT-0</version>
     <description>Implementations for bungee</description>
     <packaging>pom</packaging>
 

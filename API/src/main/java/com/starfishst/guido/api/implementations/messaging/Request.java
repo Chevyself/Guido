@@ -8,7 +8,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 /** A request given to get a {@link Response} but it can also be a {@link Void} */
-public abstract class Request<O> implements Message {
+public class Request<O> implements Message {
 
   /** The id of the request */
   @NotNull private final UUID id = UUID.randomUUID();
@@ -116,5 +116,7 @@ public abstract class Request<O> implements Message {
    *
    * @return the class requested
    */
-  public abstract @NotNull Class<O> getClazz();
+  public @NotNull Class<O> getClazz() {
+    throw new UnsupportedOperationException("This method must be overwritten");
+  }
 }

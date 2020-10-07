@@ -1,13 +1,13 @@
 package com.starfishst.bot.handlers.data;
 
 import com.starfishst.bot.api.data.BotMember;
-import com.starfishst.bot.api.data.BotUnlinkedMember;
+import com.starfishst.bot.api.data.BotUnlinkedMemberData;
 import com.starfishst.bot.api.events.data.member.BotMemberLoadedEvent;
 import com.starfishst.bot.api.events.data.member.BotMemberUnloadedEvent;
 import com.starfishst.core.utils.cache.Catchable;
 import com.starfishst.core.utils.time.Time;
 import com.starfishst.guido.api.data.PermissionStack;
-import com.starfishst.guido.api.data.UnlinkedMember;
+import com.starfishst.guido.api.data.UnlinkedMemberData;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
@@ -119,9 +119,9 @@ public class GuidoMember extends Catchable implements BotMember {
   public void onSecondsPassed() {}
 
   @Override
-  public void addLink(@NotNull UnlinkedMember unlinked) {
+  public void addLink(@NotNull UnlinkedMemberData unlinked) {
     BotMember.super.addLink(unlinked);
-    if (unlinked instanceof BotUnlinkedMember) {
+    if (unlinked instanceof BotUnlinkedMemberData) {
       unlinked.delete();
     }
   }

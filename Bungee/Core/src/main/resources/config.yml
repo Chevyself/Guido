@@ -1,4 +1,16 @@
+## This token is used to authenticate the bot connection
+token: 0a123asdsd
+## The id of the guild where this is being used
+guild: 0
+## The bungee servers that can be used by the server
+servers:
+  ## The name of the server
+  name:
+
+
+## The configuration used in the listeners of the bot
 listeners:
+  ## Configuration for the Motd
   motd:
     descriptions:
       - Join the googas clan right now

@@ -27,7 +27,7 @@ public class DisconnectedResponse implements ResponseGiver<Void> {
   @Override
   public @Nullable Response<Void> getResponse(
       @NotNull Request<?> request, @NotNull Messenger messenger) {
-    JsonClient jsonClient = this.client.getClient();
+    JsonClient jsonClient = this.client.getConnection();
     if (jsonClient != null) {
       jsonClient.close();
       this.client.setClient(null);

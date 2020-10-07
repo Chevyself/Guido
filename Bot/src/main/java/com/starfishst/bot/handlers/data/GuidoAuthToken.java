@@ -2,6 +2,7 @@ package com.starfishst.bot.handlers.data;
 
 import com.starfishst.bot.api.events.data.token.AuthTokenLoadedEvent;
 import com.starfishst.bot.api.events.data.token.AuthTokenUnloadedEvent;
+import com.starfishst.core.utils.RandomUtils;
 import com.starfishst.core.utils.cache.Catchable;
 import com.starfishst.core.utils.time.Time;
 import com.starfishst.core.utils.time.Unit;
@@ -29,12 +30,22 @@ public class GuidoAuthToken extends Catchable implements AuthToken {
    * @param level the level of authentication of the token
    * @param user the user owner of the token
    */
-  public GuidoAuthToken(@NotNull String token, @NotNull AuthLevel level, UserData user) {
+  public GuidoAuthToken(@NotNull String token, @NotNull AuthLevel level, @NotNull UserData user) {
     super(new Time(10, Unit.MINUTES));
     this.token = token;
     this.level = level;
     this.user = user;
     new AuthTokenLoadedEvent(this).call();
+  }
+
+  /**
+   * Create the token with a brand new string
+   *
+   * @param level the level of authentication of the token
+   * @param user the user owner of the token
+   */
+  public GuidoAuthToken(@NotNull AuthLevel level, @NotNull UserData user) {
+    this(RandomUtils.nextString(16), level, user);
   }
 
   @Override

@@ -4,9 +4,13 @@ import com.starfishst.bot.api.data.loader.BotDataLoader;
 import com.starfishst.bot.commands.DeveloperCommands;
 import com.starfishst.bot.commands.EloCommands;
 import com.starfishst.bot.commands.LangCommands;
+import com.starfishst.bot.commands.LinkCommand;
 import com.starfishst.bot.commands.TeamCommands;
+import com.starfishst.bot.commands.TokenCommands;
 import com.starfishst.bot.commands.UserCommands;
+import com.starfishst.bot.commands.providers.AuthLevelProvider;
 import com.starfishst.bot.commands.providers.BotUserProvider;
+import com.starfishst.bot.commands.providers.BotUserSenderProvider;
 import com.starfishst.bot.handlers.data.GuidoHandler;
 import com.starfishst.bot.handlers.data.loader.GuidoFileLoader;
 import com.starfishst.bot.handlers.data.loader.MongoDataLoader;
@@ -119,6 +123,8 @@ public class Guido {
 
     ProvidersRegistryJDA registry = new ProvidersRegistryJDA(languageHandler);
     registry.addProvider(new BotUserProvider(dataLoader));
+    registry.addProvider(new BotUserSenderProvider());
+    registry.addProvider(new AuthLevelProvider());
     CommandManager manager =
         new CommandManager(
             jda,
@@ -127,12 +133,13 @@ public class Guido {
             languageHandler,
             registry,
             new GuidoPermissionChecker(languageHandler, dataLoader));
-    manager.registerCommand(new EloCommands());
     manager.registerCommand(new DeveloperCommands(jda));
-    manager.registerCommand(new TeamCommands());
+    manager.registerCommand(new EloCommands());
     manager.registerCommand(new LangCommands());
+    manager.registerCommand(new LinkCommand());
+    manager.registerCommand(new TeamCommands());
+    manager.registerCommand(new TokenCommands());
     manager.registerCommand(new UserCommands());
-
     languageHandler.load("en", "es", "fr");
     for (GuidoHandler handler : handlers) {
       handler.register(jda);
@@ -239,5 +246,15 @@ public class Guido {
   @NotNull
   public static GuidoLanguageHandler getLanguageHandler() {
     return languageHandler;
+  }
+
+  /**
+   * Get the server which is used by the bot
+   *
+   * @return the server
+   */
+  @NotNull
+  public static Server getServer() {
+    return server;
   }
 }

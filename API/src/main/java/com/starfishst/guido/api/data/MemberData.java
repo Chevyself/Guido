@@ -44,7 +44,7 @@ public interface MemberData extends Linkable, Permissible, ICatchable {
   HashMap<String, Double> getStats();
 
   @Override
-  default void addLink(@NotNull UnlinkedMember unlinked) {
+  default void addLink(@NotNull UnlinkedMemberData unlinked) {
     Linkable.super.addLink(unlinked);
     for (PermissionStack stack : unlinked.getPermissions()) {
       PermissionStack permissions = this.getPermissions(stack.getContext());

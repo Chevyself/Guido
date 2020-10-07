@@ -7,7 +7,7 @@ import com.mongodb.client.MongoDatabase;
 import com.starfishst.bot.api.data.BotGuild;
 import com.starfishst.bot.api.data.BotMember;
 import com.starfishst.bot.api.data.BotRole;
-import com.starfishst.bot.api.data.BotUnlinkedMember;
+import com.starfishst.bot.api.data.BotUnlinkedMemberData;
 import com.starfishst.bot.api.data.BotUser;
 import com.starfishst.bot.api.data.loader.BotDataLoader;
 import com.starfishst.bot.api.events.data.guild.BotGuildUnloadedEvent;
@@ -22,7 +22,7 @@ import com.starfishst.bot.handlers.data.GuidoMember;
 import com.starfishst.bot.handlers.data.GuidoPermission;
 import com.starfishst.bot.handlers.data.GuidoPermissionStack;
 import com.starfishst.bot.handlers.data.GuidoRole;
-import com.starfishst.bot.handlers.data.GuidoUnlinkedMember;
+import com.starfishst.bot.handlers.data.GuidoUnlinkedMemberData;
 import com.starfishst.bot.handlers.data.GuidoUser;
 import com.starfishst.bot.handlers.data.GuidoValuesMap;
 import com.starfishst.core.utils.cache.Cache;
@@ -31,7 +31,7 @@ import com.starfishst.guido.api.data.AuthToken;
 import com.starfishst.guido.api.data.Permissible;
 import com.starfishst.guido.api.data.Permission;
 import com.starfishst.guido.api.data.PermissionStack;
-import com.starfishst.guido.api.data.UnlinkedMember;
+import com.starfishst.guido.api.data.UnlinkedMemberData;
 import com.starfishst.utils.events.ListenPriority;
 import com.starfishst.utils.events.Listener;
 import java.util.ArrayList;
@@ -208,7 +208,7 @@ public class MongoDataLoader implements BotDataLoader {
    */
   @Listener(priority = ListenPriority.HIGHEST)
   public void onUnlinkedMemberUnloaded(@NotNull BotUnlinkedMemberUnloadedEvent event) {
-    BotUnlinkedMember member = event.getMember();
+    BotUnlinkedMemberData member = event.getMember();
     Document query =
         new Document("guildId", member.getGuildId())
             .append("key", member.getKey())
@@ -344,10 +344,10 @@ public class MongoDataLoader implements BotDataLoader {
    * @param query the query to get the member data
    * @return the member data
    */
-  public @Nullable GuidoUnlinkedMember getUnlinkeedMemberData(@NotNull Document query) {
+  public @Nullable GuidoUnlinkedMemberData getUnlinkeedMemberData(@NotNull Document query) {
     Document document = this.members.find(query).first();
     if (document != null) {
-      return new GuidoUnlinkedMember(
+      return new GuidoUnlinkedMemberData(
           document.getString("key"),
           document.getString("value"),
           document.getLong("guildId"),
@@ -509,13 +509,13 @@ public class MongoDataLoader implements BotDataLoader {
     if (member != null) {
       return member;
     }
-    GuidoUnlinkedMember unlinkedMember =
+    GuidoUnlinkedMemberData unlinkedMember =
         Cache.getCatchable(
             catchable ->
-                catchable instanceof GuidoUnlinkedMember
-                    && ((GuidoUnlinkedMember) catchable).getKey().equalsIgnoreCase(key)
-                    && ((GuidoUnlinkedMember) catchable).getValue().equalsIgnoreCase(value),
-            GuidoUnlinkedMember.class);
+                catchable instanceof GuidoUnlinkedMemberData
+                    && ((GuidoUnlinkedMemberData) catchable).getKey().equalsIgnoreCase(key)
+                    && ((GuidoUnlinkedMemberData) catchable).getValue().equalsIgnoreCase(value),
+            GuidoUnlinkedMemberData.class);
     if (unlinkedMember != null) {
       return unlinkedMember;
     }
@@ -529,11 +529,20 @@ public class MongoDataLoader implements BotDataLoader {
 
   @Override
   public @Nullable AuthToken getAuthToken(@NotNull String token) {
+    GuidoAuthToken authToken =
+        Cache.getCatchable(
+            catchable ->
+                catchable instanceof GuidoAuthToken
+                    && ((GuidoAuthToken) catchable).getToken().equalsIgnoreCase(token),
+            GuidoAuthToken.class);
+    if (authToken != null) {
+      return authToken;
+    }
     return this.getAuthToken(new Document("token", token));
   }
 
   @Override
-  public void deleteUnlinked(@NotNull UnlinkedMember member) {
+  public void deleteUnlinked(@NotNull UnlinkedMemberData member) {
     Document query =
         new Document("guildId", member.getGuildId())
             .append("key", member.getKey())

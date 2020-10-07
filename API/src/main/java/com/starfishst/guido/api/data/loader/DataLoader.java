@@ -4,7 +4,7 @@ import com.starfishst.guido.api.data.AuthToken;
 import com.starfishst.guido.api.data.GuildData;
 import com.starfishst.guido.api.data.MemberData;
 import com.starfishst.guido.api.data.RoleData;
-import com.starfishst.guido.api.data.UnlinkedMember;
+import com.starfishst.guido.api.data.UnlinkedMemberData;
 import com.starfishst.guido.api.data.UserData;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -75,5 +75,5 @@ public interface DataLoader {
    *
    * @param member the unlinked member to delete
    */
-  void deleteUnlinked(@NotNull UnlinkedMember member);
+  void deleteUnlinked(@NotNull UnlinkedMemberData member);
 }

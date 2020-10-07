@@ -18,7 +18,7 @@ import com.starfishst.core.fallback.Fallback;
 import com.starfishst.core.utils.cache.Cache;
 import com.starfishst.core.utils.files.CoreFiles;
 import com.starfishst.guido.api.data.AuthToken;
-import com.starfishst.guido.api.data.UnlinkedMember;
+import com.starfishst.guido.api.data.UnlinkedMemberData;
 import com.starfishst.utils.events.ListenPriority;
 import com.starfishst.utils.events.Listener;
 import com.starfishst.utils.gson.GsonProvider;
@@ -299,7 +299,7 @@ public class GuidoFileLoader implements BotDataLoader {
   }
 
   @Override
-  public void deleteUnlinked(@NotNull UnlinkedMember member) {
+  public void deleteUnlinked(@NotNull UnlinkedMemberData member) {
     throw new UnsupportedOperationException("Unlinked members cannot be find using file loader");
   }
 }

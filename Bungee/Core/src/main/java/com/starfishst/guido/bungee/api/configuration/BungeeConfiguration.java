@@ -35,6 +35,28 @@ public interface BungeeConfiguration {
   }
 
   /**
+   * Get the token used in the bot
+   *
+   * @return the token used for the bot
+   */
+  String getToken();
+
+  /**
+   * Get the id of the guild where the bot is being used
+   *
+   * @return the id of the guild
+   */
+  long getGuildId();
+
+  /**
+   * Get the servers that can be connected in bungee
+   *
+   * @return the servers that can be connected in bungee
+   */
+  @NotNull
+  List<GuidoServer> getServers();
+
+  /**
    * Get the settings for listeners
    *
    * @return the settings for listeners

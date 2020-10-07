@@ -1,18 +1,16 @@
-package com.starfishst.bot.handlers.data;
+package com.starfishst.guido.implementations.data;
 
-import com.starfishst.bot.Guido;
-import com.starfishst.bot.api.data.BotUnlinkedMember;
-import com.starfishst.bot.api.events.data.unlinked.BotUnlinkedMemberLoadedEvent;
-import com.starfishst.bot.api.events.data.unlinked.BotUnlinkedMemberUnloadedEvent;
 import com.starfishst.core.utils.cache.Catchable;
 import com.starfishst.core.utils.time.Time;
 import com.starfishst.guido.api.data.PermissionStack;
+import com.starfishst.guido.api.data.UnlinkedMemberData;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Set;
 import org.jetbrains.annotations.NotNull;
 
-/** An implementation for {@link BotUnlinkedMember} */
-public class GuidoUnlinkedMember extends Catchable implements BotUnlinkedMember {
+/** An implementation for an unlinked member */
+public class UnlinkedMemberDataImpl extends Catchable implements UnlinkedMemberData {
 
   /** The key of the link */
   @NotNull private final String key;
@@ -30,57 +28,33 @@ public class GuidoUnlinkedMember extends Catchable implements BotUnlinkedMember 
   @NotNull private final HashMap<String, Double> stats;
 
   /**
-   * Create the unlinked member
+   * Create the unlinked member. This object is not added to cache automatically
    *
    * @param key the key of the link
    * @param value the value of the link
-   * @param guildId the id where this member is from
+   * @param guildId the guild of the member
    * @param permissions the permissions of the member
    * @param stats the stats of the member
    */
-  public GuidoUnlinkedMember(
+  public UnlinkedMemberDataImpl(
       @NotNull String key,
       @NotNull String value,
       long guildId,
       @NotNull Set<PermissionStack> permissions,
       @NotNull HashMap<String, Double> stats) {
-    super(Time.fromString("30m"));
+    super(Time.fromString("5m"));
+    this.unload(false);
     this.key = key;
     this.value = value;
     this.guildId = guildId;
     this.permissions = permissions;
     this.stats = stats;
-    new BotUnlinkedMemberLoadedEvent(this);
   }
 
-  /**
-   * Create a copy of a unlinked member. This will not add it to cache or call {@link
-   * BotUnlinkedMemberLoadedEvent}
-   *
-   * @param member the member that is being copied
-   */
-  public GuidoUnlinkedMember(@NotNull GuidoUnlinkedMember member) {
-    super(Time.fromString("0s"));
-    this.unload(false);
-    this.key = member.getKey();
-    this.value = member.getValue();
-    this.guildId = member.getGuildId();
-    this.permissions = member.getPermissions();
-    this.stats = member.getStats();
-  }
-
-  @NotNull
-  @Override
-  public GuidoUnlinkedMember copy() {
-    return new GuidoUnlinkedMember(this);
-  }
-
-  @Override
-  public void onSecondsPassed() {}
-
-  @Override
-  public void onRemove() {
-    new BotUnlinkedMemberUnloadedEvent(this);
+  /** This constructor may only be used by gson */
+  @Deprecated
+  public UnlinkedMemberDataImpl() {
+    this("none", "none", -1, new HashSet<>(), new HashMap<>());
   }
 
   @Override
@@ -89,9 +63,14 @@ public class GuidoUnlinkedMember extends Catchable implements BotUnlinkedMember 
   }
 
   @Override
+  public void onSecondsPassed() {}
+
+  @Override
+  public void onRemove() {}
+
+  @Override
   public void delete() {
-    this.unload(false);
-    Guido.getDataLoader().deleteUnlinked(this);
+    throw new UnsupportedOperationException("Implementations cannot delete members");
   }
 
   @Override
@@ -112,5 +91,24 @@ public class GuidoUnlinkedMember extends Catchable implements BotUnlinkedMember 
   @Override
   public @NotNull HashMap<String, Double> getStats() {
     return this.stats;
+  }
+
+  @Override
+  public String toString() {
+    return "UnlinkedMemberDataImpl{"
+        + "key='"
+        + key
+        + '\''
+        + ", value='"
+        + value
+        + '\''
+        + ", guildId="
+        + guildId
+        + ", permissions="
+        + permissions
+        + ", stats="
+        + stats
+        + "} "
+        + super.toString();
   }
 }

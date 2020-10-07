@@ -5,7 +5,7 @@ import com.starfishst.bot.api.data.BotMember;
 import com.starfishst.bot.api.data.BotRole;
 import com.starfishst.bot.api.data.BotUser;
 import com.starfishst.bot.handlers.GuidoEventHandler;
-import com.starfishst.guido.api.data.UnlinkedMember;
+import com.starfishst.guido.api.data.UnlinkedMemberData;
 import com.starfishst.guido.api.data.loader.DataLoader;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -34,5 +34,5 @@ public interface BotDataLoader extends DataLoader, GuidoEventHandler {
   BotMember getMemberByLink(long guild, @NotNull String key, @NotNull String value);
 
   @Override
-  void deleteUnlinked(@NotNull UnlinkedMember member);
+  void deleteUnlinked(@NotNull UnlinkedMemberData member);
 }

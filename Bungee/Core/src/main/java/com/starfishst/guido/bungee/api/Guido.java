@@ -1,8 +1,13 @@
 package com.starfishst.guido.bungee.api;
 
 import com.starfishst.core.utils.Validate;
+import com.starfishst.core.utils.cache.ICatchable;
+import com.starfishst.guido.api.implementations.messaging.Request;
 import com.starfishst.guido.bungee.api.configuration.BungeeConfiguration;
 import com.starfishst.guido.bungee.core.GuidoPlugin;
+import com.starfishst.guido.implementations.ImplementationClient;
+import java.util.function.Consumer;
+import java.util.function.Predicate;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -42,5 +47,30 @@ public class Guido {
   @NotNull
   public static BungeeConfiguration getConfiguration() {
     return validated().getBungeeConfiguration();
+  }
+
+  /**
+   * Send a request or get the object from cache
+   *
+   * @param request the request to make in case the object is not in cache
+   * @param predicate the boolean to get the object from cache
+   * @param consumer the method to do after we get the object
+   * @param <T> the type of the object
+   */
+  public static <T extends ICatchable> void request(
+      @NotNull Request<T> request,
+      @NotNull Predicate<ICatchable> predicate,
+      @NotNull Consumer<T> consumer) {
+    getClient().request(request, predicate, consumer);
+  }
+
+  /**
+   * Get the client used to connect with the bot
+   *
+   * @return the client used in the bot
+   */
+  @NotNull
+  public static ImplementationClient getClient() {
+    return validated().getClient();
   }
 }

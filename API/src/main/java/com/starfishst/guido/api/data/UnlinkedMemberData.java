@@ -5,7 +5,7 @@ import java.util.HashMap;
 import org.jetbrains.annotations.NotNull;
 
 /** An unlinked user is a {@link } */
-public interface UnlinkedMember extends MemberData, ICatchable {
+public interface UnlinkedMemberData extends MemberData, ICatchable {
 
   /** Deletes this unlinked member */
   void delete();

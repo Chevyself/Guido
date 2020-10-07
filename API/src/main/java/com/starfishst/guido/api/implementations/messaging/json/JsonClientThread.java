@@ -183,7 +183,7 @@ public class JsonClientThread extends Thread implements JsonMessenger {
     if (this.server.requiresAuthentication()) {
       ResponseGiver<?> responseGiver = this.getResponseGiver(request);
       if (responseGiver != null
-          && responseGiver.getLevel().getPermission() >= this.level.getPermission()) {
+          && this.level.getPermission() >= responseGiver.getLevel().getPermission()) {
         JsonMessenger.super.acceptRequest(request);
       }
     } else {

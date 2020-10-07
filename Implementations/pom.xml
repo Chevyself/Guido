@@ -3,6 +3,7 @@
          xmlns="http://maven.apache.org/POM/4.0.0"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
+
     <dependencies>
         <dependency>
             <groupId>com.starfishst.guido.api</groupId>
@@ -20,7 +21,7 @@
 
     <groupId>com.starfishst.guido.implementations</groupId>
     <artifactId>Implementations</artifactId>
-    <version>1.0.0-SNAPSHOT-0</version>
+    <version>1.0.0-SNAPSHOT-1</version>
     <description>This is the project that makes other modules be implemented in the bot</description>
 
     

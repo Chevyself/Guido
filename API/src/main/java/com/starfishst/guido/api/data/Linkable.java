@@ -30,7 +30,7 @@ public interface Linkable {
    *
    * @param unlinked the unlinked member
    */
-  default void addLink(@NotNull UnlinkedMember unlinked) {
+  default void addLink(@NotNull UnlinkedMemberData unlinked) {
     this.getLinks().put(unlinked.getKey(), unlinked.getValue());
   }
 

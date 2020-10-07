@@ -8,6 +8,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.Reader;
 import java.util.Properties;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -28,7 +29,7 @@ public class GuidoLocaleFile implements LocaleFile {
    */
   public GuidoLocaleFile(@NotNull File file) throws IOException {
     this.file = file;
-    FileReader reader = new FileReader(this.file);
+    Reader reader = new FileReader(this.file);
     this.properties.load(reader);
     reader.close();
     this.copyDefaults();

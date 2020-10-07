@@ -1,6 +1,6 @@
 package com.starfishst.bot.api.events.data.unlinked;
 
-import com.starfishst.bot.api.data.BotUnlinkedMember;
+import com.starfishst.bot.api.data.BotUnlinkedMemberData;
 import com.starfishst.bot.api.events.GuidoEvent;
 import org.jetbrains.annotations.NotNull;
 
@@ -8,14 +8,14 @@ import org.jetbrains.annotations.NotNull;
 public class BotUnlinkedMemberEvent implements GuidoEvent {
 
   /** The unlinked member involved in the event */
-  @NotNull private final BotUnlinkedMember member;
+  @NotNull private final BotUnlinkedMemberData member;
 
   /**
    * Create the event
    *
    * @param member the member involved in the event
    */
-  public BotUnlinkedMemberEvent(@NotNull BotUnlinkedMember member) {
+  public BotUnlinkedMemberEvent(@NotNull BotUnlinkedMemberData member) {
     this.member = member;
   }
 
@@ -25,7 +25,7 @@ public class BotUnlinkedMemberEvent implements GuidoEvent {
    * @return the unlinked member
    */
   @NotNull
-  public BotUnlinkedMember getMember() {
+  public BotUnlinkedMemberData getMember() {
     return member;
   }
 }
