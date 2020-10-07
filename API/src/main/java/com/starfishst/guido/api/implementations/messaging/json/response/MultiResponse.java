@@ -2,15 +2,15 @@ package com.starfishst.guido.api.implementations.messaging.json.response;
 
 import com.google.gson.JsonObject;
 import com.google.gson.internal.LinkedTreeMap;
-import com.starfishst.guido.api.data.AuthLevel;
+import com.starfishst.guido.api.data.token.AuthLevel;
 import com.starfishst.guido.api.implementations.messaging.Messenger;
 import com.starfishst.guido.api.implementations.messaging.Request;
 import com.starfishst.guido.api.implementations.messaging.Response;
 import com.starfishst.guido.api.implementations.messaging.ResponseGiver;
 import com.starfishst.guido.api.implementations.messaging.json.JsonMessenger;
-import com.starfishst.utils.gson.GsonProvider;
 import java.util.ArrayList;
 import java.util.List;
+import me.googas.commons.gson.GsonProvider;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

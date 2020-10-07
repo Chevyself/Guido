@@ -1,7 +1,6 @@
 package com.starfishst.guido.api.implementations.messaging.json;
 
-import com.starfishst.core.fallback.Fallback;
-import com.starfishst.guido.api.data.AuthLevel;
+import com.starfishst.guido.api.data.token.AuthLevel;
 import com.starfishst.guido.api.implementations.messaging.AwaitingRequest;
 import com.starfishst.guido.api.implementations.messaging.Request;
 import com.starfishst.guido.api.implementations.messaging.ResponseGiver;
@@ -14,6 +13,7 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.HashMap;
+import me.googas.commons.fallback.Fallback;
 import org.jetbrains.annotations.NotNull;
 
 /**

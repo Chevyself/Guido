@@ -1,0 +1,19 @@
+{
+  "type": "DISCORD_GUILD",
+  "linked-id": "123456",
+  "id": 86321059636203520,
+  "guild": 718281601112604675,
+  "stats": {
+    "name": 10
+  },
+  "permissions": [
+    {
+      "context": "discord",
+      "permissions": [
+        "perm1",
+        "perm2",
+        "-perm3"
+      ]
+    }
+  ]
+}

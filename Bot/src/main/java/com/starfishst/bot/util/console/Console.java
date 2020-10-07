@@ -1,8 +1,5 @@
-package com.starfishst.guido.api.console;
+package com.starfishst.bot.util.console;
 
-import com.starfishst.core.fallback.Fallback;
-import com.starfishst.core.utils.files.CoreFiles;
-import com.starfishst.core.utils.time.TimeUtils;
 import java.io.File;
 import java.io.IOException;
 import java.time.LocalDateTime;
@@ -11,6 +8,10 @@ import java.util.logging.FileHandler;
 import java.util.logging.Formatter;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import me.googas.commons.CoreFiles;
+import me.googas.commons.fallback.Fallback;
+import me.googas.commons.time.TimeUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

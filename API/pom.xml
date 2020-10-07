@@ -12,18 +12,27 @@
 
     <groupId>com.starfishst.guido.api</groupId>
     <artifactId>API</artifactId>
-    <version>1.0.0-SNAPSHOT-5</version>
+    <version>1.0.0-SNAPSHOT-6</version>
 
     <dependencies>
+        <!-- Commons dependency -->
         <dependency>
-            <groupId>com.starfishst.core</groupId>
-            <artifactId>core</artifactId>
-            <version>1.0.0-PRE2</version>
+            <groupId>me.googas.commons</groupId>
+            <artifactId>Commons</artifactId>
+            <version>1.0.2-SNAPSHOT</version>
+        </dependency>
+        <!-- Jetbrains -->
+        <dependency>
+            <artifactId>annotations</artifactId>
+            <groupId>org.jetbrains</groupId>
+            <version>17.0.0</version>
+            <optional>true</optional>
         </dependency>
         <dependency>
-            <groupId>com.starfishst.utils</groupId>
-            <artifactId>core-utils</artifactId>
-            <version>1.0-SNAPSHOT</version>
+            <groupId>com.google.code.gson</groupId>
+            <artifactId>gson</artifactId>
+            <version>2.8.6</version>
+            <scope>compile</scope>
         </dependency>
     </dependencies>
     

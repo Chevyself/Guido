@@ -1,0 +1,18 @@
+{
+  "type": "MINECRAFT",
+  "linked-id": "123456",
+  "uuid": "5eed208dde5840229ba76ccb5ea7e92a",
+  "stats": {
+    "name": 10
+  },
+  "permissions": [
+    {
+      "context": "discord",
+      "permissions": [
+        "perm1",
+        "perm2",
+        "-perm3"
+      ]
+    }
+  ]
+}

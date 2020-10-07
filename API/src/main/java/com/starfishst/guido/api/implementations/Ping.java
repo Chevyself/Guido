@@ -1,4 +1,4 @@
-package com.starfishst.guido.api;
+package com.starfishst.guido.api.implementations;
 
 /** A simple ping to send between messengers */
 public class Ping {

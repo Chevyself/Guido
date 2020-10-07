@@ -1,6 +1,6 @@
 package com.starfishst.guido.api.implementations.messaging;
 
-import com.starfishst.guido.api.data.AuthLevel;
+import com.starfishst.guido.api.data.token.AuthLevel;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

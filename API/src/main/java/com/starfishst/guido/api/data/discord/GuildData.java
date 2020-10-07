@@ -1,6 +1,6 @@
-package com.starfishst.guido.api.data;
+package com.starfishst.guido.api.data.discord;
 
-import com.starfishst.core.utils.cache.ICatchable;
+import me.googas.commons.cache.ICatchable;
 
 /** This object represents the data for a guild */
 public interface GuildData extends ICatchable {

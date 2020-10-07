@@ -1,13 +1,12 @@
 package com.starfishst.guido.api.implementations.messaging.json;
 
-import com.starfishst.core.fallback.Fallback;
-import com.starfishst.guido.api.console.Console;
 import com.starfishst.guido.api.implementations.messaging.Server;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.HashSet;
 import java.util.Set;
+import me.googas.commons.fallback.Fallback;
 import org.jetbrains.annotations.NotNull;
 
 /** An implementation for socket servers for guido */
@@ -71,9 +70,7 @@ public class JsonSocketServer extends Thread implements Runnable, Server {
    *
    * @param client the client connecting to the server
    */
-  protected void onConnection(@NotNull JsonClientThread client) {
-    Console.debug(client + " has been connected");
-  }
+  protected void onConnection(@NotNull JsonClientThread client) {}
 
   @Override
   public boolean requiresAuthentication() {

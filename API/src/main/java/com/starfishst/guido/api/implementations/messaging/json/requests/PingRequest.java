@@ -1,8 +1,8 @@
 package com.starfishst.guido.api.implementations.messaging.json.requests;
 
-import com.starfishst.core.utils.maps.Maps;
-import com.starfishst.guido.api.Ping;
+import com.starfishst.guido.api.implementations.Ping;
 import com.starfishst.guido.api.implementations.messaging.Request;
+import me.googas.commons.maps.Maps;
 import org.jetbrains.annotations.NotNull;
 
 /** Gets how long a requests is taking */

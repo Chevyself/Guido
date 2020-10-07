@@ -1,4 +1,4 @@
-package com.starfishst.guido.api.data;
+package com.starfishst.guido.api.data.token;
 
 /** The level of authentication for a token */
 public enum AuthLevel {

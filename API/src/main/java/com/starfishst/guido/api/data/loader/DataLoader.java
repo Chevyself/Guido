@@ -1,11 +1,12 @@
 package com.starfishst.guido.api.data.loader;
 
-import com.starfishst.guido.api.data.AuthToken;
-import com.starfishst.guido.api.data.GuildData;
-import com.starfishst.guido.api.data.MemberData;
-import com.starfishst.guido.api.data.RoleData;
-import com.starfishst.guido.api.data.UnlinkedMemberData;
 import com.starfishst.guido.api.data.UserData;
+import com.starfishst.guido.api.data.discord.GuildData;
+import com.starfishst.guido.api.data.discord.RoleData;
+import com.starfishst.guido.api.data.links.LinkedData;
+import com.starfishst.guido.api.data.token.AuthToken;
+import java.util.Collection;
+import me.googas.commons.RandomUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -22,16 +23,6 @@ public interface DataLoader {
   GuildData getGuildData(long id);
 
   /**
-   * Load the data of a member. If the data cannot be loaded create a fallback but don't return null
-   *
-   * @param id the id of the member
-   * @param guildId the guild id from which the data of the member must be gotten
-   * @return the data of the member or null if not found
-   */
-  @NotNull
-  MemberData getMemberData(long id, long guildId);
-
-  /**
    * Load the data of a role. If the data cannot be loaded create a fallback but don't return null
    *
    * @param id the id of the role
@@ -42,24 +33,13 @@ public interface DataLoader {
   RoleData getRoleData(long id, long guildId);
 
   /**
-   * Load the data of an user. If the data cannot be loaded create a fallback but don't return null
+   * Load the data of an user
    *
    * @param id the id of the user
    * @return the data of the user or null if not found
    */
-  @NotNull
-  UserData getUserData(long id);
-
-  /**
-   * Get a member by a link. This will attempt to get both members linked or unlinked
-   *
-   * @param guild the id of the guild
-   * @param key the key of the link
-   * @param value the value of the link
-   * @return the member if found or an unlinked member if not found
-   */
   @Nullable
-  MemberData getMemberByLink(long guild, @NotNull String key, @NotNull String value);
+  UserData getUserData(@NotNull String id);
 
   /**
    * Get an auth token using its unique string
@@ -71,9 +51,27 @@ public interface DataLoader {
   AuthToken getAuthToken(@NotNull String token);
 
   /**
-   * Delete an unlinked member
+   * Get the links from an user
    *
-   * @param member the unlinked member to delete
+   * @param user the user to get the links from
+   * @return the links
    */
-  void deleteUnlinked(@NotNull UnlinkedMemberData member);
+  @NotNull
+  Collection<LinkedData> getLinks(@NotNull UserData user);
+
+  /**
+   * Get a new id for an user
+   *
+   * @return the new id for an user
+   */
+  @NotNull
+  default String nextUserId() {
+    String id = RandomUtils.nextString(6);
+    UserData user = this.getUserData(id);
+    while (user != null) {
+      id = RandomUtils.nextString(6);
+      user = this.getUserData(id);
+    }
+    return id;
+  }
 }

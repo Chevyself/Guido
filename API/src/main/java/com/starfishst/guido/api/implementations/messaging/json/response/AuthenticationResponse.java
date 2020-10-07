@@ -1,15 +1,15 @@
 package com.starfishst.guido.api.implementations.messaging.json.response;
 
-import com.starfishst.core.utils.maps.Maps;
-import com.starfishst.guido.api.data.AuthLevel;
-import com.starfishst.guido.api.data.AuthToken;
 import com.starfishst.guido.api.data.loader.DataLoader;
+import com.starfishst.guido.api.data.token.AuthLevel;
+import com.starfishst.guido.api.data.token.AuthToken;
 import com.starfishst.guido.api.implementations.messaging.Messenger;
 import com.starfishst.guido.api.implementations.messaging.Request;
 import com.starfishst.guido.api.implementations.messaging.Response;
 import com.starfishst.guido.api.implementations.messaging.ResponseGiver;
 import com.starfishst.guido.api.implementations.messaging.VoidRequest;
 import com.starfishst.guido.api.implementations.messaging.json.JsonClientThread;
+import me.googas.commons.maps.Maps;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

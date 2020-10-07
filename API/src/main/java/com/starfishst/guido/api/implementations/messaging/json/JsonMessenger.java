@@ -1,8 +1,6 @@
 package com.starfishst.guido.api.implementations.messaging.json;
 
 import com.google.gson.JsonObject;
-import com.starfishst.core.fallback.Fallback;
-import com.starfishst.core.utils.Strings;
 import com.starfishst.guido.api.implementations.messaging.AwaitingRequest;
 import com.starfishst.guido.api.implementations.messaging.Messenger;
 import com.starfishst.guido.api.implementations.messaging.Request;
@@ -10,7 +8,6 @@ import com.starfishst.guido.api.implementations.messaging.Response;
 import com.starfishst.guido.api.implementations.messaging.ResponseGiver;
 import com.starfishst.guido.api.implementations.messaging.VoidRequest;
 import com.starfishst.guido.api.implementations.messaging.exception.MessengerListenFailException;
-import com.starfishst.utils.gson.GsonProvider;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -20,6 +17,9 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 import java.util.function.Consumer;
+import me.googas.commons.Strings;
+import me.googas.commons.fallback.Fallback;
+import me.googas.commons.gson.GsonProvider;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

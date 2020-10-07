@@ -1,6 +1,5 @@
 package com.starfishst.guido.api.implementations.messaging.json;
 
-import com.starfishst.core.fallback.Fallback;
 import com.starfishst.guido.api.implementations.messaging.AwaitingRequest;
 import com.starfishst.guido.api.implementations.messaging.ResponseGiver;
 import com.starfishst.guido.api.implementations.messaging.json.response.DisconnectedResponse;
@@ -12,6 +11,7 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.HashMap;
+import me.googas.commons.fallback.Fallback;
 import org.jetbrains.annotations.NotNull;
 
 /** This object represents a client that can be used to connect to the {@link JsonSocketServer} */

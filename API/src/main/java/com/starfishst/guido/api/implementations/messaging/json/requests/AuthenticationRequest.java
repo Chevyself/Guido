@@ -1,7 +1,7 @@
 package com.starfishst.guido.api.implementations.messaging.json.requests;
 
-import com.starfishst.core.utils.maps.Maps;
 import com.starfishst.guido.api.implementations.messaging.VoidRequest;
+import me.googas.commons.maps.Maps;
 import org.jetbrains.annotations.NotNull;
 
 /** Authenticate a token */

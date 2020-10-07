@@ -1,7 +1,7 @@
 package com.starfishst.guido.api.implementations.messaging.json.response;
 
-import com.starfishst.guido.api.Ping;
-import com.starfishst.guido.api.data.AuthLevel;
+import com.starfishst.guido.api.data.token.AuthLevel;
+import com.starfishst.guido.api.implementations.Ping;
 import com.starfishst.guido.api.implementations.messaging.Messenger;
 import com.starfishst.guido.api.implementations.messaging.Request;
 import com.starfishst.guido.api.implementations.messaging.Response;

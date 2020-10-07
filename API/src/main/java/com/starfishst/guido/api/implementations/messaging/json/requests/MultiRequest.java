@@ -1,9 +1,9 @@
 package com.starfishst.guido.api.implementations.messaging.json.requests;
 
-import com.starfishst.core.utils.maps.Maps;
 import com.starfishst.guido.api.implementations.messaging.Request;
 import java.util.ArrayList;
 import java.util.List;
+import me.googas.commons.maps.Maps;
 import org.jetbrains.annotations.NotNull;
 
 /** Creates a requests with multiple of them inside */

@@ -1,6 +1,7 @@
-package com.starfishst.guido.api.data;
+package com.starfishst.guido.api.data.token;
 
-import com.starfishst.core.utils.cache.ICatchable;
+import com.starfishst.guido.api.data.UserData;
+import me.googas.commons.cache.ICatchable;
 import org.jetbrains.annotations.NotNull;
 
 /** Token used by clients to authenticate */
