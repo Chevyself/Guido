@@ -4,13 +4,10 @@ import com.starfishst.bot.api.data.loader.BotDataLoader;
 import com.starfishst.bot.commands.DeveloperCommands;
 import com.starfishst.bot.commands.EloCommands;
 import com.starfishst.bot.commands.LangCommands;
-import com.starfishst.bot.commands.LinkCommand;
 import com.starfishst.bot.commands.TeamCommands;
 import com.starfishst.bot.commands.TokenCommands;
 import com.starfishst.bot.commands.UserCommands;
 import com.starfishst.bot.commands.providers.AuthLevelProvider;
-import com.starfishst.bot.commands.providers.BotUserProvider;
-import com.starfishst.bot.commands.providers.BotUserSenderProvider;
 import com.starfishst.bot.handlers.data.GuidoHandler;
 import com.starfishst.bot.handlers.data.loader.GuidoFileLoader;
 import com.starfishst.bot.handlers.data.loader.MongoDataLoader;
@@ -18,22 +15,23 @@ import com.starfishst.bot.handlers.lang.GuidoLanguageHandler;
 import com.starfishst.bot.handlers.responsive.GuidoMessagesController;
 import com.starfishst.bot.server.GuidoFallbackServer;
 import com.starfishst.bot.server.GuidoServer;
-import com.starfishst.commands.CommandManager;
-import com.starfishst.commands.ManagerOptions;
-import com.starfishst.commands.providers.registry.ProvidersRegistryJDA;
-import com.starfishst.core.fallback.Fallback;
-import com.starfishst.core.utils.Lots;
-import com.starfishst.core.utils.cache.Cache;
-import com.starfishst.core.utils.cache.ICatchable;
-import com.starfishst.core.utils.maps.Maps;
+import com.starfishst.bot.util.console.Console;
+import com.starfishst.guido.api.data.loader.DataLoader;
 import com.starfishst.guido.api.implementations.messaging.Server;
-import com.starfishst.utils.events.Cancellable;
-import com.starfishst.utils.events.Event;
-import com.starfishst.utils.events.ListenerManager;
+import com.starfishst.jda.CommandManager;
+import com.starfishst.jda.ManagerOptions;
+import com.starfishst.jda.providers.registry.JdaProvidersRegistry;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import me.googas.commons.Lots;
+import me.googas.commons.cache.Cache;
+import me.googas.commons.cache.ICatchable;
+import me.googas.commons.events.Cancellable;
+import me.googas.commons.events.Event;
+import me.googas.commons.events.ListenerManager;
+import me.googas.commons.maps.Maps;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.OnlineStatus;
 import net.dv8tion.jda.api.entities.Activity;
@@ -96,19 +94,20 @@ public class Guido {
     if (argsMaps.get("loader") != null) {
       if (argsMaps.get("loader").equalsIgnoreCase("mongo")) {
         try {
+          DataLoader old = dataLoader;
           dataLoader =
               new MongoDataLoader(
                   argsMaps.getOrDefault("uri", "none"),
                   argsMaps.getOrDefault("database", "testing-database"));
           languageHandler.setDataLoader(dataLoader);
+          handlers.remove(old);
+          handlers.add(dataLoader);
         } catch (Exception e) {
-          Fallback.addError("Mongo loader could not be initialized");
-          e.printStackTrace();
+          Console.exception(e, "Mongo loader could not be initialized");
         }
       }
-      System.out.println("Using data loader: " + dataLoader.getClass());
+      Console.info("Using data loader: " + dataLoader.getClass());
     }
-
     try {
       server =
           new GuidoServer(
@@ -117,13 +116,9 @@ public class Guido {
               dataLoader);
       server.start();
     } catch (IOException e) {
-      Fallback.addError("");
-      e.printStackTrace();
+      Console.exception(e, "Socket server could not be initialized");
     }
-
-    ProvidersRegistryJDA registry = new ProvidersRegistryJDA(languageHandler);
-    registry.addProvider(new BotUserProvider(dataLoader));
-    registry.addProvider(new BotUserSenderProvider());
+    JdaProvidersRegistry registry = new JdaProvidersRegistry(languageHandler);
     registry.addProvider(new AuthLevelProvider());
     CommandManager manager =
         new CommandManager(
@@ -136,7 +131,6 @@ public class Guido {
     manager.registerCommand(new DeveloperCommands(jda));
     manager.registerCommand(new EloCommands());
     manager.registerCommand(new LangCommands());
-    manager.registerCommand(new LinkCommand());
     manager.registerCommand(new TeamCommands());
     manager.registerCommand(new TokenCommands());
     manager.registerCommand(new UserCommands());
@@ -156,8 +150,7 @@ public class Guido {
     try {
       server.close();
     } catch (IOException e) {
-      Fallback.addError("Server could not be closed properly");
-      e.printStackTrace();
+      Console.exception(e, "Server could not be closed properly");
     }
     languageHandler.stop();
     for (GuidoHandler handler : handlers) {

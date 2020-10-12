@@ -1,7 +1,6 @@
 package com.starfishst.bot.server;
 
 import com.starfishst.bot.api.data.loader.BotDataLoader;
-import com.starfishst.bot.server.responses.data.MemberDataResponse;
 import com.starfishst.guido.api.implementations.messaging.ResponseGiver;
 import com.starfishst.guido.api.implementations.messaging.json.JsonClientThread;
 import com.starfishst.guido.api.implementations.messaging.json.JsonSocketServer;
@@ -34,6 +33,5 @@ public class GuidoServer extends JsonSocketServer {
   protected void onConnection(@NotNull JsonClientThread client) {
     HashMap<String, ResponseGiver<?>> responseGivers = client.getResponseGivers();
     responseGivers.put("authenticate", new AuthenticationResponse(client, loader));
-    responseGivers.put("member-data", new MemberDataResponse(loader));
   }
 }

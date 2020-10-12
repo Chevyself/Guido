@@ -1,14 +1,10 @@
 package com.starfishst.bot.commands;
 
-import com.starfishst.commands.annotations.Command;
-import com.starfishst.commands.annotations.Perm;
-import com.starfishst.commands.result.Result;
 import com.starfishst.core.annotations.Optional;
 import com.starfishst.core.annotations.Required;
-import com.starfishst.core.utils.Atomic;
-import com.starfishst.core.utils.Lots;
-import com.starfishst.core.utils.Pagination;
-import com.starfishst.core.utils.Strings;
+import com.starfishst.jda.annotations.Command;
+import com.starfishst.jda.annotations.Perm;
+import com.starfishst.jda.result.Result;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashMap;
@@ -16,6 +12,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import me.googas.commons.Atomic;
+import me.googas.commons.Lots;
+import me.googas.commons.Pagination;
+import me.googas.commons.Strings;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
@@ -226,7 +226,7 @@ public class EloCommands {
       return new Result("La pagina tiene que ser 1 o mayor");
     } else {
       if (page <= maxPage) {
-        List<Member> toSee = pagination.getPage(page, limit);
+        List<Member> toSee = pagination.getPage(page);
         StringBuilder builder = Strings.getBuilder();
         builder.append("Leaderboard:").append("\n");
         builder.append("**").append(page).append("**/").append(maxPage).append("\n");

@@ -3,8 +3,8 @@ package com.starfishst.bot.handlers.data;
 import com.starfishst.bot.api.data.BotGuild;
 import com.starfishst.bot.api.events.data.guild.BotGuildLoadedEvent;
 import com.starfishst.bot.api.events.data.guild.BotGuildUnloadedEvent;
-import com.starfishst.core.utils.cache.Catchable;
-import com.starfishst.core.utils.time.Time;
+import me.googas.commons.cache.Catchable;
+import me.googas.commons.time.Time;
 
 /** This object represents the data for a guild that is using this bot */
 public class GuidoGuild extends Catchable implements BotGuild {
@@ -35,7 +35,7 @@ public class GuidoGuild extends Catchable implements BotGuild {
   }
 
   @Override
-  public void onSecondsPassed() {}
+  public void onSecondPassed() {}
 
   @Override
   public void onRemove() {

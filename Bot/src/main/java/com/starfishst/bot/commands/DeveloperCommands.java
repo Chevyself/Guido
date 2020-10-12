@@ -1,15 +1,15 @@
 package com.starfishst.bot.commands;
 
 import com.starfishst.bot.Guido;
-import com.starfishst.commands.annotations.Command;
-import com.starfishst.commands.annotations.Perm;
-import com.starfishst.commands.context.CommandContext;
-import com.starfishst.commands.context.GuildCommandContext;
-import com.starfishst.commands.result.Result;
-import com.starfishst.commands.result.ResultType;
 import com.starfishst.core.annotations.Multiple;
 import com.starfishst.core.annotations.Required;
 import com.starfishst.core.objects.JoinedStrings;
+import com.starfishst.jda.annotations.Command;
+import com.starfishst.jda.annotations.Perm;
+import com.starfishst.jda.context.CommandContext;
+import com.starfishst.jda.context.GuildCommandContext;
+import com.starfishst.jda.result.Result;
+import com.starfishst.jda.result.ResultType;
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;

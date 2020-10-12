@@ -2,16 +2,16 @@ package com.starfishst.bot.handlers.data;
 
 import com.starfishst.bot.api.events.data.token.AuthTokenLoadedEvent;
 import com.starfishst.bot.api.events.data.token.AuthTokenUnloadedEvent;
-import com.starfishst.core.utils.RandomUtils;
-import com.starfishst.core.utils.cache.Catchable;
-import com.starfishst.core.utils.time.Time;
-import com.starfishst.core.utils.time.Unit;
-import com.starfishst.guido.api.data.AuthLevel;
-import com.starfishst.guido.api.data.AuthToken;
 import com.starfishst.guido.api.data.UserData;
+import com.starfishst.guido.api.data.token.AuthLevel;
+import com.starfishst.guido.api.data.token.AuthToken;
+import me.googas.commons.RandomUtils;
+import me.googas.commons.cache.Catchable;
+import me.googas.commons.time.Time;
+import me.googas.commons.time.Unit;
 import org.jetbrains.annotations.NotNull;
 
-/** An implementation for {@link com.starfishst.guido.api.data.AuthToken} */
+/** An implementation for {@link AuthToken} */
 public class GuidoAuthToken extends Catchable implements AuthToken {
 
   /** The unique string token */
@@ -31,7 +31,7 @@ public class GuidoAuthToken extends Catchable implements AuthToken {
    * @param user the user owner of the token
    */
   public GuidoAuthToken(@NotNull String token, @NotNull AuthLevel level, @NotNull UserData user) {
-    super(new Time(10, Unit.MINUTES));
+    super(new Time(1, Unit.MINUTES));
     this.token = token;
     this.level = level;
     this.user = user;
@@ -49,7 +49,7 @@ public class GuidoAuthToken extends Catchable implements AuthToken {
   }
 
   @Override
-  public void onSecondsPassed() {}
+  public void onSecondPassed() {}
 
   @Override
   public void onRemove() {

@@ -1,6 +1,6 @@
 package com.starfishst.bot.handlers.responsive.types;
 
-import com.starfishst.commands.utils.responsive.ResponsiveMessage;
+import com.starfishst.jda.utils.responsive.ResponsiveMessage;
 import net.dv8tion.jda.api.JDA;
 import org.jetbrains.annotations.NotNull;
 

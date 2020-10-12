@@ -1,9 +1,11 @@
 package com.starfishst.guido.api.data.loader;
 
 import com.starfishst.guido.api.data.UserData;
+import com.starfishst.guido.api.data.ValuesMap;
 import com.starfishst.guido.api.data.discord.GuildData;
 import com.starfishst.guido.api.data.discord.RoleData;
 import com.starfishst.guido.api.data.links.LinkedData;
+import com.starfishst.guido.api.data.links.LinkedDataType;
 import com.starfishst.guido.api.data.token.AuthToken;
 import java.util.Collection;
 import me.googas.commons.RandomUtils;
@@ -57,7 +59,17 @@ public interface DataLoader {
    * @return the links
    */
   @NotNull
-  Collection<LinkedData> getLinks(@NotNull UserData user);
+  Collection<? extends LinkedData> getLinks(@NotNull UserData user);
+
+  /**
+   * Get some linked data using identification
+   *
+   * @param type the type of data to get
+   * @param identification the identification to get the linked data from
+   * @return the linked data if found else null
+   */
+  @Nullable
+  LinkedData getLinkedData(@NotNull LinkedDataType type, @NotNull ValuesMap identification);
 
   /**
    * Get a new id for an user

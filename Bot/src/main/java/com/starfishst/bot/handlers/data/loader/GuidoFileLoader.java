@@ -1,33 +1,26 @@
 package com.starfishst.bot.handlers.data.loader;
 
 import com.starfishst.bot.api.data.BotGuild;
-import com.starfishst.bot.api.data.BotMember;
 import com.starfishst.bot.api.data.BotRole;
 import com.starfishst.bot.api.data.BotUser;
 import com.starfishst.bot.api.data.loader.BotDataLoader;
+import com.starfishst.bot.api.data.loader.BotLinkedData;
 import com.starfishst.bot.api.events.data.guild.BotGuildUnloadedEvent;
-import com.starfishst.bot.api.events.data.member.BotMemberUnloadedEvent;
 import com.starfishst.bot.api.events.data.role.BotRoleUnloadedEvent;
 import com.starfishst.bot.api.events.data.user.BotUserUnloadedEvent;
-import com.starfishst.bot.handlers.data.GuidoGuild;
-import com.starfishst.bot.handlers.data.GuidoMember;
-import com.starfishst.bot.handlers.data.GuidoRole;
-import com.starfishst.bot.handlers.data.GuidoUser;
-import com.starfishst.bot.handlers.data.GuidoValuesMap;
-import com.starfishst.core.fallback.Fallback;
-import com.starfishst.core.utils.cache.Cache;
-import com.starfishst.core.utils.files.CoreFiles;
-import com.starfishst.guido.api.data.AuthToken;
-import com.starfishst.guido.api.data.UnlinkedMemberData;
-import com.starfishst.utils.events.ListenPriority;
-import com.starfishst.utils.events.Listener;
-import com.starfishst.utils.gson.GsonProvider;
+import com.starfishst.bot.util.console.Console;
+import com.starfishst.guido.api.data.UserData;
+import com.starfishst.guido.api.data.ValuesMap;
+import com.starfishst.guido.api.data.links.LinkedDataType;
+import com.starfishst.guido.api.data.token.AuthToken;
 import java.io.File;
-import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.HashSet;
+import java.util.Collection;
+import me.googas.commons.CoreFiles;
+import me.googas.commons.events.ListenPriority;
+import me.googas.commons.events.Listener;
+import me.googas.commons.gson.GsonProvider;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -41,7 +34,7 @@ public class GuidoFileLoader implements BotDataLoader {
    *
    * @param event the event of the data being unloaded
    */
-  @Listener(priority = ListenPriority.HIGHEST)
+  @Deprecated
   public void onGuildDataUnloaded(@NotNull BotGuildUnloadedEvent event) {
     try {
       File file =
@@ -51,39 +44,8 @@ public class GuidoFileLoader implements BotDataLoader {
       GsonProvider.GSON.toJson(event.getData(), writer);
       writer.close();
     } catch (IOException e) {
-      Fallback.addError(
-          "IOException: Data for guild " + event.getData().getId() + " could not be saved");
-      e.printStackTrace();
-    }
-  }
-
-  /**
-   * This will listen to when the member data gets unloaded to save it
-   *
-   * @param event the event of the data being unloaded
-   */
-  @Listener(priority = ListenPriority.HIGHEST)
-  public void onMemberDataUnloaded(@NotNull BotMemberUnloadedEvent event) {
-    try {
-      File file =
-          CoreFiles.getOrCreate(
-              CoreFiles.currentDirectory()
-                  + "/data/"
-                  + event.getData().getGuildId()
-                  + "/members/"
-                  + event.getData().getId()
-                  + ".json");
-      FileWriter writer = new FileWriter(file);
-      GsonProvider.GSON.toJson(event.getData(), writer);
-      writer.close();
-    } catch (IOException e) {
-      Fallback.addError(
-          "IOException: Data for member "
-              + event.getData().getId()
-              + " in guild "
-              + event.getData().getGuildId()
-              + " could not be saved");
-      e.printStackTrace();
+      Console.exception(
+          e, "IOException: Data for guild " + event.getData().getId() + " could not be saved");
     }
   }
 
@@ -94,27 +56,7 @@ public class GuidoFileLoader implements BotDataLoader {
    */
   @Listener(priority = ListenPriority.HIGHEST)
   public void onRoleDataUnloaded(@NotNull BotRoleUnloadedEvent event) {
-    try {
-      File file =
-          CoreFiles.getOrCreate(
-              CoreFiles.currentDirectory()
-                  + "/data/"
-                  + event.getData().getGuildId()
-                  + "/roles/"
-                  + event.getData().getId()
-                  + ".json");
-      FileWriter writer = new FileWriter(file);
-      GsonProvider.GSON.toJson(event.getData(), writer);
-      writer.close();
-    } catch (IOException e) {
-      Fallback.addError(
-          "IOException: Data for role "
-              + event.getData().getId()
-              + " in guild "
-              + event.getData().getGuildId()
-              + " could not be saved");
-      e.printStackTrace();
-    }
+    throw new UnsupportedOperationException("Role data cannot be find using file loader");
   }
 
   /**
@@ -124,18 +66,7 @@ public class GuidoFileLoader implements BotDataLoader {
    */
   @Listener(priority = ListenPriority.HIGHEST)
   public void onUserDataUnloaded(@NotNull BotUserUnloadedEvent event) {
-    try {
-      File file =
-          CoreFiles.getOrCreate(
-              CoreFiles.currentDirectory() + "/users/" + event.getData().getId() + ".json");
-      FileWriter writer = new FileWriter(file);
-      GsonProvider.GSON.toJson(event.getData(), writer);
-      writer.close();
-    } catch (IOException e) {
-      Fallback.addError(
-          "IOException: Data for user " + event.getData().getId() + " could not be saved");
-      e.printStackTrace();
-    }
+    throw new UnsupportedOperationException("User data cannot be find using file loader");
   }
 
   @Override
@@ -149,72 +80,7 @@ public class GuidoFileLoader implements BotDataLoader {
    */
   @Override
   public @NotNull BotGuild getGuildData(long id) {
-    GuidoGuild guild =
-        Cache.getCatchable(
-            catchable -> catchable instanceof GuidoGuild && ((GuidoGuild) catchable).getId() == id,
-            GuidoGuild.class);
-    if (guild != null) {
-      return guild;
-    }
-    File file = CoreFiles.getFile(CoreFiles.currentDirectory() + "/data/" + id + "/info.json");
-    if (file != null) {
-      try {
-        FileReader reader = new FileReader(file);
-        BotGuild data = GsonProvider.GSON.fromJson(reader, GuidoGuild.class);
-        reader.close();
-        return data;
-      } catch (IOException e) {
-        Fallback.addError(
-            "IOException: Data for guild " + id + " could not be loaded. Created a fallback");
-        e.printStackTrace();
-        return new GuidoGuild(id);
-      }
-    } else {
-      return new GuidoGuild(id);
-    }
-  }
-
-  /**
-   * Load the data of a member
-   *
-   * @param id the id of the member
-   * @param guildId the guild id from which the data of the member must be gotten
-   * @return the data of the member or null if not found
-   */
-  @Override
-  public @NotNull BotMember getMemberData(long id, long guildId) {
-    GuidoMember member =
-        Cache.getCatchable(
-            catchable ->
-                catchable instanceof GuidoMember
-                    && ((GuidoMember) catchable).getId() == id
-                    && ((GuidoMember) catchable).getGuildId() == guildId,
-            GuidoMember.class);
-    if (member != null) {
-      return member;
-    }
-    File file =
-        CoreFiles.getFile(
-            CoreFiles.currentDirectory() + "/data/" + guildId + "/members/" + id + ".json");
-    if (file != null) {
-      try {
-        FileReader reader = new FileReader(file);
-        BotMember data = GsonProvider.GSON.fromJson(reader, GuidoMember.class);
-        reader.close();
-        return data;
-      } catch (IOException e) {
-        Fallback.addError(
-            "IOException: Data for member "
-                + id
-                + " from guild "
-                + guildId
-                + " could not be loaded. Created a fallback");
-        e.printStackTrace();
-        return new GuidoMember(id, guildId, new HashSet<>(), new HashMap<>(), new HashMap<>());
-      }
-    } else {
-      return new GuidoMember(id, guildId, new HashSet<>(), new HashMap<>(), new HashMap<>());
-    }
+    throw new UnsupportedOperationException("Guild data cannot be find using file loader");
   }
 
   /**
@@ -226,80 +92,80 @@ public class GuidoFileLoader implements BotDataLoader {
    */
   @Override
   public @NotNull BotRole getRoleData(long id, long guildId) {
-    GuidoRole role =
-        Cache.getCatchable(
-            catchable ->
-                catchable instanceof GuidoRole
-                    && ((GuidoRole) catchable).getId() == id
-                    && ((GuidoRole) catchable).getGuildId() == guildId,
-            GuidoRole.class);
-    if (role != null) {
-      return role;
-    }
-    File file =
-        CoreFiles.getFile(
-            CoreFiles.currentDirectory() + "/data/" + guildId + "/roles/" + id + ".json");
-    if (file != null) {
-      try {
-        FileReader reader = new FileReader(file);
-        BotRole data = GsonProvider.GSON.fromJson(reader, GuidoRole.class);
-        reader.close();
-        return data;
-      } catch (IOException e) {
-        Fallback.addError(
-            "IOException: Data for role "
-                + id
-                + " from guild "
-                + guildId
-                + " could not be loaded. Created a fallback");
-        e.printStackTrace();
-        return new GuidoRole(id, guildId, new HashSet<>());
-      }
-    } else {
-      return new GuidoRole(id, guildId, new HashSet<>());
-    }
+    throw new UnsupportedOperationException("Role data cannot be find using file loader");
   }
 
+  /**
+   * Load the data of an user
+   *
+   * @param id the id of the user
+   * @return the data of the user or null if not found
+   */
   @Override
-  public @NotNull BotUser getUserData(long id) {
-    GuidoUser user =
-        Cache.getCatchable(
-            catchable -> catchable instanceof GuidoUser && ((GuidoUser) catchable).getId() == id,
-            GuidoUser.class);
-    if (user != null) {
-      return user;
-    }
-    File file = CoreFiles.getFile(CoreFiles.currentDirectory() + "/users/" + id + ".json");
-    if (file != null) {
-      try {
-        FileReader reader = new FileReader(file);
-        BotUser data = GsonProvider.GSON.fromJson(reader, GuidoUser.class);
-        reader.close();
-        return data;
-      } catch (IOException e) {
-        Fallback.addError(
-            "IOException: Data for user " + id + " could not be loaded. Created a fallback");
-        e.printStackTrace();
-        return new GuidoUser(id, new HashSet<>(), new GuidoValuesMap());
-      }
-    } else {
-      return new GuidoUser(id, new HashSet<>(), new GuidoValuesMap());
-    }
+  public @Nullable BotUser getUserData(@NotNull String id) {
+    return null;
   }
 
+  /**
+   * Get linked data using it's type and identifications
+   *
+   * @param type the type of data to find
+   * @param identifications the way to identify the data
+   * @return the linked data if found else null
+   */
   @Override
-  public @NotNull BotMember getMemberByLink(
-      long guild, @NotNull String key, @NotNull String value) {
-    throw new UnsupportedOperationException("Unlinked members cannot be find using file loader");
+  public @Nullable BotLinkedData getLinkedData(
+      @NotNull LinkedDataType type, @NotNull ValuesMap identifications) {
+    throw new UnsupportedOperationException("Linked data cannot be find using file loader");
+  }
+
+  /**
+   * Get the discord data for an user
+   *
+   * @param userId the id of the user to get the data
+   * @return the data of the user
+   */
+  @Override
+  public @NotNull BotLinkedData getDiscordUserData(long userId) {
+    throw new UnsupportedOperationException("Linked data cannot be find using file loader");
+  }
+
+  /**
+   * Get the discord data for a member
+   *
+   * @param userId the id of the user to get the data
+   * @param guildId the id of the guild where the user is member from
+   * @return the data of the user
+   */
+  @Override
+  public @NotNull BotLinkedData getMemberData(long userId, long guildId) {
+    throw new UnsupportedOperationException("Link data cannot be find using file loader");
+  }
+
+  /**
+   * Get the links from an user
+   *
+   * @param user the user to get the links from
+   * @return the links
+   */
+  @Override
+  public @NotNull Collection<BotLinkedData> getLinks(@NotNull UserData user) {
+    throw new UnsupportedOperationException("Links data cannot be find using file loader");
+  }
+
+  /**
+   * Get all the member data for an user
+   *
+   * @param userId the id of the user to get the data
+   * @return the data of the user
+   */
+  @Override
+  public @NotNull Collection<BotLinkedData> getDiscordData(long userId) {
+    throw new UnsupportedOperationException("Links data cannot be find using file loader");
   }
 
   @Override
   public @Nullable AuthToken getAuthToken(@NotNull String token) {
     throw new UnsupportedOperationException("Auth tokens cannot be find using file loader");
-  }
-
-  @Override
-  public void deleteUnlinked(@NotNull UnlinkedMemberData member) {
-    throw new UnsupportedOperationException("Unlinked members cannot be find using file loader");
   }
 }

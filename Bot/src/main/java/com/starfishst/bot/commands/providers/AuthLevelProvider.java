@@ -1,12 +1,13 @@
 package com.starfishst.bot.commands.providers;
 
-import com.starfishst.commands.context.CommandContext;
 import com.starfishst.core.exceptions.ArgumentProviderException;
-import com.starfishst.core.providers.type.IArgumentProvider;
-import com.starfishst.guido.api.data.AuthLevel;
+import com.starfishst.guido.api.data.token.AuthLevel;
+import com.starfishst.jda.context.CommandContext;
+import com.starfishst.jda.providers.type.JdaArgumentProvider;
 import org.jetbrains.annotations.NotNull;
 
-public class AuthLevelProvider implements IArgumentProvider<AuthLevel, CommandContext> {
+/** Provides {@link AuthLevel} in commands */
+public class AuthLevelProvider implements JdaArgumentProvider<AuthLevel> {
   @Override
   public @NotNull Class<AuthLevel> getClazz() {
     return AuthLevel.class;

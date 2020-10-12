@@ -1,8 +1,10 @@
 {
   "type": "DISCORD_GUILD",
   "linked-id": "123456",
-  "id": 86321059636203520,
-  "guild": 718281601112604675,
+  "identification": {
+    "id": 86321059636203520,
+    "guild": 71828160111260467
+  },
   "stats": {
     "name": 10
   },

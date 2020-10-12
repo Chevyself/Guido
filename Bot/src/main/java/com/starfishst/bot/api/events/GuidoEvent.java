@@ -1,7 +1,7 @@
 package com.starfishst.bot.api.events;
 
 import com.starfishst.bot.Guido;
-import com.starfishst.utils.events.Event;
+import me.googas.commons.events.Event;
 
 /** This object represents an event called by the bot Guido */
 public interface GuidoEvent extends Event {

@@ -4,9 +4,9 @@ import com.starfishst.bot.Guido;
 import com.starfishst.bot.handlers.lang.GuidoLanguageHandler;
 import com.starfishst.bot.handlers.responsive.GuidoMessagesController;
 import com.starfishst.bot.handlers.responsive.types.lang.LangChangeResponsiveMessage;
-import com.starfishst.commands.annotations.Command;
-import com.starfishst.commands.context.CommandContext;
-import com.starfishst.commands.result.Result;
+import com.starfishst.jda.annotations.Command;
+import com.starfishst.jda.context.CommandContext;
+import com.starfishst.jda.result.Result;
 import net.dv8tion.jda.api.entities.User;
 import org.jetbrains.annotations.NotNull;
 

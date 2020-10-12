@@ -1,9 +1,5 @@
 package com.starfishst.guido.pgm.configuration;
 
-import com.starfishst.core.fallback.Fallback;
-import com.starfishst.core.utils.cache.Cache;
-import com.starfishst.core.utils.cache.ICatchable;
-import com.starfishst.core.utils.files.CoreFiles;
 import com.starfishst.guido.pgm.GuidoPlugin;
 import com.starfishst.guido.pgm.api.config.DataLoader;
 import com.starfishst.guido.pgm.api.config.PlayerData;
@@ -17,6 +13,10 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.UUID;
+import me.googas.commons.CoreFiles;
+import me.googas.commons.cache.Cache;
+import me.googas.commons.cache.ICatchable;
+import me.googas.commons.fallback.Fallback;
 import org.bukkit.event.EventHandler;
 import org.jetbrains.annotations.NotNull;
 
@@ -93,7 +93,7 @@ public class GuidoDataLoader implements DataLoader, GuidoListener {
         Cache.getCatchable(
             catchable ->
                 catchable instanceof GuidoPlayer
-                    && ((GuidoPlayer) catchable).getUniqueId().equals(uniqueId),
+                    && catchable.getUniqueId().equals(uniqueId),
             GuidoPlayer.class);
     if (data != null) {
       return data;

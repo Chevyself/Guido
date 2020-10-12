@@ -1,7 +1,7 @@
 package com.starfishst.bot.handlers.deploy.deployments;
 
-import com.starfishst.core.utils.maps.Maps;
 import com.starfishst.guido.api.implementations.messaging.VoidRequest;
+import me.googas.commons.maps.Maps;
 import org.jetbrains.annotations.NotNull;
 
 /** Deployed when a member gets a new link */

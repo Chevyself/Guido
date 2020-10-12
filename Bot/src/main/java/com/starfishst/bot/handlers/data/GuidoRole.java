@@ -3,11 +3,11 @@ package com.starfishst.bot.handlers.data;
 import com.starfishst.bot.api.data.BotRole;
 import com.starfishst.bot.api.events.data.role.BotRoleLoadedEvent;
 import com.starfishst.bot.api.events.data.role.BotRoleUnloadedEvent;
-import com.starfishst.core.utils.cache.Catchable;
-import com.starfishst.core.utils.time.Time;
 import com.starfishst.guido.api.data.PermissionStack;
 import java.util.HashSet;
 import java.util.Set;
+import me.googas.commons.cache.Catchable;
+import me.googas.commons.time.Time;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -62,7 +62,7 @@ public class GuidoRole extends Catchable implements BotRole {
   }
 
   @Override
-  public void onSecondsPassed() {}
+  public void onSecondPassed() {}
 
   @Override
   public void onRemove() {

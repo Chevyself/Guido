@@ -1,6 +1,6 @@
 package com.starfishst.bot.api.events.responsive;
 
-import com.starfishst.commands.utils.responsive.ResponsiveMessage;
+import com.starfishst.jda.utils.responsive.ResponsiveMessage;
 import org.jetbrains.annotations.NotNull;
 
 /** Called when a responsive message gets unloaded */

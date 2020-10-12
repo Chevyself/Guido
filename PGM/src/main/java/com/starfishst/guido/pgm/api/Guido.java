@@ -1,6 +1,5 @@
 package com.starfishst.guido.pgm.api;
 
-import com.starfishst.core.utils.Validate;
 import com.starfishst.guido.pgm.GuidoPlugin;
 import com.starfishst.guido.pgm.api.config.Configuration;
 import com.starfishst.guido.pgm.api.config.DataLoader;
@@ -8,6 +7,7 @@ import com.starfishst.guido.pgm.api.config.PlayerData;
 import com.starfishst.guido.pgm.api.events.GuidoEvent;
 import com.starfishst.guido.pgm.api.events.GuidoListener;
 import java.util.UUID;
+import me.googas.commons.Validate;
 import org.bukkit.Bukkit;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;

@@ -1,22 +1,20 @@
 package com.starfishst.bot.handlers.data;
 
 import com.starfishst.bot.api.data.BotUser;
-import com.starfishst.bot.api.events.data.user.BotUserLangUpdatedEvent;
 import com.starfishst.bot.api.events.data.user.BotUserLoadedEvent;
 import com.starfishst.bot.api.events.data.user.BotUserUnloadedEvent;
-import com.starfishst.core.utils.cache.Catchable;
-import com.starfishst.core.utils.time.Time;
 import com.starfishst.guido.api.data.PermissionStack;
-import com.starfishst.guido.api.data.ValuesMap;
 import java.util.HashSet;
 import java.util.Set;
+import me.googas.commons.cache.Catchable;
+import me.googas.commons.time.Time;
 import org.jetbrains.annotations.NotNull;
 
 /** An user that operates this bot */
 public class GuidoUser extends Catchable implements BotUser {
 
-  /** The unique id of the discord user */
-  private final long id;
+  /** The unique id of the user */
+  private final String id;
   /** The permissions that the user has */
   @NotNull private final Set<PermissionStack> permissions;
 
@@ -26,13 +24,15 @@ public class GuidoUser extends Catchable implements BotUser {
   /**
    * Create the guido user
    *
-   * @param id the discord id
+   * @param id the user id
    * @param permissions the permissions of the user
    * @param preferences the preferences of the user
    */
   public GuidoUser(
-      long id, @NotNull Set<PermissionStack> permissions, @NotNull GuidoValuesMap preferences) {
-    super(Time.fromString("3m"));
+      @NotNull String id,
+      @NotNull Set<PermissionStack> permissions,
+      @NotNull GuidoValuesMap preferences) {
+    super(Time.fromString("5m"));
     this.id = id;
     this.permissions = permissions;
     this.preferences = preferences;
@@ -42,11 +42,11 @@ public class GuidoUser extends Catchable implements BotUser {
   /** Create the guido user. This is deprecated because only gson may use it */
   @Deprecated
   public GuidoUser() {
-    this(0, new HashSet<>(), new GuidoValuesMap());
+    this("-1", new HashSet<>(), new GuidoValuesMap());
   }
 
   @Override
-  public void onSecondsPassed() {}
+  public void onSecondPassed() {}
 
   @Override
   public void onRemove() {
@@ -54,24 +54,8 @@ public class GuidoUser extends Catchable implements BotUser {
   }
 
   @Override
-  public long getId() {
+  @NotNull
+  public String getId() {
     return id;
-  }
-
-  @Override
-  public @NotNull ValuesMap getPreferences() {
-    return this.preferences;
-  }
-
-  @Override
-  public void setLang(@NotNull String lang) {
-    if (!new BotUserLangUpdatedEvent(this, lang).callAndGet()) {
-      BotUser.super.setLang(lang);
-    }
-  }
-
-  @Override
-  public @NotNull Set<PermissionStack> getPermissions() {
-    return this.permissions;
   }
 }

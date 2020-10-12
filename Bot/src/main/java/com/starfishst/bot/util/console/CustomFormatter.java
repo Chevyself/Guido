@@ -4,7 +4,6 @@ import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.logging.Formatter;
 import java.util.logging.LogRecord;
-
 import me.googas.commons.Strings;
 import me.googas.commons.time.TimeUtils;
 import org.jetbrains.annotations.NotNull;

@@ -1,16 +1,16 @@
 package com.starfishst.bot.handlers.lang;
 
 import com.starfishst.bot.api.data.loader.BotDataLoader;
-import com.starfishst.commands.context.CommandContext;
-import com.starfishst.commands.messages.MessagesProvider;
-import com.starfishst.commands.result.ResultType;
-import com.starfishst.core.fallback.Fallback;
-import com.starfishst.core.utils.files.CoreFiles;
-import com.starfishst.core.utils.maps.Maps;
-import com.starfishst.core.utils.time.Time;
+import com.starfishst.jda.context.CommandContext;
+import com.starfishst.jda.messages.MessagesProvider;
+import com.starfishst.jda.result.ResultType;
 import java.io.IOException;
 import java.util.HashSet;
 import java.util.Set;
+import me.googas.commons.CoreFiles;
+import me.googas.commons.fallback.Fallback;
+import me.googas.commons.maps.Maps;
+import me.googas.commons.time.Time;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -111,7 +111,10 @@ public class GuidoLanguageHandler implements MessagesProvider {
    */
   @NotNull
   public String getLang(@NotNull CommandContext context) {
-    return this.dataLoader.getUserData(context.getSender().getIdLong()).getLang();
+    return this.dataLoader
+        .getDiscordUserData(context.getSender().getIdLong())
+        .getPreferences()
+        .getValueOr("lang", String.class, "en");
   }
 
   /**

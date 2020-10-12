@@ -1,9 +1,9 @@
 package com.starfishst.guido.bungee.api.configuration;
 
-import com.starfishst.core.utils.Validate;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import me.googas.commons.Validate;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

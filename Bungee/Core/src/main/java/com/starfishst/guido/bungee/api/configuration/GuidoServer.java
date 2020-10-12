@@ -1,7 +1,7 @@
 package com.starfishst.guido.bungee.api.configuration;
 
-import com.starfishst.core.fallback.Fallback;
 import java.net.InetSocketAddress;
+import me.googas.commons.fallback.Fallback;
 import org.jetbrains.annotations.NotNull;
 
 /** This object represents a server that can be connected to a bungee that has the guido plugin */

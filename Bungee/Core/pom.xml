@@ -72,7 +72,7 @@
         <dependency>
             <groupId>com.starfishst.bungee</groupId>
             <artifactId>bungee</artifactId>
-            <version>1.0-SNAPSHOT</version>
+            <version>1.0.1-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>com.starfishst.guido.implementations</groupId>

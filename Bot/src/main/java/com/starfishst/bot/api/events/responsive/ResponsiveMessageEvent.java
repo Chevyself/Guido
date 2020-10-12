@@ -1,7 +1,7 @@
 package com.starfishst.bot.api.events.responsive;
 
 import com.starfishst.bot.api.events.GuidoEvent;
-import com.starfishst.commands.utils.responsive.ResponsiveMessage;
+import com.starfishst.jda.utils.responsive.ResponsiveMessage;
 import org.jetbrains.annotations.NotNull;
 
 /** An event that involves a responsive message */

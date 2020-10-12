@@ -1,7 +1,5 @@
 package com.starfishst.guido.pgm.configuration;
 
-import com.starfishst.core.utils.cache.Catchable;
-import com.starfishst.core.utils.time.Time;
 import com.starfishst.guido.pgm.api.config.PermissionData;
 import com.starfishst.guido.pgm.api.config.PlayerData;
 import com.starfishst.guido.pgm.api.events.config.PlayerDataPermissionAddedEvent;
@@ -10,6 +8,8 @@ import com.starfishst.guido.pgm.api.events.config.PlayerDataUnloadedEvent;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import me.googas.commons.cache.Catchable;
+import me.googas.commons.time.Time;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
@@ -67,7 +67,7 @@ public class GuidoPlayer extends Catchable implements PlayerData {
   }
 
   @Override
-  public void onSecondsPassed() {
+  public void onSecondPassed() {
     Player player = Bukkit.getPlayer(this.getUniqueId());
     if (player != null && player.isOnline()) {
       this.refresh();

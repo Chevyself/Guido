@@ -1,4 +1,4 @@
-import com.starfishst.core.utils.math.MathUtils;
+import me.googas.commons.math.MathUtils;
 
 public class TrianglesTest {
 

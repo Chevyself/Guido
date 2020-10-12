@@ -1,15 +1,15 @@
 package com.starfishst.bot.handlers.responsive.types.lang;
 
 import com.starfishst.bot.Guido;
-import com.starfishst.bot.api.data.BotUser;
 import com.starfishst.bot.api.events.responsive.ResponsiveMessageUnloadedEvent;
 import com.starfishst.bot.handlers.lang.GuidoLocaleFile;
 import com.starfishst.bot.handlers.responsive.types.GuidoResponsiveMessage;
-import com.starfishst.commands.utils.responsive.ReactionResponse;
-import com.starfishst.core.utils.cache.Catchable;
-import com.starfishst.core.utils.time.Time;
+import com.starfishst.guido.api.data.links.LinkedData;
+import com.starfishst.jda.utils.responsive.ReactionResponse;
 import java.util.HashSet;
 import java.util.Set;
+import me.googas.commons.cache.Catchable;
+import me.googas.commons.time.Time;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.TextChannel;
@@ -38,9 +38,10 @@ public class LangChangeResponsiveMessage extends Catchable implements GuidoRespo
     super(Time.fromString("30s"));
     this.id = message.getIdLong();
     this.channelId = message.getChannel().getIdLong();
-    BotUser userData = Guido.getDataLoader().getUserData(toChange.getIdLong());
+    LinkedData userData = Guido.getDataLoader().getDiscordUserData(toChange.getIdLong());
     for (GuidoLocaleFile file : Guido.getLanguageHandler().getFiles()) {
-      if (!file.getLang().equalsIgnoreCase(userData.getLang())) {
+      if (!file.getLang()
+          .equalsIgnoreCase(userData.getPreferences().getValueOr("lang", String.class, "en"))) {
         this.addReactionResponse(
             new LangChangeReactionResponse(toChange.getIdLong(), file.getUnicode()), message);
       }
@@ -48,7 +49,7 @@ public class LangChangeResponsiveMessage extends Catchable implements GuidoRespo
   }
 
   @Override
-  public void onSecondsPassed() {}
+  public void onSecondPassed() {}
 
   @Override
   public void onRemove() {

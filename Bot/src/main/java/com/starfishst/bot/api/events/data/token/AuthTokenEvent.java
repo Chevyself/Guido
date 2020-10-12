@@ -1,7 +1,7 @@
 package com.starfishst.bot.api.events.data.token;
 
 import com.starfishst.bot.api.events.GuidoEvent;
-import com.starfishst.guido.api.data.AuthToken;
+import com.starfishst.guido.api.data.token.AuthToken;
 import org.jetbrains.annotations.NotNull;
 
 /** An event that involves an auth token */

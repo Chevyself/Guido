@@ -2,7 +2,7 @@ package com.starfishst.bot.handlers.test;
 
 import com.starfishst.bot.api.events.GuidoEvent;
 import com.starfishst.bot.handlers.GuidoEventHandler;
-import com.starfishst.utils.events.Listener;
+import me.googas.commons.events.Listener;
 import org.jetbrains.annotations.NotNull;
 
 /** A handler for testing purposes */

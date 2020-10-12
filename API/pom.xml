@@ -19,7 +19,7 @@
         <dependency>
             <groupId>me.googas.commons</groupId>
             <artifactId>Commons</artifactId>
-            <version>1.0.2-SNAPSHOT</version>
+            <version>1.0.4-SNAPSHOT</version>
         </dependency>
         <!-- Jetbrains -->
         <dependency>
@@ -28,6 +28,7 @@
             <version>17.0.0</version>
             <optional>true</optional>
         </dependency>
+        <!-- Gson -->
         <dependency>
             <groupId>com.google.code.gson</groupId>
             <artifactId>gson</artifactId>

@@ -1,9 +1,9 @@
 package com.starfishst.bot.util;
 
-import com.starfishst.core.utils.Lots;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import me.googas.commons.Lots;
 import net.dv8tion.jda.api.entities.IMentionable;
 import org.jetbrains.annotations.NotNull;
 

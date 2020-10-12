@@ -1,15 +1,15 @@
 package com.starfishst.guido.bungee.core.listeners;
 
 import com.starfishst.bungee.utils.BungeeUtils;
-import com.starfishst.core.fallback.Fallback;
-import com.starfishst.core.utils.RandomUtils;
-import com.starfishst.core.utils.files.CoreFiles;
 import com.starfishst.guido.bungee.api.events.GuidoListener;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
 import java.util.UUID;
 import javax.imageio.ImageIO;
+import me.googas.commons.CoreFiles;
+import me.googas.commons.RandomUtils;
+import me.googas.commons.fallback.Fallback;
 import net.md_5.bungee.api.Favicon;
 import net.md_5.bungee.api.ServerPing;
 import net.md_5.bungee.api.chat.BaseComponent;
@@ -85,7 +85,7 @@ public class MotdListener implements GuidoListener {
   public BaseComponent getDescription() {
     return BungeeUtils.getComponent(
         BungeeUtils.build(
-            RandomUtils.getRandom(this.getSettings().getListSetting("descriptions"))));
+            RandomUtils.getRandom(this.getSettings().getListSetting("descriptions"))))[0];
   }
 
   /**

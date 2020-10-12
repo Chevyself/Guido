@@ -8,7 +8,6 @@ import java.util.logging.FileHandler;
 import java.util.logging.Formatter;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
 import me.googas.commons.CoreFiles;
 import me.googas.commons.fallback.Fallback;
 import me.googas.commons.time.TimeUtils;

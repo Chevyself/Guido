@@ -1,10 +1,10 @@
 package com.starfishst.guido.pgm.dependencies;
 
-import com.starfishst.core.utils.Lots;
 import com.starfishst.guido.pgm.api.dependencies.Dependency;
 import com.starfishst.guido.pgm.api.dependencies.DependencyManager;
 import java.util.Collection;
 import java.util.Set;
+import me.googas.commons.Lots;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
 

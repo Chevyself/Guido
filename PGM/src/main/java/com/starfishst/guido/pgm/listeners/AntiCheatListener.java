@@ -1,14 +1,14 @@
 package com.starfishst.guido.pgm.listeners;
 
 import com.starfishst.bukkit.utils.BukkitUtils;
-import com.starfishst.core.utils.Strings;
-import com.starfishst.core.utils.maps.MapBuilder;
-import com.starfishst.core.utils.maps.Maps;
-import com.starfishst.core.utils.time.Time;
 import com.starfishst.guido.pgm.api.events.GuidoListener;
 import com.starfishst.guido.pgm.api.events.anticheat.SuspectDetectedEvent;
 import java.util.HashMap;
 import java.util.UUID;
+import me.googas.commons.Strings;
+import me.googas.commons.maps.MapBuilder;
+import me.googas.commons.maps.Maps;
+import me.googas.commons.time.Time;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;

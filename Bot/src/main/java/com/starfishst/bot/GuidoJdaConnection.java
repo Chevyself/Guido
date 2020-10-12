@@ -1,11 +1,11 @@
 package com.starfishst.bot;
 
-import com.starfishst.core.fallback.Fallback;
-import com.starfishst.core.utils.Lots;
-import com.starfishst.core.utils.Validate;
-import com.starfishst.core.utils.time.Time;
+import com.starfishst.bot.util.console.Console;
 import java.util.Scanner;
 import javax.security.auth.login.LoginException;
+import me.googas.commons.Lots;
+import me.googas.commons.Validate;
+import me.googas.commons.time.Time;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.requests.GatewayIntent;
@@ -76,12 +76,10 @@ public class GuidoJdaConnection {
         Thread.sleep(1);
         millis++;
       } catch (InterruptedException e) {
-        Fallback.addError("InterruptedException: Discord connection failed");
-        e.printStackTrace();
+        Console.exception(e, "InterruptedException: Discord connection failed");
       }
     }
-    System.out.println(
-        "Discord took " + Time.fromMillis(millis).toEffectiveString() + " to connect");
+    Console.info("Discord took " + Time.fromMillis(millis).toEffectiveString() + " to connect");
     return jda;
   }
 

@@ -1,8 +1,5 @@
 package com.starfishst.bot.handlers.lang;
 
-import com.starfishst.core.fallback.Fallback;
-import com.starfishst.core.utils.Validate;
-import com.starfishst.core.utils.files.CoreFiles;
 import com.starfishst.guido.api.data.lang.LocaleFile;
 import java.io.File;
 import java.io.FileReader;
@@ -10,6 +7,9 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Reader;
 import java.util.Properties;
+import me.googas.commons.CoreFiles;
+import me.googas.commons.Validate;
+import me.googas.commons.fallback.Fallback;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

@@ -1,30 +1,18 @@
 package com.starfishst.bot.commands;
 
-import com.starfishst.bot.Guido;
-import com.starfishst.bot.api.data.BotUser;
-import com.starfishst.bot.handlers.lang.GuidoLanguageHandler;
-import com.starfishst.commands.annotations.Command;
-import com.starfishst.commands.annotations.Perm;
-import com.starfishst.commands.context.CommandContext;
-import com.starfishst.commands.result.Result;
-import com.starfishst.core.annotations.Parent;
-import com.starfishst.core.annotations.Required;
-import com.starfishst.core.utils.maps.Maps;
-import net.dv8tion.jda.api.entities.User;
-import org.jetbrains.annotations.NotNull;
+public class UserCommands {}
 
-/** Commands to manage users */
+/*
 public class UserCommands {
 
-  /** The handler to localize the messages of the command */
+ The handler to localize the messages of the command
   @NotNull private final GuidoLanguageHandler handler = Guido.getLanguageHandler();
 
-  /**
    * Manage users
    *
    * @param context the context of the command
    * @return the result saying to use a subcommand
-   */
+
   @Parent
   @Command(
       aliases = {"users", "user"},
@@ -34,7 +22,6 @@ public class UserCommands {
     return new Result(handler.getFile(context).get("cmd.users.result"));
   }
 
-  /**
    * Add a permission to an user
    *
    * @param commandContext the context of the command
@@ -43,7 +30,6 @@ public class UserCommands {
    * @param node the node of the permission
    * @param enabled whether the permission is enabled
    * @return the result of the command execution
-   */
   @Command(
       aliases = {"add", "'addPerm"},
       description = "cmd.users.add.desc",
@@ -79,7 +65,6 @@ public class UserCommands {
                     .append("enabled", String.valueOf(enabled))));
   }
 
-  /**
    * Removes the permission from an user
    *
    * @param commandContext the context of the command
@@ -87,7 +72,6 @@ public class UserCommands {
    * @param context the context to remove the permission from
    * @param node the node of the permission
    * @return the result of the command if it was removed successfully
-   */
   @Command(
       aliases = {"remove", "remPerm"},
       description = "cmd.users.remove.desc",
@@ -127,4 +111,4 @@ public class UserCommands {
                       .append("node", node)));
     }
   }
-}
+}*/

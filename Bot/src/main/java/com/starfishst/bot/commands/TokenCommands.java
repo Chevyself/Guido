@@ -2,12 +2,12 @@ package com.starfishst.bot.commands;
 
 import com.starfishst.bot.api.data.BotUser;
 import com.starfishst.bot.handlers.data.GuidoAuthToken;
-import com.starfishst.commands.annotations.Command;
-import com.starfishst.commands.annotations.Perm;
-import com.starfishst.commands.result.Result;
 import com.starfishst.core.annotations.Parent;
 import com.starfishst.core.annotations.Required;
-import com.starfishst.guido.api.data.AuthLevel;
+import com.starfishst.guido.api.data.token.AuthLevel;
+import com.starfishst.jda.annotations.Command;
+import com.starfishst.jda.annotations.Perm;
+import com.starfishst.jda.result.Result;
 
 /** Commands for token generation */
 public class TokenCommands {

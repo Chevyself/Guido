@@ -1,11 +1,11 @@
 package com.starfishst.guido.pgm.dependencies;
 
-import com.starfishst.core.utils.Lots;
 import com.starfishst.guido.pgm.api.dependencies.Dependency;
 import com.starfishst.guido.pgm.api.events.GuidoListener;
 import com.starfishst.guido.pgm.listeners.anticheat.AutoClickDetector;
 import com.starfishst.guido.pgm.listeners.anticheat.ReachDetector;
 import java.util.Collection;
+import me.googas.commons.Lots;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
 

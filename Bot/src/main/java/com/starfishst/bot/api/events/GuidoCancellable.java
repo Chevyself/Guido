@@ -1,8 +1,8 @@
 package com.starfishst.bot.api.events;
 
 import com.starfishst.bot.Guido;
-import com.starfishst.utils.events.Cancellable;
-import com.starfishst.utils.events.Event;
+import me.googas.commons.events.Cancellable;
+import me.googas.commons.events.Event;
 
 /** This class represents an event that can be cancelled */
 public interface GuidoCancellable extends Cancellable {
