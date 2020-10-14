@@ -8,6 +8,7 @@ import com.starfishst.bot.commands.TeamCommands;
 import com.starfishst.bot.commands.TokenCommands;
 import com.starfishst.bot.commands.UserCommands;
 import com.starfishst.bot.commands.providers.AuthLevelProvider;
+import com.starfishst.bot.commands.providers.BotUserSenderProvider;
 import com.starfishst.bot.handlers.data.GuidoHandler;
 import com.starfishst.bot.handlers.data.loader.GuidoFileLoader;
 import com.starfishst.bot.handlers.data.loader.MongoDataLoader;
@@ -17,7 +18,6 @@ import com.starfishst.bot.server.GuidoFallbackServer;
 import com.starfishst.bot.server.GuidoServer;
 import com.starfishst.bot.util.console.Console;
 import com.starfishst.guido.api.data.loader.DataLoader;
-import com.starfishst.guido.api.implementations.messaging.Server;
 import com.starfishst.jda.CommandManager;
 import com.starfishst.jda.ManagerOptions;
 import com.starfishst.jda.providers.registry.JdaProvidersRegistry;
@@ -32,6 +32,7 @@ import me.googas.commons.events.Cancellable;
 import me.googas.commons.events.Event;
 import me.googas.commons.events.ListenerManager;
 import me.googas.commons.maps.Maps;
+import me.googas.messaging.api.Server;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.OnlineStatus;
 import net.dv8tion.jda.api.entities.Activity;
@@ -112,14 +113,14 @@ public class Guido {
       server =
           new GuidoServer(
               Integer.parseInt(argsMaps.getOrDefault("port", "3000")),
-              Long.parseLong(argsMaps.getOrDefault("timeout", "3000")),
-              dataLoader);
+              Long.parseLong(argsMaps.getOrDefault("timeout", "3000")));
       server.start();
     } catch (IOException e) {
       Console.exception(e, "Socket server could not be initialized");
     }
     JdaProvidersRegistry registry = new JdaProvidersRegistry(languageHandler);
     registry.addProvider(new AuthLevelProvider());
+    registry.addProvider(new BotUserSenderProvider());
     CommandManager manager =
         new CommandManager(
             jda,

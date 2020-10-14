@@ -78,13 +78,18 @@
             <groupId>com.starfishst.jda</groupId>
             <artifactId>JDA</artifactId>
             <version>1.0.2-SNAPSHOT</version>
-            <scope>compile</scope>
         </dependency>
         <!-- Dependency to the API -->
         <dependency>
             <groupId>com.starfishst.guido.api</groupId>
             <artifactId>API</artifactId>
-            <version>1.0.0-SNAPSHOT-6</version>
+            <version>1.0.0-SNAPSHOT-8</version>
+        </dependency>
+        <!-- Dependency to Commons-Messaging -->
+        <dependency>
+            <groupId>me.googas.messaging</groupId>
+            <artifactId>Commons-Messaging</artifactId>
+            <version>1.0.2-SNAPSHOT</version>
             <scope>compile</scope>
         </dependency>
         <!-- Mongo dependency -->

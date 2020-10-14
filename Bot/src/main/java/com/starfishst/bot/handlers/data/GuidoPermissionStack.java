@@ -1,19 +1,18 @@
 package com.starfishst.bot.handlers.data;
 
-import com.starfishst.guido.api.data.Permission;
 import com.starfishst.guido.api.data.PermissionStack;
 import java.util.Collection;
 import java.util.Set;
 import org.jetbrains.annotations.NotNull;
 
 /** An implementation for permission stacks */
-public class GuidoPermissionStack implements PermissionStack {
+public class GuidoPermissionStack implements PermissionStack<GuidoPermission> {
 
   /** The context of the permission stack */
   @NotNull private final String context;
 
   /** The permissions inside the stack */
-  @NotNull private final Set<Permission> permissions;
+  @NotNull private final Set<GuidoPermission> permissions;
 
   /**
    * Create the permission stack
@@ -21,7 +20,7 @@ public class GuidoPermissionStack implements PermissionStack {
    * @param context the context of the stack
    * @param permissions the permissions inside the stack
    */
-  public GuidoPermissionStack(@NotNull String context, @NotNull Set<Permission> permissions) {
+  public GuidoPermissionStack(@NotNull String context, @NotNull Set<GuidoPermission> permissions) {
     this.context = context;
     this.permissions = permissions;
   }
@@ -42,7 +41,7 @@ public class GuidoPermissionStack implements PermissionStack {
    * @return the permission that the stack has
    */
   @Override
-  public @NotNull Collection<Permission> getPermissions() {
+  public @NotNull Collection<GuidoPermission> getPermissions() {
     return this.permissions;
   }
 

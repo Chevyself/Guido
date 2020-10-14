@@ -12,7 +12,7 @@
 
     <groupId>com.starfishst.guido.api</groupId>
     <artifactId>API</artifactId>
-    <version>1.0.0-SNAPSHOT-6</version>
+    <version>1.0.0-SNAPSHOT-8</version>
 
     <dependencies>
         <!-- Commons dependency -->
@@ -20,13 +20,21 @@
             <groupId>me.googas.commons</groupId>
             <artifactId>Commons</artifactId>
             <version>1.0.4-SNAPSHOT</version>
+            <scope>compile</scope>
+        </dependency>
+        <!-- Dependency to Commons-Messaging -->
+        <dependency>
+            <groupId>me.googas.messaging</groupId>
+            <artifactId>Commons-Messaging</artifactId>
+            <version>1.0.2-SNAPSHOT</version>
+            <scope>compile</scope>
         </dependency>
         <!-- Jetbrains -->
         <dependency>
             <artifactId>annotations</artifactId>
             <groupId>org.jetbrains</groupId>
             <version>17.0.0</version>
-            <optional>true</optional>
+            <scope>compile</scope>
         </dependency>
         <!-- Gson -->
         <dependency>

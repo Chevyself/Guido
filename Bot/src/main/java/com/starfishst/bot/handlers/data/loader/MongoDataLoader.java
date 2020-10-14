@@ -137,7 +137,7 @@ public class MongoDataLoader implements BotDataLoader {
     AuthToken token = event.getToken();
     Document document =
         new Document("token", token.getToken())
-            .append("level", token.getLevel())
+            .append("level", token.getLevel().toString())
             .append("user", token.getUser().getId());
     Document query = new Document("token", token.getToken());
     Document first = this.tokens.find(query).first();
@@ -155,9 +155,9 @@ public class MongoDataLoader implements BotDataLoader {
    * @return the document of the permission stack
    */
   @NotNull
-  private List<Document> getPermissionStacksDocument(@NotNull Permissible permissible) {
+  private List<Document> getPermissionStacksDocument(@NotNull Permissible<?> permissible) {
     List<Document> stack = new ArrayList<>();
-    for (PermissionStack permission : permissible.getPermissions()) {
+    for (PermissionStack<?> permission : permissible.getPermissions()) {
       List<String> nodes = new ArrayList<>();
       for (Permission permissionPermission : permission.getPermissions()) {
         nodes.add(permissionPermission.getNodeAppended());
@@ -233,11 +233,11 @@ public class MongoDataLoader implements BotDataLoader {
    * @return the set of the permission stacks
    */
   @NotNull
-  private Set<PermissionStack> getPermissionStacks(@NotNull Document document) {
-    Set<PermissionStack> permissions = new HashSet<>();
+  private Set<GuidoPermissionStack> getPermissionStacks(@NotNull Document document) {
+    Set<GuidoPermissionStack> permissions = new HashSet<>();
     if (document.get("permissions") instanceof List) {
       for (Document stackDocument : document.getList("permissions", Document.class)) {
-        Set<Permission> guidoPermissions = new HashSet<>();
+        Set<GuidoPermission> guidoPermissions = new HashSet<>();
         List<String> stack = stackDocument.getList("permissions", String.class);
         for (String string : stack) {
           if (string.startsWith("-")) {

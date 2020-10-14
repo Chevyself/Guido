@@ -14,10 +14,66 @@
     <artifactId>Bungee</artifactId>
     <version>1.0.0-SNAPSHOT-0</version>
     <description>Implementations for bungee</description>
-    <packaging>pom</packaging>
 
-    <modules>
-        <module>Core</module>
-    </modules>
+    <build>
+        <plugins>
+            <!-- Maven jar shade plugin -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-shade-plugin</artifactId>
+                <version>3.2.1</version>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>shade</goal>
+                        </goals>
+                        <configuration>
+                            <createDependencyReducedPom>false</createDependencyReducedPom>
+                            <outputFile>Guido-Bungee-${project.artifactId}.jar</outputFile>
+                            <artifactSet>
+                                <excludes>
+                                    <exclude>META-INF/*.SF</exclude>
+                                    <exclude>META-INF/*.DSA</exclude>
+                                    <exclude>META-INF/*.RSA</exclude>
+                                </excludes>
+                                <includes>
+                                    <include>com.starfishst.guido.implementations:Implementations</include>
+                                    <include>com.starfishst.guido.api:API</include>
+                                    <include>com.starfishst.bungee:bungee</include>
+                                    <include>com.starfishst.core:core</include>
+                                    <include>com.starfishst.utils:core-utils</include>
+                                </includes>
+                            </artifactSet>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+
+    <dependencies>
+        <!-- Dependency to the bungee api -->
+        <dependency>
+            <groupId>net.md-5</groupId>
+            <artifactId>bungeecord-api</artifactId>
+            <version>1.16-R0.3</version>
+            <type>jar</type>
+            <scope>provided</scope>
+        </dependency>
+        <!-- Dependency to the bungee command framework -->
+        <dependency>
+            <groupId>com.starfishst.bungee</groupId>
+            <artifactId>bungee</artifactId>
+            <version>1.0.1-SNAPSHOT</version>
+        </dependency>
+        <!-- Dependency on the bot api -->
+        <dependency>
+            <groupId>com.starfishst.guido.api</groupId>
+            <artifactId>API</artifactId>
+            <version>1.0.0-SNAPSHOT-8</version>
+            <scope>compile</scope>
+        </dependency>
+    </dependencies>
     
 </project>

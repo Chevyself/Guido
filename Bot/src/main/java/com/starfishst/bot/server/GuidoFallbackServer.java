@@ -1,9 +1,9 @@
 package com.starfishst.bot.server;
 
-import com.starfishst.guido.api.implementations.messaging.Messenger;
-import com.starfishst.guido.api.implementations.messaging.Server;
 import java.util.HashSet;
 import java.util.Set;
+import me.googas.messaging.api.Messenger;
+import me.googas.messaging.api.Server;
 import org.jetbrains.annotations.NotNull;
 
 /** A fallback server in case {@link GuidoServer does not work} */

@@ -23,7 +23,7 @@ public class GuidoRole extends Catchable implements BotRole {
   private final long guildId;
 
   /** The set of permission that the role possess */
-  @NotNull private final Set<PermissionStack> permissions;
+  @NotNull private final Set<PermissionStack<GuidoPermission>> permissions;
 
   /**
    * Create the guido role
@@ -32,11 +32,11 @@ public class GuidoRole extends Catchable implements BotRole {
    * @param guildId the unique id of the guild where this role exists
    * @param permissions the permission that the role posses
    */
-  public GuidoRole(long id, long guildId, @NotNull Set<PermissionStack> permissions) {
+  public GuidoRole(long id, long guildId, @NotNull Set<GuidoPermissionStack> permissions) {
     super(Time.fromString("3m"));
     this.id = id;
     this.guildId = guildId;
-    this.permissions = permissions;
+    this.permissions = new HashSet<>(permissions);
     new BotRoleLoadedEvent(this).call();
   }
 
@@ -57,7 +57,7 @@ public class GuidoRole extends Catchable implements BotRole {
   }
 
   @Override
-  public @NotNull Set<PermissionStack> getPermissions() {
+  public @NotNull Set<PermissionStack<GuidoPermission>> getPermissions() {
     return this.permissions;
   }
 

@@ -18,8 +18,8 @@ public class GuidoValuesMap implements ValuesMap {
    *
    * @param map the map of values
    */
-  public GuidoValuesMap(@NotNull HashMap<String, Object> map) {
-    this.map = map;
+  public GuidoValuesMap(@NotNull Map<String, Object> map) {
+    this.map = new HashMap<>(map);
   }
 
   /**
@@ -80,5 +80,20 @@ public class GuidoValuesMap implements ValuesMap {
   @Override
   public int hashCode() {
     return map.hashCode();
+  }
+
+  @Override
+  public GuidoValuesMap addValue(@NotNull String name, @NotNull Object value) {
+    return (GuidoValuesMap) ValuesMap.super.addValue(name, value);
+  }
+
+  @Override
+  public GuidoValuesMap addValues(@NotNull Map<String, Object> map) {
+    return (GuidoValuesMap) ValuesMap.super.addValues(map);
+  }
+
+  @Override
+  public GuidoValuesMap addValues(@NotNull ValuesMap map) {
+    return (GuidoValuesMap) ValuesMap.super.addValues(map);
   }
 }

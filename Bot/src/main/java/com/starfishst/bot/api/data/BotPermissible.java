@@ -10,7 +10,7 @@ import java.util.HashSet;
 import org.jetbrains.annotations.NotNull;
 
 /** A bot implementation for {@link Permissible} */
-public interface BotPermissible extends Permissible {
+public interface BotPermissible extends Permissible<GuidoPermission> {
 
   /**
    * Adds a permission for this permissible
@@ -20,13 +20,13 @@ public interface BotPermissible extends Permissible {
    * @param enabled whether the permission is enabled
    */
   default void addPermission(@NotNull String context, @NotNull String node, boolean enabled) {
-    PermissionStack stack = this.getPermissions(context);
+    PermissionStack<GuidoPermission> stack = this.getPermissions(context);
     if (stack == null) {
       stack = new GuidoPermissionStack(context, new HashSet<>());
       this.getPermissions().add(stack);
     }
     GuidoPermission permission = new GuidoPermission(node, enabled);
-    stack.getPermissions().add(permission);
+    stack.add(permission);
     new PermissiblePermissionAddedEvent(this, stack, permission);
   }
 
@@ -38,7 +38,7 @@ public interface BotPermissible extends Permissible {
    * @return whether the permission was removed. True if it was removed false otherwise
    */
   default boolean removePermission(@NotNull String context, @NotNull String node) {
-    PermissionStack stack = this.getPermissions(context);
+    PermissionStack<GuidoPermission> stack = this.getPermissions(context);
     if (stack != null) {
       if (stack.hasPermission(node)) {
         stack.getPermissions().removeIf(permission -> permission.getNode().equalsIgnoreCase(node));

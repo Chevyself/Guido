@@ -13,8 +13,6 @@
  <modules>
      <module>Bot</module>
      <module>API</module>
-     <module>Implementations</module>
-     <module>PGM</module>
      <module>Bukkit</module>
      <module>Bungee</module>
  </modules>

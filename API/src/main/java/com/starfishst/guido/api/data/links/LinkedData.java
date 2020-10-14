@@ -1,6 +1,7 @@
 package com.starfishst.guido.api.data.links;
 
 import com.starfishst.guido.api.data.Permissible;
+import com.starfishst.guido.api.data.Permission;
 import com.starfishst.guido.api.data.Stateable;
 import com.starfishst.guido.api.data.UserData;
 import com.starfishst.guido.api.data.ValuesMap;
@@ -8,8 +9,12 @@ import me.googas.commons.cache.ICatchable;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-/** This object represents data that has been linked to an user */
-public interface LinkedData extends Permissible, Stateable, ICatchable {
+/**
+ * This object represents data that has been linked to an user
+ *
+ * @param <T> the type of permission that the data can contain
+ */
+public interface LinkedData<T extends Permission> extends Permissible<T>, Stateable, ICatchable {
 
   /**
    * Get the type of linked data

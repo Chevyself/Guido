@@ -6,8 +6,10 @@ import org.jetbrains.annotations.NotNull;
 /**
  * A permission stack contains permissions with certain context to use its permissions in different
  * situations
+ *
+ * @param <T> the type of permission that the stack supports
  */
-public interface PermissionStack {
+public interface PermissionStack<T extends Permission> {
 
   /**
    * Check whether this permission stack has a permission
@@ -48,10 +50,30 @@ public interface PermissionStack {
   String getContext();
 
   /**
+   * Adds a permission to the set
+   *
+   * @param perm the permission to add
+   * @return whether the permission was added
+   */
+  default boolean add(@NotNull T perm) {
+    return this.getPermissions().add(perm);
+  }
+
+  /**
+   * Removes a permission to the set
+   *
+   * @param perm the permission to remove
+   * @return whether the permission was removed
+   */
+  default boolean remove(@NotNull T perm) {
+    return this.getPermissions().remove(perm);
+  }
+
+  /**
    * Get the permissions that the stack has
    *
    * @return the permission that the stack has
    */
   @NotNull
-  Collection<Permission> getPermissions();
+  Collection<T> getPermissions();
 }

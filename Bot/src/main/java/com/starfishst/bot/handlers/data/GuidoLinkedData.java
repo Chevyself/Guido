@@ -9,6 +9,7 @@ import com.starfishst.guido.api.data.UserData;
 import com.starfishst.guido.api.data.ValuesMap;
 import com.starfishst.guido.api.data.links.LinkedDataType;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Set;
 import me.googas.commons.cache.Catchable;
 import me.googas.commons.time.Time;
@@ -27,7 +28,7 @@ public class GuidoLinkedData extends Catchable implements BotLinkedData {
   /** The stats of the data */
   @NotNull private final HashMap<String, Double> stats;
   /** The permissions */
-  @NotNull private final Set<PermissionStack> permissions;
+  @NotNull private final Set<PermissionStack<GuidoPermission>> permissions;
   /** The linked user */
   @Nullable private BotUser user;
 
@@ -38,14 +39,24 @@ public class GuidoLinkedData extends Catchable implements BotLinkedData {
       @NotNull GuidoValuesMap identification,
       @NotNull GuidoValuesMap preferences,
       @NotNull HashMap<String, Double> stats,
-      @NotNull Set<PermissionStack> permissions) {
+      @NotNull Set<GuidoPermissionStack> permissions) {
     super(Time.fromString("3m"), addToCache);
     this.type = type;
     this.user = user;
     this.identification = identification;
     this.preferences = preferences;
     this.stats = stats;
-    this.permissions = permissions;
+    this.permissions = new HashSet<>(permissions);
+  }
+
+  /**
+   * Get the set of permission stack. This are all the permissions that this entity posses
+   *
+   * @return the set of permissions of the entity
+   */
+  @Override
+  public @NotNull Set<PermissionStack<GuidoPermission>> getPermissions() {
+    return this.permissions;
   }
 
   @Override
@@ -70,16 +81,6 @@ public class GuidoLinkedData extends Catchable implements BotLinkedData {
   @Override
   public @NotNull HashMap<String, Double> getStats() {
     return this.stats;
-  }
-
-  /**
-   * Get the set of permission stack. This are all the permissions that this entity posses
-   *
-   * @return the set of permissions of the entity
-   */
-  @Override
-  public @NotNull Set<PermissionStack> getPermissions() {
-    return this.permissions;
   }
 
   /**

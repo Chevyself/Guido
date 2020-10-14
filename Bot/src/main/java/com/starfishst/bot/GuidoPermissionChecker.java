@@ -10,6 +10,8 @@ import com.starfishst.jda.context.GuildCommandContext;
 import com.starfishst.jda.messages.MessagesProvider;
 import com.starfishst.jda.result.Result;
 import com.starfishst.jda.result.ResultType;
+import java.util.Set;
+import me.googas.commons.Lots;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Role;
 import org.jetbrains.annotations.NotNull;
@@ -17,6 +19,12 @@ import org.jetbrains.annotations.Nullable;
 
 /** Checks the permissions for the guido bot */
 public class GuidoPermissionChecker implements PermissionChecker {
+
+  /**
+   * The set of developers which are allowed to use any command without having the respective
+   * permission
+   */
+  @NotNull private final Set<Long> developers = Lots.set(86321059636203520L);
 
   /** The messages provider in case that it has to remove a result */
   @NotNull private final MessagesProvider messagesProvider;
@@ -43,12 +51,15 @@ public class GuidoPermissionChecker implements PermissionChecker {
     }
     // If a node starts with user: it will check for user permissions not member
     if (!perm.node().isEmpty()) {
+      if (developers.contains(context.getSender().getIdLong())) {
+        return null;
+      }
       if (context instanceof GuildCommandContext && !perm.node().startsWith("user:")) {
         BotLinkedData member =
             this.dataLoader.getMemberData(
                 ((GuildCommandContext) context).getMember().getIdLong(),
                 ((GuildCommandContext) context).getGuild().getIdLong());
-        if (member.hasPermission(perm.node(), "discord") || member.hasPermission("*", "discord")) {
+        if (member.hasPermission(perm.node(), "discord")) {
           return null;
         }
         for (Role role : ((GuildCommandContext) context).getMember().getRoles()) {
@@ -63,7 +74,7 @@ public class GuidoPermissionChecker implements PermissionChecker {
         String node = perm.node().startsWith("user:") ? perm.node().substring(5) : perm.node();
         BotLinkedData userData =
             this.dataLoader.getDiscordUserData(context.getSender().getIdLong());
-        if (userData.hasPermission(node, "discord") || userData.hasPermission("*", "discord")) {
+        if (userData.hasPermission(node, "discord")) {
           return null;
         }
       }

@@ -7,13 +7,91 @@
     <parent>
         <groupId>com.starfishst.guido</groupId>
         <artifactId>Guido</artifactId>
-        <version>1.0.0</version>
+        <version>1.1.0</version>
     </parent>
 
     <groupId>com.starfishst.guido.bukkit</groupId>
     <artifactId>Bukkit</artifactId>
-    <version>1.0.0</version>
+    <version>1.1.0</version>
     <description>Implementations for bukkit</description>
-    <packaging>pom</packaging>
+    <packaging>jar</packaging>
+
+    <build>
+        <plugins>
+            <!-- Maven jar shade plugin -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-shade-plugin</artifactId>
+                <version>3.2.1</version>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>shade</goal>
+                        </goals>
+                        <configuration>
+                            <createDependencyReducedPom>false</createDependencyReducedPom>
+                            <outputFile>Guido-${project.artifactId}.jar</outputFile>
+                            <artifactSet>
+                                <excludes>
+                                    <exclude>META-INF/*.SF</exclude>
+                                    <exclude>META-INF/*.DSA</exclude>
+                                    <exclude>META-INF/*.RSA</exclude>
+                                </excludes>
+                                <includes>
+                                    <include>com.starfishst.guido.implementations:Implementations</include>
+                                    <include>com.starfishst.bukkit:Bukkit</include>
+                                    <include>com.starfishst.core:core</include>
+                                    <include>com.starfishst.utils:core-utils</include>
+                                </includes>
+                            </artifactSet>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+
+    <repositories>
+        <!-- ProtocolLib repository -->
+        <repository>
+            <id>dmulloy2-repo</id>
+            <url>https://repo.dmulloy2.net/nexus/repository/public/</url>
+        </repository>
+    </repositories>
+
+    <dependencies>
+        <!-- Paper -->
+        <dependency>
+            <groupId>org.github.paperspigot</groupId>
+            <artifactId>paperspigot-api</artifactId>
+            <version>1.8.8-R0.1-SNAPSHOT</version>
+        </dependency>
+        <!-- Implementation -->
+        <dependency>
+            <groupId>com.starfishst.guido.implementations</groupId>
+            <artifactId>Implementations</artifactId>
+            <version>1.0.0-SNAPSHOT-0</version>
+            <scope>compile</scope>
+        </dependency>
+        <!-- The bukkit command framework -->
+        <dependency>
+            <groupId>com.starfishst.bukkit</groupId>
+            <artifactId>Bukkit</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
+        <!-- ProtocolLib -->
+        <dependency>
+            <groupId>com.comphenix.protocol</groupId>
+            <artifactId>ProtocolLib</artifactId>
+            <version>4.5.0</version>
+        </dependency>
+        <!-- PGM -->
+        <dependency>
+            <groupId>tc.oc.pgm</groupId>
+            <artifactId>core</artifactId>
+            <version>0.9-SNAPSHOT</version>
+        </dependency>
+    </dependencies>
 
 </project>

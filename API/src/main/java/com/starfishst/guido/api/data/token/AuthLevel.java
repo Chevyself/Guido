@@ -29,7 +29,7 @@ public enum AuthLevel {
    *
    * @return the permission
    */
-  public int getPermission() {
+  public int intValue() {
     return permission;
   }
 }

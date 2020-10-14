@@ -4,8 +4,12 @@ import java.util.Set;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-/** This is an entity which may posses node permissions */
-public interface Permissible {
+/**
+ * This is an entity which may posses node permissions
+ *
+ * @param <T> the type of permission that the permissible contains
+ */
+public interface Permissible<T extends Permission> {
 
   /**
    * Checks whether the entity posses the permission and it is enabled
@@ -15,8 +19,8 @@ public interface Permissible {
    * @return true if the entity posses the permission and it is enabled
    */
   default boolean hasPermission(@NotNull String node, @NotNull String context) {
-    PermissionStack stack = this.getPermissions(context);
-    return stack != null && stack.hasPermission(node) || stack != null && stack.hasPermission("*");
+    PermissionStack<T> stack = this.getPermissions(context);
+    return stack != null && (stack.hasPermission(node) || stack.hasPermission("*"));
   }
 
   /**
@@ -27,7 +31,7 @@ public interface Permissible {
    * @return true if the entity posses the permission
    */
   default boolean containsPermission(@NotNull String node, @NotNull String context) {
-    PermissionStack stack = this.getPermissions(context);
+    PermissionStack<T> stack = this.getPermissions(context);
     return stack != null && stack.containsPermission(node);
   }
 
@@ -38,8 +42,8 @@ public interface Permissible {
    * @return the stack of permissions if found else null
    */
   @Nullable
-  default PermissionStack getPermissions(@NotNull String context) {
-    for (PermissionStack permission : this.getPermissions()) {
+  default PermissionStack<T> getPermissions(@NotNull String context) {
+    for (PermissionStack<T> permission : this.getPermissions()) {
       if (permission.getContext().equalsIgnoreCase(context)) {
         return permission;
       }
@@ -53,5 +57,5 @@ public interface Permissible {
    * @return the set of permissions of the entity
    */
   @NotNull
-  Set<PermissionStack> getPermissions();
+  Set<PermissionStack<T>> getPermissions();
 }
