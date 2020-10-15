@@ -13,13 +13,22 @@ import me.googas.messaging.json.server.Authenticator;
 import me.googas.messaging.json.server.JsonClientThread;
 import org.jetbrains.annotations.NotNull;
 
+/** The implementation for authentication in guido */
 public class GuidoAuthenticator implements Authenticator {
 
+  /** Each client and its authentication level */
   @NotNull private final HashMap<JsonClientThread, AuthLevel> levels = new HashMap<>();
 
+  /** The required level for each receptor. By default all receptors have read_write */
   @NotNull
   private final HashMap<String, AuthLevel> requiredLevel =
-      Maps.builder("auth", AuthLevel.NONE).append("permissions", AuthLevel.READ).build();
+      Maps.builder("auth", AuthLevel.NONE)
+          .append("permissions", AuthLevel.READ)
+          .append("data-exists", AuthLevel.READ)
+          .append("permission", AuthLevel.READ)
+          .append("preferences", AuthLevel.READ)
+          .append("stats", AuthLevel.READ)
+          .build();
 
   /**
    * Removes a client from the levels map
@@ -39,17 +48,24 @@ public class GuidoAuthenticator implements Authenticator {
     this.levels.put(client, AuthLevel.NONE);
   }
 
+  /**
+   * Authenticates a client
+   *
+   * @param messenger the client that is authenticating
+   * @param token the token that the client used to authenticate
+   * @return whether the user was authenticated
+   */
   @Receptor(method = "auth")
-  public String auth(JsonMessenger messenger, @ParamName(name = "token") String token) {
+  public boolean auth(@NotNull JsonMessenger messenger, @ParamName(name = "token") String token) {
     if (messenger instanceof JsonClientThread) {
       AuthToken authToken = Guido.getDataLoader().getAuthToken(token);
       if (authToken != null) {
         levels.put((JsonClientThread) messenger, authToken.getLevel());
-        return "authenticated";
+        return true;
       }
-      return "token-not-found";
+      return false;
     }
-    return "internal-error";
+    return false;
   }
 
   @Override
@@ -60,5 +76,17 @@ public class GuidoAuthenticator implements Authenticator {
       return required.intValue() <= authLevel.intValue();
     }
     return false;
+  }
+
+  /**
+   * Disconnects a client
+   *
+   * @param client the client to disconnect
+   * @return true if the client was disconnected
+   */
+  @Receptor(method = "disconnect")
+  public boolean disconnect(@NotNull JsonClientThread client) {
+    client.close();
+    return true;
   }
 }

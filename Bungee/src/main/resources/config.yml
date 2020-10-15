@@ -1,0 +1,14 @@
+## This token is used to authenticate the bot connection
+token: 0a123asdsd
+## The servers created for the
+servers: {}
+## The configuration used in the listeners of the bot
+listeners:
+  ## Configuration for the Motd
+  motd:
+    descriptions:
+      - Join the googas clan right now
+      - Ananin
+      - Minecraft
+    players:
+      - ["Welcome to", "Googas", "LMAO"]

@@ -42,13 +42,6 @@ public interface BungeeConfiguration {
   String getToken();
 
   /**
-   * Get the id of the guild where the bot is being used
-   *
-   * @return the id of the guild
-   */
-  long getGuildId();
-
-  /**
    * Get the servers that can be connected in bungee
    *
    * @return the servers that can be connected in bungee

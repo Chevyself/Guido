@@ -121,4 +121,22 @@ public interface ValuesMap {
    */
   @NotNull
   Map<String, Object> getMap();
+
+  /**
+   * Get whether this matches to another map. Matching means that at least one value is the same
+   *
+   * @param that the other map to check
+   * @return true if it matches
+   */
+  boolean matches(@NotNull Map<?, ?> that);
+
+  /**
+   * Get whether this matches to another map. Matching means that at least one value is the same
+   *
+   * @param that the other map to check
+   * @return true if it matches
+   */
+  default boolean matches(@NotNull ValuesMap that) {
+    return this.matches(that.getMap());
+  }
 }

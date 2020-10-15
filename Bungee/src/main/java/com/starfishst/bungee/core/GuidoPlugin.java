@@ -6,13 +6,14 @@ import com.starfishst.bungee.api.configuration.BungeeConfiguration;
 import com.starfishst.bungee.api.configuration.GuidoServer;
 import com.starfishst.bungee.api.events.GuidoListener;
 import com.starfishst.bungee.core.commands.GuidoCommands;
+import com.starfishst.bungee.core.commands.PermissionCommands;
+import com.starfishst.bungee.core.commands.providers.GuidoProvidersRegistry;
 import com.starfishst.bungee.core.configuration.GuidoBungeeConfiguration;
 import com.starfishst.bungee.core.listeners.JoinListener;
 import com.starfishst.bungee.core.listeners.MotdListener;
 import com.starfishst.bungee.messages.DefaultMessagesProvider;
-import com.starfishst.core.providers.registry.ProvidersRegistry;
+import com.starfishst.guido.api.data.implementations.ClientImpl;
 import com.starfishst.guido.api.data.implementations.Implementation;
-import com.starfishst.guido.api.data.implementations.ImplementationClient;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
@@ -31,7 +32,10 @@ public class GuidoPlugin extends Plugin implements Implementation {
   /** The command manager */
   @NotNull
   private final CommandManager manager =
-      new CommandManager(this, new DefaultMessagesProvider(), new ProvidersRegistry<>());
+      new CommandManager(
+          this,
+          new DefaultMessagesProvider(),
+          new GuidoProvidersRegistry(new DefaultMessagesProvider()));
 
   /** The bungeeConfiguration that the plugin will use */
   @NotNull private BungeeConfiguration bungeeConfiguration = new GuidoBungeeConfiguration();
@@ -41,7 +45,7 @@ public class GuidoPlugin extends Plugin implements Implementation {
   private final List<GuidoListener> listeners = Lots.list(new JoinListener(), new MotdListener());
 
   /** The client connected with the bot */
-  @NotNull private final ImplementationClient client = new ImplementationClient("0");
+  @NotNull private final ClientImpl client = new ClientImpl("0");
 
   /** Loads the configuration */
   public void loadConfiguration() {
@@ -92,15 +96,21 @@ public class GuidoPlugin extends Plugin implements Implementation {
     Guido.setPlugin(this);
     this.loadConfiguration();
     this.client.setToken(this.bungeeConfiguration.getToken());
+    try {
+      this.client.startConnection();
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
     for (GuidoListener listener : this.listeners) {
       listener.register(this);
     }
     manager.registerCommand(new GuidoCommands());
+    manager.registerCommand(new PermissionCommands());
     super.onEnable();
   }
 
   @Override
-  public @NotNull ImplementationClient getClient() {
+  public @NotNull ClientImpl getClient() {
     return this.client;
   }
 }

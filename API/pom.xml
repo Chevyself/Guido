@@ -12,14 +12,15 @@
 
     <groupId>com.starfishst.guido.api</groupId>
     <artifactId>API</artifactId>
-    <version>1.0.0-SNAPSHOT-8</version>
+    <version>1.0.0-SNAPSHOT-9</version>
+    <description>The API for implementations and the bot</description>
 
     <dependencies>
         <!-- Commons dependency -->
         <dependency>
             <groupId>me.googas.commons</groupId>
             <artifactId>Commons</artifactId>
-            <version>1.0.4-SNAPSHOT</version>
+            <version>1.0.5-SNAPSHOT</version>
             <scope>compile</scope>
         </dependency>
         <!-- Dependency to Commons-Messaging -->

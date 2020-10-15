@@ -85,11 +85,6 @@ public class GuidoBungeeConfiguration implements BungeeConfiguration {
   }
 
   @Override
-  public long getGuildId() {
-    return this.guildId;
-  }
-
-  @Override
   public @NotNull List<GuidoServer> getServers() {
     return this.servers;
   }

@@ -123,6 +123,24 @@ public class GuidoLinkedData extends Catchable implements BotLinkedData {
     return this.user;
   }
 
+  @Override
+  public void addPermission(@NotNull String context, @NotNull GuidoPermission permission) {
+    PermissionStack<GuidoPermission> stack = this.getPermissions(context);
+    if (stack == null) {
+      stack = new GuidoPermissionStack(context, new HashSet<>());
+      this.getPermissions().add(stack);
+    }
+    stack.add(permission);
+  }
+
+  @Override
+  public void removePermission(@NotNull String context, @NotNull GuidoPermission permission) {
+    PermissionStack<GuidoPermission> stack = this.getPermissions(context);
+    if (stack != null) {
+      stack.remove(permission);
+    }
+  }
+
   /**
    * Set the linked user to this data
    *

@@ -3,6 +3,7 @@ package com.starfishst.bot.server.receptors;
 import com.starfishst.bot.Guido;
 import com.starfishst.bot.api.data.BotUser;
 import com.starfishst.bot.api.data.loader.BotLinkedData;
+import com.starfishst.bot.handlers.data.GuidoPermission;
 import com.starfishst.bot.handlers.data.GuidoPermissionStack;
 import com.starfishst.bot.handlers.data.GuidoValuesMap;
 import com.starfishst.guido.api.data.PermissionStack;
@@ -132,6 +133,54 @@ public class LinkedDataReceptors {
     if (data != null) {
       stats.forEach(
           (key, value) -> data.getStats().put(key, data.getStats().getOrDefault(key, 0D) + value));
+      return true;
+    }
+    return false;
+  }
+
+  /**
+   * Adds a permission to the given linked type
+   *
+   * @param type the type of the linked data
+   * @param identification the identification to get the linked data
+   * @param context the context to add the permission on
+   * @param permission the permission to add
+   * @return true if the permission was added false otherwise
+   */
+  @Receptor(method = "add-permission")
+  public boolean addPermission(
+      @ParamName(name = "type") LinkedDataType type,
+      @ParamName(name = "identification") Map<String, Object> identification,
+      @ParamName(name = "context") String context,
+      @ParamName(name = "permission") GuidoPermission permission) {
+    BotLinkedData data =
+        Guido.getDataLoader().getLinkedData(type, new GuidoValuesMap(identification));
+    if (data != null) {
+      data.addPermission(context, permission);
+      return true;
+    }
+    return false;
+  }
+
+  /**
+   * Removes a permission to the given linked type
+   *
+   * @param type the type of the linked data
+   * @param identification the identification to get the linked data
+   * @param context the context to remove the permission from
+   * @param permission the permission to remove
+   * @return true if the permission was removed false otherwise
+   */
+  @Receptor(method = "remove-permission")
+  public boolean removePermission(
+      @ParamName(name = "type") LinkedDataType type,
+      @ParamName(name = "identification") Map<String, Object> identification,
+      @ParamName(name = "context") String context,
+      @ParamName(name = "permission") GuidoPermission permission) {
+    BotLinkedData data =
+        Guido.getDataLoader().getLinkedData(type, new GuidoValuesMap(identification));
+    if (data != null) {
+      data.removePermission(context, permission);
       return true;
     }
     return false;

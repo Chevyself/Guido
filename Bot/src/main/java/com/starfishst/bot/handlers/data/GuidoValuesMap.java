@@ -3,6 +3,7 @@ package com.starfishst.bot.handlers.data;
 import com.starfishst.guido.api.data.ValuesMap;
 import java.util.HashMap;
 import java.util.Map;
+import me.googas.commons.Atomic;
 import me.googas.commons.maps.Maps;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -61,6 +62,30 @@ public class GuidoValuesMap implements ValuesMap {
         }
       }
       return true;
+    }
+  }
+
+  /**
+   * Get whether this matches to another map. Matching means that at least one value is the same
+   *
+   * @param that the other map to check
+   * @return true if it matches
+   */
+  @Override
+  public boolean matches(@NotNull Map<?, ?> that) {
+    if (this.map.isEmpty() || that.isEmpty()) {
+      return false;
+    } else {
+      Atomic<Boolean> matches = new Atomic<>(false);
+      that.forEach(
+          (key, value) -> {
+            if (key instanceof String
+                && this.getMap().containsKey(key)
+                && this.getMap().get(key).equals(value)) {
+              matches.set(true);
+            }
+          });
+      return matches.get();
     }
   }
 

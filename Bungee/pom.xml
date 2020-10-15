@@ -12,7 +12,7 @@
 
     <groupId>com.starfishst.guido.bungee</groupId>
     <artifactId>Bungee</artifactId>
-    <version>1.0.0-SNAPSHOT-0</version>
+    <version>1.0.0-SNAPSHOT-1</version>
     <description>Implementations for bungee</description>
 
     <build>
@@ -30,19 +30,17 @@
                         </goals>
                         <configuration>
                             <createDependencyReducedPom>false</createDependencyReducedPom>
-                            <outputFile>Guido-Bungee-${project.artifactId}.jar</outputFile>
+                            <outputFile>../output/Guido-${project.artifactId}.jar</outputFile>
                             <artifactSet>
                                 <excludes>
-                                    <exclude>META-INF/*.SF</exclude>
-                                    <exclude>META-INF/*.DSA</exclude>
-                                    <exclude>META-INF/*.RSA</exclude>
+                                    <exclude>META-INF/**</exclude>
                                 </excludes>
                                 <includes>
-                                    <include>com.starfishst.guido.implementations:Implementations</include>
                                     <include>com.starfishst.guido.api:API</include>
                                     <include>com.starfishst.bungee:bungee</include>
                                     <include>com.starfishst.core:core</include>
                                     <include>com.starfishst.utils:core-utils</include>
+                                    <include>me.googas.messaging:Commons-Messaging</include>
                                 </includes>
                             </artifactSet>
                         </configuration>
@@ -65,13 +63,13 @@
         <dependency>
             <groupId>com.starfishst.bungee</groupId>
             <artifactId>bungee</artifactId>
-            <version>1.0.1-SNAPSHOT</version>
+            <version>1.0.2-SNAPSHOT</version>
         </dependency>
         <!-- Dependency on the bot api -->
         <dependency>
             <groupId>com.starfishst.guido.api</groupId>
             <artifactId>API</artifactId>
-            <version>1.0.0-SNAPSHOT-8</version>
+            <version>1.0.0-SNAPSHOT-9</version>
             <scope>compile</scope>
         </dependency>
     </dependencies>

@@ -37,6 +37,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.UUID;
 import me.googas.commons.Lots;
 import me.googas.commons.cache.Cache;
 import me.googas.commons.events.ListenPriority;
@@ -479,7 +480,7 @@ public class MongoDataLoader implements BotDataLoader {
       @NotNull LinkedDataType type, @NotNull ValuesMap identifications) {
     return Cache.getCatchableOrGet(
         GuidoLinkedData.class,
-        data -> data.getType() == type && data.getIdentification().equals(identifications),
+        data -> data.getType() == type && data.getIdentification().matches(identifications),
         () ->
             this.getLinkedData(
                 new Document("type", type.toString())

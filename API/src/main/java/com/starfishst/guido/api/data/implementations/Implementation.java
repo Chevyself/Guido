@@ -11,5 +11,5 @@ public interface Implementation {
    * @return the client
    */
   @NotNull
-  ImplementationClient getClient();
+  ClientImpl getClient();
 }

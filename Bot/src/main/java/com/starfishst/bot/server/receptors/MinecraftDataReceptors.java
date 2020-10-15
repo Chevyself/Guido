@@ -8,6 +8,8 @@ import com.starfishst.guido.api.data.links.LinkedDataType;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.UUID;
+
+import me.googas.commons.UUIDUtils;
 import me.googas.messaging.json.ParamName;
 import me.googas.messaging.json.Receptor;
 
@@ -34,7 +36,7 @@ public class MinecraftDataReceptors {
           true,
           LinkedDataType.MINECRAFT,
           null,
-          new GuidoValuesMap("uuid", uuid).addValue("nickname", nick),
+          new GuidoValuesMap("uuid", UUIDUtils.trim(uuid)).addValue("nickname", nick),
           new GuidoValuesMap(),
           new HashMap<>(),
           new HashSet<>());
@@ -60,5 +62,26 @@ public class MinecraftDataReceptors {
       return true;
     }
     return false;
+  }
+
+  /**
+   * Get the uuid matching a nick
+   *
+   * @param nick the nick to match
+   * @return the uuid if matched else null
+   */
+  @Receptor(method = "get-uuid")
+  public UUID getUuid(@ParamName(name = "nickname") String nick) {
+    BotLinkedData data =
+        Guido.getDataLoader()
+            .getLinkedData(LinkedDataType.MINECRAFT, new GuidoValuesMap("nickname", nick));
+    if (data != null) {
+      String trimmed = data.getIdentification().getValue("uuid", String.class);
+      if (trimmed != null) {
+        return UUIDUtils.untrim(trimmed);
+      }
+      return null;
+    }
+    return null;
   }
 }

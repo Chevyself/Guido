@@ -54,4 +54,20 @@ public interface LinkedData<T extends Permission> extends Permissible<T>, Statea
    */
   @Nullable
   UserData getLinkedUser();
+
+  /**
+   * Adds a permission to this linked data
+   *
+   * @param context the context to add the permission on
+   * @param permission the permission to add
+   */
+  void addPermission(@NotNull String context, @NotNull T permission);
+
+  /**
+   * Removes a permission to this linked data
+   *
+   * @param context the context to remove the permission from
+   * @param permission the permission to remove
+   */
+  void removePermission(@NotNull String context, @NotNull T permission);
 }
