@@ -40,7 +40,7 @@ public class HelpCommand {
               locale.get(
                   "help.cmd.title",
                   Maps.builder("name", command.getName())
-                      .append("desc", command.getDescription())
+                      .append("desc", locale.get(command.getDescription()))
                       .append("aliases", Lots.pretty(command.getAliases()))
                       .append("perm", node.isEmpty() ? locale.get("help.cmd.empty-node") : node)));
           this.argsBuilder.setLength(0);
@@ -50,12 +50,12 @@ public class HelpCommand {
                 this.argsBuilder.append(
                     locale.get(
                         "help.cmd.arg.required",
-                        Maps.builder("name", ((Argument<?>) argument).getName())));
+                        Maps.builder("name", locale.get(((Argument<?>) argument).getName()))));
               } else {
                 this.argsBuilder.append(
                     locale.get(
                         "help.cmd.arg.optional",
-                        Maps.builder("name", ((Argument<?>) argument).getName())));
+                        Maps.builder("name", locale.get(((Argument<?>) argument).getName()))));
               }
             }
           }
@@ -64,16 +64,19 @@ public class HelpCommand {
                   "help.cmd.usage",
                   Maps.builder("arguments", this.argsBuilder.toString())
                       .append("name", command.getName())));
-          if (command instanceof ParentCommand) {
+          if (command instanceof ParentCommand && command.hasPermission(context)) {
             this.argsBuilder.setLength(0);
             for (AnnotatedCommand child : ((ParentCommand) command).getCommands()) {
               this.argsBuilder.append(
                   locale.get(
                       "help.parent-cmd.child",
                       Maps.builder("name", child.getName())
-                          .append("desc", child.getDescription())));
+                          .append("desc", locale.get(child.getDescription()))));
             }
-            builder.append(locale.get("help.parent.children"));
+            builder.append(
+                locale.get(
+                    "help.parent.children",
+                    Maps.singleton("children", this.argsBuilder.toString())));
           }
           return new Result(builder.toString());
         } else {
@@ -87,13 +90,14 @@ public class HelpCommand {
       }
     }
     StringBuilder builder = Strings.getBuilder();
-    builder.append("help.cmds.title");
+    builder.append(locale.get("help.cmds.title"));
     for (AnnotatedCommand command : commandManager.getCommands()) {
       if (command.hasPermission(context)) {
         builder.append(
             locale.get(
                 "help.cmds",
-                Maps.builder("name", command.getName()).append("desc", command.getDescription())));
+                Maps.builder("name", command.getName())
+                    .append("desc", locale.get(command.getDescription()))));
       }
     }
     return new Result(builder.toString());

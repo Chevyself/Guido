@@ -10,6 +10,7 @@ import com.starfishst.bot.commands.TokenCommands;
 import com.starfishst.bot.commands.UserCommands;
 import com.starfishst.bot.commands.providers.AuthLevelProvider;
 import com.starfishst.bot.commands.providers.BotUserSenderProvider;
+import com.starfishst.bot.commands.providers.LocaleFileProvider;
 import com.starfishst.bot.handlers.data.GuidoHandler;
 import com.starfishst.bot.handlers.data.loader.GuidoFileLoader;
 import com.starfishst.bot.handlers.data.loader.MongoDataLoader;
@@ -126,6 +127,7 @@ public class Guido {
     JdaProvidersRegistry registry = new JdaProvidersRegistry(Guido.languageHandler);
     registry.addProvider(new AuthLevelProvider());
     registry.addProvider(new BotUserSenderProvider());
+    registry.addProvider(new LocaleFileProvider());
     Guido.commandManager =
         new CommandManager(
             jda,
