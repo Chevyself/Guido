@@ -3,6 +3,7 @@ package com.starfishst.bot;
 import com.starfishst.bot.api.data.loader.BotDataLoader;
 import com.starfishst.bot.commands.DeveloperCommands;
 import com.starfishst.bot.commands.EloCommands;
+import com.starfishst.bot.commands.HelpCommand;
 import com.starfishst.bot.commands.LangCommands;
 import com.starfishst.bot.commands.TeamCommands;
 import com.starfishst.bot.commands.TokenCommands;
@@ -25,6 +26,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import me.googas.commons.Lots;
+import me.googas.commons.Validate;
 import me.googas.commons.cache.Cache;
 import me.googas.commons.cache.ICatchable;
 import me.googas.commons.events.Cancellable;
@@ -37,6 +39,7 @@ import net.dv8tion.jda.api.OnlineStatus;
 import net.dv8tion.jda.api.entities.Activity;
 import net.dv8tion.jda.api.hooks.AnnotatedEventManager;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /** El bot para las rankeds de radiator springs */
 public class Guido {
@@ -57,6 +60,12 @@ public class Guido {
   /** The language handler for the bot */
   @NotNull
   private static GuidoLanguageHandler languageHandler = new GuidoLanguageHandler(Guido.dataLoader);
+
+  /**
+   * The command manager of the bot
+   */
+  @Nullable
+  private static CommandManager commandManager;
 
   /** The server to receive implementations */
   @NotNull private static Server server = new GuidoFallbackServer();
@@ -120,7 +129,7 @@ public class Guido {
     JdaProvidersRegistry registry = new JdaProvidersRegistry(Guido.languageHandler);
     registry.addProvider(new AuthLevelProvider());
     registry.addProvider(new BotUserSenderProvider());
-    CommandManager manager =
+    Guido.commandManager =
         new CommandManager(
             jda,
             argsMaps.getOrDefault("prefix", argsMaps.getOrDefault("prefix", "$")),
@@ -128,12 +137,13 @@ public class Guido {
                 Guido.languageHandler,
             registry,
             new GuidoPermissionChecker(Guido.languageHandler, Guido.dataLoader));
-    manager.registerCommand(new DeveloperCommands(jda));
-    manager.registerCommand(new EloCommands());
-    manager.registerCommand(new LangCommands());
-    manager.registerCommand(new TeamCommands());
-    manager.registerCommand(new TokenCommands());
-    manager.registerCommand(new UserCommands());
+    Guido.commandManager.registerCommand(new DeveloperCommands(jda));
+    Guido.commandManager.registerCommand(new EloCommands());
+    Guido.commandManager.registerCommand(new HelpCommand());
+    Guido.commandManager.registerCommand(new LangCommands());
+    Guido.commandManager.registerCommand(new TeamCommands());
+    Guido.commandManager.registerCommand(new TokenCommands());
+    Guido.commandManager.registerCommand(new UserCommands());
     Guido.languageHandler.load("en", "es", "fr");
     for (GuidoHandler handler : Guido.handlers) {
       handler.register(jda);
@@ -250,5 +260,16 @@ public class Guido {
   @NotNull
   public static Server getServer() {
     return Guido.server;
+  }
+
+  /**
+   * Get the command manager of the bot
+   *
+   * @return the command manager
+   * @throws NullPointerException if the command manager was not initialized
+   */
+  @NotNull
+  public static CommandManager getCommandManager() {
+    return Validate.notNull(Guido.commandManager, "Command manager has not been initialized");
   }
 }
