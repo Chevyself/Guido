@@ -49,16 +49,16 @@ public class GuidoJdaConnection {
    */
   @NotNull
   public JDA createConnection(@NotNull String token) {
-    jda = null;
-    while (jda == null) {
+    this.jda = null;
+    while (this.jda == null) {
       try {
-        jda = this.connect(token);
+        this.jda = this.connect(token);
       } catch (LoginException e) {
         System.out.println("Discord authentication failed");
-        token = getTokenFromInput(new Scanner(System.in));
+        token = GuidoJdaConnection.getTokenFromInput(new Scanner(System.in));
       }
     }
-    return jda;
+    return this.jda;
   }
 
   /**
@@ -90,7 +90,7 @@ public class GuidoJdaConnection {
    */
   @Nullable
   public JDA getJda() {
-    return jda;
+    return this.jda;
   }
 
   /**

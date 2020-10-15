@@ -60,7 +60,7 @@ public class GuidoAuthenticator implements Authenticator {
     if (messenger instanceof JsonClientThread) {
       AuthToken authToken = Guido.getDataLoader().getAuthToken(token);
       if (authToken != null) {
-        levels.put((JsonClientThread) messenger, authToken.getLevel());
+        this.levels.put((JsonClientThread) messenger, authToken.getLevel());
         return true;
       }
       return false;
@@ -70,9 +70,9 @@ public class GuidoAuthenticator implements Authenticator {
 
   @Override
   public boolean isAuthenticated(@NotNull JsonClientThread client, @NotNull Request<?> request) {
-    if (levels.containsKey(client)) {
-      AuthLevel authLevel = levels.get(client);
-      AuthLevel required = requiredLevel.getOrDefault(request.getMethod(), AuthLevel.READ_WRITE);
+    if (this.levels.containsKey(client)) {
+      AuthLevel authLevel = this.levels.get(client);
+      AuthLevel required = this.requiredLevel.getOrDefault(request.getMethod(), AuthLevel.READ_WRITE);
       return required.intValue() <= authLevel.intValue();
     }
     return false;

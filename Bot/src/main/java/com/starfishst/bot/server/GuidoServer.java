@@ -6,6 +6,8 @@ import com.starfishst.bot.server.receptors.LinkedDataReceptors;
 import com.starfishst.bot.server.receptors.MinecraftDataReceptors;
 import com.starfishst.bot.util.console.Console;
 import java.io.IOException;
+
+import me.googas.messaging.Request;
 import me.googas.messaging.api.Message;
 import me.googas.messaging.json.adapters.MessageDeserializer;
 import me.googas.messaging.json.server.JsonClientThread;
@@ -35,18 +37,28 @@ public class GuidoServer extends JsonSocketServer {
             .setPrettyPrinting()
             .create(),
         timeout);
-    this.setAuthenticator(authenticator);
+    this.setAuthenticator(this.authenticator);
     this.addProviders(new DataParameterProviders());
-    this.addReceptors(new LinkedDataReceptors(), new MinecraftDataReceptors(), authenticator);
+    this.addReceptors(new LinkedDataReceptors(), new MinecraftDataReceptors(), this.authenticator);
   }
 
   @Override
   protected void onRemove(@NotNull JsonClientThread client) {
-    authenticator.remove(client);
+    this.authenticator.remove(client);
   }
 
   @Override
   protected void onConnection(@NotNull JsonClientThread client) {
-    authenticator.add(client);
+    this.authenticator.add(client);
+  }
+
+  @Override
+  public void close() throws IOException {
+    for (JsonClientThread client : this.getClients()) {
+      client.sendRequest(new Request<>(Boolean.class, "disconnected"), bol -> {
+        // IGNORED
+      });
+    }
+    super.close();
   }
 }

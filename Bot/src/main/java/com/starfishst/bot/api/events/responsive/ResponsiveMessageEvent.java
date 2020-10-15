@@ -26,6 +26,6 @@ public class ResponsiveMessageEvent implements GuidoEvent {
    */
   @NotNull
   public ResponsiveMessage getMessage() {
-    return message;
+    return this.message;
   }
 }

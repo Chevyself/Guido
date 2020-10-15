@@ -22,7 +22,10 @@ import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
 import org.jetbrains.annotations.NotNull;
 
-/** Elo commands for a server */
+/**
+ * Elo commands for a server
+ * @deprecated since 1.0.0-SNAPSHOT-7 to remove when {@link EloCommandsNew} is done
+ */
 public class EloCommands {
 
   /** This is the patter that allows to get the elo from a user */
@@ -251,7 +254,7 @@ public class EloCommands {
    * @return true if the member is registered
    */
   private boolean isRegistered(@NotNull Member member) {
-    return member.getNickname() != null && PATTERN.matcher(member.getNickname()).find();
+    return member.getNickname() != null && EloCommands.PATTERN.matcher(member.getNickname()).find();
   }
 
   /**
@@ -262,7 +265,7 @@ public class EloCommands {
    */
   private int getElo(@NotNull Member member) {
     if (member.getNickname() != null) {
-      Matcher matcher = PATTERN.matcher(member.getNickname());
+      Matcher matcher = EloCommands.PATTERN.matcher(member.getNickname());
       if (matcher.find()) {
         String elo = matcher.group().replace("(", "").replace(")", "");
         try {

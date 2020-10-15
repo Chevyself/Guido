@@ -51,7 +51,7 @@ public class GuidoPermissionChecker implements PermissionChecker {
     }
     // If a node starts with user: it will check for user permissions not member
     if (!perm.node().isEmpty()) {
-      if (developers.contains(context.getSender().getIdLong())) {
+      if (this.developers.contains(context.getSender().getIdLong())) {
         return null;
       }
       if (context instanceof GuildCommandContext && !perm.node().startsWith("user:")) {

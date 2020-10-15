@@ -31,7 +31,7 @@ public class TeamCommands {
    * @param sender the sender of the command
    * @return the result of the command execution
    */
-  @Command(aliases = "teams", description = "cmd.teams.desc")
+  @Command(aliases = {"teams", "equipos"}, description = "teams.desc")
   public Result teams(CommandContext context, Member sender) {
     GuildVoiceState voiceState = sender.getVoiceState();
     if (voiceState != null && voiceState.getChannel() != null) {
@@ -46,17 +46,17 @@ public class TeamCommands {
           }
         }
         return new Result(
-            handler
+                this.handler
                 .getFile(context)
                 .get(
-                    "cmd.teams.result",
+                    "teams.result",
                     Maps.builder("team1", Mentions.pretty(team1))
                         .append("team2", Mentions.pretty(team2))));
       } else {
-        return new Result(handler.getFile(context).get("cmd.teams.not-even"));
+        return new Result(this.handler.getFile(context).get("teams.not-even"));
       }
     } else {
-      return new Result(handler.getFile(context).get("cmd.teams.not-connected"));
+      return new Result(this.handler.getFile(context).get("teams.not-connected"));
     }
   }
 
@@ -72,13 +72,13 @@ public class TeamCommands {
    */
   @Command(
       aliases = {"leaders", "capitanes"},
-      description = "cmd.leaders.desc")
+      description = "leaders.desc")
   public Result capitanes(
       CommandContext context,
       Member sender,
       @Optional(
-              name = "cmd.leaders.param.number.name",
-              description = "cmd.leaders.param.number.desc",
+              name = "leaders.number",
+              description = "leaders.number.desc",
               suggestions = "2")
           int number) {
     GuildVoiceState voiceState = sender.getVoiceState();
@@ -88,20 +88,20 @@ public class TeamCommands {
       if (members.size() >= number) {
         List<Member> random = RandomUtils.getRandom(members, number);
         return new Result(
-            handler
+                this.handler
                 .getFile(context)
-                .get("cmd.leaders.result", Maps.singleton("leaders", Mentions.pretty(random))));
+                .get("leaders.result", Maps.singleton("leaders", Mentions.pretty(random))));
       } else {
         return new Result(
-            handler
+                this.handler
                 .getFile(context)
-                .get("cmd.leaders.not-enough", Maps.singleton("number", String.valueOf(number))));
+                .get("leaders.not-enough", Maps.singleton("number", String.valueOf(number))));
       }
     } else {
       return new Result(
-          handler
+              this.handler
               .getFile(context)
-              .get("cmd.leaders.not-connected", Maps.singleton("number", String.valueOf(number))));
+              .get("leaders.not-connected", Maps.singleton("number", String.valueOf(number))));
     }
   }
 }

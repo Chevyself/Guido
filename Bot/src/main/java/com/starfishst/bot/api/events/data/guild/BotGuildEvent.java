@@ -26,6 +26,6 @@ public class BotGuildEvent implements GuidoEvent {
    */
   @NotNull
   public BotGuild getData() {
-    return data;
+    return this.data;
   }
 }

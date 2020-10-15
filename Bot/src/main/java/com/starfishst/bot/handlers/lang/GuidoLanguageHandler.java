@@ -40,7 +40,7 @@ public class GuidoLanguageHandler implements MessagesProvider {
   public void load(String... toLoad) {
     for (String lang : toLoad) {
       try {
-        files.add(
+        this.files.add(
             new GuidoLocaleFile(
                 CoreFiles.getFileOrResource(
                     CoreFiles.currentDirectory() + "/assets/lang/" + lang + ".properties",
@@ -124,7 +124,7 @@ public class GuidoLanguageHandler implements MessagesProvider {
    */
   @NotNull
   public Set<GuidoLocaleFile> getFiles() {
-    return files;
+    return this.files;
   }
 
   @Override

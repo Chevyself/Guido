@@ -4,7 +4,7 @@ import com.starfishst.bot.api.data.BotUser;
 import com.starfishst.bot.api.events.data.user.BotUserLoadedEvent;
 import com.starfishst.bot.api.events.data.user.BotUserUnloadedEvent;
 import java.util.HashSet;
-import java.util.Set;
+
 import me.googas.commons.cache.Catchable;
 import me.googas.commons.time.Time;
 import org.jetbrains.annotations.NotNull;
@@ -14,34 +14,23 @@ public class GuidoUser extends Catchable implements BotUser {
 
   /** The unique id of the user */
   private final String id;
-  /** The permissions that the user has */
-  @NotNull private final Set<GuidoPermissionStack> permissions;
-
-  /** The preferences of the user */
-  @NotNull private final GuidoValuesMap preferences;
 
   /**
    * Create the guido user
    *
    * @param id the user id
-   * @param permissions the permissions of the user
-   * @param preferences the preferences of the user
    */
   public GuidoUser(
-      @NotNull String id,
-      @NotNull Set<GuidoPermissionStack> permissions,
-      @NotNull GuidoValuesMap preferences) {
+          @NotNull String id) {
     super(Time.fromString("5m"));
     this.id = id;
-    this.permissions = permissions;
-    this.preferences = preferences;
     new BotUserLoadedEvent(this).call();
   }
 
   /** Create the guido user. This is deprecated because only gson may use it */
   @Deprecated
   public GuidoUser() {
-    this("-1", new HashSet<>(), new GuidoValuesMap());
+    this("-1");
   }
 
   @Override
@@ -55,6 +44,6 @@ public class GuidoUser extends Catchable implements BotUser {
   @Override
   @NotNull
   public String getId() {
-    return id;
+    return this.id;
   }
 }

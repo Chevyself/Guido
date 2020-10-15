@@ -30,7 +30,7 @@ public class BotUserLangUpdatedEvent extends BotUserEvent implements GuidoCancel
    */
   @NotNull
   public String getLang() {
-    return lang;
+    return this.lang;
   }
 
   @Override

@@ -9,7 +9,7 @@ import org.jetbrains.annotations.NotNull;
 public class PermissiblePermissionAddedEvent extends PermissibleEvent {
 
   /** The stack to which the permission was added */
-  @NotNull private final PermissionStack stack;
+  @NotNull private final PermissionStack<?> stack;
 
   /** The permission that was added to the permissible */
   @NotNull private final Permission permission;
@@ -22,8 +22,8 @@ public class PermissiblePermissionAddedEvent extends PermissibleEvent {
    * @param permission the permission that was added to the permissible
    */
   public PermissiblePermissionAddedEvent(
-      @NotNull Permissible permissible,
-      @NotNull PermissionStack stack,
+      @NotNull Permissible<?> permissible,
+      @NotNull PermissionStack<?> stack,
       @NotNull Permission permission) {
     super(permissible);
     this.stack = stack;

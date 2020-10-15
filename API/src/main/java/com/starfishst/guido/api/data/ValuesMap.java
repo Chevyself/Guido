@@ -38,7 +38,7 @@ public interface ValuesMap {
    */
   @SuppressWarnings("unchecked")
   @NotNull
-  default <T> List<T> getLisValue(@NotNull String name) {
+  default <T> List<T> getListValue(@NotNull String name) {
     List<T> list = new ArrayList<>();
     Class<List<T>> aClass = (Class<List<T>>) list.getClass();
     list.addAll(this.getValueOr(name, aClass, new ArrayList<>()));

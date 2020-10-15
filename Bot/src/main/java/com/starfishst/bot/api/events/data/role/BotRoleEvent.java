@@ -26,6 +26,6 @@ public class BotRoleEvent implements GuidoEvent {
    */
   @NotNull
   public BotRole getData() {
-    return data;
+    return this.data;
   }
 }

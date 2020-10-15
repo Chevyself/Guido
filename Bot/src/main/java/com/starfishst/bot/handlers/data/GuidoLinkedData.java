@@ -32,6 +32,17 @@ public class GuidoLinkedData extends Catchable implements BotLinkedData {
   /** The linked user */
   @Nullable private BotUser user;
 
+  /**
+   * Create the linked data
+   *
+   * @param addToCache whether to add it to cache
+   * @param type the type of linked data that this is
+   * @param user the user linked to this data
+   * @param identification the way to identify this data
+   * @param preferences the preferences which this data has
+   * @param stats the stats of this data
+   * @param permissions the permissions of this data
+   */
   public GuidoLinkedData(
       boolean addToCache,
       @NotNull LinkedDataType type,
@@ -162,14 +173,14 @@ public class GuidoLinkedData extends Catchable implements BotLinkedData {
 
     GuidoLinkedData that = (GuidoLinkedData) object;
 
-    if (type != that.type) return false;
-    return identification.equals(that.identification);
+    if (this.type != that.type) return false;
+    return this.identification.equals(that.identification);
   }
 
   @Override
   public int hashCode() {
-    int result = type.hashCode();
-    result = 31 * result + identification.hashCode();
+    int result = this.type.hashCode();
+    result = 31 * result + this.identification.hashCode();
     return result;
   }
 }

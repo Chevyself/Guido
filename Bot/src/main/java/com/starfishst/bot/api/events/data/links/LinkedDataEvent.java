@@ -26,6 +26,6 @@ public class LinkedDataEvent implements GuidoEvent {
    */
   @NotNull
   public BotLinkedData getData() {
-    return data;
+    return this.data;
   }
 }

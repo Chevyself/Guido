@@ -65,10 +65,10 @@ public class DeveloperCommands {
   @Command(
       aliases = "eval",
       permission = @Perm(node = "user:guido.admin"),
-      description = "Evalua codigo JavaScript")
+      description = "eval.desc")
   public Result eval(
       CommandContext context,
-      @Multiple @Required(name = "code", description = "El codigo para analizar")
+      @Multiple @Required(name = "eval.code", description = "eval.code.desc")
           JoinedStrings strings) {
     this.engine.put("message", context.getMessage());
     this.engine.put("channel", context.getChannel());
@@ -98,7 +98,7 @@ public class DeveloperCommands {
    */
   @Command(
       aliases = "stop",
-      description = "Stops the bot",
+      description = "stop.desc",
       permission = @Perm(node = "user:guido.admin"))
   public Result stop() {
     Guido.stop();

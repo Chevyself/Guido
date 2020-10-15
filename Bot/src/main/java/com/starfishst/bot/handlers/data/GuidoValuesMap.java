@@ -94,7 +94,7 @@ public class GuidoValuesMap implements ValuesMap {
     if (this == object) return true;
     if (object instanceof Map) {
       Map<?, ?> that = (Map<?, ?>) object;
-      return equalsMap(that);
+      return this.equalsMap(that);
     } else if (object instanceof ValuesMap) {
       return this.equalsMap(((ValuesMap) object).getMap());
     } else {
@@ -104,7 +104,7 @@ public class GuidoValuesMap implements ValuesMap {
 
   @Override
   public int hashCode() {
-    return map.hashCode();
+    return this.map.hashCode();
   }
 
   @Override

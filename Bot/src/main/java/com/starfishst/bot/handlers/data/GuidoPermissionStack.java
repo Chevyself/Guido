@@ -49,10 +49,10 @@ public class GuidoPermissionStack implements PermissionStack<GuidoPermission> {
   public String toString() {
     return "GuidoPermissionStack{"
         + "context='"
-        + context
+        + this.context
         + '\''
         + ", permissions="
-        + permissions
+        + this.permissions
         + '}';
   }
 }

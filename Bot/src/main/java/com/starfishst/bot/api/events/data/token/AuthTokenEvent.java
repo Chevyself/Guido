@@ -26,6 +26,6 @@ public class AuthTokenEvent implements GuidoEvent {
    */
   @NotNull
   public AuthToken getToken() {
-    return token;
+    return this.token;
   }
 }

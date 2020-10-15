@@ -12,7 +12,7 @@
 
     <groupId>com.starfishst.bot</groupId>
     <artifactId>Bot</artifactId>
-    <version>1.0.0-SNAPSHOT-6</version>
+    <version>1.0.0-SNAPSHOT-7</version>
 
     <build>
         <plugins>
@@ -83,7 +83,7 @@
         <dependency>
             <groupId>com.starfishst.guido.api</groupId>
             <artifactId>API</artifactId>
-            <version>1.0.0-SNAPSHOT-9</version>
+            <version>1.0.0-SNAPSHOT-10</version>
         </dependency>
         <!-- Dependency to Commons-Messaging -->
         <dependency>

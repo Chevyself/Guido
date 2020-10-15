@@ -10,6 +10,8 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import me.googas.commons.CoreFiles;
 import me.googas.commons.fallback.Fallback;
+import me.googas.commons.log.LoggerFactory;
+import me.googas.commons.log.formatters.CustomFormatter;
 import me.googas.commons.time.TimeUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -24,14 +26,14 @@ public class Console {
     CustomFormatter formatter =
         new CustomFormatter(
             "[%hour%:%minute%:%second% - %day%/%month%/%year% %level%] %message% %stack% \n");
-    logger.setUseParentHandlers(false);
+    Console.logger.setUseParentHandlers(false);
     try {
-      logger.addHandler(Console.getFileHandler(formatter, null));
+      Console.logger.addHandler(Console.getFileHandler(formatter, null));
     } catch (IOException e) {
       Fallback.addError("IOException: File Handler could not be initialized");
       Console.exception(e, "IOException: File Handler could not be initialized");
     }
-    logger.addHandler(Console.getConsoleHandler(formatter));
+    Console.logger.addHandler(Console.getConsoleHandler(formatter));
   }
 
   /**
@@ -90,7 +92,7 @@ public class Console {
    * @param msg the message to log
    */
   public static void log(@NotNull Level level, @NotNull String msg) {
-    logger.log(level, msg);
+    Console.logger.log(level, msg);
   }
 
   /**
@@ -119,7 +121,7 @@ public class Console {
    */
   public static void exception(@NotNull Throwable throwable, @NotNull String message) {
     Fallback.addError(message);
-    logger.log(Level.SEVERE, message, throwable);
+    Console.logger.log(Level.SEVERE, message, throwable);
   }
 
   /**
@@ -129,7 +131,7 @@ public class Console {
    */
   public static void exception(@NotNull String message) {
     Fallback.addError(message);
-    logger.log(Level.SEVERE, message);
+    Console.logger.log(Level.SEVERE, message);
   }
 
   /**
@@ -139,6 +141,6 @@ public class Console {
    */
   @NotNull
   public static Logger getLogger() {
-    return logger;
+    return Console.logger;
   }
 }

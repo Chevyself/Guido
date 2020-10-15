@@ -59,7 +59,7 @@ public interface DataLoader {
    * @return the links
    */
   @NotNull
-  Collection<? extends LinkedData> getLinks(@NotNull UserData user);
+  Collection<? extends LinkedData<?>> getLinks(@NotNull UserData user);
 
   /**
    * Get some linked data using identification
@@ -69,7 +69,7 @@ public interface DataLoader {
    * @return the linked data if found else null
    */
   @Nullable
-  LinkedData getLinkedData(@NotNull LinkedDataType type, @NotNull ValuesMap identification);
+  LinkedData<?> getLinkedData(@NotNull LinkedDataType type, @NotNull ValuesMap identification);
 
   /**
    * Get a new id for an user

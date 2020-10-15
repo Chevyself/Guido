@@ -26,6 +26,6 @@ public class BotUserEvent implements GuidoEvent {
    */
   @NotNull
   public BotUser getData() {
-    return data;
+    return this.data;
   }
 }

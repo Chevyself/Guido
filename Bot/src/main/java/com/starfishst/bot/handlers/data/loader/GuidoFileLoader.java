@@ -8,21 +8,16 @@ import com.starfishst.bot.api.data.loader.BotLinkedData;
 import com.starfishst.bot.api.events.data.guild.BotGuildUnloadedEvent;
 import com.starfishst.bot.api.events.data.role.BotRoleUnloadedEvent;
 import com.starfishst.bot.api.events.data.user.BotUserUnloadedEvent;
-import com.starfishst.bot.util.console.Console;
 import com.starfishst.guido.api.data.UserData;
 import com.starfishst.guido.api.data.ValuesMap;
 import com.starfishst.guido.api.data.links.LinkedDataType;
 import com.starfishst.guido.api.data.token.AuthToken;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.util.Collection;
-import me.googas.commons.CoreFiles;
 import me.googas.commons.events.ListenPriority;
 import me.googas.commons.events.Listener;
-import me.googas.commons.gson.GsonProvider;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.Collection;
 
 /**
  * This loader will attempt to get the data from files if it fails it will create a new instance of
@@ -36,17 +31,7 @@ public class GuidoFileLoader implements BotDataLoader {
    */
   @Deprecated
   public void onGuildDataUnloaded(@NotNull BotGuildUnloadedEvent event) {
-    try {
-      File file =
-          CoreFiles.getOrCreate(
-              CoreFiles.currentDirectory() + "/data/" + event.getData().getId() + "/info.json");
-      FileWriter writer = new FileWriter(file);
-      GsonProvider.GSON.toJson(event.getData(), writer);
-      writer.close();
-    } catch (IOException e) {
-      Console.exception(
-          e, "IOException: Data for guild " + event.getData().getId() + " could not be saved");
-    }
+    throw new UnsupportedOperationException("Guild data cannot be find using file loader");
   }
 
   /**

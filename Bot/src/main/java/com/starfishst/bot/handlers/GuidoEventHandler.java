@@ -5,7 +5,7 @@ import com.starfishst.bot.handlers.data.GuidoHandler;
 import net.dv8tion.jda.api.JDA;
 import org.jetbrains.annotations.NotNull;
 
-/** This listens to {@link com.starfishst.utils.events.Event} */
+/** This listens to {@link com.starfishst.bot.api.events.GuidoEvent} and jda events */
 public interface GuidoEventHandler extends GuidoHandler {
 
   @Override

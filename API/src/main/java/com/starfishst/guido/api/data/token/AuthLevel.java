@@ -30,6 +30,6 @@ public enum AuthLevel {
    * @return the permission
    */
   public int intValue() {
-    return permission;
+    return this.permission;
   }
 }

@@ -22,7 +22,6 @@ import com.starfishst.jda.CommandManager;
 import com.starfishst.jda.ManagerOptions;
 import com.starfishst.jda.providers.registry.JdaProvidersRegistry;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import me.googas.commons.Lots;
@@ -53,11 +52,11 @@ public class Guido {
   /** The list of handlers that the bot is using */
   @NotNull
   private static final List<GuidoHandler> handlers =
-      Lots.list(new GuidoMessagesController(), dataLoader);
+      Lots.list(new GuidoMessagesController(), Guido.dataLoader);
 
   /** The language handler for the bot */
   @NotNull
-  private static GuidoLanguageHandler languageHandler = new GuidoLanguageHandler(dataLoader);
+  private static GuidoLanguageHandler languageHandler = new GuidoLanguageHandler(Guido.dataLoader);
 
   /** The server to receive implementations */
   @NotNull private static Server server = new GuidoFallbackServer();
@@ -88,37 +87,37 @@ public class Guido {
   public static void main(String[] args) {
     HashMap<String, String> argsMaps = Maps.fromStringArray("=", args);
 
-    JDA jda = connection.createConnection(argsMaps.getOrDefault("token", ""));
+    JDA jda = Guido.connection.createConnection(argsMaps.getOrDefault("token", ""));
     jda.getPresence().setPresence(OnlineStatus.DO_NOT_DISTURB, Activity.playing("A los pits"));
     jda.setEventManager(new AnnotatedEventManager());
 
     if (argsMaps.get("loader") != null) {
       if (argsMaps.get("loader").equalsIgnoreCase("mongo")) {
         try {
-          DataLoader old = dataLoader;
-          dataLoader =
+          DataLoader old = Guido.dataLoader;
+          Guido.dataLoader =
               new MongoDataLoader(
                   argsMaps.getOrDefault("uri", "none"),
                   argsMaps.getOrDefault("database", "testing-database"));
-          languageHandler.setDataLoader(dataLoader);
-          handlers.remove(old);
-          handlers.add(dataLoader);
+          Guido.languageHandler.setDataLoader(Guido.dataLoader);
+          Guido.handlers.remove(old);
+          Guido.handlers.add(Guido.dataLoader);
         } catch (Exception e) {
           Console.exception(e, "Mongo loader could not be initialized");
         }
       }
-      Console.info("Using data loader: " + dataLoader.getClass());
+      Console.info("Using data loader: " + Guido.dataLoader.getClass());
     }
     try {
-      server =
+      Guido.server =
           new GuidoServer(
               Integer.parseInt(argsMaps.getOrDefault("port", "3000")),
               Long.parseLong(argsMaps.getOrDefault("timeout", "3000")));
-      server.start();
+      Guido.server.start();
     } catch (IOException e) {
       Console.exception(e, "Socket server could not be initialized");
     }
-    JdaProvidersRegistry registry = new JdaProvidersRegistry(languageHandler);
+    JdaProvidersRegistry registry = new JdaProvidersRegistry(Guido.languageHandler);
     registry.addProvider(new AuthLevelProvider());
     registry.addProvider(new BotUserSenderProvider());
     CommandManager manager =
@@ -126,38 +125,39 @@ public class Guido {
             jda,
             argsMaps.getOrDefault("prefix", argsMaps.getOrDefault("prefix", "$")),
             new ManagerOptions(),
-            languageHandler,
+                Guido.languageHandler,
             registry,
-            new GuidoPermissionChecker(languageHandler, dataLoader));
+            new GuidoPermissionChecker(Guido.languageHandler, Guido.dataLoader));
     manager.registerCommand(new DeveloperCommands(jda));
     manager.registerCommand(new EloCommands());
     manager.registerCommand(new LangCommands());
     manager.registerCommand(new TeamCommands());
     manager.registerCommand(new TokenCommands());
     manager.registerCommand(new UserCommands());
-    languageHandler.load("en", "es", "fr");
-    for (GuidoHandler handler : handlers) {
+    Guido.languageHandler.load("en", "es", "fr");
+    for (GuidoHandler handler : Guido.handlers) {
       handler.register(jda);
     }
   }
 
   /** Stops the bot */
   public static void stop() {
-    List<ICatchable> copy = new ArrayList<>(Cache.getCache());
+    List<ICatchable> copy = Cache.copy();
     for (ICatchable catchable : copy) {
       catchable.onRemove();
       catchable.unload();
     }
     try {
-      server.close();
+      Guido.server.close();
     } catch (IOException e) {
       Console.exception(e, "Server could not be closed properly");
     }
-    languageHandler.stop();
-    for (GuidoHandler handler : handlers) {
+    Guido.languageHandler.stop();
+    for (GuidoHandler handler : Guido.handlers) {
+      handler.close();
       handler.unregister();
     }
-    JDA jda = connection.getJda();
+    JDA jda = Guido.connection.getJda();
     if (jda != null) {
       jda.shutdown();
     }
@@ -170,7 +170,7 @@ public class Guido {
    * @param event the event to be called
    */
   public static void call(@NotNull Event event) {
-    listenerManager.call(event);
+    Guido.listenerManager.call(event);
   }
 
   /**
@@ -181,7 +181,7 @@ public class Guido {
    * @throws IllegalArgumentException cancellable is not an instance of {@link Event}
    */
   public static boolean call(@NotNull Cancellable cancellable) {
-    return listenerManager.call(cancellable);
+    return Guido.listenerManager.call(cancellable);
   }
 
   /**
@@ -194,7 +194,7 @@ public class Guido {
    * @throws IllegalStateException if the handler was not found
    */
   public static <T extends GuidoHandler> T getHandler(@NotNull Class<T> clazz) {
-    for (GuidoHandler handler : handlers) {
+    for (GuidoHandler handler : Guido.handlers) {
       if (handler.getClass() == clazz) {
         return clazz.cast(handler);
       }
@@ -209,7 +209,7 @@ public class Guido {
    */
   @NotNull
   public static ListenerManager getListenerManager() {
-    return listenerManager;
+    return Guido.listenerManager;
   }
 
   /**
@@ -219,7 +219,7 @@ public class Guido {
    */
   @NotNull
   public static BotDataLoader getDataLoader() {
-    return dataLoader;
+    return Guido.dataLoader;
   }
 
   /**
@@ -229,7 +229,7 @@ public class Guido {
    */
   @NotNull
   public static GuidoJdaConnection getConnection() {
-    return connection;
+    return Guido.connection;
   }
 
   /**
@@ -239,7 +239,7 @@ public class Guido {
    */
   @NotNull
   public static GuidoLanguageHandler getLanguageHandler() {
-    return languageHandler;
+    return Guido.languageHandler;
   }
 
   /**
@@ -249,6 +249,6 @@ public class Guido {
    */
   @NotNull
   public static Server getServer() {
-    return server;
+    return Guido.server;
   }
 }

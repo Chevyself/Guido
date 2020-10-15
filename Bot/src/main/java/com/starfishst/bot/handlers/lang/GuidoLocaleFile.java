@@ -74,7 +74,7 @@ public class GuidoLocaleFile implements LocaleFile {
   public void save() {
     try {
       FileWriter writer = new FileWriter(this.file);
-      properties.store(writer, "No comments");
+      this.properties.store(writer, "No comments");
       writer.close();
     } catch (IOException e) {
       Fallback.addError("IOException: Lang file from " + this + " could not be saved");

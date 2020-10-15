@@ -32,8 +32,13 @@ public class GuidoMessagesController implements ResponsiveMessageController, Gui
     this.messages.add(message);
   }
 
+  /**
+   * Listen for when a message is unloaded to save it
+   *
+   * @param event the event of a message being unloaded
+   */
   @Listener(priority = 5)
-  public void onResponsiveMessageUnload(ResponsiveMessageUnloadedEvent event) {
+  public void onResponsiveMessageUnload(@NotNull ResponsiveMessageUnloadedEvent event) {
     JDA jda = Guido.getConnection().getJda();
     if (jda != null && event.getMessage() instanceof GuidoResponsiveMessage) {
       ((GuidoResponsiveMessage) event.getMessage()).save(jda);
@@ -56,6 +61,6 @@ public class GuidoMessagesController implements ResponsiveMessageController, Gui
 
   @Override
   public @NotNull Collection<ResponsiveMessage> getResponsiveMessages(@Nullable Guild guild) {
-    return messages;
+    return this.messages;
   }
 }

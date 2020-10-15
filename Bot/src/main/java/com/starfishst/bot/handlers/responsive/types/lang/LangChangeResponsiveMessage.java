@@ -71,7 +71,7 @@ public class LangChangeResponsiveMessage extends Catchable implements GuidoRespo
 
   @Override
   public long getId() {
-    return id;
+    return this.id;
   }
 
   @Override

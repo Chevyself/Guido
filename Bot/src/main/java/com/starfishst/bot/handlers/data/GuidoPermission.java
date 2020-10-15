@@ -12,6 +12,12 @@ public class GuidoPermission implements Permission {
   /** Whether the permission is enabled */
   private boolean enabled;
 
+  /**
+   * Create the permission
+   *
+   * @param node the node of the permission
+   * @param enabled whether the permission is enabled
+   */
   public GuidoPermission(@NotNull String node, boolean enabled) {
     this.node = node;
     this.enabled = enabled;
@@ -40,6 +46,6 @@ public class GuidoPermission implements Permission {
 
   @Override
   public String toString() {
-    return "GuidoPermission{" + "node='" + node + '\'' + ", enabled=" + enabled + '}';
+    return "GuidoPermission{" + "node='" + this.node + '\'' + ", enabled=" + this.enabled + '}';
   }
 }
