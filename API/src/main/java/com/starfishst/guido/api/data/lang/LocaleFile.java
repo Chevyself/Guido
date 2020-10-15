@@ -64,7 +64,6 @@ public interface LocaleFile extends Localizable {
    * Get the actual file that this is using.
    *
    * @deprecated since 1.0.0-SNAPSHOT-10
-   *
    * @return the file that this is using
    */
   @NotNull

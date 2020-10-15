@@ -12,12 +12,11 @@ import com.starfishst.guido.api.data.UserData;
 import com.starfishst.guido.api.data.ValuesMap;
 import com.starfishst.guido.api.data.links.LinkedDataType;
 import com.starfishst.guido.api.data.token.AuthToken;
+import java.util.Collection;
 import me.googas.commons.events.ListenPriority;
 import me.googas.commons.events.Listener;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.Collection;
 
 /**
  * This loader will attempt to get the data from files if it fails it will create a new instance of

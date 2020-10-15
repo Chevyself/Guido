@@ -11,6 +11,7 @@ public class TestHandler implements GuidoEventHandler {
 
   /**
    * Listen to guido events and print then
+   *
    * @param event a guido event
    */
   @Listener

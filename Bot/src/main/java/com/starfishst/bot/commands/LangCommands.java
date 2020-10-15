@@ -26,7 +26,7 @@ public class LangCommands {
   @Command(aliases = "lang", description = "lang.desc")
   public Result lang(CommandContext context, User user) {
     return new Result(
-            this.handler.getFile(context).get("lang.change"),
+        this.handler.getFile(context).get("lang.change"),
         msg -> {
           LangChangeResponsiveMessage responsiveMessage =
               new LangChangeResponsiveMessage(user, msg);

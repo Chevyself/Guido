@@ -3,8 +3,6 @@ package com.starfishst.bot.handlers.data;
 import com.starfishst.bot.api.data.BotUser;
 import com.starfishst.bot.api.events.data.user.BotUserLoadedEvent;
 import com.starfishst.bot.api.events.data.user.BotUserUnloadedEvent;
-import java.util.HashSet;
-
 import me.googas.commons.cache.Catchable;
 import me.googas.commons.time.Time;
 import org.jetbrains.annotations.NotNull;
@@ -20,8 +18,7 @@ public class GuidoUser extends Catchable implements BotUser {
    *
    * @param id the user id
    */
-  public GuidoUser(
-          @NotNull String id) {
+  public GuidoUser(@NotNull String id) {
     super(Time.fromString("5m"));
     this.id = id;
     new BotUserLoadedEvent(this).call();

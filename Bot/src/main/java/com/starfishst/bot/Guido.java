@@ -61,11 +61,8 @@ public class Guido {
   @NotNull
   private static GuidoLanguageHandler languageHandler = new GuidoLanguageHandler(Guido.dataLoader);
 
-  /**
-   * The command manager of the bot
-   */
-  @Nullable
-  private static CommandManager commandManager;
+  /** The command manager of the bot */
+  @Nullable private static CommandManager commandManager;
 
   /** The server to receive implementations */
   @NotNull private static Server server = new GuidoFallbackServer();
@@ -97,7 +94,7 @@ public class Guido {
     HashMap<String, String> argsMaps = Maps.fromStringArray("=", args);
 
     JDA jda = Guido.connection.createConnection(argsMaps.getOrDefault("token", ""));
-    jda.getPresence().setPresence(OnlineStatus.DO_NOT_DISTURB, Activity.playing("A los pits"));
+    jda.getPresence().setPresence(OnlineStatus.DO_NOT_DISTURB, Activity.playing(".help .ayuda .?"));
     jda.setEventManager(new AnnotatedEventManager());
 
     if (argsMaps.get("loader") != null) {
@@ -132,9 +129,9 @@ public class Guido {
     Guido.commandManager =
         new CommandManager(
             jda,
-            argsMaps.getOrDefault("prefix", argsMaps.getOrDefault("prefix", "$")),
+            argsMaps.getOrDefault("prefix", argsMaps.getOrDefault("prefix", ".")),
             new ManagerOptions(),
-                Guido.languageHandler,
+            Guido.languageHandler,
             registry,
             new GuidoPermissionChecker(Guido.languageHandler, Guido.dataLoader));
     Guido.commandManager.registerCommand(new DeveloperCommands(jda));

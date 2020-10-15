@@ -24,6 +24,7 @@ import org.jetbrains.annotations.NotNull;
 
 /**
  * Elo commands for a server
+ *
  * @deprecated since 1.0.0-SNAPSHOT-7 to remove when {@link EloCommandsNew} is done
  */
 public class EloCommands {

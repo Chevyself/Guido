@@ -10,7 +10,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import me.googas.commons.CoreFiles;
 import me.googas.commons.fallback.Fallback;
-import me.googas.commons.log.LoggerFactory;
 import me.googas.commons.log.formatters.CustomFormatter;
 import me.googas.commons.time.TimeUtils;
 import org.jetbrains.annotations.NotNull;

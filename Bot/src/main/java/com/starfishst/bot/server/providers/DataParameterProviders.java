@@ -9,7 +9,6 @@ import me.googas.messaging.json.Provider;
 import me.googas.messaging.json.exception.JsonIllegalArgumentException;
 import org.jetbrains.annotations.NotNull;
 
-
 /** Providers for data types */
 public class DataParameterProviders {
 
@@ -68,7 +67,7 @@ public class DataParameterProviders {
    */
   @Provider(clazz = GuidoPermission.class)
   public GuidoPermission providePermission(@NotNull Request<?> request, @NotNull Object param)
-          throws JsonIllegalArgumentException {
+      throws JsonIllegalArgumentException {
     if (param instanceof String) {
       String that = (String) param;
       if (that.startsWith("-")) {

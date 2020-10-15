@@ -6,7 +6,6 @@ import com.starfishst.bot.server.receptors.LinkedDataReceptors;
 import com.starfishst.bot.server.receptors.MinecraftDataReceptors;
 import com.starfishst.bot.util.console.Console;
 import java.io.IOException;
-
 import me.googas.messaging.Request;
 import me.googas.messaging.api.Message;
 import me.googas.messaging.json.adapters.MessageDeserializer;
@@ -55,9 +54,11 @@ public class GuidoServer extends JsonSocketServer {
   @Override
   public void close() throws IOException {
     for (JsonClientThread client : this.getClients()) {
-      client.sendRequest(new Request<>(Boolean.class, "disconnected"), bol -> {
-        // IGNORED
-      });
+      client.sendRequest(
+          new Request<>(Boolean.class, "disconnected"),
+          bol -> {
+            // IGNORED
+          });
     }
     super.close();
   }

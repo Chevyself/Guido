@@ -39,8 +39,7 @@ public class TokenCommands {
       permission = @Perm(node = "user:guido.token.generate"))
   public Result generate(
       BotUser user,
-      @Required(name = "token.gen.perm", description = "token.gen.perm.desc")
-          AuthLevel level) {
+      @Required(name = "token.gen.perm", description = "token.gen.perm.desc") AuthLevel level) {
     GuidoAuthToken token = new GuidoAuthToken(level, user);
     return new Result("Token generated use the string: " + token.getToken() + " to use it");
   }

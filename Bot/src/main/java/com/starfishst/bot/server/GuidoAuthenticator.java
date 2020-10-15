@@ -72,7 +72,8 @@ public class GuidoAuthenticator implements Authenticator {
   public boolean isAuthenticated(@NotNull JsonClientThread client, @NotNull Request<?> request) {
     if (this.levels.containsKey(client)) {
       AuthLevel authLevel = this.levels.get(client);
-      AuthLevel required = this.requiredLevel.getOrDefault(request.getMethod(), AuthLevel.READ_WRITE);
+      AuthLevel required =
+          this.requiredLevel.getOrDefault(request.getMethod(), AuthLevel.READ_WRITE);
       return required.intValue() <= authLevel.intValue();
     }
     return false;

@@ -8,7 +8,6 @@ import com.starfishst.guido.api.data.links.LinkedDataType;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.UUID;
-
 import me.googas.commons.UUIDUtils;
 import me.googas.commons.maps.Maps;
 import me.googas.messaging.Request;

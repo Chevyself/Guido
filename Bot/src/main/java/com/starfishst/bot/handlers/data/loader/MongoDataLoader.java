@@ -296,10 +296,7 @@ public class MongoDataLoader implements BotDataLoader {
   public @Nullable GuidoUser getUserData(@NotNull Document query) {
     Document document = this.users.find(query).first();
     if (document != null) {
-      return new GuidoUser(
-          document.getString("id"),
-          this.getPermissionStacks(document),
-          this.getPreferences(document));
+      return new GuidoUser(document.getString("id"));
     }
     return null;
   }
@@ -358,7 +355,7 @@ public class MongoDataLoader implements BotDataLoader {
       }
     }
     if (user == null) {
-      user = new GuidoUser(this.nextUserId(), new HashSet<>(), new GuidoValuesMap());
+      user = new GuidoUser(this.nextUserId());
     }
     return user;
   }

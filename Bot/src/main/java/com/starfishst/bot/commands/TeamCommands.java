@@ -31,7 +31,9 @@ public class TeamCommands {
    * @param sender the sender of the command
    * @return the result of the command execution
    */
-  @Command(aliases = {"teams", "equipos"}, description = "teams.desc")
+  @Command(
+      aliases = {"teams", "equipos"},
+      description = "teams.desc")
   public Result teams(CommandContext context, Member sender) {
     GuildVoiceState voiceState = sender.getVoiceState();
     if (voiceState != null && voiceState.getChannel() != null) {
@@ -46,7 +48,7 @@ public class TeamCommands {
           }
         }
         return new Result(
-                this.handler
+            this.handler
                 .getFile(context)
                 .get(
                     "teams.result",
@@ -76,10 +78,7 @@ public class TeamCommands {
   public Result capitanes(
       CommandContext context,
       Member sender,
-      @Optional(
-              name = "leaders.number",
-              description = "leaders.number.desc",
-              suggestions = "2")
+      @Optional(name = "leaders.number", description = "leaders.number.desc", suggestions = "2")
           int number) {
     GuildVoiceState voiceState = sender.getVoiceState();
     if (voiceState != null && voiceState.getChannel() != null) {
@@ -88,18 +87,18 @@ public class TeamCommands {
       if (members.size() >= number) {
         List<Member> random = RandomUtils.getRandom(members, number);
         return new Result(
-                this.handler
+            this.handler
                 .getFile(context)
                 .get("leaders.result", Maps.singleton("leaders", Mentions.pretty(random))));
       } else {
         return new Result(
-                this.handler
+            this.handler
                 .getFile(context)
                 .get("leaders.not-enough", Maps.singleton("number", String.valueOf(number))));
       }
     } else {
       return new Result(
-              this.handler
+          this.handler
               .getFile(context)
               .get("leaders.not-connected", Maps.singleton("number", String.valueOf(number))));
     }

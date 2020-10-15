@@ -11,11 +11,9 @@ import com.starfishst.core.annotations.settings.Setting;
 import com.starfishst.core.annotations.settings.Settings;
 import com.starfishst.guido.api.data.implementations.data.PermissionImpl;
 import com.starfishst.guido.api.data.implementations.data.PermissionStackImpl;
-import com.starfishst.guido.api.data.links.LinkedData;
 import com.starfishst.guido.api.data.links.LinkedDataType;
 import java.util.ArrayList;
 import java.util.HashMap;
-
 import me.googas.commons.Pagination;
 import me.googas.commons.Strings;
 import me.googas.commons.UUIDUtils;
@@ -40,8 +38,13 @@ public class PermissionCommands {
   public Result perms(
       @Required(name = "player", description = "The proxied player to add the permission to ")
           ProxiedOfflinePlayer player,
-      @Optional(name = "context", description = "The context to see the permissions", suggestions = "") String context,
-      @Optional(name = "page", description = "The page to see the permissions", suggestions = "1") int page) {
+      @Optional(
+              name = "context",
+              description = "The context to see the permissions",
+              suggestions = "")
+          String context,
+      @Optional(name = "page", description = "The page to see the permissions", suggestions = "1")
+          int page) {
     PermissionStackImpl stack =
         Guido.getClient()
             .request(
@@ -51,7 +54,7 @@ public class PermissionCommands {
                     Maps.objects("type", LinkedDataType.MINECRAFT)
                         .append(
                             "identification", Maps.objects("uuid", player.getUniqueId()).build())
-                            .append("context", context)
+                        .append("context", context)
                         .build()));
     if (stack != null && !stack.getPermissions().isEmpty()) {
       Pagination<PermissionImpl> pagination =
@@ -91,11 +94,21 @@ public class PermissionCommands {
       @Required(name = "node", description = "The node of the permission") String node,
       @Required(name = "enabled", description = "Whether the permission is enabled")
           boolean enabled,
-      @Optional(name = "context", description = "The context to add the permission on", suggestions = "bungee")
+      @Optional(
+              name = "context",
+              description = "The context to add the permission on",
+              suggestions = "bungee")
           String context) {
-    HashMap<String, Object> identification = Maps.objects("uuid", UUIDUtils.trim(player.getUniqueId())).build();
-    HashMap<String, Object> params = Maps.objects("type", LinkedDataType.MINECRAFT).append("context", context).append("permission", new PermissionImpl(node, enabled).getNodeAppended()).append("identification", identification).build();
-    Boolean added = Guido.getClient().request(new Request<>(Boolean.class, "add-permission", params));
+    HashMap<String, Object> identification =
+        Maps.objects("uuid", UUIDUtils.trim(player.getUniqueId())).build();
+    HashMap<String, Object> params =
+        Maps.objects("type", LinkedDataType.MINECRAFT)
+            .append("context", context)
+            .append("permission", new PermissionImpl(node, enabled).getNodeAppended())
+            .append("identification", identification)
+            .build();
+    Boolean added =
+        Guido.getClient().request(new Request<>(Boolean.class, "add-permission", params));
     if (added) {
       return new Result("Permission added");
     } else {

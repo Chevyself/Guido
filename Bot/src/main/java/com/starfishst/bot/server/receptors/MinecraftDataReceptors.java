@@ -8,7 +8,6 @@ import com.starfishst.guido.api.data.links.LinkedDataType;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.UUID;
-
 import me.googas.commons.UUIDUtils;
 import me.googas.messaging.json.ParamName;
 import me.googas.messaging.json.Receptor;
