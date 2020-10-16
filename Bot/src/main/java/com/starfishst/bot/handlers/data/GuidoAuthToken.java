@@ -29,8 +29,9 @@ public class GuidoAuthToken extends Catchable implements AuthToken {
    * @param token the unique string of the token
    * @param level the level of authentication of the token
    * @param user the user owner of the token
+   * @param addToCache whether to add the token to cache
    */
-  public GuidoAuthToken(@NotNull String token, @NotNull AuthLevel level, @NotNull UserData user) {
+  public GuidoAuthToken(@NotNull String token, @NotNull AuthLevel level, @NotNull UserData user, boolean addToCache) {
     super(new Time(1, Unit.MINUTES));
     this.token = token;
     this.level = level;
@@ -45,7 +46,7 @@ public class GuidoAuthToken extends Catchable implements AuthToken {
    * @param user the user owner of the token
    */
   public GuidoAuthToken(@NotNull AuthLevel level, @NotNull UserData user) {
-    this(RandomUtils.nextString(16), level, user);
+    this(RandomUtils.nextString(16), level, user, true);
   }
 
   @Override
@@ -70,5 +71,23 @@ public class GuidoAuthToken extends Catchable implements AuthToken {
   @Override
   public @NotNull AuthLevel getLevel() {
     return this.level;
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) return true;
+    if (!(o instanceof GuidoAuthToken)) return false;
+
+    GuidoAuthToken that = (GuidoAuthToken) o;
+
+    if (!this.token.equals(that.token)) return false;
+    return this.level == that.level;
+  }
+
+  @Override
+  public int hashCode() {
+    int result = this.token.hashCode();
+    result = 31 * result + this.level.hashCode();
+    return result;
   }
 }

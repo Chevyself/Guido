@@ -1,7 +1,7 @@
 package com.starfishst.bot.server.receptors;
 
 import com.starfishst.bot.Guido;
-import com.starfishst.bot.api.data.loader.BotLinkedData;
+import com.starfishst.bot.api.data.BotLinkedData;
 import com.starfishst.bot.handlers.data.GuidoLinkedData;
 import com.starfishst.bot.handlers.data.GuidoValuesMap;
 import com.starfishst.guido.api.data.links.LinkedDataType;
@@ -27,7 +27,7 @@ public class MinecraftDataReceptors {
       @ParamName(name = "uuid") UUID uuid, @ParamName(name = "nickname") String nick) {
     BotLinkedData data =
         Guido.getDataLoader()
-            .getLinkedData(LinkedDataType.MINECRAFT, new GuidoValuesMap("uuid", uuid));
+            .getLinkedData(LinkedDataType.MINECRAFT, new GuidoValuesMap("uuid", UUIDUtils.trim(uuid)));
     if (data != null) {
       return false;
     } else {

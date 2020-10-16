@@ -2,7 +2,7 @@ package com.starfishst.bot.server.receptors;
 
 import com.starfishst.bot.Guido;
 import com.starfishst.bot.api.data.BotUser;
-import com.starfishst.bot.api.data.loader.BotLinkedData;
+import com.starfishst.bot.api.data.BotLinkedData;
 import com.starfishst.bot.handlers.data.GuidoPermission;
 import com.starfishst.bot.handlers.data.GuidoPermissionStack;
 import com.starfishst.bot.handlers.data.GuidoValuesMap;

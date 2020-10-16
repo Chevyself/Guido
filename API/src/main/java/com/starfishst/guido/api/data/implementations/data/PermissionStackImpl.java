@@ -34,4 +34,12 @@ public class PermissionStackImpl implements PermissionStack<PermissionImpl> {
   public @NotNull Collection<PermissionImpl> getPermissions() {
     return this.permissions;
   }
+
+  @Override
+  public String toString() {
+    return "PermissionStackImpl{" +
+            "context='" + this.context + '\'' +
+            ", permissions=" + this.permissions +
+            '}';
+  }
 }

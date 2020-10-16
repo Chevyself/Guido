@@ -271,8 +271,8 @@ public class GuidoLanguageHandler implements MessagesProvider {
     return this.getFile(context)
         .get(
             "invalid.strings",
-            Maps.builder("name", s)
-                .append("description", s1)
+            Maps.builder("name", this.getFile(context).get(s))
+                .append("description", this.getFile(context).get(s1))
                 .append("position", String.valueOf(i))
                 .append("min", String.valueOf(i1))
                 .append("missing", String.valueOf(i2)));

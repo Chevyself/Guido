@@ -52,23 +52,23 @@ public class ClientImpl {
    */
   @NotNull
   public JsonClient startConnection() throws IOException {
-    client =
+    this.client =
         new JsonClient(
-            new Socket(IP, PORT),
+            new Socket(ClientImpl.IP, ClientImpl.PORT),
             Throwable::printStackTrace,
             new GsonBuilder()
                 .registerTypeAdapter(Message.class, new MessageDeserializer())
                 .setPrettyPrinting()
                 .create(),
             1000);
-    client.addReceptors(receptors);
-    client.start();
-    client.sendRequest(
+    this.client.addReceptors(this.receptors);
+    this.client.start();
+    this.client.sendRequest(
         new Request<>(Boolean.class, "auth", Maps.objects("token", this.token).build()),
         authenticated -> {
           // TODO show that it was authenticated
         });
-    return client;
+    return this.client;
   }
 
   /**
@@ -143,8 +143,8 @@ public class ClientImpl {
    */
   @NotNull
   public JsonClient validatedConnection() throws IOException {
-    if (client != null) {
-      return client;
+    if (this.client != null) {
+      return this.client;
     } else {
       return this.startConnection();
     }
@@ -166,7 +166,7 @@ public class ClientImpl {
    */
   @Nullable
   public JsonClient getConnection() {
-    return client;
+    return this.client;
   }
 
   /** Disconnects the client */
@@ -188,7 +188,7 @@ public class ClientImpl {
    */
   @NotNull
   public String getToken() {
-    return token;
+    return this.token;
   }
 
   /**

@@ -4,13 +4,14 @@ import com.starfishst.bot.api.data.BotGuild;
 import com.starfishst.bot.api.data.BotRole;
 import com.starfishst.bot.api.data.BotUser;
 import com.starfishst.bot.api.data.loader.BotDataLoader;
-import com.starfishst.bot.api.data.loader.BotLinkedData;
+import com.starfishst.bot.api.data.BotLinkedData;
 import com.starfishst.bot.api.events.data.guild.BotGuildUnloadedEvent;
 import com.starfishst.bot.api.events.data.role.BotRoleUnloadedEvent;
 import com.starfishst.bot.api.events.data.user.BotUserUnloadedEvent;
 import com.starfishst.guido.api.data.UserData;
 import com.starfishst.guido.api.data.ValuesMap;
 import com.starfishst.guido.api.data.links.LinkedDataType;
+import com.starfishst.guido.api.data.matches.Match;
 import com.starfishst.guido.api.data.token.AuthToken;
 import java.util.Collection;
 import me.googas.commons.events.ListenPriority;
@@ -103,6 +104,11 @@ public class GuidoFileLoader implements BotDataLoader {
     throw new UnsupportedOperationException("Linked data cannot be find using file loader");
   }
 
+  @Override
+  public @Nullable Match getMatch(@NotNull String id) {
+    return null;
+  }
+
   /**
    * Get the discord data for an user
    *
@@ -135,6 +141,11 @@ public class GuidoFileLoader implements BotDataLoader {
   @Override
   public @NotNull Collection<BotLinkedData> getLinks(@NotNull UserData user) {
     throw new UnsupportedOperationException("Links data cannot be find using file loader");
+  }
+
+  @Override
+  public Collection<? extends AuthToken> getTokens(@NotNull UserData user) {
+    throw new UnsupportedOperationException("File loader cannot get tokens");
   }
 
   /**

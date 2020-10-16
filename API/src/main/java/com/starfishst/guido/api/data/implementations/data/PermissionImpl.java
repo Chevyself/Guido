@@ -32,4 +32,12 @@ public class PermissionImpl implements Permission {
   public boolean isEnabled() {
     return this.enabled;
   }
+
+  @Override
+  public String toString() {
+    return "PermissionImpl{" +
+            "node='" + this.node + '\'' +
+            ", enabled=" + this.enabled +
+            '}';
+  }
 }

@@ -1,6 +1,7 @@
 package com.starfishst.bot.api.data.loader;
 
 import com.starfishst.bot.api.data.BotGuild;
+import com.starfishst.bot.api.data.BotLinkedData;
 import com.starfishst.bot.api.data.BotRole;
 import com.starfishst.bot.api.data.BotUser;
 import com.starfishst.bot.handlers.GuidoEventHandler;

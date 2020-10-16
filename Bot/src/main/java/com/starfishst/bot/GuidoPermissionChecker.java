@@ -2,7 +2,7 @@ package com.starfishst.bot;
 
 import com.starfishst.bot.api.data.BotRole;
 import com.starfishst.bot.api.data.loader.BotDataLoader;
-import com.starfishst.bot.api.data.loader.BotLinkedData;
+import com.starfishst.bot.api.data.BotLinkedData;
 import com.starfishst.jda.PermissionChecker;
 import com.starfishst.jda.annotations.Perm;
 import com.starfishst.jda.context.CommandContext;

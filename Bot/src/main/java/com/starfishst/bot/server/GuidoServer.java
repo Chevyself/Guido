@@ -1,11 +1,15 @@
 package com.starfishst.bot.server;
 
 import com.google.gson.GsonBuilder;
+import com.starfishst.bot.api.events.data.server.GuidoServerConnectionEvent;
+import com.starfishst.bot.api.events.data.server.GuidoServerDisconnectionEvent;
 import com.starfishst.bot.server.providers.DataParameterProviders;
 import com.starfishst.bot.server.receptors.LinkedDataReceptors;
 import com.starfishst.bot.server.receptors.MinecraftDataReceptors;
 import com.starfishst.bot.util.console.Console;
 import java.io.IOException;
+import java.util.Set;
+
 import me.googas.messaging.Request;
 import me.googas.messaging.api.Message;
 import me.googas.messaging.json.adapters.MessageDeserializer;
@@ -44,11 +48,13 @@ public class GuidoServer extends JsonSocketServer {
   @Override
   protected void onRemove(@NotNull JsonClientThread client) {
     this.authenticator.remove(client);
+    new GuidoServerDisconnectionEvent(this, client).call();
   }
 
   @Override
   protected void onConnection(@NotNull JsonClientThread client) {
     this.authenticator.add(client);
+    new GuidoServerConnectionEvent(this, client).call();
   }
 
   @Override

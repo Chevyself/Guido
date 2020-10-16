@@ -1,7 +1,7 @@
 package com.starfishst.bot.handlers.responsive.types.lang;
 
 import com.starfishst.bot.Guido;
-import com.starfishst.bot.api.data.loader.BotLinkedData;
+import com.starfishst.bot.api.data.BotLinkedData;
 import com.starfishst.bot.handlers.responsive.GuidoMessagesController;
 import com.starfishst.jda.utils.responsive.ReactionResponse;
 import com.starfishst.jda.utils.responsive.ResponsiveMessage;

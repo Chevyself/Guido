@@ -1,6 +1,6 @@
 package com.starfishst.bot.api.events.data.links;
 
-import com.starfishst.bot.api.data.loader.BotLinkedData;
+import com.starfishst.bot.api.data.BotLinkedData;
 import org.jetbrains.annotations.NotNull;
 
 /** Called when linked data gets unloaded */

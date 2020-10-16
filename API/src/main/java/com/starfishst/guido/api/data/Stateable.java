@@ -13,4 +13,15 @@ public interface Stateable {
    */
   @NotNull
   HashMap<String, Double> getStats();
+
+  /**
+   * Get the elo for certain ranked ladder
+   *
+   * @param ladder the ladder to get the elo from
+   * @return the elo for certain ranked ladder
+   */
+  default Double getElo(@NotNull String ladder) {
+    return this.getStats().get(ladder + ".elo");
+  }
+
 }

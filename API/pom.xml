@@ -12,7 +12,7 @@
 
     <groupId>com.starfishst.guido.api</groupId>
     <artifactId>API</artifactId>
-    <version>1.0.0-SNAPSHOT-10</version>
+    <version>1.0.0-SNAPSHOT-11</version>
     <description>The API for implementations and the bot</description>
 
     <dependencies>
@@ -27,7 +27,7 @@
         <dependency>
             <groupId>me.googas.messaging</groupId>
             <artifactId>Commons-Messaging</artifactId>
-            <version>1.0.2-SNAPSHOT</version>
+            <version>1.0.3-SNAPSHOT</version>
             <scope>compile</scope>
         </dependency>
         <!-- Jetbrains -->

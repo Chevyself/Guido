@@ -1,7 +1,7 @@
 package com.starfishst.bot.handlers.data;
 
 import com.starfishst.bot.api.data.BotUser;
-import com.starfishst.bot.api.data.loader.BotLinkedData;
+import com.starfishst.bot.api.data.BotLinkedData;
 import com.starfishst.bot.api.events.data.links.LinkedDataLoadedEvent;
 import com.starfishst.bot.api.events.data.links.LinkedDataUnloadedEvent;
 import com.starfishst.guido.api.data.PermissionStack;
@@ -183,4 +183,5 @@ public class GuidoLinkedData extends Catchable implements BotLinkedData {
     result = 31 * result + this.identification.hashCode();
     return result;
   }
+
 }
