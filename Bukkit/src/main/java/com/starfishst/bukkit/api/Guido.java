@@ -4,6 +4,7 @@ import com.starfishst.bukkit.GuidoPlugin;
 import com.starfishst.bukkit.api.config.Configuration;
 import com.starfishst.bukkit.api.events.GuidoEvent;
 import com.starfishst.bukkit.api.events.GuidoListener;
+import com.starfishst.guido.api.data.implementations.ClientImpl;
 import me.googas.commons.Validate;
 import org.bukkit.Bukkit;
 import org.jetbrains.annotations.NotNull;
@@ -23,16 +24,17 @@ public class Guido {
    * @return the listener if found null if it might not have been registered
    */
   public static <T extends GuidoListener> @Nullable T getListener(@NotNull Class<T> clazz) {
-    return validated().getListener(clazz);
+    return Guido.validated().getListener(clazz);
   }
 
   /**
-   * Get whether pgm is connected with the plugin
+   * Gives the instance validated to not be null
    *
-   * @return true if pgm is connected
+   * @return the not null instance
    */
-  public static boolean isPgmConnected() {
-    return validated().getDependencies().getDependency("PGM").isEnabled();
+  @NotNull
+  public static GuidoPlugin validated() {
+    return Validate.notNull(Guido.plugin, "Guido might not have been initialized");
   }
 
   /**
@@ -45,13 +47,12 @@ public class Guido {
   }
 
   /**
-   * Gives the instance validated to not be null
+   * Get whether pgm is connected with the plugin
    *
-   * @return the not null instance
+   * @return true if pgm is connected
    */
-  @NotNull
-  public static GuidoPlugin validated() {
-    return Validate.notNull(plugin, "Guido might not have been initialized");
+  public static boolean isPgmConnected() {
+    return Guido.validated().getDependencies().getDependency("PGM").isEnabled();
   }
 
   /**
@@ -73,7 +74,7 @@ public class Guido {
    */
   @NotNull
   public static Configuration getConfiguration() {
-    return validated().getConfiguration();
+    return Guido.validated().getConfiguration();
   }
 
   /**
@@ -82,6 +83,16 @@ public class Guido {
    * @return true if protocol lib is connected
    */
   public static boolean isProtocolLibConnected() {
-    return validated().getDependencies().getDependency("ProtocolLib").isEnabled();
+    return Guido.validated().getDependencies().getDependency("ProtocolLib").isEnabled();
+  }
+
+  /**
+   * Get the client of the implementation
+   *
+   * @return the client
+   */
+  @NotNull
+  public static ClientImpl getClient() {
+    return Guido.validated().getClient();
   }
 }

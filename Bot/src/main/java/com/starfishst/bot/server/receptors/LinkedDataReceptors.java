@@ -1,8 +1,8 @@
 package com.starfishst.bot.server.receptors;
 
 import com.starfishst.bot.Guido;
-import com.starfishst.bot.api.data.BotUser;
 import com.starfishst.bot.api.data.BotLinkedData;
+import com.starfishst.bot.api.data.BotUser;
 import com.starfishst.bot.handlers.data.GuidoPermission;
 import com.starfishst.bot.handlers.data.GuidoPermissionStack;
 import com.starfishst.bot.handlers.data.GuidoValuesMap;
@@ -155,7 +155,7 @@ public class LinkedDataReceptors {
       @ParamName(name = "permission") GuidoPermission permission) {
     BotLinkedData data =
         Guido.getDataLoader().getLinkedData(type, new GuidoValuesMap(identification));
-    if (data != null) {
+    if (data != null && !data.containsPermission(permission.getNode(), context)) {
       data.addPermission(context, permission);
       return true;
     }
@@ -179,7 +179,7 @@ public class LinkedDataReceptors {
       @ParamName(name = "permission") GuidoPermission permission) {
     BotLinkedData data =
         Guido.getDataLoader().getLinkedData(type, new GuidoValuesMap(identification));
-    if (data != null) {
+    if (data != null && data.containsPermission(permission.getNode(), context)) {
       data.removePermission(context, permission);
       return true;
     }

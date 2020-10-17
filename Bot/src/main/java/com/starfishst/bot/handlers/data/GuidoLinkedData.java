@@ -1,7 +1,8 @@
 package com.starfishst.bot.handlers.data;
 
-import com.starfishst.bot.api.data.BotUser;
 import com.starfishst.bot.api.data.BotLinkedData;
+import com.starfishst.bot.api.data.BotPermissible;
+import com.starfishst.bot.api.data.BotUser;
 import com.starfishst.bot.api.events.data.links.LinkedDataLoadedEvent;
 import com.starfishst.bot.api.events.data.links.LinkedDataUnloadedEvent;
 import com.starfishst.guido.api.data.PermissionStack;
@@ -17,7 +18,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 /** The implementation of bot linked ata */
-public class GuidoLinkedData extends Catchable implements BotLinkedData {
+public class GuidoLinkedData extends Catchable implements BotLinkedData, BotPermissible {
 
   /** The type of the linked data */
   @NotNull private final LinkedDataType type;
@@ -134,22 +135,26 @@ public class GuidoLinkedData extends Catchable implements BotLinkedData {
     return this.user;
   }
 
+  /**
+   * Adds a permission to this linked data
+   *
+   * @param context the context to add the permission on
+   * @param permission the permission to add
+   */
   @Override
   public void addPermission(@NotNull String context, @NotNull GuidoPermission permission) {
-    PermissionStack<GuidoPermission> stack = this.getPermissions(context);
-    if (stack == null) {
-      stack = new GuidoPermissionStack(context, new HashSet<>());
-      this.getPermissions().add(stack);
-    }
-    stack.add(permission);
+    BotPermissible.super.addPermission(context, permission.getNode(), permission.isEnabled());
   }
 
+  /**
+   * Removes a permission to this linked data
+   *
+   * @param context the context to remove the permission from
+   * @param permission the permission to remove
+   */
   @Override
   public void removePermission(@NotNull String context, @NotNull GuidoPermission permission) {
-    PermissionStack<GuidoPermission> stack = this.getPermissions(context);
-    if (stack != null) {
-      stack.remove(permission);
-    }
+    BotPermissible.super.removePermission(context, permission.getNode());
   }
 
   /**
@@ -183,5 +188,4 @@ public class GuidoLinkedData extends Catchable implements BotLinkedData {
     result = 31 * result + this.identification.hashCode();
     return result;
   }
-
 }

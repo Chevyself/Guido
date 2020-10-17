@@ -6,12 +6,12 @@ import java.io.IOException;
 import java.net.Socket;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
-import me.googas.commons.NullableAtomic;
 import me.googas.commons.cache.Cache;
 import me.googas.commons.cache.ICatchable;
 import me.googas.commons.maps.Maps;
 import me.googas.messaging.Request;
 import me.googas.messaging.api.Message;
+import me.googas.messaging.api.MessengerListenFailException;
 import me.googas.messaging.json.adapters.MessageDeserializer;
 import me.googas.messaging.json.client.JsonClient;
 import org.jetbrains.annotations.NotNull;
@@ -21,7 +21,7 @@ import org.jetbrains.annotations.Nullable;
 public class ClientImpl {
 
   /** The ip of the bot */
-  @NotNull private static final String IP = "localhost";
+  @NotNull private static final String IP = "104.243.43.176";
 
   /** The port of the bot */
   private static final int PORT = 3000;
@@ -54,7 +54,7 @@ public class ClientImpl {
   public JsonClient startConnection() throws IOException {
     this.client =
         new JsonClient(
-            new Socket(ClientImpl.IP, ClientImpl.PORT),
+            new Socket("localhost", ClientImpl.PORT),
             Throwable::printStackTrace,
             new GsonBuilder()
                 .registerTypeAdapter(Message.class, new MessageDeserializer())
@@ -72,11 +72,11 @@ public class ClientImpl {
   }
 
   /**
-   * Send a request or get the object from cache
-   *
-   * @param request the request to make in case the object is not in cache
-   * @param predicate the boolean to get the object from cache
-   * @param consumer the method to do after we get the object
+   * @see JsonClient#sendRequest(Request, Consumer) this method is delegated but it also allows to
+   *     get an object from cache
+   * @param request the request to make
+   * @param predicate the method to get the object from the cache
+   * @param consumer the method to execute with the given object
    * @param <T> the type of the object
    */
   public <T extends ICatchable> void request(
@@ -94,11 +94,10 @@ public class ClientImpl {
   }
 
   /**
-   * Send a request
-   *
-   * @param request the request to make
-   * @param consumer the method to do after we get the object
-   * @param <T> the type of the object
+   * @see JsonClient#sendRequest(Request, Consumer) this method is delegated
+   * @param request the request to send
+   * @param consumer the consumer of the request
+   * @param <T> the type of the object requested
    */
   public <T> void request(@NotNull Request<T> request, @NotNull Consumer<T> consumer) {
     try {
@@ -109,27 +108,16 @@ public class ClientImpl {
   }
 
   /**
-   * Send a request
-   *
-   * @param request the request to make
-   * @param <T> the type of the object
-   * @return the object
+   * @see JsonClient#sendRequest(Request) this method is delegated
+   * @param request the request to send
+   * @param <T> the type of object requested
+   * @return the object requested
+   * @throws MessengerListenFailException if the connection times out
    */
   @Nullable
-  public <T> T request(@NotNull Request<T> request) {
+  public <T> T request(@NotNull Request<T> request) throws MessengerListenFailException {
     try {
-      NullableAtomic<T> atomic = new NullableAtomic<>();
-      JsonClient connection = this.validatedConnection();
-      connection.sendRequest(request, atomic::set);
-      int millis = 0;
-      while (atomic.get() == null || millis >= connection.getTimeout()) {
-        try {
-          Thread.sleep(1);
-        } catch (InterruptedException e) {
-          this.handler.handle(e);
-        }
-      }
-      return atomic.get();
+      return this.validatedConnection().sendRequest(request);
     } catch (IOException e) {
       throw new IllegalStateException("There's no connection with the bot", e);
     }

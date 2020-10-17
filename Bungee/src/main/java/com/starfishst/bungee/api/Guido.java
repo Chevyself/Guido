@@ -20,7 +20,7 @@ public class Guido {
    */
   @NotNull
   public static GuidoPlugin validated() {
-    return Validate.notNull(plugin, "Guido might not have been initialized");
+    return Validate.notNull(Guido.plugin, "Guido might not have been initialized");
   }
 
   /**
@@ -42,7 +42,7 @@ public class Guido {
    */
   @NotNull
   public static BungeeConfiguration getConfiguration() {
-    return validated().getBungeeConfiguration();
+    return Guido.validated().getBungeeConfiguration();
   }
 
   /**
@@ -52,6 +52,6 @@ public class Guido {
    */
   @NotNull
   public static ClientImpl getClient() {
-    return validated().getClient();
+    return Guido.validated().getClient();
   }
 }

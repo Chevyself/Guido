@@ -1,0 +1,8 @@
+main: com.starfishst.bukkit.GuidoPlugin
+name: Guido
+description: An implementation for the Guido bot to use PGM
+## The version of the bot is as follows:
+## major.small.patch-status-id
+## The status is:
+## 0 -> SNAPSHOT
+version: 1.1.0-0-0

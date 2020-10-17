@@ -11,10 +11,9 @@ import com.starfishst.guido.api.data.token.AuthToken;
 import com.starfishst.jda.annotations.Command;
 import com.starfishst.jda.annotations.Perm;
 import com.starfishst.jda.result.Result;
+import java.util.Collection;
 import me.googas.commons.Strings;
 import me.googas.commons.maps.Maps;
-
-import java.util.Collection;
 
 /** Commands for token generation */
 public class TokenCommands {
@@ -38,7 +37,11 @@ public class TokenCommands {
     } else {
       StringBuilder builder = Strings.getBuilder();
       for (AuthToken token : tokens) {
-        builder.append(locale.get("tokens.token", Maps.builder("token", token.getToken()).append("level", token.getLevel().toString().toLowerCase())));
+        builder.append(
+            locale.get(
+                "tokens.token",
+                Maps.builder("token", token.getToken())
+                    .append("level", token.getLevel().toString().toLowerCase())));
       }
       return new Result(builder.toString());
     }

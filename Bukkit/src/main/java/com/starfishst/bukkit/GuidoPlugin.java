@@ -12,7 +12,6 @@ import com.starfishst.bukkit.commands.PingCommand;
 import com.starfishst.bukkit.commands.providers.GameModeProvider;
 import com.starfishst.bukkit.configuration.GuidoConfiguration;
 import com.starfishst.bukkit.dependencies.GuidoDependencies;
-import com.starfishst.bukkit.listeners.AntiCheatListener;
 import com.starfishst.bukkit.listeners.CommandExecutionListener;
 import com.starfishst.bukkit.listeners.PermissionListener;
 import com.starfishst.bukkit.listeners.TestListener;
@@ -20,7 +19,8 @@ import com.starfishst.bukkit.messages.DefaultMessagesProvider;
 import com.starfishst.bukkit.utils.BukkitUtils;
 import com.starfishst.bukkit.utils.FilesUtils;
 import com.starfishst.core.providers.registry.ProvidersRegistry;
-import com.starfishst.guido.implementations.Implementation;
+import com.starfishst.guido.api.data.implementations.ClientImpl;
+import com.starfishst.guido.api.data.implementations.Implementation;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -61,14 +61,17 @@ public class GuidoPlugin extends JavaPlugin implements Implementation {
    */
   @NotNull private final DependencyManager dependencies = new GuidoDependencies(this);
 
+  /** The client that the plugin is using */
+  @NotNull private final ClientImpl client = new ClientImpl("none");
+
   /** Unregisters the commands registered by the implementation */
   private void unregisterCommands() {
     for (GuidoCommand command : this.commands) {
       command.setEnabled(false);
-      for (AnnotatedCommand annotated : manager.getCommands()) {
+      for (AnnotatedCommand annotated : this.manager.getCommands()) {
         annotated.unregister(Bukkit.getCommandMap());
       }
-      manager.getCommands().removeIf(annotated -> annotated.getClazz().equals(command));
+      this.manager.getCommands().removeIf(annotated -> annotated.getClazz().equals(command));
     }
   }
 
@@ -85,7 +88,7 @@ public class GuidoPlugin extends JavaPlugin implements Implementation {
         }
       }
       if (command.isEnabled()) {
-        manager.registerCommand(command);
+        this.manager.registerCommand(command);
       }
     }
     this.manager.registerPlugin();
@@ -133,6 +136,17 @@ public class GuidoPlugin extends JavaPlugin implements Implementation {
     }
   }
 
+  /** Start the connection with the bot */
+  private void startConnection() {
+    this.getClient().setToken(this.configuration.getToken());
+    try {
+      this.getClient().startConnection();
+    } catch (IOException e) {
+      Fallback.addError("Server could not be connected");
+      e.printStackTrace();
+    }
+  }
+
   /**
    * Get the configuration that the plugin is using
    *
@@ -140,15 +154,17 @@ public class GuidoPlugin extends JavaPlugin implements Implementation {
    */
   @NotNull
   public Configuration getConfiguration() {
-    return configuration;
+    return this.configuration;
   }
 
-  @Override
-  public void onDisable() {
-    this.unregisterCommands();
-    this.unregisterListeners();
-    Guido.setPlugin(null);
-    super.onDisable();
+  /**
+   * Get the default listeners that the plugin needs
+   *
+   * @return the default listeners
+   */
+  private @NotNull List<GuidoListener> getDefaultListeners() {
+    return Lots.list(
+        new CommandExecutionListener(), new PermissionListener(this), new TestListener());
   }
 
   /** Check the dependencies and add the listeners to them */
@@ -179,26 +195,27 @@ public class GuidoPlugin extends JavaPlugin implements Implementation {
   }
 
   /**
-   * Get the default listeners that the plugin needs
-   *
-   * @return the default listeners
-   */
-  private @NotNull List<GuidoListener> getDefaultListeners() {
-    return Lots.list(
-        new AntiCheatListener(),
-        new CommandExecutionListener(),
-        new PermissionListener(this),
-        new TestListener());
-  }
-
-  /**
    * Get the dependencies that are connected with the plugin
    *
    * @return the dependencies that the bot has
    */
   @NotNull
   public DependencyManager getDependencies() {
-    return dependencies;
+    return this.dependencies;
+  }
+
+  @Override
+  public @NotNull ClientImpl getClient() {
+    return this.client;
+  }
+
+  @Override
+  public void onDisable() {
+    this.unregisterCommands();
+    this.unregisterListeners();
+    this.client.disconnect();
+    Guido.setPlugin(null);
+    super.onDisable();
   }
 
   @Override
@@ -208,6 +225,7 @@ public class GuidoPlugin extends JavaPlugin implements Implementation {
     this.loadConfiguration();
     this.registerCommands();
     this.registerListeners();
+    this.startConnection();
     BukkitUtils.startCache(this);
     super.onEnable();
   }

@@ -35,6 +35,22 @@ public interface Configuration {
   }
 
   /**
+   * Get the context that the server is on
+   *
+   * @return the context
+   */
+  @NotNull
+  String getContext();
+
+  /**
+   * Get the token to connect with the bot
+   *
+   * @return the token to authenticate
+   */
+  @NotNull
+  String getToken();
+
+  /**
    * Get the name of the commands that are enabled
    *
    * @return the enabled commands

@@ -35,9 +35,6 @@ public class PermissionImpl implements Permission {
 
   @Override
   public String toString() {
-    return "PermissionImpl{" +
-            "node='" + this.node + '\'' +
-            ", enabled=" + this.enabled +
-            '}';
+    return "PermissionImpl{" + "node='" + this.node + '\'' + ", enabled=" + this.enabled + '}';
   }
 }

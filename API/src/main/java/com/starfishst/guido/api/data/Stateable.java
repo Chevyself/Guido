@@ -23,5 +23,4 @@ public interface Stateable {
   default Double getElo(@NotNull String ladder) {
     return this.getStats().get(ladder + ".elo");
   }
-
 }

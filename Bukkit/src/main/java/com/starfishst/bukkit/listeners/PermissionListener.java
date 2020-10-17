@@ -1,17 +1,32 @@
 package com.starfishst.bukkit.listeners;
 
 import com.starfishst.bukkit.GuidoPlugin;
+import com.starfishst.bukkit.api.Guido;
 import com.starfishst.bukkit.api.events.GuidoListener;
+import com.starfishst.guido.api.data.implementations.data.PermissionImpl;
+import com.starfishst.guido.api.data.implementations.data.PermissionStackImpl;
+import com.starfishst.guido.api.data.links.LinkedDataType;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
+import me.googas.commons.UUIDUtils;
+import me.googas.commons.maps.Maps;
+import me.googas.messaging.Request;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
+import org.bukkit.event.player.AsyncPlayerPreLoginEvent;
+import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.permissions.PermissionAttachment;
 import org.jetbrains.annotations.NotNull;
 
 /** Listens to changes to the player and player data to add or remove permissions */
 public class PermissionListener implements GuidoListener {
+
+  /** Permissions are given to the server in async then are added to the player */
+  @NotNull private final Map<UUID, Collection<PermissionImpl>> toGive = new HashMap<>();
 
   /** The permissions attachment for each player */
   @NotNull private final HashMap<UUID, PermissionAttachment> attachments = new HashMap<>();
@@ -62,6 +77,41 @@ public class PermissionListener implements GuidoListener {
     this.getAttachment(player).unsetPermission(node);
     if (player.hasPermission(node) && force) {
       this.getAttachment(player).setPermission(node, false);
+    }
+  }
+
+  @EventHandler(priority = EventPriority.LOWEST)
+  public void onPlayerLogin(AsyncPlayerPreLoginEvent event) {
+    Guido.getClient()
+        .request(
+            new Request<>(
+                PermissionStackImpl.class,
+                "permission",
+                Maps.objects("type", LinkedDataType.MINECRAFT)
+                    .append(
+                        "identification",
+                        Maps.singleton("uuid", UUIDUtils.trim(event.getUniqueId())))
+                    .append("context", Guido.getConfiguration().getContext())
+                    .build()),
+            stack -> {
+              if (stack != null && !stack.getPermissions().isEmpty()) {
+                this.toGive.put(event.getUniqueId(), stack.getPermissions());
+              }
+            });
+  }
+
+  @EventHandler(priority = EventPriority.LOWEST)
+  public void onPlayerJoin(PlayerJoinEvent event) {
+    Collection<PermissionImpl> permissions = this.toGive.get(event.getPlayer().getUniqueId());
+    if (permissions != null) {
+      for (PermissionImpl permission : permissions) {
+        if (permission.isEnabled()) {
+          this.enablePermission(permission.getNode(), event.getPlayer());
+        } else {
+          this.disablePermission(permission.getNode(), event.getPlayer(), true);
+        }
+      }
+      this.toGive.remove(event.getPlayer().getUniqueId());
     }
   }
 

@@ -6,10 +6,10 @@ import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoCursor;
 import com.mongodb.client.MongoDatabase;
 import com.starfishst.bot.api.data.BotGuild;
+import com.starfishst.bot.api.data.BotLinkedData;
 import com.starfishst.bot.api.data.BotRole;
 import com.starfishst.bot.api.data.BotUser;
 import com.starfishst.bot.api.data.loader.BotDataLoader;
-import com.starfishst.bot.api.data.BotLinkedData;
 import com.starfishst.bot.api.events.data.guild.BotGuildUnloadedEvent;
 import com.starfishst.bot.api.events.data.links.LinkedDataUnloadedEvent;
 import com.starfishst.bot.api.events.data.role.BotRoleUnloadedEvent;
@@ -41,7 +41,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.regex.Pattern;
-
 import me.googas.commons.Lots;
 import me.googas.commons.cache.Cache;
 import me.googas.commons.events.ListenPriority;
@@ -98,7 +97,10 @@ public class MongoDataLoader implements BotDataLoader {
     BotGuild data = event.getData();
     Document query = new Document("id", data.getId());
     // TODO append the document
-    Document document = new Document("id", data.getId()).append("multipliers", data.getMultipliers()).append("ladders", data.getLadders());
+    Document document =
+        new Document("id", data.getId())
+            .append("multipliers", data.getMultipliers())
+            .append("ladders", data.getLadders());
     Document first = this.guilds.find(query).first();
     if (first != null) {
       this.guilds.replaceOne(query, document);
@@ -232,14 +234,18 @@ public class MongoDataLoader implements BotDataLoader {
    * @return the map with the values found in the document if none are found the map is empty
    */
   @NotNull
-  private <V> HashMap<String, V> getMap(@NotNull Document document, @NotNull String key, @NotNull Class<V> vClass) {
+  private <V> HashMap<String, V> getMap(
+      @NotNull Document document, @NotNull String key, @NotNull Class<V> vClass) {
     HashMap<String, V> map = new HashMap<>();
     if (document.get(key) instanceof Document) {
-      document.get(key, Document.class).forEach((docKey, value) -> {
-        if (vClass.isAssignableFrom(value.getClass())) {
-          map.put(docKey, vClass.cast(value));
-        }
-      });
+      document
+          .get(key, Document.class)
+          .forEach(
+              (docKey, value) -> {
+                if (vClass.isAssignableFrom(value.getClass())) {
+                  map.put(docKey, vClass.cast(value));
+                }
+              });
     }
     return map;
   }
@@ -285,7 +291,11 @@ public class MongoDataLoader implements BotDataLoader {
   public @Nullable GuidoGuild getGuildData(@NotNull Document query) {
     Document document = this.guilds.find(query).first();
     if (document != null) {
-      return new GuidoGuild(document.getLong("id"), this.getMultipliers(document), this.getLadders(document), this.getRange(document));
+      return new GuidoGuild(
+          document.getLong("id"),
+          this.getMultipliers(document),
+          this.getLadders(document),
+          this.getRange(document));
     }
     return null;
   }
@@ -320,13 +330,17 @@ public class MongoDataLoader implements BotDataLoader {
   private HashMap<Long, GuidoRankRange> getRange(Document document) {
     HashMap<String, Document> laddersDocs = this.getMap(document, "ladders", Document.class);
     HashMap<Long, GuidoRankRange> ladders = new HashMap<>();
-    laddersDocs.forEach((key, doc) -> {
-      try {
-        ladders.put(Long.parseLong(key), new GuidoRankRange(doc.getString("ladder"), doc.getInteger("min"), doc.getInteger("max")));
-      } catch (NumberFormatException e) {
-        Console.exception(e, "Error while parsing long");
-      }
-      });
+    laddersDocs.forEach(
+        (key, doc) -> {
+          try {
+            ladders.put(
+                Long.parseLong(key),
+                new GuidoRankRange(
+                    doc.getString("ladder"), doc.getInteger("min"), doc.getInteger("max")));
+          } catch (NumberFormatException e) {
+            Console.exception(e, "Error while parsing long");
+          }
+        });
     return ladders;
   }
 
@@ -401,7 +415,10 @@ public class MongoDataLoader implements BotDataLoader {
     BotUser user = this.getUserData(document.getString("user"));
     if (user != null) {
       return new GuidoAuthToken(
-          document.getString("token"), AuthLevel.valueOf(document.getString("level")), user, addToCache);
+          document.getString("token"),
+          AuthLevel.valueOf(document.getString("level")),
+          user,
+          addToCache);
     } else {
       return null;
     }
@@ -550,16 +567,20 @@ public class MongoDataLoader implements BotDataLoader {
         data -> data.getType() == type && data.getIdentification().matches(identifications),
         () -> {
           Document query = new Document("type", type.toString());
-          identifications.getMap().forEach((key, value) -> {
-            if (key.startsWith("nick") && value instanceof String) {
-              query.append("identification." + key, Pattern.compile((String) value, Pattern.CASE_INSENSITIVE));
-            } else {
-              query.append("identification." + key, value);
-            }
-          });
+          identifications
+              .getMap()
+              .forEach(
+                  (key, value) -> {
+                    if (key.startsWith("nick") && value instanceof String) {
+                      query.append(
+                          "identification." + key,
+                          Pattern.compile((String) value, Pattern.CASE_INSENSITIVE));
+                    } else {
+                      query.append("identification." + key, value);
+                    }
+                  });
           return this.getLinkedData(query);
-        }
-            );
+        });
   }
 
   @Override
@@ -692,7 +713,8 @@ public class MongoDataLoader implements BotDataLoader {
 
   @Override
   public Collection<GuidoAuthToken> getTokens(@NotNull UserData user) {
-    List<GuidoAuthToken> catchables = Cache.getCatchables(GuidoAuthToken.class, token -> token.getUser().equals(user));
+    List<GuidoAuthToken> catchables =
+        Cache.getCatchables(GuidoAuthToken.class, token -> token.getUser().equals(user));
     MongoCursor<Document> cursor = this.tokens.find(new Document("user", user.getId())).cursor();
     while (cursor.hasNext()) {
       GuidoAuthToken token = this.getGuidoAuthToken(cursor.next(), false);

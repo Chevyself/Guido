@@ -37,9 +37,12 @@ public class PermissionStackImpl implements PermissionStack<PermissionImpl> {
 
   @Override
   public String toString() {
-    return "PermissionStackImpl{" +
-            "context='" + this.context + '\'' +
-            ", permissions=" + this.permissions +
-            '}';
+    return "PermissionStackImpl{"
+        + "context='"
+        + this.context
+        + '\''
+        + ", permissions="
+        + this.permissions
+        + '}';
   }
 }

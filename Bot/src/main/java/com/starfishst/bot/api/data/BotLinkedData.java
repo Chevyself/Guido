@@ -1,14 +1,9 @@
 package com.starfishst.bot.api.data;
 
 import com.starfishst.bot.Guido;
-import com.starfishst.bot.api.data.BotUser;
 import com.starfishst.bot.handlers.data.GuidoPermission;
-import com.starfishst.bot.handlers.lang.GuidoLanguageHandler;
-import com.starfishst.bot.handlers.lang.GuidoLocaleFile;
 import com.starfishst.guido.api.data.lang.LocaleFile;
-import com.starfishst.guido.api.data.lang.Localizable;
 import com.starfishst.guido.api.data.links.LinkedData;
-import com.starfishst.jda.context.CommandContext;
 import me.googas.commons.maps.Maps;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.Guild;
@@ -30,10 +25,14 @@ public interface BotLinkedData extends LinkedData<GuidoPermission> {
     JDA jda = Guido.getConnection().validatedJda();
     switch (this.getType()) {
       case DISCORD_GUILD:
-        User guildUser = jda.getUserById(this.getIdentification().getValueOr("id", Long.class, -1L));
-        Guild guild = jda.getGuildById(this.getIdentification().getValueOr("guild", Long.class, -1L));
+        User guildUser =
+            jda.getUserById(this.getIdentification().getValueOr("id", Long.class, -1L));
+        Guild guild =
+            jda.getGuildById(this.getIdentification().getValueOr("guild", Long.class, -1L));
         if (guildUser != null && guild != null) {
-          return locale.get("link.discord-guild", Maps.builder("mention", guildUser.getAsMention()).append("guild", guild.getName()));
+          return locale.get(
+              "link.discord-guild",
+              Maps.builder("mention", guildUser.getAsMention()).append("guild", guild.getName()));
         } else {
           return locale.get("link.invalid");
         }

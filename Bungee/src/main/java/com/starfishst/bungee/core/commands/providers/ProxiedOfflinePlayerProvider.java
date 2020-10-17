@@ -7,13 +7,14 @@ import com.starfishst.bungee.providers.type.BungeeArgumentProvider;
 import com.starfishst.core.exceptions.ArgumentProviderException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 import me.googas.commons.maps.Maps;
 import me.googas.messaging.Request;
+import me.googas.messaging.api.MessengerListenFailException;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import org.jetbrains.annotations.NotNull;
 
+/** Provides offline player to commands */
 public class ProxiedOfflinePlayerProvider implements BungeeArgumentProvider<ProxiedOfflinePlayer> {
 
   @Override
@@ -36,15 +37,23 @@ public class ProxiedOfflinePlayerProvider implements BungeeArgumentProvider<Prox
       throws ArgumentProviderException {
     for (ProxiedPlayer player : ProxyServer.getInstance().getPlayers()) {
       if (player.getName().equalsIgnoreCase(s)) {
-        return new ProxiedOfflinePlayer(player.getUniqueId());
+        return new ProxiedOfflinePlayer(player.getUniqueId(), player.getName());
       }
     }
-    UUID uuid =
-        Guido.getClient()
-            .request(new Request<>(UUID.class, "get-uuid", Maps.objects("nickname", s).build()));
-    if (uuid != null) {
-      return new ProxiedOfflinePlayer(uuid);
+    try {
+      ProxiedOfflinePlayer player =
+          Guido.getClient()
+              .request(
+                  new Request<>(
+                      ProxiedOfflinePlayer.class,
+                      "get-mc-by-name",
+                      Maps.objects("nickname", s).build()));
+      if (player != null) {
+        return player;
+      }
+    } catch (MessengerListenFailException e) {
+      throw new ArgumentProviderException("&cRequest timed out");
     }
-    throw new ArgumentProviderException("&c" + s + " is not a valid player");
+    throw new ArgumentProviderException("&e" + s + "&c is not a valid player");
   }
 }

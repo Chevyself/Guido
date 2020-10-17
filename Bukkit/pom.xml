@@ -12,7 +12,7 @@
 
     <groupId>com.starfishst.guido.bukkit</groupId>
     <artifactId>Bukkit</artifactId>
-    <version>1.1.0</version>
+    <version>1.2.0-SNAPSHOT</version>
     <description>Implementations for bukkit</description>
     <packaging>jar</packaging>
 
@@ -30,19 +30,22 @@
                             <goal>shade</goal>
                         </goals>
                         <configuration>
+                            <filters>
+                                <filter>
+                                    <artifact>*:*</artifact>
+                                </filter>
+                            </filters>
                             <createDependencyReducedPom>false</createDependencyReducedPom>
-                            <outputFile>Guido-${project.artifactId}.jar</outputFile>
+                            <outputFile>../output/Guido-${project.artifactId}.jar</outputFile>
                             <artifactSet>
                                 <excludes>
-                                    <exclude>META-INF/*.SF</exclude>
-                                    <exclude>META-INF/*.DSA</exclude>
-                                    <exclude>META-INF/*.RSA</exclude>
+                                    <exclude>META-INF/**</exclude>
                                 </excludes>
                                 <includes>
-                                    <include>com.starfishst.guido.implementations:Implementations</include>
+                                    <include>com.starfishst.guido.api:API</include>
                                     <include>com.starfishst.bukkit:Bukkit</include>
                                     <include>com.starfishst.core:core</include>
-                                    <include>com.starfishst.utils:core-utils</include>
+                                    <include>me.googas.messaging:Commons-Messaging</include>
                                 </includes>
                             </artifactSet>
                         </configuration>
@@ -67,18 +70,18 @@
             <artifactId>paperspigot-api</artifactId>
             <version>1.8.8-R0.1-SNAPSHOT</version>
         </dependency>
-        <!-- Implementation -->
+        <!-- Dependency on the bot api -->
         <dependency>
-            <groupId>com.starfishst.guido.implementations</groupId>
-            <artifactId>Implementations</artifactId>
-            <version>1.0.0-SNAPSHOT-0</version>
+            <groupId>com.starfishst.guido.api</groupId>
+            <artifactId>API</artifactId>
+            <version>1.0.0-SNAPSHOT-12</version>
             <scope>compile</scope>
         </dependency>
         <!-- The bukkit command framework -->
         <dependency>
             <groupId>com.starfishst.bukkit</groupId>
             <artifactId>Bukkit</artifactId>
-            <version>1.0-SNAPSHOT</version>
+            <version>1.0.2-SNAPSHOT</version>
         </dependency>
         <!-- ProtocolLib -->
         <dependency>

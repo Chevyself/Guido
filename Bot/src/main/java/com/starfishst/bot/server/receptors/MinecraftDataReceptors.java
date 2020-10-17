@@ -9,6 +9,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.UUID;
 import me.googas.commons.UUIDUtils;
+import me.googas.commons.maps.Maps;
 import me.googas.messaging.json.ParamName;
 import me.googas.messaging.json.Receptor;
 
@@ -27,7 +28,8 @@ public class MinecraftDataReceptors {
       @ParamName(name = "uuid") UUID uuid, @ParamName(name = "nickname") String nick) {
     BotLinkedData data =
         Guido.getDataLoader()
-            .getLinkedData(LinkedDataType.MINECRAFT, new GuidoValuesMap("uuid", UUIDUtils.trim(uuid)));
+            .getLinkedData(
+                LinkedDataType.MINECRAFT, new GuidoValuesMap("uuid", UUIDUtils.trim(uuid)));
     if (data != null) {
       return false;
     } else {
@@ -69,15 +71,16 @@ public class MinecraftDataReceptors {
    * @param nick the nick to match
    * @return the uuid if matched else null
    */
-  @Receptor(method = "get-uuid")
-  public UUID getUuid(@ParamName(name = "nickname") String nick) {
+  @Receptor(method = "get-mc-by-name")
+  public HashMap<String, Object> getUuid(@ParamName(name = "nickname") String nick) {
     BotLinkedData data =
         Guido.getDataLoader()
             .getLinkedData(LinkedDataType.MINECRAFT, new GuidoValuesMap("nickname", nick));
     if (data != null) {
       String trimmed = data.getIdentification().getValue("uuid", String.class);
-      if (trimmed != null) {
-        return UUIDUtils.untrim(trimmed);
+      String nickname = data.getIdentification().getValue("nickname", String.class);
+      if (trimmed != null && nickname != null) {
+        return Maps.objects("uuid", UUIDUtils.untrim(trimmed)).append("nickname", nickname).build();
       }
       return null;
     }

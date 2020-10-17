@@ -11,6 +11,12 @@ import org.jetbrains.annotations.NotNull;
 /** The configuration for the pgm implementation */
 public class GuidoConfiguration implements Configuration {
 
+  /** The context in which the server is on */
+  @NotNull private final String context;
+
+  /** The token to connect with the bot */
+  @NotNull private final String token;
+
   /** The set of enabled commands */
   @NotNull private final List<String> enabledCommands;
 
@@ -19,6 +25,8 @@ public class GuidoConfiguration implements Configuration {
 
   /** Create the configuration */
   public GuidoConfiguration() {
+    this.context = "Bukkit";
+    this.token = "none";
     this.enabledCommands = new ArrayList<>();
   }
 
@@ -28,6 +36,8 @@ public class GuidoConfiguration implements Configuration {
    * @param section the configuration section to use and get the configuration
    */
   public GuidoConfiguration(@NotNull ConfigurationSection section) {
+    this.context = section.getString("context", "Bukkit");
+    this.token = section.getString("token", "none");
     if (section.get("enabled-commands") != null) {
       this.enabledCommands = section.getStringList("enabled-commands");
     } else {
@@ -56,6 +66,16 @@ public class GuidoConfiguration implements Configuration {
             });
       }
     }
+  }
+
+  @Override
+  public @NotNull String getContext() {
+    return this.context;
+  }
+
+  @Override
+  public @NotNull String getToken() {
+    return this.token;
   }
 
   /**

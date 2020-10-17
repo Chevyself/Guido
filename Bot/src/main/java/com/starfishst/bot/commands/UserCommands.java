@@ -8,45 +8,45 @@ import com.starfishst.core.annotations.Optional;
 import com.starfishst.guido.api.data.lang.LocaleFile;
 import com.starfishst.jda.annotations.Command;
 import com.starfishst.jda.result.Result;
+import java.util.Collection;
 import me.googas.commons.Strings;
 import me.googas.commons.maps.Maps;
 
-import java.util.Collection;
-
-/**
- * Commands that users can use
- */
+/** Commands that users can use */
 public class UserCommands {
 
-    /**
-     * Get the links form an user
-     *
-     * @param locale the locale that will read the links
-     * @param sender the sender of the command
-     * @param that the other user to see the links
-     * @return the links of the user
-     */
-    @Command(aliases = "links", description = "links.desc", time = "5s")
-    public Result links(LocaleFile locale, BotUser sender, @Optional(name = "links.user", description = "links.user.desc") BotUser that) {
-        BotUser toSee;
-        if (that != null) {
-            toSee = that;
-        } else {
-            toSee = sender;
-        }
-        BotDataLoader loader = Guido.getDataLoader();
-        Collection<BotLinkedData> links = loader.getLinks(toSee);
-        if (links.isEmpty()) {
-            return new Result(locale.get("links.empty", Maps.singleton("id", toSee.getId())));
-        } else {
-            StringBuilder builder = Strings.getBuilder();
-            builder.append(locale.get("links.title", Maps.singleton("id", toSee.getId())));
-            for (BotLinkedData link: links) {
-                builder.append(link.getReadable(locale));
-            }
-            return new Result(builder.toString());
-        }
+  /**
+   * Get the links form an user
+   *
+   * @param locale the locale that will read the links
+   * @param sender the sender of the command
+   * @param that the other user to see the links
+   * @return the links of the user
+   */
+  @Command(aliases = "links", description = "links.desc", time = "5s")
+  public Result links(
+      LocaleFile locale,
+      BotUser sender,
+      @Optional(name = "links.user", description = "links.user.desc") BotUser that) {
+    BotUser toSee;
+    if (that != null) {
+      toSee = that;
+    } else {
+      toSee = sender;
     }
+    BotDataLoader loader = Guido.getDataLoader();
+    Collection<BotLinkedData> links = loader.getLinks(toSee);
+    if (links.isEmpty()) {
+      return new Result(locale.get("links.empty", Maps.singleton("id", toSee.getId())));
+    } else {
+      StringBuilder builder = Strings.getBuilder();
+      builder.append(locale.get("links.title", Maps.singleton("id", toSee.getId())));
+      for (BotLinkedData link : links) {
+        builder.append(link.getReadable(locale));
+      }
+      return new Result(builder.toString());
+    }
+  }
 }
 
 /*

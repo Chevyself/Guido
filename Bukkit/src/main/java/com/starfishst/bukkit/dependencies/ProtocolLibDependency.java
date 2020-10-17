@@ -2,6 +2,7 @@ package com.starfishst.bukkit.dependencies;
 
 import com.starfishst.bukkit.api.dependencies.Dependency;
 import com.starfishst.bukkit.api.events.GuidoListener;
+import com.starfishst.bukkit.listeners.AntiCheatListener;
 import com.starfishst.bukkit.listeners.anticheat.AutoClickDetector;
 import com.starfishst.bukkit.listeners.anticheat.ReachDetector;
 import java.util.Collection;
@@ -31,6 +32,7 @@ public class ProtocolLibDependency implements Dependency {
 
   @Override
   public @NotNull Collection<GuidoListener> getListeners(@NotNull Plugin plugin) {
-    return Lots.list(new AutoClickDetector(plugin), new ReachDetector(plugin));
+    return Lots.list(
+        new AntiCheatListener(), new AutoClickDetector(plugin), new ReachDetector(plugin));
   }
 }

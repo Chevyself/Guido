@@ -8,8 +8,8 @@ import com.starfishst.bot.server.receptors.LinkedDataReceptors;
 import com.starfishst.bot.server.receptors.MinecraftDataReceptors;
 import com.starfishst.bot.util.console.Console;
 import java.io.IOException;
+import java.util.HashSet;
 import java.util.Set;
-
 import me.googas.messaging.Request;
 import me.googas.messaging.api.Message;
 import me.googas.messaging.json.adapters.MessageDeserializer;
@@ -59,7 +59,8 @@ public class GuidoServer extends JsonSocketServer {
 
   @Override
   public void close() throws IOException {
-    for (JsonClientThread client : this.getClients()) {
+    Set<JsonClientThread> copy = new HashSet<>(this.getClients());
+    for (JsonClientThread client : copy) {
       client.sendRequest(
           new Request<>(Boolean.class, "disconnected"),
           bol -> {

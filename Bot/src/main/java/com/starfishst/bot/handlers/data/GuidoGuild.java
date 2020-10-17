@@ -3,11 +3,10 @@ package com.starfishst.bot.handlers.data;
 import com.starfishst.bot.api.data.BotGuild;
 import com.starfishst.bot.api.events.data.guild.BotGuildLoadedEvent;
 import com.starfishst.bot.api.events.data.guild.BotGuildUnloadedEvent;
-import me.googas.commons.cache.Catchable;
-import me.googas.commons.time.Time;
-
 import java.util.HashMap;
 import java.util.Map;
+import me.googas.commons.cache.Catchable;
+import me.googas.commons.time.Time;
 
 /** This object represents the data for a guild that is using this bot */
 public class GuidoGuild extends Catchable implements BotGuild {
@@ -15,29 +14,28 @@ public class GuidoGuild extends Catchable implements BotGuild {
   /** The unique id of the guild */
   private final transient long id;
 
-  /**
-   * The multipliers of the guild
-   */
+  /** The multipliers of the guild */
   private final HashMap<String, Integer> multipliers;
 
-  /**
-   * The ladders of the guild
-   */
+  /** The ladders of the guild */
   private final HashMap<String, Integer> ladders;
 
-  /**
-   * The rank ranges of the guild
-   */
+  /** The rank ranges of the guild */
   private final HashMap<Long, GuidoRankRange> ranges;
 
   /**
    * Create the guido guild
+   *
    * @param id the id of the guild
    * @param multipliers the multipliers of the guild
    * @param ladders the ladders of the guild
    * @param ranges the ranges of the guild
    */
-  public GuidoGuild(long id, HashMap<String, Integer> multipliers, HashMap<String, Integer> ladders, HashMap<Long, GuidoRankRange> ranges) {
+  public GuidoGuild(
+      long id,
+      HashMap<String, Integer> multipliers,
+      HashMap<String, Integer> ladders,
+      HashMap<Long, GuidoRankRange> ranges) {
     super(Time.fromString("3m"));
     this.id = id;
     this.multipliers = multipliers;

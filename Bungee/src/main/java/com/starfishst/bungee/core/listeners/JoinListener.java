@@ -60,7 +60,7 @@ public class JoinListener implements GuidoListener {
                       Maps.objects("uuid", uuid)
                           .append("nickname", event.getPlayer().getName())
                           .build()),
-                  System.out::println);
+                  ignored -> {});
             }
           });
     } catch (IOException e) {

@@ -12,7 +12,7 @@
 
     <groupId>com.starfishst.guido.bungee</groupId>
     <artifactId>Bungee</artifactId>
-    <version>1.0.0-SNAPSHOT-1</version>
+    <version>1.0.0-SNAPSHOT-2</version>
     <description>Implementations for bungee</description>
 
     <build>
@@ -31,6 +31,11 @@
                         <configuration>
                             <createDependencyReducedPom>false</createDependencyReducedPom>
                             <outputFile>../output/Guido-${project.artifactId}.jar</outputFile>
+                            <filters>
+                                <filter>
+                                    <artifact>*:*</artifact>
+                                </filter>
+                            </filters>
                             <artifactSet>
                                 <excludes>
                                     <exclude>META-INF/**</exclude>
@@ -69,7 +74,7 @@
         <dependency>
             <groupId>com.starfishst.guido.api</groupId>
             <artifactId>API</artifactId>
-            <version>1.0.0-SNAPSHOT-9</version>
+            <version>1.0.0-SNAPSHOT-12</version>
             <scope>compile</scope>
         </dependency>
     </dependencies>

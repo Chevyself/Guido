@@ -31,7 +31,8 @@ public class GuidoAuthToken extends Catchable implements AuthToken {
    * @param user the user owner of the token
    * @param addToCache whether to add the token to cache
    */
-  public GuidoAuthToken(@NotNull String token, @NotNull AuthLevel level, @NotNull UserData user, boolean addToCache) {
+  public GuidoAuthToken(
+      @NotNull String token, @NotNull AuthLevel level, @NotNull UserData user, boolean addToCache) {
     super(new Time(1, Unit.MINUTES));
     this.token = token;
     this.level = level;
