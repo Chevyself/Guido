@@ -40,6 +40,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 import java.util.regex.Pattern;
 import me.googas.commons.Lots;
 import me.googas.commons.cache.Cache;
@@ -456,7 +457,7 @@ public class MongoDataLoader implements BotDataLoader {
    */
   @Nullable
   private GuidoLinkedData getLinkedData(@NotNull Document query) {
-    Document first = this.links.find(query).first();
+    Document first = this.links.find(query).maxTime(100, TimeUnit.MILLISECONDS).first();
     if (first != null) {
       return this.getGuidoLinkedData(first, true);
     }

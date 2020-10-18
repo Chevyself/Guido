@@ -2,6 +2,7 @@ import com.starfishst.guido.api.data.implementations.ClientImpl;
 import com.starfishst.guido.api.data.implementations.data.PermissionStackImpl;
 import com.starfishst.guido.api.data.links.LinkedDataType;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.Scanner;
 import java.util.UUID;
 import me.googas.commons.UUIDUtils;
@@ -72,7 +73,7 @@ public class ClientTest {
               });
         } else {
           conn.sendRequest(
-              new Request<>(UUID.class, "get-mc-by-name", Maps.singleton("nickname", line)),
+              new Request<>(HashMap.class, "get-mc-by-name", Maps.singleton("nickname", line)),
               System.out::println);
         }
       }

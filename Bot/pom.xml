@@ -89,7 +89,7 @@
         <dependency>
             <groupId>me.googas.messaging</groupId>
             <artifactId>Commons-Messaging</artifactId>
-            <version>1.0.3-SNAPSHOT</version>
+            <version>1.0.4-SNAPSHOT</version>
             <scope>compile</scope>
         </dependency>
         <!-- Mongo dependency -->

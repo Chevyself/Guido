@@ -23,6 +23,9 @@ public class ClientImpl {
   /** The ip of the bot */
   @NotNull private static final String IP = "104.243.43.176";
 
+  /** The ip of the bot in case of debug */
+  @Deprecated @NotNull private static final String DEBUG_IP = "localhost";
+
   /** The port of the bot */
   private static final int PORT = 3000;
 
@@ -54,13 +57,13 @@ public class ClientImpl {
   public JsonClient startConnection() throws IOException {
     this.client =
         new JsonClient(
-            new Socket("localhost", ClientImpl.PORT),
-            Throwable::printStackTrace,
+            new Socket(ClientImpl.IP, ClientImpl.PORT),
+            this.handler,
             new GsonBuilder()
                 .registerTypeAdapter(Message.class, new MessageDeserializer())
                 .setPrettyPrinting()
                 .create(),
-            1000);
+            5000);
     this.client.addReceptors(this.receptors);
     this.client.start();
     this.client.sendRequest(
