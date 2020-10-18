@@ -12,6 +12,10 @@ enabled-commands:
   - gamemode
 ## The settings for certain listeners
 listener-settings:
+  ## Listener for saving the stats after a match
+  pgm-stats:
+    ## Whether to save stats
+    enabled: false
   ## Listener for command executions. To print what others are doing with commands!
   command-execution:
     ## Whether this listener is enabled

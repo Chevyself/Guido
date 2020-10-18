@@ -71,7 +71,9 @@ public class PermissionCommands {
                 }
                 StringBuilder builder = Strings.getBuilder();
                 builder
-                    .append("&7Permissions: &a")
+                    .append("&7Permissions in &a")
+                    .append(context)
+                    .append("&7: &a")
                     .append(page)
                     .append("&8/")
                     .append(pagination.maxPage())
@@ -177,7 +179,7 @@ public class PermissionCommands {
       permission = "guido.perms.remove")
   public Result add(
       CommandSender sender,
-      @Required(name = "player", description = "The proxied player to add the permission to ")
+      @Required(name = "player", description = "The proxied player to revoke the permission from ")
           ProxiedOfflinePlayer player,
       @Required(name = "node", description = "The node of the permission") String node,
       @Optional(

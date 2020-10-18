@@ -1,4 +1,4 @@
 name: Guido
 main: com.starfishst.bungee.core.GuidoPlugin
-version: 1.0.0
+version: ${project.version}
 author: Selfie

@@ -12,7 +12,7 @@
 
     <groupId>com.starfishst.bot</groupId>
     <artifactId>Bot</artifactId>
-    <version>1.1.0-SNAPSHOT-1</version>
+    <version>1.1.0-SNAPSHOT-2</version>
 
     <build>
         <plugins>
@@ -89,7 +89,7 @@
         <dependency>
             <groupId>me.googas.messaging</groupId>
             <artifactId>Commons-Messaging</artifactId>
-            <version>1.0.4-SNAPSHOT</version>
+            <version>1.0.5-SNAPSHOT</version>
             <scope>compile</scope>
         </dependency>
         <!-- Mongo dependency -->

@@ -12,7 +12,7 @@
 
     <groupId>com.starfishst.guido.bungee</groupId>
     <artifactId>Bungee</artifactId>
-    <version>1.0.0-SNAPSHOT-2</version>
+    <version>1.0.0-SNAPSHOT-3</version>
     <description>Implementations for bungee</description>
 
     <build>
@@ -53,6 +53,13 @@
                 </executions>
             </plugin>
         </plugins>
+        <!-- The resources of the project -->
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+                <filtering>true</filtering>
+            </resource>
+        </resources>
     </build>
 
     <dependencies>

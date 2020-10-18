@@ -116,6 +116,26 @@ public class LinkedDataReceptors {
   }
 
   /**
+   * Reset the stats of the linked data
+   *
+   * @param type the type of linked data to reset the stats to
+   * @param identification the identification for the linked data
+   * @return whether the stats were reset
+   */
+  @Receptor(method = "reset-stats")
+  public boolean resetStats(
+      @ParamName(name = "type") LinkedDataType type,
+      @ParamName(name = "identification") Map<String, Object> identification) {
+    BotLinkedData data =
+        Guido.getDataLoader().getLinkedData(type, new GuidoValuesMap(identification));
+    if (data != null) {
+      data.getStats().clear();
+      return true;
+    }
+    return false;
+  }
+
+  /**
    * Save the stats for the given data
    *
    * @param type the type of the given data

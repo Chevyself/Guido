@@ -21,6 +21,7 @@ public class ThrowableHandlerImpl implements ThrowableHandler {
   @Override
   public void handle(@NotNull Throwable throwable) {
     // This makes that the connection resets every time there is an exception
+    throwable.printStackTrace();
     this.client.setConnection(null);
   }
 }

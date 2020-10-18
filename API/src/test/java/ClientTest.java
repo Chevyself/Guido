@@ -71,9 +71,26 @@ public class ClientTest {
               bol -> {
                 System.out.println("Perm added? " + bol);
               });
+        } else if (line.equalsIgnoreCase("save-stats")) {
+          conn.sendRequest(
+              new Request<>(
+                  Boolean.class,
+                  "save-stats",
+                  Maps.objects("identification", Maps.singleton("uuid", trimmed))
+                      .append("stats", Maps.singleton("kills", 1))
+                      .append("type", LinkedDataType.MINECRAFT)
+                      .build()),
+              bol -> {
+                System.out.println("Saved? " + bol);
+              });
         } else {
           conn.sendRequest(
-              new Request<>(HashMap.class, "get-mc-by-name", Maps.singleton("nickname", line)),
+              new Request<>(
+                  HashMap.class,
+                  "stats",
+                  Maps.objects("identification", Maps.singleton("nickname", line))
+                      .append("type", LinkedDataType.MINECRAFT)
+                      .build()),
               System.out::println);
         }
       }

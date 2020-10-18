@@ -80,6 +80,13 @@ public class GuidoValuesMap implements ValuesMap {
       that.forEach(
           (key, value) -> {
             if (key instanceof String
+                && ((String) key).startsWith("nickname")
+                && value instanceof String
+                && this.getMap().containsKey(key)
+                && this.getMap().get(key) instanceof String
+                && ((String) this.getMap().get(key)).equalsIgnoreCase((String) value)) {
+              matches.set(true);
+            } else if (key instanceof String
                 && this.getMap().containsKey(key)
                 && this.getMap().get(key).equals(value)) {
               matches.set(true);

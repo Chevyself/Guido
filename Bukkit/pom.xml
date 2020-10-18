@@ -12,7 +12,7 @@
 
     <groupId>com.starfishst.guido.bukkit</groupId>
     <artifactId>Bukkit</artifactId>
-    <version>1.2.0-SNAPSHOT-0</version>
+    <version>1.2.0-SNAPSHOT-1</version>
     <description>Implementations for bukkit</description>
     <packaging>jar</packaging>
 
@@ -52,6 +52,13 @@
                 </executions>
             </plugin>
         </plugins>
+        <!-- The resources of the project -->
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+                <filtering>true</filtering>
+            </resource>
+        </resources>
     </build>
 
     <repositories>
@@ -80,7 +87,7 @@
         <dependency>
             <groupId>com.starfishst.bukkit</groupId>
             <artifactId>Bukkit</artifactId>
-            <version>1.0.2-SNAPSHOT</version>
+            <version>1.0.3-SNAPSHOT</version>
         </dependency>
         <!-- ProtocolLib -->
         <dependency>
