@@ -4,7 +4,9 @@ import com.starfishst.bot.api.data.BotGuild;
 import com.starfishst.bot.api.events.data.guild.BotGuildLoadedEvent;
 import com.starfishst.bot.api.events.data.guild.BotGuildUnloadedEvent;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 import me.googas.commons.cache.Catchable;
 import me.googas.commons.time.Time;
 
@@ -18,7 +20,7 @@ public class GuidoGuild extends Catchable implements BotGuild {
   private final HashMap<String, Integer> multipliers;
 
   /** The ladders of the guild */
-  private final HashMap<String, Integer> ladders;
+  private final Set<GuidoLadder> ladders;
 
   /** The rank ranges of the guild */
   private final HashMap<Long, GuidoRankRange> ranges;
@@ -34,9 +36,9 @@ public class GuidoGuild extends Catchable implements BotGuild {
   public GuidoGuild(
       long id,
       HashMap<String, Integer> multipliers,
-      HashMap<String, Integer> ladders,
+      Set<GuidoLadder> ladders,
       HashMap<Long, GuidoRankRange> ranges) {
-    super(Time.fromString("3m"));
+    super(Time.fromString("10m"));
     this.id = id;
     this.multipliers = multipliers;
     this.ladders = ladders;
@@ -44,10 +46,9 @@ public class GuidoGuild extends Catchable implements BotGuild {
     new BotGuildLoadedEvent(this).call();
   }
 
-  /** Create the guido guild. Deprecated because this type of constructor is required for GSON */
-  @Deprecated
+  /** @deprecated this constructor may only be used by gson */
   public GuidoGuild() {
-    this(0, new HashMap<>(), new HashMap<>(), new HashMap<>());
+    this(0, new HashMap<>(), new HashSet<>(), new HashMap<>());
   }
 
   @Override
@@ -61,7 +62,7 @@ public class GuidoGuild extends Catchable implements BotGuild {
   }
 
   @Override
-  public Map<String, Integer> getLadders() {
+  public Set<GuidoLadder> getLadders() {
     return this.ladders;
   }
 

@@ -34,4 +34,9 @@ public class GuidoServerDisconnectionEvent extends GuidoServerEvent {
   public JsonClientThread getClient() {
     return this.client;
   }
+
+  @Override
+  public String toString() {
+    return "GuidoServerDisconnectionEvent{" + "client=" + this.client + "} " + super.toString();
+  }
 }

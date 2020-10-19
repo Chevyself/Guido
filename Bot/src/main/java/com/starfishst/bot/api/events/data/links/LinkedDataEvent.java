@@ -28,4 +28,9 @@ public class LinkedDataEvent implements GuidoEvent {
   public BotLinkedData getData() {
     return this.data;
   }
+
+  @Override
+  public String toString() {
+    return "LinkedDataEvent{" + "data=" + this.data + '}';
+  }
 }

@@ -5,14 +5,19 @@ import com.starfishst.bot.commands.DeveloperCommands;
 import com.starfishst.bot.commands.EloCommands;
 import com.starfishst.bot.commands.HelpCommand;
 import com.starfishst.bot.commands.LangCommands;
+import com.starfishst.bot.commands.MatchCommands;
 import com.starfishst.bot.commands.TeamCommands;
 import com.starfishst.bot.commands.TokenCommands;
 import com.starfishst.bot.commands.UserCommands;
 import com.starfishst.bot.commands.providers.AuthLevelProvider;
+import com.starfishst.bot.commands.providers.BotGuildProvider;
+import com.starfishst.bot.commands.providers.BotUserProvider;
 import com.starfishst.bot.commands.providers.BotUserSenderProvider;
+import com.starfishst.bot.commands.providers.LadderProvider;
 import com.starfishst.bot.commands.providers.LocaleFileProvider;
-import com.starfishst.bot.handlers.data.GuidoHandler;
+import com.starfishst.bot.handlers.GuidoHandler;
 import com.starfishst.bot.handlers.data.loader.GuidoFileLoader;
+import com.starfishst.bot.handlers.data.loader.JsongoDataLoader;
 import com.starfishst.bot.handlers.data.loader.MongoDataLoader;
 import com.starfishst.bot.handlers.lang.GuidoLanguageHandler;
 import com.starfishst.bot.handlers.responsive.GuidoMessagesController;
@@ -112,6 +117,19 @@ public class Guido {
         } catch (Exception e) {
           Console.exception(e, "Mongo loader could not be initialized");
         }
+      } else if (argsMaps.get("loader").equalsIgnoreCase("jsongo")) {
+        try {
+          DataLoader old = Guido.dataLoader;
+          Guido.dataLoader =
+              new JsongoDataLoader(
+                  argsMaps.getOrDefault("uri", "none"),
+                  argsMaps.getOrDefault("database", "testing-database"));
+          Guido.languageHandler.setDataLoader(Guido.dataLoader);
+          Guido.handlers.remove(old);
+          Guido.handlers.add(Guido.dataLoader);
+        } catch (Exception e) {
+          Console.exception(e, "Jsongo loader could not be initialized");
+        }
       }
       Console.info("Using data loader: " + Guido.dataLoader.getClass());
     }
@@ -126,7 +144,10 @@ public class Guido {
     }
     JdaProvidersRegistry registry = new JdaProvidersRegistry(Guido.languageHandler);
     registry.addProvider(new AuthLevelProvider());
+    registry.addProvider(new BotGuildProvider());
+    registry.addProvider(new BotUserProvider());
     registry.addProvider(new BotUserSenderProvider());
+    registry.addProvider(new LadderProvider());
     registry.addProvider(new LocaleFileProvider());
     Guido.commandManager =
         new CommandManager(
@@ -140,6 +161,7 @@ public class Guido {
     Guido.commandManager.registerCommand(new EloCommands());
     Guido.commandManager.registerCommand(new HelpCommand());
     Guido.commandManager.registerCommand(new LangCommands());
+    Guido.commandManager.registerCommand(new MatchCommands());
     Guido.commandManager.registerCommand(new TeamCommands());
     Guido.commandManager.registerCommand(new TokenCommands());
     Guido.commandManager.registerCommand(new UserCommands());

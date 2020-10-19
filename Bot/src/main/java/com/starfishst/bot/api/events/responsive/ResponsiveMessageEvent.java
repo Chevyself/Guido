@@ -28,4 +28,9 @@ public class ResponsiveMessageEvent implements GuidoEvent {
   public ResponsiveMessage getMessage() {
     return this.message;
   }
+
+  @Override
+  public String toString() {
+    return "ResponsiveMessageEvent{" + "message=" + this.message + '}';
+  }
 }

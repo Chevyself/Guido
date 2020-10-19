@@ -2,6 +2,7 @@ package com.starfishst.bot.handlers.data;
 
 import com.starfishst.guido.api.data.PermissionStack;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.Set;
 import org.jetbrains.annotations.NotNull;
 
@@ -23,6 +24,11 @@ public class GuidoPermissionStack implements PermissionStack<GuidoPermission> {
   public GuidoPermissionStack(@NotNull String context, @NotNull Set<GuidoPermission> permissions) {
     this.context = context;
     this.permissions = permissions;
+  }
+
+  /** @deprecated this constructor may only be used by gson */
+  public GuidoPermissionStack() {
+    this("", new HashSet<>());
   }
 
   /**

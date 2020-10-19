@@ -1,6 +1,6 @@
 package com.starfishst.guido.api.data.matches;
 
-import com.starfishst.guido.api.data.UserData;
+import com.starfishst.guido.api.data.links.LinkedInfo;
 import java.util.Map;
 import org.jetbrains.annotations.NotNull;
 
@@ -13,5 +13,5 @@ public interface Team {
    * @return the members of the team
    */
   @NotNull
-  Map<? extends UserData, TeamRole> getMembers();
+  Map<? extends LinkedInfo<?, ?>, TeamRole> getMembers();
 }

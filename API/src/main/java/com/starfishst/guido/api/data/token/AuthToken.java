@@ -3,6 +3,7 @@ package com.starfishst.guido.api.data.token;
 import com.starfishst.guido.api.data.UserData;
 import me.googas.commons.cache.ICatchable;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /** Token used by clients to authenticate */
 public interface AuthToken extends ICatchable {
@@ -16,11 +17,19 @@ public interface AuthToken extends ICatchable {
   String getToken();
 
   /**
+   * The id of the user that created the token
+   *
+   * @return the id of the user that created the token
+   */
+  @NotNull
+  String getUserId();
+
+  /**
    * The user that created the token
    *
    * @return the user that created the token
    */
-  @NotNull
+  @Nullable
   UserData getUser();
 
   /**

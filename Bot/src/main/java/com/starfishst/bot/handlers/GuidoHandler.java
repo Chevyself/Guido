@@ -1,4 +1,4 @@
-package com.starfishst.bot.handlers.data;
+package com.starfishst.bot.handlers;
 
 import net.dv8tion.jda.api.JDA;
 import org.jetbrains.annotations.NotNull;

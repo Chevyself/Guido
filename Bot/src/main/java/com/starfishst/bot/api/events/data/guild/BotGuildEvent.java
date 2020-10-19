@@ -28,4 +28,9 @@ public class BotGuildEvent implements GuidoEvent {
   public BotGuild getData() {
     return this.data;
   }
+
+  @Override
+  public String toString() {
+    return "BotGuildEvent{" + "data=" + this.data + '}';
+  }
 }

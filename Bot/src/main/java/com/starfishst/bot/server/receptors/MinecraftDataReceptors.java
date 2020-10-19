@@ -31,6 +31,7 @@ public class MinecraftDataReceptors {
             .getLinkedData(
                 LinkedDataType.MINECRAFT, new GuidoValuesMap("uuid", UUIDUtils.trim(uuid)));
     if (data != null) {
+      data.refresh();
       return false;
     } else {
       new GuidoLinkedData(
@@ -59,7 +60,7 @@ public class MinecraftDataReceptors {
         Guido.getDataLoader()
             .getLinkedData(LinkedDataType.MINECRAFT, new GuidoValuesMap("uuid", uuid));
     if (data != null) {
-      data.getIdentification().addValue("nickname", name);
+      data.refresh().getIdentification().addValue("nickname", name);
       return true;
     }
     return false;
@@ -77,6 +78,7 @@ public class MinecraftDataReceptors {
         Guido.getDataLoader()
             .getLinkedData(LinkedDataType.MINECRAFT, new GuidoValuesMap("nickname", nick));
     if (data != null) {
+      data.refresh();
       String trimmed = data.getIdentification().getValue("uuid", String.class);
       String nickname = data.getIdentification().getValue("nickname", String.class);
       if (trimmed != null && nickname != null) {

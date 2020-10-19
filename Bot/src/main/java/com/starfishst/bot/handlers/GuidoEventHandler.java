@@ -1,7 +1,6 @@
 package com.starfishst.bot.handlers;
 
 import com.starfishst.bot.Guido;
-import com.starfishst.bot.handlers.data.GuidoHandler;
 import net.dv8tion.jda.api.JDA;
 import org.jetbrains.annotations.NotNull;
 

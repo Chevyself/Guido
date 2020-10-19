@@ -3,7 +3,6 @@ package com.starfishst.bot.handlers.data;
 import com.starfishst.bot.api.data.BotRole;
 import com.starfishst.bot.api.events.data.role.BotRoleLoadedEvent;
 import com.starfishst.bot.api.events.data.role.BotRoleUnloadedEvent;
-import com.starfishst.guido.api.data.PermissionStack;
 import java.util.HashSet;
 import java.util.Set;
 import me.googas.commons.cache.Catchable;
@@ -23,7 +22,7 @@ public class GuidoRole extends Catchable implements BotRole {
   private final long guildId;
 
   /** The set of permission that the role possess */
-  @NotNull private final Set<PermissionStack<GuidoPermission>> permissions;
+  @NotNull private final Set<GuidoPermissionStack> permissions;
 
   /**
    * Create the guido role
@@ -40,8 +39,7 @@ public class GuidoRole extends Catchable implements BotRole {
     new BotRoleLoadedEvent(this).call();
   }
 
-  /** Create the guido role. Deprecated because this constructor may only be used by GSON */
-  @Deprecated
+  /** @deprecated this constructor may only be used by gson */
   public GuidoRole() {
     this(0, 0, new HashSet<>());
   }
@@ -57,7 +55,7 @@ public class GuidoRole extends Catchable implements BotRole {
   }
 
   @Override
-  public @NotNull Set<PermissionStack<GuidoPermission>> getPermissions() {
+  public @NotNull Set<GuidoPermissionStack> getPermissions() {
     return this.permissions;
   }
 
@@ -67,5 +65,10 @@ public class GuidoRole extends Catchable implements BotRole {
   @Override
   public void onRemove() {
     new BotRoleUnloadedEvent(this).call();
+  }
+
+  @Override
+  public @NotNull GuidoRole refresh() {
+    return (GuidoRole) super.refresh();
   }
 }

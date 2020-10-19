@@ -8,14 +8,14 @@ import org.jetbrains.annotations.NotNull;
 public class PermissibleEvent implements GuidoEvent {
 
   /** The permissible involved in the event */
-  @NotNull private final Permissible<?> permissible;
+  @NotNull private final Permissible<?, ?> permissible;
 
   /**
    * Create the event
    *
    * @param permissible the permissible involved in the event
    */
-  public PermissibleEvent(@NotNull Permissible<?> permissible) {
+  public PermissibleEvent(@NotNull Permissible<?, ?> permissible) {
     this.permissible = permissible;
   }
 
@@ -25,7 +25,12 @@ public class PermissibleEvent implements GuidoEvent {
    * @return the permissible
    */
   @NotNull
-  public Permissible<?> getPermissible() {
+  public Permissible<?, ?> getPermissible() {
     return this.permissible;
+  }
+
+  @Override
+  public String toString() {
+    return "PermissibleEvent{" + "permissible=" + this.permissible + '}';
   }
 }

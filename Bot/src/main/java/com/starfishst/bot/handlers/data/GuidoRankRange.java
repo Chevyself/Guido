@@ -28,6 +28,11 @@ public class GuidoRankRange implements RankRange {
     this.max = max;
   }
 
+  /** @deprecated this constructor may only be used by gson */
+  public GuidoRankRange() {
+    this("", -1, -1);
+  }
+
   @Override
   public int getMin() {
     return this.min;

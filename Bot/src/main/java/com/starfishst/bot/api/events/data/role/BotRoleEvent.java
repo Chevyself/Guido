@@ -28,4 +28,9 @@ public class BotRoleEvent implements GuidoEvent {
   public BotRole getData() {
     return this.data;
   }
+
+  @Override
+  public String toString() {
+    return "BotRoleEvent{" + "data=" + this.data + '}';
+  }
 }

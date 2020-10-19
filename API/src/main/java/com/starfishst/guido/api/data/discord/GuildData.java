@@ -1,8 +1,12 @@
 package com.starfishst.guido.api.data.discord;
 
 import com.starfishst.guido.api.data.RankRange;
+import com.starfishst.guido.api.data.matches.Ladder;
+import java.util.Collection;
 import java.util.Map;
 import me.googas.commons.cache.ICatchable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /** This object represents the data for a guild */
 public interface GuildData extends ICatchable {
@@ -24,11 +28,20 @@ public interface GuildData extends ICatchable {
   Map<String, Integer> getMultipliers();
 
   /**
-   * Get the ladders of the guild and the ladder base value
+   * Get a ladder using its name
    *
-   * @return the map of the ladders and its initial base value
+   * @param name the name of the ladder
+   * @return the ladder if found else null
    */
-  Map<String, Integer> getLadders();
+  @Nullable
+  default Ladder getLadder(@NotNull String name) {
+    for (Ladder ladder : this.getLadders()) {
+      if (ladder.getName().equalsIgnoreCase(name)) {
+        return ladder;
+      }
+    }
+    return null;
+  }
 
   /**
    * This map contains the ids of roles and it's respective rank range. This is used to give roles
@@ -37,4 +50,11 @@ public interface GuildData extends ICatchable {
    * @return the ranges
    */
   Map<Long, ? extends RankRange> getRanges();
+
+  /**
+   * Get the ladders of the guild and the ladder base value
+   *
+   * @return the map of the ladders and its initial base value
+   */
+  Collection<? extends Ladder> getLadders();
 }

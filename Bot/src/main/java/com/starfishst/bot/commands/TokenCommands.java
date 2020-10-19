@@ -61,7 +61,7 @@ public class TokenCommands {
   public Result generate(
       BotUser user,
       @Required(name = "token.gen.perm", description = "token.gen.perm.desc") AuthLevel level) {
-    GuidoAuthToken token = new GuidoAuthToken(level, user);
+    GuidoAuthToken token = new GuidoAuthToken(level, user.getId());
     return new Result("Token generated use the string: " + token.getToken() + " to use it");
   }
 }

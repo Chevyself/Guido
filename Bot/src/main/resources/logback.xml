@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- This is used to disable slf4j messages -->
+<configuration>
+    <root level="SEVERE">
+
+    </root>
+</configuration>

@@ -7,6 +7,7 @@ import com.mongodb.client.MongoCursor;
 import com.mongodb.client.MongoDatabase;
 import com.starfishst.bot.api.data.BotGuild;
 import com.starfishst.bot.api.data.BotLinkedData;
+import com.starfishst.bot.api.data.BotLinkedInfo;
 import com.starfishst.bot.api.data.BotRole;
 import com.starfishst.bot.api.data.BotUser;
 import com.starfishst.bot.api.data.loader.BotDataLoader;
@@ -17,11 +18,14 @@ import com.starfishst.bot.api.events.data.token.AuthTokenUnloadedEvent;
 import com.starfishst.bot.api.events.data.user.BotUserUnloadedEvent;
 import com.starfishst.bot.handlers.data.GuidoAuthToken;
 import com.starfishst.bot.handlers.data.GuidoGuild;
+import com.starfishst.bot.handlers.data.GuidoLadder;
 import com.starfishst.bot.handlers.data.GuidoLinkedData;
+import com.starfishst.bot.handlers.data.GuidoMatch;
 import com.starfishst.bot.handlers.data.GuidoPermission;
 import com.starfishst.bot.handlers.data.GuidoPermissionStack;
 import com.starfishst.bot.handlers.data.GuidoRankRange;
 import com.starfishst.bot.handlers.data.GuidoRole;
+import com.starfishst.bot.handlers.data.GuidoTeam;
 import com.starfishst.bot.handlers.data.GuidoUser;
 import com.starfishst.bot.handlers.data.GuidoValuesMap;
 import com.starfishst.bot.util.console.Console;
@@ -32,6 +36,8 @@ import com.starfishst.guido.api.data.UserData;
 import com.starfishst.guido.api.data.ValuesMap;
 import com.starfishst.guido.api.data.links.LinkedDataType;
 import com.starfishst.guido.api.data.matches.Match;
+import com.starfishst.guido.api.data.matches.MatchStatus;
+import com.starfishst.guido.api.data.matches.TeamRole;
 import com.starfishst.guido.api.data.token.AuthLevel;
 import com.starfishst.guido.api.data.token.AuthToken;
 import java.util.ArrayList;
@@ -51,7 +57,11 @@ import org.bson.Document;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-/** Loads the data from a mongo database */
+/**
+ * Loads the data from a mongo database
+ *
+ * @deprecated since 1.1.0-SNAPSHOT-3 as it was getting too long this class needed to be optimized
+ */
 public class MongoDataLoader implements BotDataLoader {
 
   /** The mongo client to have access to collections */
@@ -72,6 +82,9 @@ public class MongoDataLoader implements BotDataLoader {
   /** The collection containing tokens data */
   @NotNull private final MongoCollection<Document> tokens;
 
+  /** The collection containing matches */
+  @NotNull private final MongoCollection<Document> matches;
+
   /**
    * Create the mongo data loader
    *
@@ -86,6 +99,7 @@ public class MongoDataLoader implements BotDataLoader {
     this.users = database.getCollection("users");
     this.links = database.getCollection("links");
     this.tokens = database.getCollection("tokens");
+    this.matches = database.getCollection("matches");
   }
 
   /**
@@ -97,7 +111,6 @@ public class MongoDataLoader implements BotDataLoader {
   public void onGuildDataUnloaded(@NotNull BotGuildUnloadedEvent event) {
     BotGuild data = event.getData();
     Document query = new Document("id", data.getId());
-    // TODO append the document
     Document document =
         new Document("id", data.getId())
             .append("multipliers", data.getMultipliers())
@@ -119,8 +132,8 @@ public class MongoDataLoader implements BotDataLoader {
   public void onLinkedDataUnloadedEvent(@NotNull LinkedDataUnloadedEvent event) {
     BotLinkedData data = event.getData();
     Document document = new Document("type", data.getType().toString());
-    if (data.getLinkedUser() != null) {
-      document.append("linked-id", data.getLinkedUser().getId());
+    if (data.getLinkedUserId() != null) {
+      document.append("linked-id", data.getLinkedUserId());
     }
     document.append("identification", data.getIdentification().getMap());
     document.append("preferences", data.getPreferences().getMap());
@@ -165,7 +178,7 @@ public class MongoDataLoader implements BotDataLoader {
    * @return the document of the permission stack
    */
   @NotNull
-  private List<Document> getPermissionStacksDocument(@NotNull Permissible<?> permissible) {
+  private List<Document> getPermissionStacksDocument(@NotNull Permissible<?, ?> permissible) {
     List<Document> stack = new ArrayList<>();
     for (PermissionStack<?> permission : permissible.getPermissions()) {
       List<String> nodes = new ArrayList<>();
@@ -317,8 +330,17 @@ public class MongoDataLoader implements BotDataLoader {
    * @param document the document to get the map from
    * @return the map
    */
-  private HashMap<String, Integer> getLadders(Document document) {
-    return this.getMap(document, "ladders", Integer.class);
+  private Set<GuidoLadder> getLadders(@NotNull Document document) {
+    Set<GuidoLadder> ladders = new HashSet<>();
+    if (document.get("ladders") != null) {
+      for (Document ladderDoc : document.getList("ladders", Document.class)) {
+        new GuidoLadder(
+            ladderDoc.getString("name"),
+            ladderDoc.getInteger("per-team"),
+            ladderDoc.getInteger("base"));
+      }
+    }
+    return ladders;
   }
 
   /**
@@ -382,11 +404,30 @@ public class MongoDataLoader implements BotDataLoader {
    */
   @NotNull
   private GuidoValuesMap getPreferences(@NotNull Document document) {
-    GuidoValuesMap map = new GuidoValuesMap();
-    if (document.get("preferences") != null) {
-      map.addValues(document.get("preferences", Document.class));
-    }
-    return map;
+    return this.getGuidoValuesMap(document, "preferences");
+  }
+
+  /**
+   * Get the details from a document
+   *
+   * @param document the document to get the details from
+   * @return the details
+   */
+  @NotNull
+  private GuidoValuesMap getDetails(@NotNull Document document) {
+    return this.getGuidoValuesMap(document, "details");
+  }
+
+  /**
+   * Get a guido values map from a document
+   *
+   * @param document the document to get the map from
+   * @param key the match to search in the document
+   * @return the values map
+   */
+  @NotNull
+  private GuidoValuesMap getGuidoValuesMap(@NotNull Document document, @NotNull String key) {
+    return new GuidoValuesMap(this.getMap(document, key, Object.class));
   }
 
   /**
@@ -413,16 +454,11 @@ public class MongoDataLoader implements BotDataLoader {
    */
   @Nullable
   private GuidoAuthToken getGuidoAuthToken(@NotNull Document document, boolean addToCache) {
-    BotUser user = this.getUserData(document.getString("user"));
-    if (user != null) {
-      return new GuidoAuthToken(
-          document.getString("token"),
-          AuthLevel.valueOf(document.getString("level")),
-          user,
-          addToCache);
-    } else {
-      return null;
-    }
+    return new GuidoAuthToken(
+        document.getString("token"),
+        AuthLevel.valueOf(document.getString("level")),
+        document.getString("user"),
+        addToCache);
   }
 
   /**
@@ -459,6 +495,7 @@ public class MongoDataLoader implements BotDataLoader {
   private GuidoLinkedData getLinkedData(@NotNull Document query) {
     Document first = this.links.find(query).maxTime(100, TimeUnit.MILLISECONDS).first();
     if (first != null) {
+      System.out.println(first.toJson());
       return this.getGuidoLinkedData(first, true);
     }
     return null;
@@ -488,14 +525,10 @@ public class MongoDataLoader implements BotDataLoader {
    */
   @NotNull
   private GuidoLinkedData getGuidoLinkedData(@NotNull Document document, boolean addToCache) {
-    BotUser user = null;
-    if (document.get("linked-id") != null) {
-      user = this.getUserData(document.getString("linked-id"));
-    }
     return new GuidoLinkedData(
         addToCache,
         LinkedDataType.valueOf(document.getString("type")),
-        user,
+        document.getString("linked-id"),
         this.getIdentificationMap(document),
         this.getPreferences(document),
         this.getStats(document),
@@ -517,18 +550,30 @@ public class MongoDataLoader implements BotDataLoader {
     return identification;
   }
 
-  @Override
-  public @NotNull BotGuild getGuildData(long id) {
-    return Cache.getCatchableOrGet(
-        GuidoGuild.class,
-        guild -> guild.getId() == id,
-        () -> {
-          GuidoGuild guild = this.getGuildData(new Document("id", id));
-          if (guild == null) {
-            guild = new GuidoGuild(id, new HashMap<>(), new HashMap<>(), new HashMap<>());
-          }
-          return guild;
-        });
+  /**
+   * Get a match from a query document
+   *
+   * @param query the query document
+   * @return the match if found else null
+   */
+  @Nullable
+  private GuidoMatch getMatch(@NotNull Document query) {
+    Document first = this.matches.find(query).first();
+    if (first != null) {
+      MatchStatus status;
+      try {
+        status = MatchStatus.valueOf(first.getString("status"));
+      } catch (IllegalArgumentException e) {
+        status = MatchStatus.FINISHED;
+      }
+      GuidoTeam winners = null;
+      if (first.get("winners") != null) {
+        winners = this.getTeamFromDocument(first.get("winners", Document.class));
+      }
+      return new GuidoMatch(
+          first.getString("id"), status, this.getTeams(first), this.getDetails(first), winners);
+    }
+    return null;
   }
 
   @Override
@@ -545,12 +590,20 @@ public class MongoDataLoader implements BotDataLoader {
         });
   }
 
-  @Override
-  public @Nullable BotUser getUserData(@NotNull String id) {
-    return Cache.getCatchableOrGet(
-        GuidoUser.class,
-        user -> user.getId().equals(id),
-        () -> this.getUserData(new Document("id", id)));
+  /**
+   * Get teams from a document
+   *
+   * @param first the document to get the team from
+   * @return the team
+   */
+  private Set<GuidoTeam> getTeams(@NotNull Document first) {
+    Set<GuidoTeam> teams = new HashSet<>();
+    if (first.get("teams") != null) {
+      for (Document teamDoc : first.getList("teams", Document.class)) {
+        teams.add(this.getTeamFromDocument(teamDoc));
+      }
+    }
+    return teams;
   }
 
   /**
@@ -584,8 +637,68 @@ public class MongoDataLoader implements BotDataLoader {
         });
   }
 
+  /**
+   * Get a guido team from a document
+   *
+   * @param teamDoc the document of the team
+   * @return the team
+   */
+  @NotNull
+  private GuidoTeam getTeamFromDocument(Document teamDoc) {
+    HashMap<BotLinkedInfo, TeamRole> members = new HashMap<>();
+    if (teamDoc.get("members") != null) {
+      for (Document memberDoc : teamDoc.getList("members", Document.class)) {
+        try {
+          TeamRole role = TeamRole.valueOf(memberDoc.getString("role"));
+          LinkedDataType type = LinkedDataType.valueOf(memberDoc.getString("type"));
+          GuidoValuesMap identification = this.getIdentificationMap(memberDoc);
+          BotLinkedData linkedData = this.getLinkedData(type, identification);
+          if (linkedData != null) {
+            members.put(linkedData.getInfo(), role);
+          }
+        } catch (IllegalArgumentException ignored) {
+
+        }
+      }
+    }
+    return new GuidoTeam(new HashMap<>());
+  }
+
+  @Override
+  public @NotNull BotGuild getGuildData(long id) {
+    return Cache.getCatchableOrGet(
+        GuidoGuild.class,
+        guild -> guild.getId() == id,
+        () -> {
+          GuidoGuild guild = this.getGuildData(new Document("id", id));
+          if (guild == null) {
+            guild = new GuidoGuild(id, new HashMap<>(), new HashSet<>(), new HashMap<>());
+          }
+          return guild;
+        });
+  }
+
+  @Override
+  public @Nullable BotUser getUserData(@Nullable String id) {
+    if (id != null) {
+      return Cache.getCatchableOrGet(
+          GuidoUser.class,
+          user -> user.getId().equals(id),
+          () -> this.getUserData(new Document("id", id)));
+    } else {
+      return null;
+    }
+  }
+
   @Override
   public @Nullable Match getMatch(@NotNull String id) {
+    Cache.getCatchableOrGet(
+        GuidoMatch.class,
+        match -> match.getId().equals(id),
+        () -> {
+          return this.getMatch(new Document("id", id));
+        });
+
     // TODO implement this
     throw new UnsupportedOperationException("Matches have not been implemented yet");
   }
@@ -611,7 +724,7 @@ public class MongoDataLoader implements BotDataLoader {
                 new GuidoLinkedData(
                     true,
                     LinkedDataType.DISCORD,
-                    this.getUserData(userId),
+                    this.getUserData(userId).getId(),
                     new GuidoValuesMap(Maps.singleton("id", userId)),
                     new GuidoValuesMap(),
                     new HashMap<>(),
@@ -646,7 +759,7 @@ public class MongoDataLoader implements BotDataLoader {
                 new GuidoLinkedData(
                     true,
                     LinkedDataType.DISCORD,
-                    this.getUserData(userId),
+                    this.getUserData(userId).getId(),
                     new GuidoValuesMap(Maps.singleton("id", userId)),
                     new GuidoValuesMap(),
                     new HashMap<>(),
@@ -697,7 +810,7 @@ public class MongoDataLoader implements BotDataLoader {
     List<BotLinkedData> data =
         new ArrayList<>(
             Cache.getCatchables(
-                GuidoLinkedData.class, linked -> user.equals(linked.getLinkedUser())));
+                GuidoLinkedData.class, linked -> user.equals(linked.getLinkedUserId())));
     List<BotLinkedData> links = this.getLinks(new Document("linked-id", user.getId()));
     Lots.addIf(
         data,
@@ -712,6 +825,7 @@ public class MongoDataLoader implements BotDataLoader {
     return data;
   }
 
+  @NotNull
   @Override
   public Collection<GuidoAuthToken> getTokens(@NotNull UserData user) {
     List<GuidoAuthToken> catchables =

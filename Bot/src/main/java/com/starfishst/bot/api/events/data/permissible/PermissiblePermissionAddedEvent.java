@@ -22,11 +22,22 @@ public class PermissiblePermissionAddedEvent extends PermissibleEvent {
    * @param permission the permission that was added to the permissible
    */
   public PermissiblePermissionAddedEvent(
-      @NotNull Permissible<?> permissible,
+      @NotNull Permissible<?, ?> permissible,
       @NotNull PermissionStack<?> stack,
       @NotNull Permission permission) {
     super(permissible);
     this.stack = stack;
     this.permission = permission;
+  }
+
+  @Override
+  public String toString() {
+    return "PermissiblePermissionAddedEvent{"
+        + "stack="
+        + this.stack
+        + ", permission="
+        + this.permission
+        + "} "
+        + super.toString();
   }
 }

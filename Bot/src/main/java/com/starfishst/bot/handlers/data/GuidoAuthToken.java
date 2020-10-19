@@ -1,8 +1,9 @@
 package com.starfishst.bot.handlers.data;
 
+import com.starfishst.bot.Guido;
+import com.starfishst.bot.api.data.BotUser;
 import com.starfishst.bot.api.events.data.token.AuthTokenLoadedEvent;
 import com.starfishst.bot.api.events.data.token.AuthTokenUnloadedEvent;
-import com.starfishst.guido.api.data.UserData;
 import com.starfishst.guido.api.data.token.AuthLevel;
 import com.starfishst.guido.api.data.token.AuthToken;
 import me.googas.commons.RandomUtils;
@@ -10,6 +11,7 @@ import me.googas.commons.cache.Catchable;
 import me.googas.commons.time.Time;
 import me.googas.commons.time.Unit;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /** An implementation for {@link AuthToken} */
 public class GuidoAuthToken extends Catchable implements AuthToken {
@@ -21,7 +23,7 @@ public class GuidoAuthToken extends Catchable implements AuthToken {
   @NotNull private final AuthLevel level;
 
   /** The user owner of the token */
-  @NotNull private final UserData user;
+  @NotNull private final String user;
 
   /**
    * Create the token
@@ -32,8 +34,8 @@ public class GuidoAuthToken extends Catchable implements AuthToken {
    * @param addToCache whether to add the token to cache
    */
   public GuidoAuthToken(
-      @NotNull String token, @NotNull AuthLevel level, @NotNull UserData user, boolean addToCache) {
-    super(new Time(1, Unit.MINUTES));
+      @NotNull String token, @NotNull AuthLevel level, @NotNull String user, boolean addToCache) {
+    super(new Time(1, Unit.MINUTES), addToCache);
     this.token = token;
     this.level = level;
     this.user = user;
@@ -46,8 +48,13 @@ public class GuidoAuthToken extends Catchable implements AuthToken {
    * @param level the level of authentication of the token
    * @param user the user owner of the token
    */
-  public GuidoAuthToken(@NotNull AuthLevel level, @NotNull UserData user) {
+  public GuidoAuthToken(@NotNull AuthLevel level, @NotNull String user) {
     this(RandomUtils.nextString(16), level, user, true);
+  }
+
+  /** @deprecated this constructor may only be used by gson */
+  public GuidoAuthToken() {
+    this("", AuthLevel.NONE, "", false);
   }
 
   @Override
@@ -65,8 +72,13 @@ public class GuidoAuthToken extends Catchable implements AuthToken {
   }
 
   @Override
-  public @NotNull UserData getUser() {
+  public @NotNull String getUserId() {
     return this.user;
+  }
+
+  @Override
+  public @Nullable BotUser getUser() {
+    return Guido.getDataLoader().getUserData(this.user);
   }
 
   @Override

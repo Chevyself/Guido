@@ -143,6 +143,7 @@ public class GuidoFileLoader implements BotDataLoader {
     throw new UnsupportedOperationException("Links data cannot be find using file loader");
   }
 
+  @NotNull
   @Override
   public Collection<? extends AuthToken> getTokens(@NotNull UserData user) {
     throw new UnsupportedOperationException("File loader cannot get tokens");

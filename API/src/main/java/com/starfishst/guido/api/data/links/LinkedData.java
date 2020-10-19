@@ -2,6 +2,7 @@ package com.starfishst.guido.api.data.links;
 
 import com.starfishst.guido.api.data.Permissible;
 import com.starfishst.guido.api.data.Permission;
+import com.starfishst.guido.api.data.PermissionStack;
 import com.starfishst.guido.api.data.Stateable;
 import com.starfishst.guido.api.data.UserData;
 import com.starfishst.guido.api.data.ValuesMap;
@@ -14,7 +15,8 @@ import org.jetbrains.annotations.Nullable;
  *
  * @param <T> the type of permission that the data can contain
  */
-public interface LinkedData<T extends Permission> extends Permissible<T>, Stateable, ICatchable {
+public interface LinkedData<T extends Permission, K extends PermissionStack<T>>
+    extends Permissible<T, K>, Stateable, ICatchable {
 
   /**
    * Get the type of linked data
@@ -48,6 +50,14 @@ public interface LinkedData<T extends Permission> extends Permissible<T>, Statea
   ValuesMap getPreferences();
 
   /**
+   * Get the id of the user that is linked to this data
+   *
+   * @return the id of the user that is linked to this data
+   */
+  @Nullable
+  String getLinkedUserId();
+
+  /**
    * Get the user that is linked to this data
    *
    * @return the user that is linked to this data
@@ -56,18 +66,10 @@ public interface LinkedData<T extends Permission> extends Permissible<T>, Statea
   UserData getLinkedUser();
 
   /**
-   * Adds a permission to this linked data
+   * Get this linked data but only the type and identification
    *
-   * @param context the context to add the permission on
-   * @param permission the permission to add
+   * @return the data as uncompleted
    */
-  void addPermission(@NotNull String context, @NotNull T permission);
-
-  /**
-   * Removes a permission to this linked data
-   *
-   * @param context the context to remove the permission from
-   * @param permission the permission to remove
-   */
-  void removePermission(@NotNull String context, @NotNull T permission);
+  @NotNull
+  LinkedInfo<T, K> getInfo();
 }

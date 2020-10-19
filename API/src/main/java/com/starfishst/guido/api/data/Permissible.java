@@ -8,8 +8,9 @@ import org.jetbrains.annotations.Nullable;
  * This is an entity which may posses node permissions
  *
  * @param <T> the type of permission that the permissible contains
+ * @param <K> the type of permission stack that this permissible supports
  */
-public interface Permissible<T extends Permission> {
+public interface Permissible<T extends Permission, K extends PermissionStack<T>> {
 
   /**
    * Checks whether the entity posses the permission and it is enabled
@@ -42,8 +43,8 @@ public interface Permissible<T extends Permission> {
    * @return the stack of permissions if found else null
    */
   @Nullable
-  default PermissionStack<T> getPermissions(@NotNull String context) {
-    for (PermissionStack<T> permission : this.getPermissions()) {
+  default K getPermissions(@NotNull String context) {
+    for (K permission : this.getPermissions()) {
       if (permission.getContext().equalsIgnoreCase(context)) {
         return permission;
       }
@@ -57,5 +58,5 @@ public interface Permissible<T extends Permission> {
    * @return the set of permissions of the entity
    */
   @NotNull
-  Set<PermissionStack<T>> getPermissions();
+  Set<K> getPermissions();
 }

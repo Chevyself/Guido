@@ -28,4 +28,9 @@ public class AuthTokenEvent implements GuidoEvent {
   public AuthToken getToken() {
     return this.token;
   }
+
+  @Override
+  public String toString() {
+    return "AuthTokenEvent{" + "token=" + this.token + '}';
+  }
 }

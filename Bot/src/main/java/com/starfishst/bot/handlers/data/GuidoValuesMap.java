@@ -128,4 +128,9 @@ public class GuidoValuesMap implements ValuesMap {
   public GuidoValuesMap addValues(@NotNull ValuesMap map) {
     return (GuidoValuesMap) ValuesMap.super.addValues(map);
   }
+
+  @Override
+  public String toString() {
+    return "GuidoValuesMap{" + "map=" + this.map + '}';
+  }
 }

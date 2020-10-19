@@ -47,7 +47,7 @@ public class LinkedDataReceptors {
     BotLinkedData linkedData =
         Guido.getDataLoader().getLinkedData(type, new GuidoValuesMap(identification));
     if (linkedData != null) {
-      linkedData.setLinkedUser(user);
+      linkedData.refresh().setLinkedUser(user);
       return true;
     }
     return false;
@@ -69,7 +69,7 @@ public class LinkedDataReceptors {
     BotLinkedData linkedData =
         Guido.getDataLoader().getLinkedData(type, new GuidoValuesMap(identification));
     if (linkedData != null) {
-      PermissionStack<?> permissions = linkedData.getPermissions(context);
+      PermissionStack<?> permissions = linkedData.refresh().getPermissions(context);
       if (permissions != null) {
         return permissions;
       }
@@ -91,7 +91,7 @@ public class LinkedDataReceptors {
     BotLinkedData data =
         Guido.getDataLoader().getLinkedData(type, new GuidoValuesMap(identification));
     if (data != null) {
-      return data.getPreferences().getMap();
+      return data.refresh().getPreferences().getMap();
     }
     return new HashMap<>();
   }
@@ -110,7 +110,7 @@ public class LinkedDataReceptors {
     BotLinkedData data =
         Guido.getDataLoader().getLinkedData(type, new GuidoValuesMap(identification));
     if (data != null) {
-      return data.getStats();
+      return data.refresh().getStats();
     }
     return new HashMap<>();
   }
@@ -129,7 +129,7 @@ public class LinkedDataReceptors {
     BotLinkedData data =
         Guido.getDataLoader().getLinkedData(type, new GuidoValuesMap(identification));
     if (data != null) {
-      data.getStats().clear();
+      data.refresh().getStats().clear();
       return true;
     }
     return false;
@@ -152,7 +152,8 @@ public class LinkedDataReceptors {
         Guido.getDataLoader().getLinkedData(type, new GuidoValuesMap(identification));
     if (data != null) {
       stats.forEach(
-          (key, value) -> data.getStats().put(key, data.getStats().getOrDefault(key, 0D) + value));
+          (key, value) ->
+              data.refresh().getStats().put(key, data.getStats().getOrDefault(key, 0D) + value));
       return true;
     }
     return false;
@@ -176,7 +177,7 @@ public class LinkedDataReceptors {
     BotLinkedData data =
         Guido.getDataLoader().getLinkedData(type, new GuidoValuesMap(identification));
     if (data != null && !data.containsPermission(permission.getNode(), context)) {
-      data.addPermission(context, permission);
+      data.refresh().addPermission(context, permission.getNode(), permission.isEnabled());
       return true;
     }
     return false;
@@ -200,7 +201,7 @@ public class LinkedDataReceptors {
     BotLinkedData data =
         Guido.getDataLoader().getLinkedData(type, new GuidoValuesMap(identification));
     if (data != null && data.containsPermission(permission.getNode(), context)) {
-      data.removePermission(context, permission);
+      data.refresh().removePermission(context, permission.getNode());
       return true;
     }
     return false;

@@ -2,6 +2,7 @@ package com.starfishst.bot.api.data;
 
 import com.starfishst.bot.Guido;
 import com.starfishst.bot.handlers.data.GuidoPermission;
+import com.starfishst.bot.handlers.data.GuidoPermissionStack;
 import com.starfishst.guido.api.data.lang.LocaleFile;
 import com.starfishst.guido.api.data.links.LinkedData;
 import me.googas.commons.maps.Maps;
@@ -12,7 +13,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 /** An extension for linked data for bot use */
-public interface BotLinkedData extends LinkedData<GuidoPermission> {
+public interface BotLinkedData
+    extends BotPermissible, LinkedData<GuidoPermission, GuidoPermissionStack> {
 
   /**
    * Get the linked data as a readable string
@@ -56,6 +58,16 @@ public interface BotLinkedData extends LinkedData<GuidoPermission> {
   }
 
   @Override
+  @NotNull
+  BotLinkedData refresh();
+
+  @Override
   @Nullable
-  BotUser getLinkedUser();
+  default BotUser getLinkedUser() {
+    return Guido.getDataLoader().getUserData(this.getLinkedUserId());
+  }
+
+  @Override
+  @NotNull
+  BotLinkedInfo getInfo();
 }

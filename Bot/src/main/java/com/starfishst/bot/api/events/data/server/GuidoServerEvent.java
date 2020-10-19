@@ -28,4 +28,9 @@ public class GuidoServerEvent implements GuidoEvent {
   public GuidoServer getServer() {
     return this.server;
   }
+
+  @Override
+  public String toString() {
+    return "GuidoServerEvent{" + "server=" + this.server + '}';
+  }
 }

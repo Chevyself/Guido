@@ -16,8 +16,13 @@ public class PermissiblePermissionRemovedEvent extends PermissibleEvent {
    * @param node the node of the permission that was removed
    */
   public PermissiblePermissionRemovedEvent(
-      @NotNull Permissible<?> permissible, @NotNull String node) {
+      @NotNull Permissible<?, ?> permissible, @NotNull String node) {
     super(permissible);
     this.node = node;
+  }
+
+  @Override
+  public String toString() {
+    return "PermissiblePermissionRemovedEvent{" + "node='" + this.node + '\'' + "} " + super.toString();
   }
 }

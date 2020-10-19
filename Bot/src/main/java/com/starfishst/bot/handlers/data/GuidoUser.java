@@ -24,8 +24,7 @@ public class GuidoUser extends Catchable implements BotUser {
     new BotUserLoadedEvent(this).call();
   }
 
-  /** Create the guido user. This is deprecated because only gson may use it */
-  @Deprecated
+  /** @deprecated this constructor may only be used by gson */
   public GuidoUser() {
     this("-1");
   }

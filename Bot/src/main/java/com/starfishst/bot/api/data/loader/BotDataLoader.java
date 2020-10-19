@@ -73,7 +73,7 @@ public interface BotDataLoader extends DataLoader, GuidoEventHandler {
    */
   @Override
   @Nullable
-  BotUser getUserData(@NotNull String id);
+  BotUser getUserData(@Nullable String id);
 
   /**
    * Get linked data using it's type and identifications
