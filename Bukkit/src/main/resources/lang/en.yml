@@ -1,0 +1,42 @@
+## This is needed in order to identify the language of the file
+locale: en
+## This is needed for the framework
+invalid:
+  number: "&e%string% &cis not a valid number!"
+  decimal: "&e%string% &cis not a valid decimal!"
+  decimal-empty: "&cDecimals cannot be empty"
+  boolean: "&e%string% &cis not a valid boolean!"
+  time: "&e%string% &cis not valid time!"
+  player: "&e%string% &cis not online!"
+missing-argument: "&cYou are missing &e%name% &cin the position &e%position% &cit is &e%description%"
+player-only: "&cThis command can only be used by players"
+not-allowed: "&cYou are not allowed to use this command"
+# Help topic of the plugin
+help-topic:
+  plugin:
+    short: "Get help for %name%-%version%"
+    full: ""
+    command: ""
+    child: ""
+  command:
+    name: ""
+    short: ""
+    full: ""
+  parent:
+    full: ""
+    short: ""
+    child:
+      name: ""
+      short: ""
+      full: ""
+  arguments:
+    required: ""
+    optional: ""
+## For commands
+fly:
+  enabled: "&eFly has been enabled"
+  disabled: "&eFly has been disabled"
+  else:
+    not-allowed: "&cYou are not allowed to toggle fly to someone else"
+    enabled: "&a%display%&e allowed you to fly"
+    disabled: "&a%display% &e disallowed you to fly"

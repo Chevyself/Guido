@@ -1,0 +1,13 @@
+## This is needed in order to identify the language of the file
+locale: "en"
+## This is needed for the framework
+invalid:
+  number: "&e%string% &cis not a valid number!"
+  decimal: "&e%string% &cis not a valid decimal!"
+  decimal-empty: "&cDecimals cannot be empty"
+  boolean: "&e%string% &cis not a valid boolean!"
+  time: "&e%string% &cis not valid time!"
+  player: "&e%string% &cis not online!"
+  material: "&e%string% &cis not a valid material"
+  material-empty: "&cMaterials cannot be empty"
+missing-argument: "&cYou are missing &e%name% &cin the position &e%position% &cit is &e%description%"

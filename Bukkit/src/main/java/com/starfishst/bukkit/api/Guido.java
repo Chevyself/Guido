@@ -4,6 +4,7 @@ import com.starfishst.bukkit.GuidoPlugin;
 import com.starfishst.bukkit.api.config.Configuration;
 import com.starfishst.bukkit.api.events.GuidoEvent;
 import com.starfishst.bukkit.api.events.GuidoListener;
+import com.starfishst.bukkit.lang.BukkitLanguageHandler;
 import com.starfishst.guido.api.data.implementations.ClientImpl;
 import me.googas.commons.Validate;
 import org.bukkit.Bukkit;
@@ -94,5 +95,15 @@ public class Guido {
   @NotNull
   public static ClientImpl getClient() {
     return Guido.validated().getClient();
+  }
+
+  /**
+   * Get the language handler of the plugin
+   *
+   * @return the language handler
+   */
+  @NotNull
+  public static BukkitLanguageHandler getLanguageHandler() {
+    return Guido.validated().getLanguageHandler();
   }
 }

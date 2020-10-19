@@ -2,6 +2,7 @@ package com.starfishst.bungee.api;
 
 import com.starfishst.bungee.api.configuration.BungeeConfiguration;
 import com.starfishst.bungee.core.GuidoPlugin;
+import com.starfishst.bungee.core.lang.BungeeLanguageHandler;
 import com.starfishst.guido.api.data.implementations.ClientImpl;
 import me.googas.commons.Validate;
 import org.jetbrains.annotations.NotNull;
@@ -53,5 +54,15 @@ public class Guido {
   @NotNull
   public static ClientImpl getClient() {
     return Guido.validated().getClient();
+  }
+
+  /**
+   * Get the language handler that the plugin is using
+   *
+   * @return the language handler
+   */
+  @NotNull
+  public static BungeeLanguageHandler getLanguageHandler() {
+    return Guido.validated().getLanguageHandler();
   }
 }

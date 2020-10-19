@@ -87,7 +87,7 @@
         <dependency>
             <groupId>com.starfishst.bukkit</groupId>
             <artifactId>Bukkit</artifactId>
-            <version>1.0.3-SNAPSHOT</version>
+            <version>1.0.4-SNAPSHOT</version>
         </dependency>
         <!-- ProtocolLib -->
         <dependency>

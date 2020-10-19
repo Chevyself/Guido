@@ -10,9 +10,9 @@ import com.starfishst.bungee.core.commands.PermissionCommands;
 import com.starfishst.bungee.core.commands.StatsCommand;
 import com.starfishst.bungee.core.commands.providers.GuidoProvidersRegistry;
 import com.starfishst.bungee.core.configuration.GuidoBungeeConfiguration;
+import com.starfishst.bungee.core.lang.BungeeLanguageHandler;
 import com.starfishst.bungee.core.listeners.JoinListener;
 import com.starfishst.bungee.core.listeners.MotdListener;
-import com.starfishst.bungee.messages.DefaultMessagesProvider;
 import com.starfishst.guido.api.data.implementations.ClientImpl;
 import com.starfishst.guido.api.data.implementations.Implementation;
 import java.io.File;
@@ -30,20 +30,24 @@ import org.jetbrains.annotations.NotNull;
 /** The guido plugin for Bungee */
 public class GuidoPlugin extends Plugin implements Implementation {
 
+  /** The bungee language handler */
+  @NotNull
+  private final BungeeLanguageHandler languageHandler =
+      new BungeeLanguageHandler().loadResources(this, "en");
+
   /** The command manager */
   @NotNull
   private final CommandManager manager =
       new CommandManager(
-          this,
-          new DefaultMessagesProvider(),
-          new GuidoProvidersRegistry(new DefaultMessagesProvider()));
+          this, this.languageHandler, new GuidoProvidersRegistry(this.languageHandler));
 
   /** The bungeeConfiguration that the plugin will use */
   @NotNull private BungeeConfiguration bungeeConfiguration = new GuidoBungeeConfiguration();
 
   /** The listeners being used by the plugin */
   @NotNull
-  private final List<GuidoListener> listeners = Lots.list(new JoinListener(), new MotdListener());
+  private final List<GuidoListener> listeners =
+      Lots.list(this.languageHandler, new JoinListener(), new MotdListener());
 
   /** The client connected with the bot */
   @NotNull private final ClientImpl client = new ClientImpl("0");
@@ -114,5 +118,15 @@ public class GuidoPlugin extends Plugin implements Implementation {
   @Override
   public @NotNull ClientImpl getClient() {
     return this.client;
+  }
+
+  /**
+   * Get the language handler that the plugin is using
+   *
+   * @return the language handler
+   */
+  @NotNull
+  public BungeeLanguageHandler getLanguageHandler() {
+    return this.languageHandler;
   }
 }

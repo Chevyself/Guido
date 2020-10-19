@@ -14,6 +14,7 @@ public class GuidoProvidersRegistry extends BungeeProvidersRegistry {
    */
   public GuidoProvidersRegistry(@NotNull MessagesProvider messages) {
     super(messages);
+    this.addProvider(new LocaleFileProvider());
     this.addProvider(new ProxiedOfflinePlayerProvider());
   }
 }

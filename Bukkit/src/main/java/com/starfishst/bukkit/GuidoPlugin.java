@@ -12,19 +12,17 @@ import com.starfishst.bukkit.commands.PingCommand;
 import com.starfishst.bukkit.commands.providers.GameModeProvider;
 import com.starfishst.bukkit.configuration.GuidoConfiguration;
 import com.starfishst.bukkit.dependencies.GuidoDependencies;
+import com.starfishst.bukkit.lang.BukkitLanguageHandler;
 import com.starfishst.bukkit.listeners.CommandExecutionListener;
 import com.starfishst.bukkit.listeners.PermissionListener;
 import com.starfishst.bukkit.listeners.TestListener;
-import com.starfishst.bukkit.messages.DefaultMessagesProvider;
 import com.starfishst.bukkit.utils.BukkitUtils;
 import com.starfishst.bukkit.utils.FilesUtils;
-import com.starfishst.core.providers.registry.ProvidersRegistry;
 import com.starfishst.guido.api.data.implementations.ClientImpl;
 import com.starfishst.guido.api.data.implementations.Implementation;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import me.googas.commons.Lots;
@@ -36,8 +34,13 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-/** GuidoPlugin implementation for Sportpaper and PGM */
+/** Guido implementation for Bukkit */
 public class GuidoPlugin extends JavaPlugin implements Implementation {
+
+  /** The language handler for localized messages */
+  @NotNull
+  private final BukkitLanguageHandler bukkitLanguageHandler =
+      new BukkitLanguageHandler().loadResources(this, "en");
 
   /** The command manager that the implementation is using to register commands */
   @NotNull
@@ -45,14 +48,14 @@ public class GuidoPlugin extends JavaPlugin implements Implementation {
       new CommandManager(
           this,
           new CommandManagerOptions(false),
-          new DefaultMessagesProvider(),
-          new ProvidersRegistry<>());
+          this.bukkitLanguageHandler,
+          new GuidoProvidersRegistry(this.bukkitLanguageHandler));
   /** The set of commands that the implementation is using */
   @NotNull
   private final Set<GuidoCommand> commands =
       Lots.set(new FlyCommand(), new GameModeCommand(), new PingCommand());
   /** The listeners that this requires */
-  @NotNull private final List<GuidoListener> listeners = new ArrayList<>();
+  @NotNull private final List<GuidoListener> listeners = Lots.list(this.bukkitLanguageHandler);
   /** The guidoConfiguration that the implementation is using */
   @NotNull private Configuration configuration = new GuidoConfiguration();
   /**
@@ -228,5 +231,15 @@ public class GuidoPlugin extends JavaPlugin implements Implementation {
     this.startConnection();
     BukkitUtils.startCache(this);
     super.onEnable();
+  }
+
+  /**
+   * Get the language handler of the plugin
+   *
+   * @return the language handler
+   */
+  @NotNull
+  public BukkitLanguageHandler getLanguageHandler() {
+    return this.bukkitLanguageHandler;
   }
 }
