@@ -23,6 +23,11 @@ public class PermissiblePermissionRemovedEvent extends PermissibleEvent {
 
   @Override
   public String toString() {
-    return "PermissiblePermissionRemovedEvent{" + "node='" + this.node + '\'' + "} " + super.toString();
+    return "PermissiblePermissionRemovedEvent{"
+        + "node='"
+        + this.node
+        + '\''
+        + "} "
+        + super.toString();
   }
 }

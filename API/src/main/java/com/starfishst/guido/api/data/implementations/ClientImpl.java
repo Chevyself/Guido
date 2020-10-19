@@ -57,7 +57,7 @@ public class ClientImpl {
   public JsonClient startConnection() throws IOException {
     this.client =
         new JsonClient(
-            new Socket(ClientImpl.DEBUG_IP, ClientImpl.PORT),
+            new Socket(ClientImpl.IP, ClientImpl.PORT),
             this.handler,
             new GsonBuilder()
                 .registerTypeAdapter(Message.class, new MessageDeserializer())
