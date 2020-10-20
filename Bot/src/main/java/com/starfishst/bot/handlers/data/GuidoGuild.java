@@ -14,7 +14,7 @@ import me.googas.commons.time.Time;
 public class GuidoGuild extends Catchable implements BotGuild {
 
   /** The unique id of the guild */
-  private final transient long id;
+  private final long id;
 
   /** The multipliers of the guild */
   private final HashMap<String, Integer> multipliers;

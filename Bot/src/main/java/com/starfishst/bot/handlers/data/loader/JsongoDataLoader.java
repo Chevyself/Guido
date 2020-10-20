@@ -7,6 +7,7 @@ import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoCursor;
 import com.mongodb.client.MongoDatabase;
+import com.starfishst.bot.adapters.LongMongoAdapter;
 import com.starfishst.bot.adapters.PermissionAdapter;
 import com.starfishst.bot.adapters.ValuesMapAdapter;
 import com.starfishst.bot.api.data.BotGuild;
@@ -52,7 +53,11 @@ import org.bson.Document;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-/** A data loader that uses both mongo and json */
+/**
+ * A data loader that uses both mongo and json
+ *
+ * <h1>IMPORTANT Mongo does not support dots '.' in their field names!!</h1>
+ */
 public class JsongoDataLoader implements BotDataLoader {
 
   /** The gson instance for deserialization */
@@ -60,10 +65,12 @@ public class JsongoDataLoader implements BotDataLoader {
   private final Gson gson =
       new GsonBuilder()
           .setPrettyPrinting()
-          .registerTypeAdapter(ValuesMap.class, new ValuesMapAdapter())
-          .registerTypeAdapter(GuidoValuesMap.class, new ValuesMapAdapter())
+          .registerTypeAdapter(long.class, new LongMongoAdapter())
+          .registerTypeAdapter(Long.class, new LongMongoAdapter())
           .registerTypeAdapter(Permission.class, new PermissionAdapter())
           .registerTypeAdapter(GuidoPermission.class, new PermissionAdapter())
+          .registerTypeAdapter(ValuesMap.class, new ValuesMapAdapter())
+          .registerTypeAdapter(GuidoValuesMap.class, new ValuesMapAdapter())
           .create();
 
   /** The mongo client to have access to collections */
@@ -111,7 +118,7 @@ public class JsongoDataLoader implements BotDataLoader {
    */
   @Listener(priority = ListenPriority.HIGHEST)
   public void onBotGuildUnloaded(@NotNull BotGuildUnloadedEvent event) {
-    this.save(this.users, new Document("id", event.getData().getId()), event.getData());
+    this.save(this.guilds, new Document("id", event.getData().getId()), event.getData());
   }
 
   /**
@@ -208,6 +215,7 @@ public class JsongoDataLoader implements BotDataLoader {
   /**
    * Get an object from a query. This works for getting one object only
    *
+   * @param typeOfT the type of object to supply
    * @param collection the collection to get the object from
    * @param query the query to match the object
    * @param <T> the type of the object
@@ -232,6 +240,7 @@ public class JsongoDataLoader implements BotDataLoader {
    * Supply all the objects matching the query. If the limit and skip are < 1 there will be no
    * elements skipped nor limited
    *
+   * @param typeOfT the type of objects to supply
    * @param collection the collection to find the objects from
    * @param query the query to find the documents
    * @param limit the limit of the documents to get
@@ -307,6 +316,7 @@ public class JsongoDataLoader implements BotDataLoader {
   /**
    * Get an object given a document
    *
+   * @param typeOfT the type of object to get from document
    * @param document the document to get the object from
    * @param <T> the type of the object
    * @return the object given by json
@@ -402,10 +412,15 @@ public class JsongoDataLoader implements BotDataLoader {
 
   @Override
   public @NotNull BotGuild getGuildData(long id) {
-    return Cache.getCatchableOrGet(
-        GuidoGuild.class,
-        guild -> guild.getId() == id,
-        this.supplyObjectFromQuery(GuidoGuild.class, this.guilds, new Document("id", id)));
+    GuidoGuild guidoGuild =
+        Cache.getCatchableOrGet(
+            GuidoGuild.class,
+            guild -> guild.getId() == id,
+            this.supplyObjectFromQuery(GuidoGuild.class, this.guilds, new Document("id", id)));
+    if (guidoGuild == null) {
+      guidoGuild = new GuidoGuild(id, new HashMap<>(), new HashSet<>(), new HashMap<>());
+    }
+    return guidoGuild;
   }
 
   @Override

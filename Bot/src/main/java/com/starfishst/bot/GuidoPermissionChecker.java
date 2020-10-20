@@ -12,6 +12,7 @@ import com.starfishst.jda.result.Result;
 import com.starfishst.jda.result.ResultType;
 import java.util.Set;
 import me.googas.commons.Lots;
+import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Role;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -57,7 +58,10 @@ public class GuidoPermissionChecker implements PermissionChecker {
                     ((GuildCommandContext) context).getMember().getIdLong(),
                     ((GuildCommandContext) context).getGuild().getIdLong())
                 .refresh();
-        if (member.hasPermission(perm.node(), "discord")) {
+        if (member.hasPermission(perm.node(), "discord")
+            || ((GuildCommandContext) context)
+                .getMember()
+                .hasPermission(Permission.ADMINISTRATOR)) {
           return null;
         }
         for (Role role : ((GuildCommandContext) context).getMember().getRoles()) {
