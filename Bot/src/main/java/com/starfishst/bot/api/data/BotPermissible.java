@@ -47,7 +47,7 @@ public interface BotPermissible extends Permissible<GuidoPermission, GuidoPermis
   default boolean removePermission(@NotNull String context, @NotNull String node) {
     PermissionStack<GuidoPermission> stack = this.getPermissions(context);
     if (stack != null) {
-      if (stack.hasPermission(node)) {
+      if (stack.containsPermission(node)) {
         stack.getPermissions().removeIf(permission -> permission.getNode().equalsIgnoreCase(node));
         new PermissiblePermissionRemovedEvent(this, node);
         return true;

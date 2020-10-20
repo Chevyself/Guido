@@ -10,11 +10,13 @@ import com.mongodb.client.MongoDatabase;
 import com.starfishst.bot.adapters.LongMongoAdapter;
 import com.starfishst.bot.adapters.PermissionAdapter;
 import com.starfishst.bot.adapters.ValuesMapAdapter;
+import com.starfishst.bot.api.data.BotGroup;
 import com.starfishst.bot.api.data.BotGuild;
 import com.starfishst.bot.api.data.BotLinkedData;
 import com.starfishst.bot.api.data.BotRole;
 import com.starfishst.bot.api.data.BotUser;
 import com.starfishst.bot.api.data.loader.BotDataLoader;
+import com.starfishst.bot.api.events.data.group.GroupUnloadedEvent;
 import com.starfishst.bot.api.events.data.guild.BotGuildUnloadedEvent;
 import com.starfishst.bot.api.events.data.links.LinkedDataUnloadedEvent;
 import com.starfishst.bot.api.events.data.match.MatchUnloadedEvent;
@@ -22,6 +24,7 @@ import com.starfishst.bot.api.events.data.role.BotRoleUnloadedEvent;
 import com.starfishst.bot.api.events.data.token.AuthTokenUnloadedEvent;
 import com.starfishst.bot.api.events.data.user.BotUserUnloadedEvent;
 import com.starfishst.bot.handlers.data.GuidoAuthToken;
+import com.starfishst.bot.handlers.data.GuidoGroup;
 import com.starfishst.bot.handlers.data.GuidoGuild;
 import com.starfishst.bot.handlers.data.GuidoLinkedData;
 import com.starfishst.bot.handlers.data.GuidoMatch;
@@ -29,6 +32,7 @@ import com.starfishst.bot.handlers.data.GuidoPermission;
 import com.starfishst.bot.handlers.data.GuidoRole;
 import com.starfishst.bot.handlers.data.GuidoUser;
 import com.starfishst.bot.handlers.data.GuidoValuesMap;
+import com.starfishst.guido.api.data.Group;
 import com.starfishst.guido.api.data.Permission;
 import com.starfishst.guido.api.data.UserData;
 import com.starfishst.guido.api.data.ValuesMap;
@@ -94,6 +98,9 @@ public class JsongoDataLoader implements BotDataLoader {
   /** The collection containing matches */
   @NotNull private final MongoCollection<Document> matches;
 
+  /** The collection containing matches */
+  @NotNull private final MongoCollection<Document> groups;
+
   /**
    * Create the mongo data loader
    *
@@ -109,6 +116,7 @@ public class JsongoDataLoader implements BotDataLoader {
     this.links = database.getCollection("links");
     this.tokens = database.getCollection("tokens");
     this.matches = database.getCollection("matches");
+    this.groups = database.getCollection("groups");
   }
 
   /**
@@ -149,6 +157,16 @@ public class JsongoDataLoader implements BotDataLoader {
   @Listener(priority = ListenPriority.HIGHEST)
   public void onBotUserUnloaded(@NotNull BotUserUnloadedEvent event) {
     this.save(this.users, new Document("id", event.getData().getId()), event.getData());
+  }
+
+  /**
+   * Save a group when unloaded
+   *
+   * @param event the event of a group being unloaded
+   */
+  @Listener(priority = ListenPriority.HIGHEST)
+  public void onGroupUnloadedEvent(@NotNull GroupUnloadedEvent event) {
+    this.save(this.groups, new Document("id", event.getGroup().getId()), event.getGroup());
   }
 
   /**
@@ -418,18 +436,24 @@ public class JsongoDataLoader implements BotDataLoader {
             guild -> guild.getId() == id,
             this.supplyObjectFromQuery(GuidoGuild.class, this.guilds, new Document("id", id)));
     if (guidoGuild == null) {
-      guidoGuild = new GuidoGuild(id, new HashMap<>(), new HashSet<>(), new HashMap<>());
+      return new GuidoGuild(id, new HashMap<>(), new HashSet<>(), new HashMap<>());
     }
     return guidoGuild;
   }
 
   @Override
   public @NotNull BotRole getRoleData(long id, long guildId) {
-    return Cache.getCatchableOrGet(
-        GuidoRole.class,
-        role -> role.getId() == id && role.getGuildId() == guildId,
-        this.supplyObjectFromQuery(
-            GuidoRole.class, this.roles, new Document("id", id).append("guildId", guildId)));
+    GuidoRole guidoRole =
+        Cache.getCatchableOrGet(
+            GuidoRole.class,
+            role -> role.getId() == id && role.getGuildId() == guildId,
+            this.supplyObjectFromQuery(
+                GuidoRole.class, this.roles, new Document("id", id).append("guildId", guildId)));
+    if (guidoRole == null) {
+      return new GuidoRole(id, guildId, new HashSet<>());
+    } else {
+      return guidoRole;
+    }
   }
 
   @Override
@@ -465,6 +489,21 @@ public class JsongoDataLoader implements BotDataLoader {
         GuidoMatch.class,
         match -> match.getId().equals(id),
         this.supplyObjectFromQuery(GuidoMatch.class, this.matches, new Document("id", id)));
+  }
+
+  @Override
+  public @Nullable BotGroup getGroup(@NotNull String id) {
+    return Cache.getCatchableOrGet(
+        GuidoGroup.class,
+        group -> group.getId().equals(id),
+        this.supplyObjectFromQuery(GuidoGroup.class, this.groups, new Document("id", id)));
+  }
+
+  @Override
+  public @NotNull Collection<Group<?, ?>> getGroups() {
+    return new ArrayList<>(
+        this.supplyManyAndCache(
+            GuidoGroup.class, group -> true, this.groups, new Document(), -1, -1));
   }
 
   @Override

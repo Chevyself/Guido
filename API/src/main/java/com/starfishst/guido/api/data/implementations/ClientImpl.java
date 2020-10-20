@@ -1,6 +1,14 @@
 package com.starfishst.guido.api.data.implementations;
 
 import com.google.gson.GsonBuilder;
+import com.starfishst.guido.api.data.Group;
+import com.starfishst.guido.api.data.Permission;
+import com.starfishst.guido.api.data.PermissionStack;
+import com.starfishst.guido.api.data.ValuesMap;
+import com.starfishst.guido.api.data.implementations.data.adapters.GroupDeserializer;
+import com.starfishst.guido.api.data.implementations.data.adapters.PermissionAdapter;
+import com.starfishst.guido.api.data.implementations.data.adapters.PermissionStackDeserializer;
+import com.starfishst.guido.api.data.implementations.data.adapters.ValuesMapAdapter;
 import com.starfishst.guido.api.data.implementations.receptors.ReceptorsImpl;
 import java.io.IOException;
 import java.net.Socket;
@@ -60,6 +68,10 @@ public class ClientImpl {
             new Socket(ClientImpl.IP, ClientImpl.PORT),
             this.handler,
             new GsonBuilder()
+                .registerTypeAdapter(Group.class, new GroupDeserializer())
+                .registerTypeAdapter(Permission.class, new PermissionAdapter())
+                .registerTypeAdapter(PermissionStack.class, new PermissionStackDeserializer())
+                .registerTypeAdapter(ValuesMap.class, new ValuesMapAdapter())
                 .registerTypeAdapter(Message.class, new MessageDeserializer())
                 .setPrettyPrinting()
                 .create(),

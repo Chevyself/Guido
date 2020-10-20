@@ -176,9 +176,8 @@ public class LinkedDataReceptors {
       @ParamName(name = "permission") GuidoPermission permission) {
     BotLinkedData data =
         Guido.getDataLoader().getLinkedData(type, new GuidoValuesMap(identification));
-    if (data != null && !data.containsPermission(permission.getNode(), context)) {
-      data.refresh().addPermission(context, permission.getNode(), permission.isEnabled());
-      return true;
+    if (data != null) {
+      return data.refresh().addPermission(context, permission.getNode(), permission.isEnabled());
     }
     return false;
   }
@@ -200,9 +199,8 @@ public class LinkedDataReceptors {
       @ParamName(name = "permission") GuidoPermission permission) {
     BotLinkedData data =
         Guido.getDataLoader().getLinkedData(type, new GuidoValuesMap(identification));
-    if (data != null && data.containsPermission(permission.getNode(), context)) {
-      data.refresh().removePermission(context, permission.getNode());
-      return true;
+    if (data != null) {
+      return data.refresh().removePermission(context, permission.getNode());
     }
     return false;
   }

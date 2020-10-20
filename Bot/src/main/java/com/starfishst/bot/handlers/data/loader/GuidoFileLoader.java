@@ -1,5 +1,6 @@
 package com.starfishst.bot.handlers.data.loader;
 
+import com.starfishst.bot.api.data.BotGroup;
 import com.starfishst.bot.api.data.BotGuild;
 import com.starfishst.bot.api.data.BotLinkedData;
 import com.starfishst.bot.api.data.BotRole;
@@ -8,6 +9,7 @@ import com.starfishst.bot.api.data.loader.BotDataLoader;
 import com.starfishst.bot.api.events.data.guild.BotGuildUnloadedEvent;
 import com.starfishst.bot.api.events.data.role.BotRoleUnloadedEvent;
 import com.starfishst.bot.api.events.data.user.BotUserUnloadedEvent;
+import com.starfishst.guido.api.data.Group;
 import com.starfishst.guido.api.data.UserData;
 import com.starfishst.guido.api.data.ValuesMap;
 import com.starfishst.guido.api.data.links.LinkedDataType;
@@ -87,7 +89,7 @@ public class GuidoFileLoader implements BotDataLoader {
    * @return the data of the user or null if not found
    */
   @Override
-  public @Nullable BotUser getUserData(@NotNull String id) {
+  public @Nullable BotUser getUserData(@Nullable String id) {
     return null;
   }
 
@@ -106,6 +108,16 @@ public class GuidoFileLoader implements BotDataLoader {
 
   @Override
   public @Nullable Match getMatch(@NotNull String id) {
+    return null;
+  }
+
+  @Override
+  public @Nullable BotGroup getGroup(@NotNull String id) {
+    throw new UnsupportedOperationException("Groups have not been implemented yet");
+  }
+
+  @Override
+  public @NotNull Collection<Group<?, ?>> getGroups() {
     return null;
   }
 

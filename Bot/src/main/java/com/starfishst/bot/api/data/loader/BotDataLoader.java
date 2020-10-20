@@ -1,5 +1,6 @@
 package com.starfishst.bot.api.data.loader;
 
+import com.starfishst.bot.api.data.BotGroup;
 import com.starfishst.bot.api.data.BotGuild;
 import com.starfishst.bot.api.data.BotLinkedData;
 import com.starfishst.bot.api.data.BotRole;
@@ -44,54 +45,26 @@ public interface BotDataLoader extends DataLoader, GuidoEventHandler {
   @NotNull
   Collection<BotLinkedData> getDiscordData(long userId);
 
-  /**
-   * Load the data of a guild. If the data cannot be loaded create a fallback but don't return null
-   *
-   * @param id the id of the guild
-   * @return the data of the guild or null if not found
-   */
   @Override
   @NotNull
   BotGuild getGuildData(long id);
 
-  /**
-   * Load the data of a role. If the data cannot be loaded create a fallback but don't return null
-   *
-   * @param id the id of the role
-   * @param guildId the guild id from which the data of the role must be gotten
-   * @return the data of the role or null if not found
-   */
   @Override
   @NotNull
   BotRole getRoleData(long id, long guildId);
 
-  /**
-   * Load the data of an user
-   *
-   * @param id the id of the user
-   * @return the data of the user or null if not found
-   */
   @Override
   @Nullable
   BotUser getUserData(@Nullable String id);
 
-  /**
-   * Get linked data using it's type and identifications
-   *
-   * @param type the type of data to find
-   * @param identifications the way to identify the data
-   * @return the linked data if found else null
-   */
   @Nullable
   BotLinkedData getLinkedData(@NotNull LinkedDataType type, @NotNull ValuesMap identifications);
 
-  /**
-   * Get the links from an user
-   *
-   * @param user the user to get the links from
-   * @return the links
-   */
   @Override
   @NotNull
   Collection<BotLinkedData> getLinks(@NotNull UserData user);
+
+  @Override
+  @Nullable
+  BotGroup getGroup(@NotNull String id);
 }

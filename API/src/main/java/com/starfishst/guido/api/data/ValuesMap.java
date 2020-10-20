@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import me.googas.commons.Atomic;
 import me.googas.commons.Validate;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -128,7 +129,29 @@ public interface ValuesMap {
    * @param that the other map to check
    * @return true if it matches
    */
-  boolean matches(@NotNull Map<?, ?> that);
+  default boolean matches(@NotNull Map<?, ?> that) {
+    if (this.getMap().isEmpty() || that.isEmpty()) {
+      return false;
+    } else {
+      Atomic<Boolean> matches = new Atomic<>(false);
+      that.forEach(
+          (key, value) -> {
+            if (key instanceof String
+                && ((String) key).startsWith("nickname")
+                && value instanceof String
+                && this.getMap().containsKey(key)
+                && this.getMap().get(key) instanceof String
+                && ((String) this.getMap().get(key)).equalsIgnoreCase((String) value)) {
+              matches.set(true);
+            } else if (key instanceof String
+                && this.getMap().containsKey(key)
+                && this.getMap().get(key).equals(value)) {
+              matches.set(true);
+            }
+          });
+      return matches.get();
+    }
+  }
 
   /**
    * Get whether this matches to another map. Matching means that at least one value is the same

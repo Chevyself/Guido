@@ -5,6 +5,7 @@ import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoCursor;
 import com.mongodb.client.MongoDatabase;
+import com.starfishst.bot.api.data.BotGroup;
 import com.starfishst.bot.api.data.BotGuild;
 import com.starfishst.bot.api.data.BotLinkedData;
 import com.starfishst.bot.api.data.BotLinkedInfo;
@@ -29,6 +30,7 @@ import com.starfishst.bot.handlers.data.GuidoTeam;
 import com.starfishst.bot.handlers.data.GuidoUser;
 import com.starfishst.bot.handlers.data.GuidoValuesMap;
 import com.starfishst.bot.util.console.Console;
+import com.starfishst.guido.api.data.Group;
 import com.starfishst.guido.api.data.Permissible;
 import com.starfishst.guido.api.data.Permission;
 import com.starfishst.guido.api.data.PermissionStack;
@@ -701,6 +703,16 @@ public class MongoDataLoader implements BotDataLoader {
 
     // TODO implement this
     throw new UnsupportedOperationException("Matches have not been implemented yet");
+  }
+
+  @Override
+  public @Nullable BotGroup getGroup(@NotNull String id) {
+    throw new UnsupportedOperationException("Groups have not been implemented yet");
+  }
+
+  @Override
+  public @NotNull Collection<Group<?, ?>> getGroups() {
+    throw new UnsupportedOperationException("Groups have not been implemented yet");
   }
 
   /**

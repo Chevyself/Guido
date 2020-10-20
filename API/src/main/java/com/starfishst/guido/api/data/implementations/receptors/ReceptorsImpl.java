@@ -27,10 +27,10 @@ public class ReceptorsImpl {
    */
   @Receptor(method = "disconnected")
   public boolean disconnected() {
-    JsonClient connection = client.getConnection();
+    JsonClient connection = this.client.getConnection();
     if (connection != null) {
       connection.close();
-      client.setConnection(null);
+      this.client.setConnection(null);
       return true;
     }
     return false;

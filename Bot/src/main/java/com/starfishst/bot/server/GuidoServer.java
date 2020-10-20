@@ -4,6 +4,7 @@ import com.google.gson.GsonBuilder;
 import com.starfishst.bot.api.events.data.server.GuidoServerConnectionEvent;
 import com.starfishst.bot.api.events.data.server.GuidoServerDisconnectionEvent;
 import com.starfishst.bot.server.providers.DataParameterProviders;
+import com.starfishst.bot.server.receptors.GroupReceptors;
 import com.starfishst.bot.server.receptors.LinkedDataReceptors;
 import com.starfishst.bot.server.receptors.MinecraftDataReceptors;
 import com.starfishst.bot.util.console.Console;
@@ -42,7 +43,11 @@ public class GuidoServer extends JsonSocketServer {
         timeout);
     this.setAuthenticator(this.authenticator);
     this.addProviders(new DataParameterProviders());
-    this.addReceptors(new LinkedDataReceptors(), new MinecraftDataReceptors(), this.authenticator);
+    this.addReceptors(
+        new GroupReceptors(),
+        new LinkedDataReceptors(),
+        new MinecraftDataReceptors(),
+        this.authenticator);
   }
 
   @Override

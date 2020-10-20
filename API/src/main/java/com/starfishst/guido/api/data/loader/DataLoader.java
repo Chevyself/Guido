@@ -1,5 +1,6 @@
 package com.starfishst.guido.api.data.loader;
 
+import com.starfishst.guido.api.data.Group;
 import com.starfishst.guido.api.data.UserData;
 import com.starfishst.guido.api.data.ValuesMap;
 import com.starfishst.guido.api.data.discord.GuildData;
@@ -121,4 +122,37 @@ public interface DataLoader {
     }
     return id;
   }
+
+  /**
+   * Get a new id for a group
+   *
+   * @return the id of the new group
+   */
+  @NotNull
+  default String nextGroupId() {
+    String id = RandomUtils.nextString(6);
+    Group<?, ?> group = this.getGroup(id);
+    while (group != null) {
+      id = RandomUtils.nextString(6);
+      group = this.getGroup(id);
+    }
+    return id;
+  }
+
+  /**
+   * Get a group matching the given id
+   *
+   * @param id the id of the group
+   * @return the group if found else null
+   */
+  @Nullable
+  Group<?, ?> getGroup(@NotNull String id);
+
+  /**
+   * Get all the created groups
+   *
+   * @return the created groups
+   */
+  @NotNull
+  Collection<Group<?, ?>> getGroups();
 }

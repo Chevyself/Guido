@@ -28,6 +28,7 @@ public class GuidoAuthenticator implements Authenticator {
           .append("permission", AuthLevel.READ)
           .append("preferences", AuthLevel.READ)
           .append("stats", AuthLevel.READ)
+          .append("group", AuthLevel.READ)
           .build();
 
   /**

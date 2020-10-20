@@ -1,7 +1,9 @@
+import com.starfishst.guido.api.data.Group;
 import com.starfishst.guido.api.data.implementations.ClientImpl;
 import com.starfishst.guido.api.data.implementations.data.PermissionStackImpl;
 import com.starfishst.guido.api.data.links.LinkedDataType;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Scanner;
 import java.util.UUID;
@@ -13,8 +15,10 @@ import me.googas.messaging.json.client.JsonClient;
 /** A test for the client */
 public class ClientTest {
 
+  private static String groupId = "kI9w6F";
+
   public static void main(String[] args) throws IOException {
-    ClientImpl client = new ClientImpl("1Uv2AZduciPKwUL8");
+    ClientImpl client = new ClientImpl("NFwo6qPZArG7rYQt");
     String nick = "Selfie";
     UUID uud = UUID.fromString("5eed208d-de58-4022-9ba7-6ccb5ea7e92a");
     String trimmed = UUIDUtils.trim(uud);
@@ -82,6 +86,23 @@ public class ClientTest {
                       .build()),
               bol -> {
                 System.out.println("Saved? " + bol);
+              });
+        } else if (line.equalsIgnoreCase("group")) {
+          conn.sendRequest(
+              new Request<>(Group.class, "group", Maps.singleton("id", ClientTest.groupId)),
+              System.out::println);
+        } else if (line.equalsIgnoreCase("groups")) {
+          conn.sendRequest(
+              new Request<>(Group[].class, "groups"),
+              arr -> {
+                System.out.println(Arrays.toString(arr));
+              });
+        } else if (line.equalsIgnoreCase("create-group")) {
+          conn.sendRequest(
+              new Request<>(String.class, "create-group"),
+              id -> {
+                ClientTest.groupId = id;
+                System.out.println(id);
               });
         } else {
           conn.sendRequest(
