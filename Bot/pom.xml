@@ -83,7 +83,7 @@
         <dependency>
             <groupId>com.starfishst.guido.api</groupId>
             <artifactId>API</artifactId>
-            <version>1.0.0-SNAPSHOT-15</version>
+            <version>1.0.0-SNAPSHOT-16</version>
         </dependency>
         <!-- Dependency to Commons-Messaging -->
         <dependency>

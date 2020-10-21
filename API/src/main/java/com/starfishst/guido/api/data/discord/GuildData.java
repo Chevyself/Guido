@@ -25,6 +25,7 @@ public interface GuildData extends ICatchable {
    *
    * @return the map of multipliers
    */
+  @NotNull
   Map<String, Integer> getMultipliers();
 
   /**
@@ -49,6 +50,7 @@ public interface GuildData extends ICatchable {
    *
    * @return the ranges
    */
+  @NotNull
   Map<Long, ? extends RankRange> getRanges();
 
   /**
@@ -56,5 +58,22 @@ public interface GuildData extends ICatchable {
    *
    * @return the map of the ladders and its initial base value
    */
+  @NotNull
   Collection<? extends Ladder> getLadders();
+
+  /**
+   * This map contains the string to identify a channel and its id
+   *
+   * @return the map of channels
+   */
+  @NotNull
+  Map<String, Long> getChannels();
+
+  /**
+   * This map contains the string to identify a channel and its category
+   *
+   * @return the map of categories
+   */
+  @NotNull
+  Map<String, Long> getCategories();
 }

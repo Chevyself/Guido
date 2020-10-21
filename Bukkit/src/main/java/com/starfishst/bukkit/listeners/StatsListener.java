@@ -42,9 +42,9 @@ public class StatsListener implements GuidoListener {
       killer = event.getKiller().getId();
     }
     String context = Guido.getConfiguration().getContext();
-    this.increase(victim, "deaths." + context);
+    this.increase(victim, "deaths-" + context);
     if (killer != null) {
-      this.increase(killer, "kills." + context);
+      this.increase(killer, "kills-" + context);
     }
   }
 
@@ -57,7 +57,7 @@ public class StatsListener implements GuidoListener {
   public void onCoreLeakEvent(CoreLeakEvent event) {
     for (Contribution contribution : event.getCore().getContributions()) {
       this.increase(
-          contribution.getPlayerState().getId(), "cores." + Guido.getConfiguration().getContext());
+          contribution.getPlayerState().getId(), "cores-" + Guido.getConfiguration().getContext());
     }
   }
 
@@ -68,7 +68,7 @@ public class StatsListener implements GuidoListener {
    */
   @EventHandler(priority = EventPriority.HIGHEST)
   public void onWoolPlaced(PlayerWoolPlaceEvent event) {
-    this.increase(event.getPlayer().getId(), "wools." + Guido.getConfiguration().getContext());
+    this.increase(event.getPlayer().getId(), "wools-" + Guido.getConfiguration().getContext());
   }
 
   /**
@@ -82,7 +82,7 @@ public class StatsListener implements GuidoListener {
 
       this.increase(
           contribution.getPlayerState().getId(),
-          "monuments." + Guido.getConfiguration().getContext());
+          "monuments-" + Guido.getConfiguration().getContext());
     }
   }
 
@@ -93,7 +93,7 @@ public class StatsListener implements GuidoListener {
    */
   @EventHandler(priority = EventPriority.HIGHEST)
   public void onFlagCaptureEvent(FlagCaptureEvent event) {
-    this.increase(event.getCarrier().getId(), "flags." + Guido.getConfiguration().getContext());
+    this.increase(event.getCarrier().getId(), "flags-" + Guido.getConfiguration().getContext());
   }
 
   /**
@@ -106,12 +106,12 @@ public class StatsListener implements GuidoListener {
     for (MatchPlayer player : event.getMatch().getPlayers()) {
       if (!event.getMatch().getWinners().isEmpty()) {
         if (this.didWin(event, player)) {
-          this.increase(player.getId(), "wins." + Guido.getConfiguration().getContext());
+          this.increase(player.getId(), "wins-" + Guido.getConfiguration().getContext());
         } else {
-          this.increase(player.getId(), "loses." + Guido.getConfiguration().getContext());
+          this.increase(player.getId(), "loses-" + Guido.getConfiguration().getContext());
         }
       } else {
-        this.increase(player.getId(), "ties." + Guido.getConfiguration().getContext());
+        this.increase(player.getId(), "ties-" + Guido.getConfiguration().getContext());
       }
     }
     // Save them after we gave them the win and lose stats

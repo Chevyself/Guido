@@ -72,4 +72,11 @@ public interface LinkedData<T extends Permission, K extends PermissionStack<T>>
    */
   @NotNull
   LinkedInfo<T, K> getInfo();
+
+  /**
+   * Get whether this data is linked to an user
+   *
+   * @return true if the data is linkeed
+   */
+  boolean isLinked();
 }

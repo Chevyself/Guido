@@ -61,6 +61,9 @@ public class GuidoLinkedData extends Catchable implements BotLinkedData, BotPerm
     this.preferences = preferences;
     this.stats = stats;
     this.permissions = new HashSet<>(permissions);
+    if (addToCache) {
+      new LinkedDataLoadedEvent(this).call();
+    }
   }
 
   /** @deprecated this constructor may only be used by gson */
@@ -78,12 +81,6 @@ public class GuidoLinkedData extends Catchable implements BotLinkedData, BotPerm
   @Override
   public @NotNull Set<GuidoPermissionStack> getPermissions() {
     return this.permissions;
-  }
-
-  @Override
-  public void addToCache() {
-    new LinkedDataLoadedEvent(this).call();
-    super.addToCache();
   }
 
   @Override
@@ -150,6 +147,11 @@ public class GuidoLinkedData extends Catchable implements BotLinkedData, BotPerm
   @Override
   public @NotNull BotLinkedInfo getInfo() {
     return new GuidoLinkedInfo(this.getType(), this.identification);
+  }
+
+  @Override
+  public boolean isLinked() {
+    return this.getLinkedUser() != null;
   }
 
   @Override

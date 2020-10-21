@@ -1,7 +1,11 @@
 package com.starfishst.bungee.core.lang;
 
+import com.starfishst.bungee.utils.BungeeUtils;
 import com.starfishst.guido.api.data.lang.LocaleFile;
 import java.io.File;
+import java.util.HashMap;
+import me.googas.commons.maps.MapBuilder;
+import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.config.Configuration;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -19,6 +23,40 @@ public class BungeeLocaleFile implements LocaleFile {
    */
   public BungeeLocaleFile(@NotNull Configuration config) {
     this.config = config;
+  }
+
+  /**
+   * Get the component from a given key
+   *
+   * @param key the key to get from the file and turn it into component
+   * @return the component from the given key
+   */
+  public @NotNull BaseComponent[] getComponent(@NotNull String key) {
+    return BungeeUtils.getComponent(BungeeUtils.build(this.get(key)));
+  }
+
+  /**
+   * Get the component from a given key and placeholders
+   *
+   * @param key the key to get from the file and turn it into component
+   * @param placeholders the placeholders of the component
+   * @return the component from the given key
+   */
+  public @NotNull BaseComponent[] getComponent(
+      @NotNull String key, @NotNull MapBuilder<String, String> placeholders) {
+    return BungeeUtils.getComponent(BungeeUtils.build(this.get(key, placeholders)));
+  }
+
+  /**
+   * Get the component from a given key and placeholders
+   *
+   * @param key the key to get from the file and turn it into component
+   * @param placeholders the placeholders in the component
+   * @return the component from the given key
+   */
+  public @NotNull BaseComponent[] getComponent(
+      @NotNull String key, @NotNull HashMap<String, String> placeholders) {
+    return BungeeUtils.getComponent(BungeeUtils.build(this.get(key, placeholders)));
   }
 
   @Override

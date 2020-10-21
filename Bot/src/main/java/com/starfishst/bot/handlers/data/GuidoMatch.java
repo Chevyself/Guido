@@ -13,7 +13,11 @@ import me.googas.commons.cache.Catchable;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-/** An implementation for a match */
+/**
+ * An implementation for a match
+ *
+ * <p>TODO add more events in matches
+ */
 public class GuidoMatch extends Catchable implements BotMatch {
 
   /** The id of the match */

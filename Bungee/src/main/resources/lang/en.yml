@@ -1,3 +1,5 @@
+## Use https://minecraft.tools/en/json_text.php to generate json components
+## AND 1.8 TEXT
 ## This is needed in order to identify the language of the file
 locale: "en"
 ## This is needed for the framework
@@ -8,6 +10,9 @@ invalid:
   boolean: "&e%string% &cis not a valid boolean!"
   time: "&e%string% &cis not valid time!"
   player: "&e%string% &cis not online!"
-  material: "&e%string% &cis not a valid material"
-  material-empty: "&cMaterials cannot be empty"
 missing-argument: "&cYou are missing &e%name% &cin the position &e%position% &cit is &e%description%"
+## Link command
+link:
+  linked: "&cYour account is already linked"
+  code: "[\"\",{\"text\":\"&aYour code is &e\"},{\"text\":\"%code%\",\"hoverEvent\":{\"action\":\"show_text\",\"value\":\"&7Send the command &3.link %code%\"}},{\"text\":\" &asend it in the &e\"},{\"text\":\"discord server\",\"clickEvent\":{\"action\":\"open_url\",\"value\":\"https://discord.io/GOOGAS\"},\"hoverEvent\":{\"action\":\"show_text\",\"value\":\"&6Click here to join!\"}},{\"text\":\" &aor directly to the guido bot!\"}]"
+  internal: "&cThere's been an internal error"

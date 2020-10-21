@@ -22,7 +22,9 @@ import com.starfishst.bot.handlers.data.loader.GuidoFileLoader;
 import com.starfishst.bot.handlers.data.loader.JsongoDataLoader;
 import com.starfishst.bot.handlers.data.loader.MongoDataLoader;
 import com.starfishst.bot.handlers.lang.GuidoLanguageHandler;
+import com.starfishst.bot.handlers.link.LinkHandler;
 import com.starfishst.bot.handlers.responsive.GuidoMessagesController;
+import com.starfishst.bot.handlers.test.TestHandler;
 import com.starfishst.bot.server.GuidoFallbackServer;
 import com.starfishst.bot.server.GuidoServer;
 import com.starfishst.bot.util.console.Console;
@@ -33,6 +35,7 @@ import com.starfishst.jda.providers.registry.JdaProvidersRegistry;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Timer;
 import me.googas.commons.Lots;
 import me.googas.commons.Validate;
 import me.googas.commons.cache.Cache;
@@ -52,6 +55,8 @@ import org.jetbrains.annotations.Nullable;
 /** El bot para las rankeds de radiator springs */
 public class Guido {
 
+  /** The timer which can be used in other instances of the bot */
+  @NotNull private static final Timer timer = new Timer(Guido.class.getName());
   /** The connection of guido with discord */
   @NotNull private static final GuidoJdaConnection connection = new GuidoJdaConnection();
   /** The listener manager for calling events */
@@ -60,14 +65,19 @@ public class Guido {
   /** The data loader for the bot */
   @NotNull private static BotDataLoader dataLoader = new GuidoFileLoader();
 
-  /** The list of handlers that the bot is using */
-  @NotNull
-  private static final List<GuidoHandler> handlers =
-      Lots.list(new GuidoMessagesController(), Guido.dataLoader);
-
   /** The language handler for the bot */
   @NotNull
   private static GuidoLanguageHandler languageHandler = new GuidoLanguageHandler(Guido.dataLoader);
+
+  /** The list of handlers that the bot is using */
+  @NotNull
+  private static final List<GuidoHandler> handlers =
+      Lots.list(
+          Guido.languageHandler,
+          new LinkHandler(),
+          new GuidoMessagesController(),
+          new TestHandler(),
+          Guido.dataLoader);
 
   /** The command manager of the bot */
   @Nullable private static CommandManager commandManager;
@@ -296,5 +306,14 @@ public class Guido {
   @NotNull
   public static CommandManager getCommandManager() {
     return Validate.notNull(Guido.commandManager, "Command manager has not been initialized");
+  }
+
+  /**
+   * Get the timer used in other instances of the bot
+   *
+   * @return the timer
+   */
+  public static Timer getTimer() {
+    return Guido.timer;
   }
 }

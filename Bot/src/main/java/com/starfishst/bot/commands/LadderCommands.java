@@ -2,6 +2,7 @@ package com.starfishst.bot.commands;
 
 import com.starfishst.bot.api.data.BotGuild;
 import com.starfishst.bot.handlers.data.GuidoLadder;
+import com.starfishst.bot.handlers.data.GuidoValuesMap;
 import com.starfishst.core.annotations.Optional;
 import com.starfishst.core.annotations.Parent;
 import com.starfishst.core.annotations.Required;
@@ -96,7 +97,7 @@ public class LadderCommands {
     if (guild.getLadder(name) != null) {
       return new Result(ResultType.USAGE, locale.get("ladders.make.exists", placeholders));
     } else {
-      guild.getLadders().add(new GuidoLadder(name, players, base));
+      guild.getLadders().add(new GuidoLadder(name, players, base, new GuidoValuesMap()));
       return new Result(locale.get("ladders.make.success", placeholders));
     }
   }

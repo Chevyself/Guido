@@ -9,6 +9,7 @@ import java.util.Map;
 import java.util.Set;
 import me.googas.commons.cache.Catchable;
 import me.googas.commons.time.Time;
+import org.jetbrains.annotations.NotNull;
 
 /** This object represents the data for a guild that is using this bot */
 public class GuidoGuild extends Catchable implements BotGuild {
@@ -17,13 +18,19 @@ public class GuidoGuild extends Catchable implements BotGuild {
   private final long id;
 
   /** The multipliers of the guild */
-  private final HashMap<String, Integer> multipliers;
+  @NotNull private final Map<String, Integer> multipliers;
 
   /** The ladders of the guild */
-  private final Set<GuidoLadder> ladders;
+  @NotNull private final Set<GuidoLadder> ladders;
 
   /** The rank ranges of the guild */
-  private final HashMap<Long, GuidoRankRange> ranges;
+  @NotNull private final Map<Long, GuidoRankRange> ranges;
+
+  /** The map of channels and its ids for the guild */
+  @NotNull private final Map<String, Long> channels;
+
+  /** The map of categories and its ids for the guild */
+  @NotNull private final Map<String, Long> categories;
 
   /**
    * Create the guido guild
@@ -32,23 +39,29 @@ public class GuidoGuild extends Catchable implements BotGuild {
    * @param multipliers the multipliers of the guild
    * @param ladders the ladders of the guild
    * @param ranges the ranges of the guild
+   * @param channels the channels map of the guild
+   * @param categories the categories map of the guild
    */
   public GuidoGuild(
       long id,
-      HashMap<String, Integer> multipliers,
-      Set<GuidoLadder> ladders,
-      HashMap<Long, GuidoRankRange> ranges) {
+      @NotNull HashMap<String, Integer> multipliers,
+      @NotNull Set<GuidoLadder> ladders,
+      @NotNull HashMap<Long, GuidoRankRange> ranges,
+      @NotNull HashMap<String, Long> channels,
+      @NotNull HashMap<String, Long> categories) {
     super(Time.fromString("10m"));
     this.id = id;
     this.multipliers = multipliers;
     this.ladders = ladders;
     this.ranges = ranges;
+    this.channels = channels;
+    this.categories = categories;
     new BotGuildLoadedEvent(this).call();
   }
 
   /** @deprecated this constructor may only be used by gson */
   public GuidoGuild() {
-    this(0, new HashMap<>(), new HashSet<>(), new HashMap<>());
+    this(0, new HashMap<>(), new HashSet<>(), new HashMap<>(), new HashMap<>(), new HashMap<>());
   }
 
   @Override
@@ -56,19 +69,32 @@ public class GuidoGuild extends Catchable implements BotGuild {
     return this.id;
   }
 
+  @NotNull
   @Override
   public Map<String, Integer> getMultipliers() {
     return this.multipliers;
   }
 
+  @NotNull
   @Override
   public Set<GuidoLadder> getLadders() {
     return this.ladders;
   }
 
+  @NotNull
   @Override
   public Map<Long, GuidoRankRange> getRanges() {
     return this.ranges;
+  }
+
+  @Override
+  public @NotNull Map<String, Long> getChannels() {
+    return this.channels;
+  }
+
+  @Override
+  public @NotNull Map<String, Long> getCategories() {
+    return this.categories;
   }
 
   @Override

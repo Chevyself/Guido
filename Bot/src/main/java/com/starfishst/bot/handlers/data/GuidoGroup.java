@@ -15,6 +15,9 @@ public class GuidoGroup extends Catchable implements BotGroup {
   /** The id of the group */
   @NotNull private final String id;
 
+  /** The name of the group */
+  @NotNull private final String name;
+
   /** The preferences of the group */
   @NotNull private final GuidoValuesMap preferences;
 
@@ -25,12 +28,14 @@ public class GuidoGroup extends Catchable implements BotGroup {
    * Create the group
    *
    * @param id the id of the group
+   * @param name the name of the group
    * @param preferences the preferences of the group
    * @param permissions the permissions of the group
    * @param addToCache whether to add this group to cache
    */
   public GuidoGroup(
       @NotNull String id,
+      @NotNull String name,
       @NotNull GuidoValuesMap preferences,
       @NotNull Set<GuidoPermissionStack> permissions,
       boolean addToCache) {
@@ -38,22 +43,26 @@ public class GuidoGroup extends Catchable implements BotGroup {
     this.id = id;
     this.preferences = preferences;
     this.permissions = permissions;
+    this.name = name;
   }
 
   /**
    * Create the group
    *
+   * @param name the name of the group
    * @param preferences the preferences of the group
    * @param permissions the permissions of the group
    */
   public GuidoGroup(
-      @NotNull GuidoValuesMap preferences, @NotNull Set<GuidoPermissionStack> permissions) {
-    this(Guido.getDataLoader().nextGroupId(), preferences, permissions, true);
+      @NotNull GuidoValuesMap preferences,
+      @NotNull Set<GuidoPermissionStack> permissions,
+      String name) {
+    this(Guido.getDataLoader().nextGroupId(), name, preferences, permissions, true);
   }
 
   /** @deprecated this may only be used be used by json */
   public GuidoGroup() {
-    this("", new GuidoValuesMap(), new HashSet<>(), false);
+    this("", "", new GuidoValuesMap(), new HashSet<>(), false);
   }
 
   @Override
@@ -72,6 +81,11 @@ public class GuidoGroup extends Catchable implements BotGroup {
   @Override
   public @NotNull String getId() {
     return this.id;
+  }
+
+  @Override
+  public @NotNull String getName() {
+    return this.name;
   }
 
   @NotNull

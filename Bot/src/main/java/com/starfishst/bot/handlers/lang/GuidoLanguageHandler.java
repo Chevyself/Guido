@@ -1,6 +1,7 @@
 package com.starfishst.bot.handlers.lang;
 
 import com.starfishst.bot.api.data.loader.BotDataLoader;
+import com.starfishst.bot.handlers.GuidoHandler;
 import com.starfishst.jda.context.CommandContext;
 import com.starfishst.jda.messages.MessagesProvider;
 import com.starfishst.jda.result.ResultType;
@@ -15,7 +16,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 /** Handles the language for guido messages */
-public class GuidoLanguageHandler implements MessagesProvider {
+public class GuidoLanguageHandler implements MessagesProvider, GuidoHandler {
 
   /** The files that this handler is using */
   @NotNull private final Set<GuidoLocaleFile> files = new HashSet<>();
@@ -116,6 +117,12 @@ public class GuidoLanguageHandler implements MessagesProvider {
         .getPreferences()
         .getValueOr("lang", String.class, "en");
   }
+
+  @Override
+  public void close() {}
+
+  @Override
+  public void unregister() {}
 
   /**
    * Get the files that are loaded

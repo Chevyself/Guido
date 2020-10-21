@@ -239,6 +239,28 @@ public class JsongoDataLoader implements BotDataLoader {
    * @param <T> the type of the object
    * @return the supplier of the object
    */
+  @Nullable
+  private <T> T getObjectFromQuery(
+      @NotNull Type typeOfT,
+      @NotNull MongoCollection<Document> collection,
+      @NotNull Document query) {
+    Document first = collection.find(query).maxAwaitTime(400, TimeUnit.MILLISECONDS).first();
+    if (first != null) {
+      return this.getObjectFromDocument(typeOfT, first);
+    } else {
+      return null;
+    }
+  }
+
+  /**
+   * Get an object from a query. This works for getting one object only
+   *
+   * @param typeOfT the type of object to supply
+   * @param collection the collection to get the object from
+   * @param query the query to match the object
+   * @param <T> the type of the object
+   * @return the supplier of the object
+   */
   @NotNull
   private <T> Supplier<T> supplyObjectFromQuery(
       @NotNull Type typeOfT,
@@ -436,7 +458,8 @@ public class JsongoDataLoader implements BotDataLoader {
             guild -> guild.getId() == id,
             this.supplyObjectFromQuery(GuidoGuild.class, this.guilds, new Document("id", id)));
     if (guidoGuild == null) {
-      return new GuidoGuild(id, new HashMap<>(), new HashSet<>(), new HashMap<>());
+      return new GuidoGuild(
+          id, new HashMap<>(), new HashSet<>(), new HashMap<>(), new HashMap<>(), new HashMap<>());
     }
     return guidoGuild;
   }
@@ -479,8 +502,17 @@ public class JsongoDataLoader implements BotDataLoader {
     return Cache.getCatchableOrGet(
         GuidoLinkedData.class,
         data -> data.getType() == type && data.getIdentification().matches(identification),
-        this.supplyObjectFromQuery(
-            GuidoLinkedData.class, this.links, this.getIdentifiableQuery(type, identification)));
+        () -> {
+          GuidoLinkedData data =
+              this.getObjectFromQuery(
+                  GuidoLinkedData.class,
+                  this.links,
+                  this.getIdentifiableQuery(type, identification));
+          if (data != null) {
+            data.addToCache();
+          }
+          return data;
+        });
   }
 
   @Override
@@ -513,7 +545,7 @@ public class JsongoDataLoader implements BotDataLoader {
             GuidoLinkedData.class,
             link -> user.getId().equals(link.getLinkedUserId()),
             this.links,
-            new Document("linked-user", user.getId()),
+            new Document("linked-id", user.getId()),
             -1,
             -1));
   }

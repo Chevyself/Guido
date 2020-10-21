@@ -4,7 +4,6 @@ import com.starfishst.guido.api.data.implementations.data.PermissionStackImpl;
 import com.starfishst.guido.api.data.links.LinkedDataType;
 import java.io.IOException;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.Scanner;
 import java.util.UUID;
 import me.googas.commons.UUIDUtils;
@@ -18,7 +17,7 @@ public class ClientTest {
   private static String groupId = "kI9w6F";
 
   public static void main(String[] args) throws IOException {
-    ClientImpl client = new ClientImpl("NFwo6qPZArG7rYQt");
+    ClientImpl client = new ClientImpl("1Uv2AZduciPKwUL8");
     String nick = "Selfie";
     UUID uud = UUID.fromString("5eed208d-de58-4022-9ba7-6ccb5ea7e92a");
     String trimmed = UUIDUtils.trim(uud);
@@ -55,7 +54,7 @@ public class ClientTest {
               new Request<>(
                   PermissionStackImpl.class,
                   "permission",
-                  Maps.objects("context", "bungee")
+                  Maps.objects("context", "PGM")
                       .append("type", LinkedDataType.MINECRAFT)
                       .append("identification", Maps.singleton("uuid", trimmed))
                       .build()),
@@ -68,8 +67,8 @@ public class ClientTest {
                   Boolean.class,
                   "add-permission",
                   Maps.objects("type", LinkedDataType.MINECRAFT)
-                      .append("context", "bungee")
-                      .append("permission", "guido.*")
+                      .append("context", "PGM")
+                      .append("permission", "pgm.group.mod")
                       .append("identification", Maps.singleton("uuid", trimmed))
                       .build()),
               bol -> {
@@ -104,13 +103,13 @@ public class ClientTest {
                 ClientTest.groupId = id;
                 System.out.println(id);
               });
-        } else {
+        } else if (line.equalsIgnoreCase("link")) {
           conn.sendRequest(
               new Request<>(
-                  HashMap.class,
-                  "stats",
-                  Maps.objects("identification", Maps.singleton("nickname", line))
-                      .append("type", LinkedDataType.MINECRAFT)
+                  String.class,
+                  "link-code",
+                  Maps.objects("type", LinkedDataType.MINECRAFT)
+                      .append("identification", Maps.singleton("uuid", trimmed))
                       .build()),
               System.out::println);
         }

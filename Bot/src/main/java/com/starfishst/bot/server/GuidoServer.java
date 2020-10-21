@@ -5,6 +5,7 @@ import com.starfishst.bot.api.events.data.server.GuidoServerConnectionEvent;
 import com.starfishst.bot.api.events.data.server.GuidoServerDisconnectionEvent;
 import com.starfishst.bot.server.providers.DataParameterProviders;
 import com.starfishst.bot.server.receptors.GroupReceptors;
+import com.starfishst.bot.server.receptors.LinkReceptors;
 import com.starfishst.bot.server.receptors.LinkedDataReceptors;
 import com.starfishst.bot.server.receptors.MinecraftDataReceptors;
 import com.starfishst.bot.util.console.Console;
@@ -46,6 +47,7 @@ public class GuidoServer extends JsonSocketServer {
     this.addReceptors(
         new GroupReceptors(),
         new LinkedDataReceptors(),
+        new LinkReceptors(),
         new MinecraftDataReceptors(),
         this.authenticator);
   }

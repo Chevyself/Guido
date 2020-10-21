@@ -4,10 +4,14 @@ import com.starfishst.bot.Guido;
 import com.starfishst.bot.api.data.BotLinkedData;
 import com.starfishst.bot.api.data.BotUser;
 import com.starfishst.bot.api.data.loader.BotDataLoader;
+import com.starfishst.bot.handlers.data.GuidoLinkedInfo;
+import com.starfishst.bot.handlers.link.LinkHandler;
 import com.starfishst.core.annotations.Optional;
+import com.starfishst.core.annotations.Required;
 import com.starfishst.guido.api.data.lang.LocaleFile;
 import com.starfishst.jda.annotations.Command;
 import com.starfishst.jda.result.Result;
+import com.starfishst.jda.result.ResultType;
 import java.util.Collection;
 import me.googas.commons.Strings;
 import me.googas.commons.maps.Maps;
@@ -45,6 +49,35 @@ public class UserCommands {
         builder.append(link.getReadable(locale));
       }
       return new Result(builder.toString());
+    }
+  }
+
+  /**
+   * Link an user account with the given link code
+   *
+   * @param locale the locale of the command sender
+   * @param user the user to link the account
+   * @param code the code to get the linked info
+   * @return whether the link was successful
+   */
+  @Command(aliases = "link", description = "link.desc")
+  public Result link(
+      LocaleFile locale,
+      BotUser user,
+      @Required(name = "link.code", description = "link.code.desc") String code) {
+    GuidoLinkedInfo info = Guido.getHandler(LinkHandler.class).getInfo(code);
+    if (info != null) {
+      BotLinkedData data =
+          Guido.getDataLoader().getLinkedData(info.getType(), info.getIdentification());
+      if (data != null) {
+        data.setLinkedUser(user);
+        return new Result(
+            locale.get("link.added", Maps.singleton("readable", data.getReadable(locale))));
+      } else {
+        return new Result(ResultType.UNKNOWN, locale.get("link.data-not-found"));
+      }
+    } else {
+      return new Result(ResultType.USAGE, locale.get("link.code-not-match"));
     }
   }
 }

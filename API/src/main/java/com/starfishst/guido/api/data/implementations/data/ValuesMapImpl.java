@@ -31,11 +31,6 @@ public class ValuesMapImpl implements ValuesMap {
   }
 
   @Override
-  public boolean matches(@NotNull Map<?, ?> that) {
-    return false;
-  }
-
-  @Override
   public String toString() {
     return "ValuesMap{" + "map=" + this.map + '}';
   }

@@ -12,6 +12,9 @@ public class GroupImpl extends Catchable implements Group<PermissionImpl, Permis
   /** The id of the group */
   @NotNull private final String id;
 
+  /** The name of the group */
+  @NotNull private final String name;
+
   /** The preferences of the group */
   @NotNull private final ValuesMapImpl preferences;
 
@@ -22,21 +25,24 @@ public class GroupImpl extends Catchable implements Group<PermissionImpl, Permis
    * Create the group
    *
    * @param id the id of the group
+   * @param name the name of the group
    * @param preferences the preferences of the group
    * @param permissions the permissions of the group
    */
   public GroupImpl(
       @NotNull String id,
+      @NotNull String name,
       @NotNull ValuesMapImpl preferences,
       @NotNull Set<PermissionStackImpl> permissions) {
     this.id = id;
+    this.name = name;
     this.preferences = preferences;
     this.permissions = permissions;
   }
 
   /** @deprecated this may only be used be used by json */
   public GroupImpl() {
-    this("", new ValuesMapImpl(), new HashSet<>());
+    this("", "", new ValuesMapImpl(), new HashSet<>());
   }
 
   @Override
@@ -53,6 +59,11 @@ public class GroupImpl extends Catchable implements Group<PermissionImpl, Permis
   @Override
   public @NotNull String getId() {
     return this.id;
+  }
+
+  @Override
+  public @NotNull String getName() {
+    return null;
   }
 
   @NotNull

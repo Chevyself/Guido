@@ -38,11 +38,12 @@ public class GroupReceptors {
   /**
    * Create a group and get an id for it
    *
+   * @param name the name of the group
    * @return the id of the group created
    */
   @Receptor(method = "create-group")
-  public String createGroup() {
-    return new GuidoGroup(new GuidoValuesMap(), new HashSet<>()).getId();
+  public String createGroup(@ParamName(name = "name") String name) {
+    return new GuidoGroup(new GuidoValuesMap(), new HashSet<>(), name).getId();
   }
 
   /**

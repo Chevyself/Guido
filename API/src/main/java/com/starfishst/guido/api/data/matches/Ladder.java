@@ -1,5 +1,6 @@
 package com.starfishst.guido.api.data.matches;
 
+import com.starfishst.guido.api.data.ValuesMap;
 import org.jetbrains.annotations.NotNull;
 
 /** A ladder is a ranked system that users may use to climb */
@@ -26,4 +27,12 @@ public interface Ladder {
    */
   @NotNull
   String getName();
+
+  /**
+   * Get the options that the ladder uses
+   *
+   * @return the options in a map
+   */
+  @NotNull
+  ValuesMap getOptions();
 }

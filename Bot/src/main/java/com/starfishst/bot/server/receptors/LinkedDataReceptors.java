@@ -136,6 +136,25 @@ public class LinkedDataReceptors {
   }
 
   /**
+   * Check whether linked data is linked
+   *
+   * @param type the type of linked data
+   * @param identification the way to identify the data
+   * @return true if the data is linked
+   */
+  @Receptor(method = "is-linked")
+  public boolean isLinked(
+      @ParamName(name = "type") LinkedDataType type,
+      @ParamName(name = "identification") Map<String, Object> identification) {
+    BotLinkedData data =
+        Guido.getDataLoader().getLinkedData(type, new GuidoValuesMap(identification));
+    if (data != null) {
+      return data.isLinked();
+    }
+    return false;
+  }
+
+  /**
    * Save the stats for the given data
    *
    * @param type the type of the given data

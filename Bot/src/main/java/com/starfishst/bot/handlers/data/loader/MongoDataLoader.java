@@ -311,7 +311,9 @@ public class MongoDataLoader implements BotDataLoader {
           document.getLong("id"),
           this.getMultipliers(document),
           this.getLadders(document),
-          this.getRange(document));
+          this.getRange(document),
+          new HashMap<>(),
+          new HashMap<>());
     }
     return null;
   }
@@ -339,7 +341,8 @@ public class MongoDataLoader implements BotDataLoader {
         new GuidoLadder(
             ladderDoc.getString("name"),
             ladderDoc.getInteger("per-team"),
-            ladderDoc.getInteger("base"));
+            ladderDoc.getInteger("base"),
+            new GuidoValuesMap());
       }
     }
     return ladders;
@@ -674,7 +677,14 @@ public class MongoDataLoader implements BotDataLoader {
         () -> {
           GuidoGuild guild = this.getGuildData(new Document("id", id));
           if (guild == null) {
-            guild = new GuidoGuild(id, new HashMap<>(), new HashSet<>(), new HashMap<>());
+            guild =
+                new GuidoGuild(
+                    id,
+                    new HashMap<>(),
+                    new HashSet<>(),
+                    new HashMap<>(),
+                    new HashMap<>(),
+                    new HashMap<>());
           }
           return guild;
         });

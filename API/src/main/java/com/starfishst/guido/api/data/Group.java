@@ -21,6 +21,14 @@ public interface Group<T extends Permission, K extends PermissionStack<T>>
   String getId();
 
   /**
+   * Get the group using its name. This is a more readable way to get it instead of an id
+   *
+   * @return the name of the group
+   */
+  @NotNull
+  String getName();
+
+  /**
    * Get the preferences of the group
    *
    * @return the preferences
