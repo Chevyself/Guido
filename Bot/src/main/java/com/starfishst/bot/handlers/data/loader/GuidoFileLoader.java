@@ -3,6 +3,7 @@ package com.starfishst.bot.handlers.data.loader;
 import com.starfishst.bot.api.data.BotGroup;
 import com.starfishst.bot.api.data.BotGuild;
 import com.starfishst.bot.api.data.BotLinkedData;
+import com.starfishst.bot.api.data.BotMatch;
 import com.starfishst.bot.api.data.BotRole;
 import com.starfishst.bot.api.data.BotUser;
 import com.starfishst.bot.api.data.loader.BotDataLoader;
@@ -13,7 +14,6 @@ import com.starfishst.guido.api.data.Group;
 import com.starfishst.guido.api.data.UserData;
 import com.starfishst.guido.api.data.ValuesMap;
 import com.starfishst.guido.api.data.links.LinkedDataType;
-import com.starfishst.guido.api.data.matches.Match;
 import com.starfishst.guido.api.data.token.AuthToken;
 import java.util.Collection;
 import me.googas.commons.events.ListenPriority;
@@ -107,7 +107,7 @@ public class GuidoFileLoader implements BotDataLoader {
   }
 
   @Override
-  public @Nullable Match getMatch(@NotNull String id) {
+  public @Nullable BotMatch getMatch(@NotNull String id) {
     return null;
   }
 

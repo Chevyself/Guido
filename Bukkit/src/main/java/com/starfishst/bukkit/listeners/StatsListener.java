@@ -34,7 +34,7 @@ public class StatsListener implements GuidoListener {
    *
    * @param event the event of a player dying
    */
-  @EventHandler(priority = EventPriority.HIGHEST)
+  @EventHandler(priority = EventPriority.MONITOR)
   public void onPlayerDeath(MatchPlayerDeathEvent event) {
     UUID victim = event.getVictim().getId();
     UUID killer = null;
@@ -53,7 +53,7 @@ public class StatsListener implements GuidoListener {
    *
    * @param event the event of a core being leaked
    */
-  @EventHandler(priority = EventPriority.HIGHEST)
+  @EventHandler(priority = EventPriority.MONITOR)
   public void onCoreLeakEvent(CoreLeakEvent event) {
     for (Contribution contribution : event.getCore().getContributions()) {
       this.increase(
@@ -66,7 +66,7 @@ public class StatsListener implements GuidoListener {
    *
    * @param event the event of a
    */
-  @EventHandler(priority = EventPriority.HIGHEST)
+  @EventHandler(priority = EventPriority.MONITOR)
   public void onWoolPlaced(PlayerWoolPlaceEvent event) {
     this.increase(event.getPlayer().getId(), "wools-" + Guido.getConfiguration().getContext());
   }
@@ -76,10 +76,9 @@ public class StatsListener implements GuidoListener {
    *
    * @param event the event of a monument being broken
    */
-  @EventHandler(priority = EventPriority.HIGHEST)
+  @EventHandler(priority = EventPriority.MONITOR)
   public void onMonumentBroke(DestroyableDestroyedEvent event) {
     for (DestroyableContribution contribution : event.getDestroyable().getContributions()) {
-
       this.increase(
           contribution.getPlayerState().getId(),
           "monuments-" + Guido.getConfiguration().getContext());
@@ -91,7 +90,7 @@ public class StatsListener implements GuidoListener {
    *
    * @param event the event of a flag being captured
    */
-  @EventHandler(priority = EventPriority.HIGHEST)
+  @EventHandler(priority = EventPriority.MONITOR)
   public void onFlagCaptureEvent(FlagCaptureEvent event) {
     this.increase(event.getCarrier().getId(), "flags-" + Guido.getConfiguration().getContext());
   }
@@ -101,7 +100,7 @@ public class StatsListener implements GuidoListener {
    *
    * @param event the event of the stat ending
    */
-  @EventHandler(priority = EventPriority.HIGHEST)
+  @EventHandler(priority = EventPriority.MONITOR)
   public void onMatchEnd(MatchFinishEvent event) {
     for (MatchPlayer player : event.getMatch().getPlayers()) {
       if (!event.getMatch().getWinners().isEmpty()) {

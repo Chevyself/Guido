@@ -2,6 +2,7 @@ package com.starfishst.bot.handlers.lang;
 
 import com.starfishst.bot.api.data.loader.BotDataLoader;
 import com.starfishst.bot.handlers.GuidoHandler;
+import com.starfishst.guido.api.data.lang.LocaleFile;
 import com.starfishst.jda.context.CommandContext;
 import com.starfishst.jda.messages.MessagesProvider;
 import com.starfishst.jda.result.ResultType;
@@ -116,6 +117,16 @@ public class GuidoLanguageHandler implements MessagesProvider, GuidoHandler {
         .getDiscordUserData(context.getSender().getIdLong())
         .getPreferences()
         .getValueOr("lang", String.class, "en");
+  }
+
+  /**
+   * Get the default locale file which in this case is english
+   *
+   * @return the default locale file
+   */
+  @NotNull
+  public LocaleFile getDefault() {
+    return this.getFile("en");
   }
 
   @Override

@@ -3,6 +3,7 @@ package com.starfishst.bot.api.data.loader;
 import com.starfishst.bot.api.data.BotGroup;
 import com.starfishst.bot.api.data.BotGuild;
 import com.starfishst.bot.api.data.BotLinkedData;
+import com.starfishst.bot.api.data.BotMatch;
 import com.starfishst.bot.api.data.BotRole;
 import com.starfishst.bot.api.data.BotUser;
 import com.starfishst.bot.handlers.GuidoEventHandler;
@@ -67,4 +68,8 @@ public interface BotDataLoader extends DataLoader, GuidoEventHandler {
   @Override
   @Nullable
   BotGroup getGroup(@NotNull String id);
+
+  @Override
+  @Nullable
+  BotMatch getMatch(@NotNull String id);
 }

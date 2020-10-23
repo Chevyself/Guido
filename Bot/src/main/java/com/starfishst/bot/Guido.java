@@ -2,12 +2,12 @@ package com.starfishst.bot;
 
 import com.starfishst.bot.api.data.loader.BotDataLoader;
 import com.starfishst.bot.commands.DeveloperCommands;
-import com.starfishst.bot.commands.EloCommands;
 import com.starfishst.bot.commands.HelpCommand;
 import com.starfishst.bot.commands.LadderCommands;
 import com.starfishst.bot.commands.LangCommands;
 import com.starfishst.bot.commands.MatchCommands;
 import com.starfishst.bot.commands.MultiplierCommands;
+import com.starfishst.bot.commands.RangesCommand;
 import com.starfishst.bot.commands.TeamCommands;
 import com.starfishst.bot.commands.TokenCommands;
 import com.starfishst.bot.commands.UserCommands;
@@ -20,9 +20,11 @@ import com.starfishst.bot.commands.providers.LocaleFileProvider;
 import com.starfishst.bot.handlers.GuidoHandler;
 import com.starfishst.bot.handlers.data.loader.GuidoFileLoader;
 import com.starfishst.bot.handlers.data.loader.JsongoDataLoader;
-import com.starfishst.bot.handlers.data.loader.MongoDataLoader;
+import com.starfishst.bot.handlers.decorations.DecorationsHandler;
 import com.starfishst.bot.handlers.lang.GuidoLanguageHandler;
 import com.starfishst.bot.handlers.link.LinkHandler;
+import com.starfishst.bot.handlers.matches.MatchCalculator;
+import com.starfishst.bot.handlers.matches.MatchMakingHandler;
 import com.starfishst.bot.handlers.responsive.GuidoMessagesController;
 import com.starfishst.bot.handlers.test.TestHandler;
 import com.starfishst.bot.server.GuidoFallbackServer;
@@ -73,8 +75,11 @@ public class Guido {
   @NotNull
   private static final List<GuidoHandler> handlers =
       Lots.list(
+          new DecorationsHandler(),
           Guido.languageHandler,
           new LinkHandler(),
+          new MatchCalculator(),
+          new MatchMakingHandler(),
           new GuidoMessagesController(),
           new TestHandler(),
           Guido.dataLoader);
@@ -116,20 +121,7 @@ public class Guido {
     jda.setEventManager(new AnnotatedEventManager());
 
     if (argsMaps.get("loader") != null) {
-      if (argsMaps.get("loader").equalsIgnoreCase("mongo")) {
-        try {
-          DataLoader old = Guido.dataLoader;
-          Guido.dataLoader =
-              new MongoDataLoader(
-                  argsMaps.getOrDefault("uri", "none"),
-                  argsMaps.getOrDefault("database", "testing-database"));
-          Guido.languageHandler.setDataLoader(Guido.dataLoader);
-          Guido.handlers.remove(old);
-          Guido.handlers.add(Guido.dataLoader);
-        } catch (Exception e) {
-          Console.exception(e, "Mongo loader could not be initialized");
-        }
-      } else if (argsMaps.get("loader").equalsIgnoreCase("jsongo")) {
+      if (argsMaps.get("loader").equalsIgnoreCase("jsongo")) {
         try {
           DataLoader old = Guido.dataLoader;
           Guido.dataLoader =
@@ -170,12 +162,12 @@ public class Guido {
             registry,
             new GuidoPermissionChecker(Guido.languageHandler, Guido.dataLoader));
     Guido.commandManager.registerCommand(new DeveloperCommands(jda));
-    Guido.commandManager.registerCommand(new EloCommands());
     Guido.commandManager.registerCommand(new HelpCommand());
     Guido.commandManager.registerCommand(new LadderCommands());
     Guido.commandManager.registerCommand(new LangCommands());
     Guido.commandManager.registerCommand(new MatchCommands());
     Guido.commandManager.registerCommand(new MultiplierCommands());
+    Guido.commandManager.registerCommand(new RangesCommand());
     Guido.commandManager.registerCommand(new TeamCommands());
     Guido.commandManager.registerCommand(new TokenCommands());
     Guido.commandManager.registerCommand(new UserCommands());

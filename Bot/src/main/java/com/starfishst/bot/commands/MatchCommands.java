@@ -4,9 +4,10 @@ import com.starfishst.bot.Guido;
 import com.starfishst.bot.api.data.BotGuild;
 import com.starfishst.bot.api.data.BotLinkedData;
 import com.starfishst.bot.api.data.BotLinkedInfo;
+import com.starfishst.bot.api.data.BotMatch;
+import com.starfishst.bot.handlers.data.GuidoLinkedValuesMap;
 import com.starfishst.bot.handlers.data.GuidoMatch;
 import com.starfishst.bot.handlers.data.GuidoTeam;
-import com.starfishst.bot.handlers.data.GuidoValuesMap;
 import com.starfishst.core.annotations.Required;
 import com.starfishst.guido.api.data.lang.LocaleFile;
 import com.starfishst.guido.api.data.matches.Ladder;
@@ -65,18 +66,40 @@ public class MatchCommands {
         members1.put(member.getInfo(), TeamRole.NORMAL);
       }
     }
-    GuidoTeam team1 = new GuidoTeam(members1);
-    GuidoTeam team2 = new GuidoTeam(members2);
+    GuidoTeam team1 = new GuidoTeam(members1, "Team 1");
+    GuidoTeam team2 = new GuidoTeam(members2, "Team 2");
     GuidoMatch match =
         new GuidoMatch(
             Guido.getDataLoader().nextMatchId(),
             Lots.set(team1, team2),
-            new GuidoValuesMap("manual", true).addValue("ladder", ladder.getName()));
+            new GuidoLinkedValuesMap("manual", true)
+                .addValue("ladder", ladder.getName())
+                .addValue("guild", guild.getId()));
     if (context.hasFlag("-t")) {
       match.finish(null);
     } else {
       match.finish(team1);
     }
     return new Result(locale.get("match.saved", Maps.singleton("id", match.getId())));
+  }
+
+  /**
+   * See the information about a match
+   *
+   * @param locale the locale of the user that will see the match
+   * @param id the id of the match
+   * @return the result of the command
+   */
+  @Command(
+      aliases = {"game", "gameinfo", "gi", "matchinfo", "mi"},
+      description = "game.desc")
+  public Result game(
+      LocaleFile locale, @Required(name = "game.id", description = "game.id.desc") String id) {
+    BotMatch match = Guido.getDataLoader().getMatch(id);
+    if (match != null) {
+      return new Result(match.getInformation(locale));
+    } else {
+      return new Result(locale.get("game.not-found", Maps.singleton("id", id)));
+    }
   }
 }

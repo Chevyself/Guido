@@ -23,7 +23,7 @@ public interface ValuesMap {
   @Nullable
   default <T> T getValue(@NotNull String name, @NotNull Class<T> clazz) {
     Object obj = this.getMap().get(name);
-    if (obj != null) {
+    if (obj != null && clazz.isAssignableFrom(obj.getClass())) {
       return clazz.cast(obj);
     } else {
       return null;

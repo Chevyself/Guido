@@ -11,7 +11,7 @@ import org.jetbrains.annotations.Nullable;
 public class GuidoValuesMap implements ValuesMap {
 
   /** The map of values */
-  @NotNull private final HashMap<String, Object> map;
+  @NotNull private final Map<String, Object> map;
 
   /**
    * Create the values map
@@ -19,7 +19,7 @@ public class GuidoValuesMap implements ValuesMap {
    * @param map the map of values
    */
   public GuidoValuesMap(@NotNull Map<String, Object> map) {
-    this.map = new HashMap<>(map);
+    this.map = map;
   }
 
   /**

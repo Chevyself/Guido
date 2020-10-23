@@ -7,12 +7,14 @@ import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoCursor;
 import com.mongodb.client.MongoDatabase;
+import com.starfishst.bot.adapters.LinkedValuesMapAdapter;
 import com.starfishst.bot.adapters.LongMongoAdapter;
 import com.starfishst.bot.adapters.PermissionAdapter;
 import com.starfishst.bot.adapters.ValuesMapAdapter;
 import com.starfishst.bot.api.data.BotGroup;
 import com.starfishst.bot.api.data.BotGuild;
 import com.starfishst.bot.api.data.BotLinkedData;
+import com.starfishst.bot.api.data.BotMatch;
 import com.starfishst.bot.api.data.BotRole;
 import com.starfishst.bot.api.data.BotUser;
 import com.starfishst.bot.api.data.loader.BotDataLoader;
@@ -27,6 +29,7 @@ import com.starfishst.bot.handlers.data.GuidoAuthToken;
 import com.starfishst.bot.handlers.data.GuidoGroup;
 import com.starfishst.bot.handlers.data.GuidoGuild;
 import com.starfishst.bot.handlers.data.GuidoLinkedData;
+import com.starfishst.bot.handlers.data.GuidoLinkedValuesMap;
 import com.starfishst.bot.handlers.data.GuidoMatch;
 import com.starfishst.bot.handlers.data.GuidoPermission;
 import com.starfishst.bot.handlers.data.GuidoRole;
@@ -37,7 +40,6 @@ import com.starfishst.guido.api.data.Permission;
 import com.starfishst.guido.api.data.UserData;
 import com.starfishst.guido.api.data.ValuesMap;
 import com.starfishst.guido.api.data.links.LinkedDataType;
-import com.starfishst.guido.api.data.matches.Match;
 import com.starfishst.guido.api.data.token.AuthToken;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
@@ -75,6 +77,7 @@ public class JsongoDataLoader implements BotDataLoader {
           .registerTypeAdapter(GuidoPermission.class, new PermissionAdapter())
           .registerTypeAdapter(ValuesMap.class, new ValuesMapAdapter())
           .registerTypeAdapter(GuidoValuesMap.class, new ValuesMapAdapter())
+          .registerTypeAdapter(GuidoLinkedValuesMap.class, new LinkedValuesMapAdapter())
           .create();
 
   /** The mongo client to have access to collections */
@@ -415,24 +418,24 @@ public class JsongoDataLoader implements BotDataLoader {
     return data;
   }
 
-  @Override
-  public @NotNull BotLinkedData getMemberData(long userId, long guildId) {
-    BotLinkedData data =
-        this.getLinkedData(
-            LinkedDataType.DISCORD_GUILD,
-            new GuidoValuesMap("id", userId).addValue("guildId", guildId));
-    if (data == null) {
-      data =
-          new GuidoLinkedData(
-              true,
-              LinkedDataType.DISCORD_GUILD,
-              this.getUserData(userId).getId(),
-              new GuidoValuesMap("id", userId),
-              new GuidoValuesMap(),
-              new HashMap<>(),
-              new HashSet<>());
-    }
-    return data;
+  public @Nullable BotLinkedData getLinkedData(
+      @NotNull LinkedDataType type,
+      @NotNull ValuesMap identification,
+      @NotNull Predicate<GuidoLinkedData> predicate) {
+    return Cache.getCatchableOrGet(
+        GuidoLinkedData.class,
+        predicate,
+        () -> {
+          GuidoLinkedData data =
+              this.getObjectFromQuery(
+                  GuidoLinkedData.class,
+                  this.links,
+                  this.getIdentifiableQuery(type, identification));
+          if (data != null) {
+            data.addToCache();
+          }
+          return data;
+        });
   }
 
   @Override
@@ -497,26 +500,41 @@ public class JsongoDataLoader implements BotDataLoader {
   }
 
   @Override
-  public @Nullable BotLinkedData getLinkedData(
-      @NotNull LinkedDataType type, @NotNull ValuesMap identification) {
-    return Cache.getCatchableOrGet(
-        GuidoLinkedData.class,
-        data -> data.getType() == type && data.getIdentification().matches(identification),
-        () -> {
-          GuidoLinkedData data =
-              this.getObjectFromQuery(
-                  GuidoLinkedData.class,
-                  this.links,
-                  this.getIdentifiableQuery(type, identification));
-          if (data != null) {
-            data.addToCache();
-          }
-          return data;
-        });
+  public @NotNull BotLinkedData getMemberData(long userId, long guildId) {
+    BotLinkedData data =
+        this.getLinkedData(
+            LinkedDataType.DISCORD_GUILD,
+            new GuidoValuesMap("id", userId).addValue("guild", guildId),
+            cache ->
+                cache.getType() == LinkedDataType.DISCORD_GUILD
+                    && cache
+                        .getIdentification()
+                        .equals(new GuidoValuesMap("id", userId).addValue("guild", guildId)));
+    if (data == null) {
+      data =
+          new GuidoLinkedData(
+              true,
+              LinkedDataType.DISCORD_GUILD,
+              this.getUserData(userId).getId(),
+              new GuidoValuesMap("id", userId).addValue("guild", guildId),
+              new GuidoValuesMap(),
+              new HashMap<>(),
+              new HashSet<>());
+    }
+    return data;
   }
 
   @Override
-  public @Nullable Match getMatch(@NotNull String id) {
+  public @Nullable BotLinkedData getLinkedData(
+      @NotNull LinkedDataType type, @NotNull ValuesMap identification) {
+    return this.getLinkedData(
+        type,
+        identification,
+        data -> data.getType() == type && data.getIdentification().equals(identification));
+  }
+
+  @Override
+  public @Nullable BotMatch getMatch(@NotNull String id) {
     return Cache.getCatchableOrGet(
         GuidoMatch.class,
         match -> match.getId().equals(id),
