@@ -1,8 +1,8 @@
 package com.starfishst.bot.server.providers;
 
 import com.starfishst.bot.Guido;
-import com.starfishst.bot.api.data.BotUser;
 import com.starfishst.bot.handlers.data.GuidoPermission;
+import com.starfishst.guido.api.data.UserData;
 import com.starfishst.guido.api.data.links.LinkedDataType;
 import me.googas.messaging.Request;
 import me.googas.messaging.json.Provider;
@@ -42,11 +42,11 @@ public class DataParameterProviders {
    * @return the wanted bot user
    * @throws JsonIllegalArgumentException if the parameter cannot provide the bot user
    */
-  @Provider(clazz = BotUser.class)
-  public BotUser provideUser(@NotNull Request<?> request, @NotNull Object param)
+  @Provider(clazz = UserData.class)
+  public UserData provideUser(@NotNull Request<?> request, @NotNull Object param)
       throws JsonIllegalArgumentException {
     if (param instanceof String) {
-      BotUser user = Guido.getDataLoader().getUserData((String) param);
+      UserData user = Guido.getDataLoader().getUserData((String) param);
       if (user != null) {
         return user;
       } else {

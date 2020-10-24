@@ -10,7 +10,7 @@ public class GroupUnloadedEvent extends GroupEvent {
    *
    * @param group the group involved
    */
-  public GroupUnloadedEvent(@NotNull Group<?, ?> group) {
+  public GroupUnloadedEvent(@NotNull Group group) {
     super(group);
   }
 }

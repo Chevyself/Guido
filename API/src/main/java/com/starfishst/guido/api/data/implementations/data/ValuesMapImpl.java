@@ -9,7 +9,7 @@ import org.jetbrains.annotations.NotNull;
 public class ValuesMapImpl implements ValuesMap {
 
   /** The map to get values */
-  @NotNull private Map<String, Object> map;
+  @NotNull private final Map<String, Object> map;
 
   /**
    * Create the values map

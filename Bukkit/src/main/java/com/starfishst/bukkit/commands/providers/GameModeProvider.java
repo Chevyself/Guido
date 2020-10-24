@@ -93,7 +93,7 @@ public class GameModeProvider implements BukkitArgumentProvider<GameMode> {
      */
     @NotNull
     public Set<String> getAliases() {
-      return aliases;
+      return this.aliases;
     }
 
     /**
@@ -103,7 +103,7 @@ public class GameModeProvider implements BukkitArgumentProvider<GameMode> {
      */
     @NotNull
     public GameMode getBukkit() {
-      return bukkit;
+      return this.bukkit;
     }
   }
 }

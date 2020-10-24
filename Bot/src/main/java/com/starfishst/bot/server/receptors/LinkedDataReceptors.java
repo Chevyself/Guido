@@ -2,11 +2,11 @@ package com.starfishst.bot.server.receptors;
 
 import com.starfishst.bot.Guido;
 import com.starfishst.bot.api.data.BotLinkedData;
-import com.starfishst.bot.api.data.BotUser;
 import com.starfishst.bot.handlers.data.GuidoPermission;
 import com.starfishst.bot.handlers.data.GuidoPermissionStack;
 import com.starfishst.bot.handlers.data.GuidoValuesMap;
 import com.starfishst.guido.api.data.PermissionStack;
+import com.starfishst.guido.api.data.UserData;
 import com.starfishst.guido.api.data.links.LinkedDataType;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -43,7 +43,7 @@ public class LinkedDataReceptors {
   public boolean setUser(
       @ParamName(name = "type") LinkedDataType type,
       @ParamName(name = "identification") Map<String, Object> identification,
-      @ParamName(name = "user") BotUser user) {
+      @ParamName(name = "user") UserData user) {
     BotLinkedData linkedData =
         Guido.getDataLoader().getLinkedData(type, new GuidoValuesMap(identification));
     if (linkedData != null) {
@@ -62,14 +62,14 @@ public class LinkedDataReceptors {
    * @return the permission stack of the data
    */
   @Receptor(method = "permission")
-  public PermissionStack<?> permissions(
+  public PermissionStack permissions(
       @ParamName(name = "type") LinkedDataType type,
       @ParamName(name = "identification") Map<String, Object> identification,
       @ParamName(name = "context") String context) {
     BotLinkedData linkedData =
         Guido.getDataLoader().getLinkedData(type, new GuidoValuesMap(identification));
     if (linkedData != null) {
-      PermissionStack<?> permissions = linkedData.refresh().getPermissions(context);
+      PermissionStack permissions = linkedData.refresh().getPermissions(context);
       if (permissions != null) {
         return permissions;
       }

@@ -49,7 +49,7 @@ public class SuspectDetectedEvent extends GuidoEvent {
    * @return when this call was made
    */
   public long getSentAt() {
-    return sentAt;
+    return this.sentAt;
   }
 
   /**
@@ -59,7 +59,7 @@ public class SuspectDetectedEvent extends GuidoEvent {
    */
   @NotNull
   public Player getPlayer() {
-    return player;
+    return this.player;
   }
 
   /**
@@ -69,7 +69,7 @@ public class SuspectDetectedEvent extends GuidoEvent {
    */
   @NotNull
   public AntiCheatDetector getDetector() {
-    return detector;
+    return this.detector;
   }
 
   /**
@@ -79,7 +79,7 @@ public class SuspectDetectedEvent extends GuidoEvent {
    */
   @NotNull
   public String getReason() {
-    return reason;
+    return this.reason;
   }
 
   /**
@@ -89,6 +89,6 @@ public class SuspectDetectedEvent extends GuidoEvent {
    */
   @NotNull
   public SuspectLevel getSuspectLevel() {
-    return suspectLevel;
+    return this.suspectLevel;
   }
 }

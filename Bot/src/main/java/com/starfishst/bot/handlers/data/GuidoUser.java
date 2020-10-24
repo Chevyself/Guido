@@ -1,14 +1,14 @@
 package com.starfishst.bot.handlers.data;
 
-import com.starfishst.bot.api.data.BotUser;
-import com.starfishst.bot.api.events.data.user.BotUserLoadedEvent;
-import com.starfishst.bot.api.events.data.user.BotUserUnloadedEvent;
+import com.starfishst.bot.api.events.data.user.UserLoadedDataEvent;
+import com.starfishst.bot.api.events.data.user.UserUnloadedDataEvent;
+import com.starfishst.guido.api.data.UserData;
 import me.googas.commons.cache.Catchable;
 import me.googas.commons.time.Time;
 import org.jetbrains.annotations.NotNull;
 
 /** An user that operates this bot */
-public class GuidoUser extends Catchable implements BotUser {
+public class GuidoUser extends Catchable implements UserData {
 
   /** The unique id of the user */
   private final String id;
@@ -21,7 +21,7 @@ public class GuidoUser extends Catchable implements BotUser {
   public GuidoUser(@NotNull String id) {
     super(Time.fromString("5m"));
     this.id = id;
-    new BotUserLoadedEvent(this).call();
+    new UserLoadedDataEvent(this).call();
   }
 
   /** @deprecated this constructor may only be used by gson */
@@ -34,7 +34,7 @@ public class GuidoUser extends Catchable implements BotUser {
 
   @Override
   public void onRemove() {
-    new BotUserUnloadedEvent(this).call();
+    new UserUnloadedDataEvent(this).call();
   }
 
   @Override

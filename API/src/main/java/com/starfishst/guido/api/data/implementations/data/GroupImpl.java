@@ -1,13 +1,14 @@
 package com.starfishst.guido.api.data.implementations.data;
 
 import com.starfishst.guido.api.data.Group;
+import com.starfishst.guido.api.data.PermissionStack;
 import java.util.HashSet;
 import java.util.Set;
 import me.googas.commons.cache.Catchable;
 import org.jetbrains.annotations.NotNull;
 
 /** An implementation for group */
-public class GroupImpl extends Catchable implements Group<PermissionImpl, PermissionStackImpl> {
+public class GroupImpl extends Catchable implements Group {
 
   /** The id of the group */
   @NotNull private final String id;
@@ -19,7 +20,7 @@ public class GroupImpl extends Catchable implements Group<PermissionImpl, Permis
   @NotNull private final ValuesMapImpl preferences;
 
   /** The permissions of the group */
-  @NotNull private final Set<PermissionStackImpl> permissions;
+  @NotNull private final Set<PermissionStack> permissions;
 
   /**
    * Create the group
@@ -33,7 +34,7 @@ public class GroupImpl extends Catchable implements Group<PermissionImpl, Permis
       @NotNull String id,
       @NotNull String name,
       @NotNull ValuesMapImpl preferences,
-      @NotNull Set<PermissionStackImpl> permissions) {
+      @NotNull Set<PermissionStack> permissions) {
     this.id = id;
     this.name = name;
     this.preferences = preferences;
@@ -52,7 +53,7 @@ public class GroupImpl extends Catchable implements Group<PermissionImpl, Permis
   public void onRemove() {}
 
   @Override
-  public @NotNull Set<PermissionStackImpl> getPermissions() {
+  public @NotNull Set<PermissionStack> getPermissions() {
     return this.permissions;
   }
 
@@ -63,7 +64,7 @@ public class GroupImpl extends Catchable implements Group<PermissionImpl, Permis
 
   @Override
   public @NotNull String getName() {
-    return null;
+    return this.name;
   }
 
   @NotNull

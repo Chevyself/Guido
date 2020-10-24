@@ -1,4 +1,4 @@
-package com.starfishst.bot;
+package com.starfishst.bot.commands;
 
 import com.starfishst.bot.api.data.BotLinkedData;
 import com.starfishst.bot.api.data.BotRole;

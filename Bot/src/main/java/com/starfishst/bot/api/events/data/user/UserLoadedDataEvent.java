@@ -1,16 +1,16 @@
 package com.starfishst.bot.api.events.data.user;
 
-import com.starfishst.bot.api.data.BotUser;
+import com.starfishst.guido.api.data.UserData;
 import org.jetbrains.annotations.NotNull;
 
 /** Called when the user data gets loaded */
-public class BotUserLoadedEvent extends BotUserEvent {
+public class UserLoadedDataEvent extends UserDataEvent {
   /**
    * Create the event
    *
    * @param data the user data involved in the event
    */
-  public BotUserLoadedEvent(@NotNull BotUser data) {
+  public UserLoadedDataEvent(@NotNull UserData data) {
     super(data);
   }
 }

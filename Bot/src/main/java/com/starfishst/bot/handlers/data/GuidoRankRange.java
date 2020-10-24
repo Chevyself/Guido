@@ -1,19 +1,19 @@
 package com.starfishst.bot.handlers.data;
 
-import com.starfishst.bot.api.data.BotRankRange;
+import com.starfishst.guido.api.data.RankRange;
 import org.jetbrains.annotations.NotNull;
 
 /** Rank range implementation for the guido bot */
-public class GuidoRankRange implements BotRankRange {
+public class GuidoRankRange implements RankRange {
 
   /** The ladder that is using this range */
   @NotNull private final String ladder;
 
   /** The minimum value of the range */
-  private int min;
+  private final int min;
 
   /** The maximum value of the range */
-  private int max;
+  private final int max;
 
   /**
    * Create the range

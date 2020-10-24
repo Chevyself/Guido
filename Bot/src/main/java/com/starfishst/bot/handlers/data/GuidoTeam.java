@@ -1,17 +1,16 @@
 package com.starfishst.bot.handlers.data;
 
-import com.starfishst.bot.api.data.BotLinkedInfo;
-import com.starfishst.bot.api.data.BotTeam;
+import com.starfishst.guido.api.data.links.LinkedInfo;
+import com.starfishst.guido.api.data.matches.Team;
 import com.starfishst.guido.api.data.matches.TeamRole;
-import java.util.HashMap;
 import java.util.Map;
 import org.jetbrains.annotations.NotNull;
 
 /** An implementation for team */
-public class GuidoTeam implements BotTeam {
+public class GuidoTeam implements Team {
 
   /** The members of the team */
-  @NotNull private final HashMap<BotLinkedInfo, TeamRole> members;
+  @NotNull private final Map<LinkedInfo, TeamRole> members;
 
   /** The name of the team */
   @NotNull private final String name;
@@ -22,7 +21,7 @@ public class GuidoTeam implements BotTeam {
    * @param members the members inside the team
    * @param name the name of the team
    */
-  public GuidoTeam(@NotNull HashMap<BotLinkedInfo, TeamRole> members, @NotNull String name) {
+  public GuidoTeam(@NotNull Map<LinkedInfo, TeamRole> members, @NotNull String name) {
     this.members = members;
     this.name = name;
   }
@@ -33,7 +32,7 @@ public class GuidoTeam implements BotTeam {
   }
 
   @Override
-  public @NotNull Map<BotLinkedInfo, TeamRole> getMembers() {
+  public @NotNull Map<LinkedInfo, TeamRole> getMembers() {
     return this.members;
   }
 }

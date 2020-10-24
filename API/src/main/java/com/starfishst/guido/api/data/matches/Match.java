@@ -33,7 +33,7 @@ public interface Match extends ICatchable {
    * @return collection of teams
    */
   @NotNull
-  Collection<? extends Team> getTeams();
+  Collection<Team> getTeams();
 
   /**
    * Get the team that won the match

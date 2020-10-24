@@ -1,9 +1,11 @@
 package com.starfishst.bot.server;
 
 import com.starfishst.bot.Guido;
+import com.starfishst.bot.handlers.data.GuidoValuesMap;
 import com.starfishst.guido.api.data.token.AuthLevel;
 import com.starfishst.guido.api.data.token.AuthToken;
 import java.util.HashMap;
+import java.util.Map;
 import me.googas.commons.maps.Maps;
 import me.googas.messaging.Request;
 import me.googas.messaging.json.JsonMessenger;
@@ -12,12 +14,16 @@ import me.googas.messaging.json.Receptor;
 import me.googas.messaging.json.server.Authenticator;
 import me.googas.messaging.json.server.JsonClientThread;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /** The implementation for authentication in guido */
 public class GuidoAuthenticator implements Authenticator {
 
   /** Each client and its authentication level */
   @NotNull private final HashMap<JsonClientThread, AuthLevel> levels = new HashMap<>();
+
+  /** Each client and its provided information */
+  @NotNull private final HashMap<JsonClientThread, GuidoValuesMap> info = new HashMap<>();
 
   /** The required level for each receptor. By default all receptors have read_write */
   @NotNull
@@ -38,6 +44,7 @@ public class GuidoAuthenticator implements Authenticator {
    */
   public void remove(@NotNull JsonClientThread client) {
     this.levels.remove(client);
+    this.info.remove(client);
   }
 
   /**
@@ -67,6 +74,46 @@ public class GuidoAuthenticator implements Authenticator {
       return false;
     }
     return false;
+  }
+
+  /**
+   * Provide some information about the client
+   *
+   * @param messenger the messenger providing info of its self
+   * @param info the info of the client
+   * @return true if the info was saved
+   */
+  @Receptor(method = "client-info")
+  public boolean info(@NotNull JsonMessenger messenger, @ParamName(name = "info") Map<?, ?> info) {
+    if (messenger instanceof JsonClientThread) {
+      GuidoValuesMap map = new GuidoValuesMap();
+      info.forEach(
+          (key, value) -> {
+            if (key instanceof String) {
+              if (!((String) key).equalsIgnoreCase("bungee") || this.getBungee() == null) {
+                map.addValue((String) key, value);
+              }
+            }
+          });
+      this.info.put((JsonClientThread) messenger, map);
+      return false;
+    }
+    return false;
+  }
+
+  /**
+   * Get the bungee
+   *
+   * @return the client of the bungee
+   */
+  @Nullable
+  public JsonClientThread getBungee() {
+    for (JsonClientThread client : this.info.keySet()) {
+      if (this.info.get(client).getValueOr("bungee", Boolean.class, false)) {
+        return client;
+      }
+    }
+    return null;
   }
 
   @Override

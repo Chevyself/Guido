@@ -1,9 +1,9 @@
 package com.starfishst.bot.handlers.data;
 
 import com.starfishst.bot.Guido;
-import com.starfishst.bot.api.data.BotUser;
 import com.starfishst.bot.api.events.data.token.AuthTokenLoadedEvent;
 import com.starfishst.bot.api.events.data.token.AuthTokenUnloadedEvent;
+import com.starfishst.guido.api.data.UserData;
 import com.starfishst.guido.api.data.token.AuthLevel;
 import com.starfishst.guido.api.data.token.AuthToken;
 import me.googas.commons.RandomUtils;
@@ -77,7 +77,7 @@ public class GuidoAuthToken extends Catchable implements AuthToken {
   }
 
   @Override
-  public @Nullable BotUser getUser() {
+  public @Nullable UserData getUser() {
     return Guido.getDataLoader().getUserData(this.user);
   }
 

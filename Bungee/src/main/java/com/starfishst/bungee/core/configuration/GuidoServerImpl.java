@@ -47,13 +47,13 @@ public class GuidoServerImpl implements GuidoServer {
   public String toString() {
     return "GuidoServerImpl{"
         + "name='"
-        + name
+        + this.name
         + '\''
         + ", address='"
-        + address
+        + this.address
         + '\''
         + ", restricted="
-        + restricted
+        + this.restricted
         + '}';
   }
 }

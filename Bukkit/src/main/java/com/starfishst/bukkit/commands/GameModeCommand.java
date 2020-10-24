@@ -50,6 +50,6 @@ public class GameModeCommand implements GuidoCommand {
 
   @Override
   public boolean isEnabled() {
-    return enabled;
+    return this.enabled;
   }
 }

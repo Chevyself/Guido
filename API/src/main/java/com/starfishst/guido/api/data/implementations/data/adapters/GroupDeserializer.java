@@ -9,10 +9,10 @@ import com.starfishst.guido.api.data.implementations.data.GroupImpl;
 import java.lang.reflect.Type;
 
 /** Deserializer for groups */
-public class GroupDeserializer implements JsonDeserializer<Group<?, ?>> {
+public class GroupDeserializer implements JsonDeserializer<Group> {
 
   @Override
-  public Group<?, ?> deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context)
+  public Group deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context)
       throws JsonParseException {
     return context.deserialize(json, GroupImpl.class);
   }

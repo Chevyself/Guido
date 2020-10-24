@@ -2,10 +2,10 @@ package com.starfishst.bot.handlers.data;
 
 import com.google.gson.annotations.SerializedName;
 import com.starfishst.bot.api.data.BotLinkedData;
-import com.starfishst.bot.api.data.BotLinkedInfo;
 import com.starfishst.bot.api.data.BotPermissible;
 import com.starfishst.bot.api.events.data.links.LinkedDataLoadedEvent;
 import com.starfishst.bot.api.events.data.links.LinkedDataUnloadedEvent;
+import com.starfishst.guido.api.data.PermissionStack;
 import com.starfishst.guido.api.data.UserData;
 import com.starfishst.guido.api.data.ValuesMap;
 import com.starfishst.guido.api.data.links.LinkedDataType;
@@ -29,7 +29,7 @@ public class GuidoLinkedData extends Catchable implements BotLinkedData, BotPerm
   /** The stats of the data */
   @NotNull private final HashMap<String, Double> stats;
   /** The permissions */
-  @NotNull private final Set<GuidoPermissionStack> permissions;
+  @NotNull private final Set<PermissionStack> permissions;
   /** The id of the linked user */
   @SerializedName("linked-id")
   @Nullable
@@ -53,14 +53,14 @@ public class GuidoLinkedData extends Catchable implements BotLinkedData, BotPerm
       @NotNull GuidoValuesMap identification,
       @NotNull GuidoValuesMap preferences,
       @NotNull HashMap<String, Double> stats,
-      @NotNull Set<GuidoPermissionStack> permissions) {
+      @NotNull Set<PermissionStack> permissions) {
     super(Time.fromString("3m"), addToCache);
     this.type = type;
     this.user = user;
     this.identification = identification;
     this.preferences = preferences;
     this.stats = stats;
-    this.permissions = new HashSet<>(permissions);
+    this.permissions = permissions;
     if (addToCache) {
       new LinkedDataLoadedEvent(this).call();
     }
@@ -79,7 +79,7 @@ public class GuidoLinkedData extends Catchable implements BotLinkedData, BotPerm
   }
 
   @Override
-  public @NotNull Set<GuidoPermissionStack> getPermissions() {
+  public @NotNull Set<PermissionStack> getPermissions() {
     return this.permissions;
   }
 
@@ -145,7 +145,7 @@ public class GuidoLinkedData extends Catchable implements BotLinkedData, BotPerm
   }
 
   @Override
-  public @NotNull BotLinkedInfo getInfo() {
+  public @NotNull GuidoLinkedInfo getInfo() {
     return new GuidoLinkedInfo(this.getType(), this.identification);
   }
 

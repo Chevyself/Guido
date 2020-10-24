@@ -34,7 +34,7 @@ public interface Punishment {
    * @return the info of the punisher
    */
   @Nullable
-  LinkedInfo<?, ?> getPunisher();
+  LinkedInfo getPunisher();
 
   /**
    * Get the info of who received the punishment
@@ -42,7 +42,7 @@ public interface Punishment {
    * @return the info of the punished
    */
   @NotNull
-  LinkedInfo<?, ?> getPunished();
+  LinkedInfo getPunished();
 
   /**
    * Get the details of the punishment

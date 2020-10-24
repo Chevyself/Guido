@@ -1,15 +1,13 @@
 package com.starfishst.bot.api.data;
 
 import com.starfishst.bot.Guido;
-import com.starfishst.bot.handlers.data.GuidoLadder;
-import com.starfishst.bot.handlers.data.GuidoRankRange;
 import com.starfishst.guido.api.data.discord.GuildData;
 import com.starfishst.guido.api.data.matches.Ladder;
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
 import me.googas.commons.Validate;
+import net.dv8tion.jda.api.entities.Category;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.entities.TextChannel;
@@ -17,10 +15,6 @@ import org.jetbrains.annotations.NotNull;
 
 /** The data of a guild in jda */
 public interface BotGuild extends GuildData {
-
-  @NotNull
-  @Override
-  Collection<GuidoLadder> getLadders();
 
   /**
    * Get the discord text channel for the given key
@@ -37,6 +31,23 @@ public interface BotGuild extends GuildData {
       this.getChannels().put(key, channel.getIdLong());
     }
     return channel;
+  }
+
+  /**
+   * Get the discord category for the given key
+   *
+   * @param key the key to get the category
+   * @return the category
+   */
+  @NotNull
+  default Category getCategory(@NotNull String key) {
+    Guild guild = this.getDiscord();
+    Category category = guild.getCategoryById(this.getChannels().getOrDefault(key, -1L));
+    if (category == null) {
+      category = guild.createCategory(key).complete();
+      this.getChannels().put(key, category.getIdLong());
+    }
+    return category;
   }
 
   /**
@@ -76,14 +87,13 @@ public interface BotGuild extends GuildData {
   default Collection<Role> getRolesById(@NotNull Collection<Long> rolesId) {
     Guild guild = this.getDiscord();
     Set<Role> roles = new HashSet<>();
-    for (Long id : rolesId) {
+    for (long id : rolesId) {
       Role role = guild.getRoleById(id);
       if (role != null) {
         roles.add(role);
-      } else {
-        // TODO remove it
       }
     }
+
     return roles;
   }
 
@@ -98,8 +108,4 @@ public interface BotGuild extends GuildData {
         Guido.getConnection().validatedJda().getGuildById(this.getId()),
         "Guild in " + this.getId() + " no longer exists");
   }
-
-  @Override
-  @NotNull
-  Map<Long, GuidoRankRange> getRanges();
 }

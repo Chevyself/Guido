@@ -12,7 +12,7 @@
 
     <groupId>com.starfishst.guido.api</groupId>
     <artifactId>API</artifactId>
-    <version>1.0.0-SNAPSHOT-17</version>
+    <version>1.0.0-SNAPSHOT-18</version>
     <description>The API for implementations and the bot</description>
 
     <dependencies>

@@ -12,8 +12,11 @@ import com.starfishst.guido.api.data.implementations.data.adapters.ValuesMapAdap
 import com.starfishst.guido.api.data.implementations.receptors.ReceptorsImpl;
 import java.io.IOException;
 import java.net.Socket;
+import java.util.Arrays;
+import java.util.Set;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
+import me.googas.commons.Lots;
 import me.googas.commons.cache.Cache;
 import me.googas.commons.cache.ICatchable;
 import me.googas.commons.maps.Maps;
@@ -42,9 +45,9 @@ public class ClientImpl {
   /** The client to connect with the bot */
   @Nullable private JsonClient client;
   /** The receptors that the client is using */
-  @NotNull private final ReceptorsImpl receptors = new ReceptorsImpl(this);
+  @NotNull private final Set<Object> receptors = Lots.set(new ReceptorsImpl(this));
   /** The handler for throwable */
-  @NotNull private ThrowableHandlerImpl handler = new ThrowableHandlerImpl(this);
+  @NotNull private final ThrowableHandlerImpl handler = new ThrowableHandlerImpl(this);
 
   /**
    * Create the client
@@ -201,5 +204,18 @@ public class ClientImpl {
    */
   public void setConnection(@Nullable JsonClient client) {
     this.client = client;
+  }
+
+  /**
+   * Add all the given receptors to the client
+   *
+   * @param receptors the receptors to add
+   */
+  public void addReceptors(@NotNull Object... receptors) {
+    this.receptors.addAll(Arrays.asList(receptors));
+    JsonClient connection = this.getConnection();
+    if (connection != null) {
+      connection.addReceptors(receptors);
+    }
   }
 }

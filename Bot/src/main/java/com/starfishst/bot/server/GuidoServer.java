@@ -1,8 +1,8 @@
 package com.starfishst.bot.server;
 
 import com.google.gson.GsonBuilder;
-import com.starfishst.bot.api.events.data.server.GuidoServerConnectionEvent;
-import com.starfishst.bot.api.events.data.server.GuidoServerDisconnectionEvent;
+import com.starfishst.bot.api.events.server.GuidoServerConnectionEvent;
+import com.starfishst.bot.api.events.server.GuidoServerDisconnectionEvent;
 import com.starfishst.bot.server.providers.DataParameterProviders;
 import com.starfishst.bot.server.receptors.GroupReceptors;
 import com.starfishst.bot.server.receptors.LinkReceptors;
@@ -20,7 +20,7 @@ import me.googas.messaging.json.server.JsonSocketServer;
 import org.jetbrains.annotations.NotNull;
 
 /** A server for implementations connections */
-public class GuidoServer extends JsonSocketServer {
+public class GuidoServer extends JsonSocketServer implements IGuidoServer {
 
   /** The authentication system for the guido server */
   @NotNull private final GuidoAuthenticator authenticator = new GuidoAuthenticator();
@@ -75,5 +75,11 @@ public class GuidoServer extends JsonSocketServer {
           });
     }
     super.close();
+  }
+
+  @NotNull
+  @Override
+  public GuidoAuthenticator getAuthenticator() {
+    return this.authenticator;
   }
 }

@@ -98,14 +98,14 @@ public class GuidoBungeeConfiguration implements BungeeConfiguration {
   public String toString() {
     return "GuidoBungeeConfiguration{"
         + "token='"
-        + token
+        + this.token
         + '\''
         + ", guildId="
-        + guildId
+        + this.guildId
         + ", servers="
-        + servers
+        + this.servers
         + ", settings="
-        + settings
+        + this.settings
         + '}';
   }
 }

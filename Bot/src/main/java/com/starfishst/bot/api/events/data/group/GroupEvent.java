@@ -8,14 +8,14 @@ import org.jetbrains.annotations.NotNull;
 public class GroupEvent implements GuidoEvent {
 
   /** The group involved in the event */
-  @NotNull private final Group<?, ?> group;
+  @NotNull private final Group group;
 
   /**
    * Create the event
    *
    * @param group the group involved
    */
-  public GroupEvent(@NotNull Group<?, ?> group) {
+  public GroupEvent(@NotNull Group group) {
     this.group = group;
   }
 
@@ -25,7 +25,7 @@ public class GroupEvent implements GuidoEvent {
    * @return the group involved
    */
   @NotNull
-  public Group<?, ?> getGroup() {
+  public Group getGroup() {
     return this.group;
   }
 }

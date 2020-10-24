@@ -3,6 +3,8 @@ package com.starfishst.bot.handlers.data;
 import com.starfishst.bot.api.data.BotGuild;
 import com.starfishst.bot.api.events.data.guild.BotGuildLoadedEvent;
 import com.starfishst.bot.api.events.data.guild.BotGuildUnloadedEvent;
+import com.starfishst.guido.api.data.RankRange;
+import com.starfishst.guido.api.data.matches.Ladder;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -21,10 +23,10 @@ public class GuidoGuild extends Catchable implements BotGuild {
   @NotNull private final Map<String, Integer> multipliers;
 
   /** The ladders of the guild */
-  @NotNull private final Set<GuidoLadder> ladders;
+  @NotNull private final Set<Ladder> ladders;
 
   /** The rank ranges of the guild */
-  @NotNull private final Map<Long, GuidoRankRange> ranges;
+  @NotNull private final Map<Long, RankRange> ranges;
 
   /** The map of channels and its ids for the guild */
   @NotNull private final Map<String, Long> channels;
@@ -45,8 +47,8 @@ public class GuidoGuild extends Catchable implements BotGuild {
   public GuidoGuild(
       long id,
       @NotNull HashMap<String, Integer> multipliers,
-      @NotNull Set<GuidoLadder> ladders,
-      @NotNull HashMap<Long, GuidoRankRange> ranges,
+      @NotNull Set<Ladder> ladders,
+      @NotNull HashMap<Long, RankRange> ranges,
       @NotNull HashMap<String, Long> channels,
       @NotNull HashMap<String, Long> categories) {
     super(Time.fromString("10m"));
@@ -77,13 +79,13 @@ public class GuidoGuild extends Catchable implements BotGuild {
 
   @NotNull
   @Override
-  public Set<GuidoLadder> getLadders() {
+  public Set<Ladder> getLadders() {
     return this.ladders;
   }
 
   @NotNull
   @Override
-  public Map<Long, GuidoRankRange> getRanges() {
+  public Map<Long, RankRange> getRanges() {
     return this.ranges;
   }
 

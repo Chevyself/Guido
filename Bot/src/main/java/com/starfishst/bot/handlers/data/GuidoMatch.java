@@ -1,10 +1,11 @@
 package com.starfishst.bot.handlers.data;
 
+import com.starfishst.bot.Guido;
 import com.starfishst.bot.api.data.BotMatch;
-import com.starfishst.bot.api.events.data.match.MatchLoadedEvent;
-import com.starfishst.bot.api.events.data.match.MatchStatusUpdatedEvent;
-import com.starfishst.bot.api.events.data.match.MatchUnloadedEvent;
-import com.starfishst.bot.api.events.data.match.MatchWinnersSetEvent;
+import com.starfishst.bot.api.events.match.MatchLoadedEvent;
+import com.starfishst.bot.api.events.match.MatchStatusUpdatedEvent;
+import com.starfishst.bot.api.events.match.MatchUnloadedEvent;
+import com.starfishst.bot.api.events.match.MatchWinnersSetEvent;
 import com.starfishst.guido.api.data.matches.MatchStatus;
 import com.starfishst.guido.api.data.matches.Team;
 import java.util.Collection;
@@ -25,13 +26,13 @@ public class GuidoMatch extends Catchable implements BotMatch {
   /** The id of the match */
   @NotNull private final String id;
   /** The teams inside the match */
-  @NotNull private final Set<GuidoTeam> teams;
+  @NotNull private final Set<Team> teams;
   /** The details of the match */
   @NotNull private final GuidoLinkedValuesMap details;
   /** The status of the match */
   @NotNull private MatchStatus status;
   /** The winners of the match */
-  @Nullable private GuidoTeam winners;
+  @Nullable private Team winners;
 
   /**
    * Create the match
@@ -45,9 +46,9 @@ public class GuidoMatch extends Catchable implements BotMatch {
   public GuidoMatch(
       @NotNull String id,
       @NotNull MatchStatus status,
-      @NotNull Set<GuidoTeam> teams,
+      @NotNull Set<Team> teams,
       @NotNull GuidoLinkedValuesMap details,
-      @Nullable GuidoTeam winners) {
+      @Nullable Team winners) {
     super(Time.fromString("5m"));
     this.id = id;
     this.status = status;
@@ -65,8 +66,18 @@ public class GuidoMatch extends Catchable implements BotMatch {
    * @param details the details of the match
    */
   public GuidoMatch(
-      @NotNull String id, @NotNull Set<GuidoTeam> teams, @NotNull GuidoLinkedValuesMap details) {
+      @NotNull String id, @NotNull Set<Team> teams, @NotNull GuidoLinkedValuesMap details) {
     this(id, MatchStatus.STARTING, teams, details, null);
+  }
+
+  /**
+   * Create the match in a status of starting
+   *
+   * @param teams the teams inside the match
+   * @param details the details of the match
+   */
+  public GuidoMatch(@NotNull Set<Team> teams, @NotNull GuidoLinkedValuesMap details) {
+    this(Guido.getDataLoader().nextMatchId(), MatchStatus.STARTING, teams, details, null);
   }
 
   /** @deprecated this constructor may only be used by gson */
@@ -99,12 +110,12 @@ public class GuidoMatch extends Catchable implements BotMatch {
   }
 
   @Override
-  public @NotNull Collection<GuidoTeam> getTeams() {
+  public @NotNull Collection<Team> getTeams() {
     return this.teams;
   }
 
   @Override
-  public @Nullable GuidoTeam getWinners() {
+  public @Nullable Team getWinners() {
     return this.winners;
   }
 
@@ -120,16 +131,8 @@ public class GuidoMatch extends Catchable implements BotMatch {
    */
   @Override
   public void setWinners(@Nullable Team winners) {
-    if (winners != null) {
-      if (winners instanceof GuidoTeam) {
-        new MatchWinnersSetEvent(this, (GuidoTeam) winners);
-        this.winners = (GuidoTeam) winners;
-      } else {
-        throw new IllegalArgumentException(winners + " must be a guido team");
-      }
-    } else {
-      this.winners = null;
-    }
+    new MatchWinnersSetEvent(this, winners);
+    this.winners = winners;
   }
 
   /**
@@ -139,7 +142,8 @@ public class GuidoMatch extends Catchable implements BotMatch {
    */
   @Override
   public void setStatus(@NotNull MatchStatus status) {
-    this.status = status;
-    new MatchStatusUpdatedEvent(this, status).call();
+    if (new MatchStatusUpdatedEvent(this, status).callAndGet()) {
+      this.status = status;
+    }
   }
 }

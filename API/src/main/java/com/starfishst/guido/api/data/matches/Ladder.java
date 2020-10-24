@@ -1,6 +1,7 @@
 package com.starfishst.guido.api.data.matches;
 
 import com.starfishst.guido.api.data.ValuesMap;
+import com.starfishst.guido.api.data.discord.GuildData;
 import org.jetbrains.annotations.NotNull;
 
 /** A ladder is a ranked system that users may use to climb */
@@ -19,6 +20,15 @@ public interface Ladder {
    * @return the base value
    */
   int baseValue();
+
+  /**
+   * Create the queue for this ladder
+   *
+   * @param guild the guild that the queue is being created to
+   * @return the created queue
+   */
+  @NotNull
+  Queue createQueue(@NotNull GuildData guild);
 
   /**
    * Get the name of the ladder

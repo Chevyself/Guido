@@ -5,14 +5,14 @@ import com.starfishst.bot.api.data.BotGuild;
 import com.starfishst.bot.api.data.BotLinkedData;
 import com.starfishst.bot.api.data.BotMatch;
 import com.starfishst.bot.api.data.BotRole;
-import com.starfishst.bot.api.data.BotUser;
 import com.starfishst.bot.api.data.loader.BotDataLoader;
 import com.starfishst.bot.api.events.data.guild.BotGuildUnloadedEvent;
 import com.starfishst.bot.api.events.data.role.BotRoleUnloadedEvent;
-import com.starfishst.bot.api.events.data.user.BotUserUnloadedEvent;
+import com.starfishst.bot.api.events.data.user.UserUnloadedDataEvent;
 import com.starfishst.guido.api.data.Group;
 import com.starfishst.guido.api.data.UserData;
 import com.starfishst.guido.api.data.ValuesMap;
+import com.starfishst.guido.api.data.links.LinkedData;
 import com.starfishst.guido.api.data.links.LinkedDataType;
 import com.starfishst.guido.api.data.token.AuthToken;
 import java.util.Collection;
@@ -31,7 +31,7 @@ public class GuidoFileLoader implements BotDataLoader {
    *
    * @param event the event of the data being unloaded
    */
-  @Deprecated
+  @Listener(priority = ListenPriority.HIGHEST)
   public void onGuildDataUnloaded(@NotNull BotGuildUnloadedEvent event) {
     throw new UnsupportedOperationException("Guild data cannot be find using file loader");
   }
@@ -52,7 +52,7 @@ public class GuidoFileLoader implements BotDataLoader {
    * @param event the event of the data being unloaded
    */
   @Listener(priority = ListenPriority.HIGHEST)
-  public void onUserDataUnloaded(@NotNull BotUserUnloadedEvent event) {
+  public void onUserDataUnloaded(@NotNull UserUnloadedDataEvent event) {
     throw new UnsupportedOperationException("User data cannot be find using file loader");
   }
 
@@ -89,7 +89,7 @@ public class GuidoFileLoader implements BotDataLoader {
    * @return the data of the user or null if not found
    */
   @Override
-  public @Nullable BotUser getUserData(@Nullable String id) {
+  public @Nullable UserData getUserData(@Nullable String id) {
     return null;
   }
 
@@ -117,8 +117,8 @@ public class GuidoFileLoader implements BotDataLoader {
   }
 
   @Override
-  public @NotNull Collection<Group<?, ?>> getGroups() {
-    return null;
+  public @NotNull Collection<Group> getGroups() {
+    throw new UnsupportedOperationException("There's no groups");
   }
 
   /**
@@ -151,13 +151,19 @@ public class GuidoFileLoader implements BotDataLoader {
    * @return the links
    */
   @Override
-  public @NotNull Collection<BotLinkedData> getLinks(@NotNull UserData user) {
+  public @NotNull Collection<LinkedData> getLinks(@NotNull UserData user) {
+    throw new UnsupportedOperationException("Links data cannot be find using file loader");
+  }
+
+  @Override
+  public @NotNull Collection<LinkedData> getLinks(
+      @NotNull UserData user, @NotNull LinkedDataType... types) {
     throw new UnsupportedOperationException("Links data cannot be find using file loader");
   }
 
   @NotNull
   @Override
-  public Collection<? extends AuthToken> getTokens(@NotNull UserData user) {
+  public Collection<AuthToken> getTokens(@NotNull UserData user) {
     throw new UnsupportedOperationException("File loader cannot get tokens");
   }
 

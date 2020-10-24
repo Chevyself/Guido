@@ -1,8 +1,7 @@
 package com.starfishst.bot.api.data;
 
 import com.starfishst.bot.Guido;
-import com.starfishst.bot.handlers.data.GuidoPermission;
-import com.starfishst.bot.handlers.data.GuidoPermissionStack;
+import com.starfishst.guido.api.data.UserData;
 import com.starfishst.guido.api.data.lang.LocaleFile;
 import com.starfishst.guido.api.data.links.LinkedData;
 import com.starfishst.guido.api.data.links.LinkedDataType;
@@ -15,16 +14,10 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 /** An extension for linked data for bot use */
-public interface BotLinkedData
-    extends BotPermissible, LinkedData<GuidoPermission, GuidoPermissionStack> {
+public interface BotLinkedData extends BotPermissible, LinkedData {
 
-  /**
-   * Get the linked data as a readable string
-   *
-   * @param locale the locale that needs to read it
-   * @return the readable string
-   */
   @NotNull
+  @Override
   default String getReadable(@NotNull LocaleFile locale) {
     JDA jda = Guido.getConnection().validatedJda();
     switch (this.getType()) {
@@ -59,13 +52,8 @@ public interface BotLinkedData
     }
   }
 
-  /**
-   * Get this linked data as a single way to identify it. For example in the case of discord it will
-   * be the tag, for minecraft its nickname
-   *
-   * @return a simple way to identify the data
-   */
   @NotNull
+  @Override
   default String getSingle() {
     JDA jda = Guido.getConnection().validatedJda();
     switch (this.getType()) {
@@ -86,7 +74,7 @@ public interface BotLinkedData
 
   @Override
   @Nullable
-  default BotUser getLinkedUser() {
+  default UserData getLinkedUser() {
     return Guido.getDataLoader().getUserData(this.getLinkedUserId());
   }
 

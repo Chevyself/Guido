@@ -10,7 +10,7 @@ public class GuidoPermission implements Permission {
   @NotNull private final String node;
 
   /** Whether the permission is enabled */
-  private boolean enabled;
+  private final boolean enabled;
 
   /**
    * Create the permission

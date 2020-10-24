@@ -2,13 +2,14 @@ package com.starfishst.bot.commands;
 
 import com.starfishst.bot.Guido;
 import com.starfishst.bot.api.data.BotLinkedData;
-import com.starfishst.bot.api.data.BotUser;
 import com.starfishst.bot.api.data.loader.BotDataLoader;
 import com.starfishst.bot.handlers.data.GuidoLinkedInfo;
 import com.starfishst.bot.handlers.link.LinkHandler;
 import com.starfishst.core.annotations.Optional;
 import com.starfishst.core.annotations.Required;
+import com.starfishst.guido.api.data.UserData;
 import com.starfishst.guido.api.data.lang.LocaleFile;
+import com.starfishst.guido.api.data.links.LinkedData;
 import com.starfishst.jda.annotations.Command;
 import com.starfishst.jda.result.Result;
 import com.starfishst.jda.result.ResultType;
@@ -30,22 +31,22 @@ public class UserCommands {
   @Command(aliases = "links", description = "links.desc", time = "5s")
   public Result links(
       LocaleFile locale,
-      BotUser sender,
-      @Optional(name = "links.user", description = "links.user.desc") BotUser that) {
-    BotUser toSee;
+      UserData sender,
+      @Optional(name = "links.user", description = "links.user.desc") UserData that) {
+    UserData toSee;
     if (that != null) {
       toSee = that;
     } else {
       toSee = sender;
     }
     BotDataLoader loader = Guido.getDataLoader();
-    Collection<BotLinkedData> links = loader.getLinks(toSee);
+    Collection<LinkedData> links = loader.getLinks(toSee);
     if (links.isEmpty()) {
       return new Result(locale.get("links.empty", Maps.singleton("id", toSee.getId())));
     } else {
       StringBuilder builder = Strings.getBuilder();
       builder.append(locale.get("links.title", Maps.singleton("id", toSee.getId())));
-      for (BotLinkedData link : links) {
+      for (LinkedData link : links) {
         builder.append(link.getReadable(locale));
       }
       return new Result(builder.toString());
@@ -63,18 +64,26 @@ public class UserCommands {
   @Command(aliases = "link", description = "link.desc")
   public Result link(
       LocaleFile locale,
-      BotUser user,
+      UserData user,
       @Required(name = "link.code", description = "link.code.desc") String code) {
     GuidoLinkedInfo info = Guido.getHandler(LinkHandler.class).getInfo(code);
     if (info != null) {
-      BotLinkedData data =
-          Guido.getDataLoader().getLinkedData(info.getType(), info.getIdentification());
-      if (data != null) {
-        data.setLinkedUser(user);
+      Collection<LinkedData> links = Guido.getDataLoader().getLinks(user, info.getType());
+      if (links.size() >= 1) {
         return new Result(
-            locale.get("link.added", Maps.singleton("readable", data.getReadable(locale))));
+            ResultType.ERROR,
+            locale.get(
+                "link.only-one", Maps.singleton("type", info.getType().toString().toLowerCase())));
       } else {
-        return new Result(ResultType.UNKNOWN, locale.get("link.data-not-found"));
+        BotLinkedData data =
+            Guido.getDataLoader().getLinkedData(info.getType(), info.getIdentification());
+        if (data != null) {
+          data.setLinkedUser(user);
+          return new Result(
+              locale.get("link.added", Maps.singleton("readable", data.getReadable(locale))));
+        } else {
+          return new Result(ResultType.UNKNOWN, locale.get("link.data-not-found"));
+        }
       }
     } else {
       return new Result(ResultType.USAGE, locale.get("link.code-not-match"));

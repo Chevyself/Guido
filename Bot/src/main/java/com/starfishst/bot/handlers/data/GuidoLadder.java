@@ -1,6 +1,10 @@
 package com.starfishst.bot.handlers.data;
 
+import com.starfishst.bot.handlers.data.queues.GuidoPGMQueue;
+import com.starfishst.bot.handlers.data.queues.GuidoQueue;
+import com.starfishst.guido.api.data.discord.GuildData;
 import com.starfishst.guido.api.data.matches.Ladder;
+import com.starfishst.guido.api.data.matches.Queue;
 import org.jetbrains.annotations.NotNull;
 
 /** An implementation for ladder */
@@ -10,10 +14,10 @@ public class GuidoLadder implements Ladder {
   @NotNull private final String name;
 
   /** The players per team in the ladder */
-  private int playersPerTeam;
+  private final int playersPerTeam;
 
   /** The base value of the ladder */
-  private int baseValue;
+  private final int baseValue;
 
   /** The options for the ladder to make each ladder unique */
   @NotNull private final GuidoValuesMap options;
@@ -37,6 +41,17 @@ public class GuidoLadder implements Ladder {
   /** @deprecated this constructor may only be used by gson */
   public GuidoLadder() {
     this("", 5, 500, new GuidoValuesMap());
+  }
+
+  @Override
+  public @NotNull Queue createQueue(@NotNull GuildData data) {
+    String type = this.getOptions().getValueOr("type", String.class, "none");
+    switch (type) {
+      case "pgm":
+        return new GuidoPGMQueue(data.getId(), this.getName());
+      default:
+        return new GuidoQueue(data.getId(), this.getName());
+    }
   }
 
   /**

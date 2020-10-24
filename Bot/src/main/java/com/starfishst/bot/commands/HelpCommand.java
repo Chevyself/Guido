@@ -20,8 +20,16 @@ import me.googas.commons.maps.Maps;
 public class HelpCommand {
 
   /** The arguments builder for commands */
-  StringBuilder argsBuilder = new StringBuilder();
+  final StringBuilder argsBuilder = new StringBuilder();
 
+  /**
+   * Get help for all the commands
+   *
+   * @param locale the locale of the sender
+   * @param context the context of the command
+   * @param cmdName the name of the command to see
+   * @return help for the command or every command
+   */
   @Command(
       aliases = {"help", "ayuda", "commands", "", "?"},
       description = "help.desc")

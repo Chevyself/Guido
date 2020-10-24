@@ -1,10 +1,10 @@
 package com.starfishst.bot.commands;
 
 import com.starfishst.bot.Guido;
-import com.starfishst.bot.api.data.BotUser;
 import com.starfishst.bot.handlers.data.GuidoAuthToken;
 import com.starfishst.core.annotations.Parent;
 import com.starfishst.core.annotations.Required;
+import com.starfishst.guido.api.data.UserData;
 import com.starfishst.guido.api.data.lang.LocaleFile;
 import com.starfishst.guido.api.data.token.AuthLevel;
 import com.starfishst.guido.api.data.token.AuthToken;
@@ -30,7 +30,7 @@ public class TokenCommands {
       aliases = {"tokens", "token"},
       description = "tokens.desc",
       permission = @Perm(node = "user:guido.token"))
-  public Result token(LocaleFile locale, BotUser sender) {
+  public Result token(LocaleFile locale, UserData sender) {
     Collection<? extends AuthToken> tokens = Guido.getDataLoader().getTokens(sender);
     if (tokens.isEmpty()) {
       return new Result(locale.get("tokens.empty"));
@@ -59,7 +59,7 @@ public class TokenCommands {
       description = "token.gen.desc",
       permission = @Perm(node = "user:guido.token.generate"))
   public Result generate(
-      BotUser user,
+      UserData user,
       @Required(name = "token.gen.perm", description = "token.gen.perm.desc") AuthLevel level) {
     GuidoAuthToken token = new GuidoAuthToken(level, user.getId());
     return new Result("Token generated use the string: " + token.getToken() + " to use it");

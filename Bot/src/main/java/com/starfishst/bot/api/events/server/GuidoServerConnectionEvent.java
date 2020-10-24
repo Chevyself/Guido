@@ -1,4 +1,4 @@
-package com.starfishst.bot.api.events.data.server;
+package com.starfishst.bot.api.events.server;
 
 import com.starfishst.bot.server.GuidoServer;
 import me.googas.messaging.json.server.JsonClientThread;

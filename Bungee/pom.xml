@@ -12,7 +12,7 @@
 
     <groupId>com.starfishst.guido.bungee</groupId>
     <artifactId>Bungee</artifactId>
-    <version>1.0.0-SNAPSHOT-4</version>
+    <version>1.0.0-SNAPSHOT-5</version>
     <description>Implementations for bungee</description>
 
     <build>
@@ -81,7 +81,7 @@
         <dependency>
             <groupId>com.starfishst.guido.api</groupId>
             <artifactId>API</artifactId>
-            <version>1.0.0-SNAPSHOT-16</version>
+            <version>1.0.0-SNAPSHOT-18</version>
             <scope>compile</scope>
         </dependency>
     </dependencies>

@@ -7,11 +7,10 @@ import com.starfishst.bot.handlers.data.GuidoPermissionStack;
 import com.starfishst.guido.api.data.Permissible;
 import com.starfishst.guido.api.data.PermissionStack;
 import java.util.HashSet;
-import java.util.Set;
 import org.jetbrains.annotations.NotNull;
 
 /** A bot implementation for {@link Permissible} */
-public interface BotPermissible extends Permissible<GuidoPermission, GuidoPermissionStack> {
+public interface BotPermissible extends Permissible {
 
   /**
    * Adds a permission for this permissible
@@ -22,7 +21,7 @@ public interface BotPermissible extends Permissible<GuidoPermission, GuidoPermis
    * @return whether the permission was added
    */
   default boolean addPermission(@NotNull String context, @NotNull String node, boolean enabled) {
-    GuidoPermissionStack stack = this.getPermissions(context);
+    PermissionStack stack = this.getPermissions(context);
     if (stack == null) {
       stack = new GuidoPermissionStack(context, new HashSet<>());
       this.getPermissions().add(stack);
@@ -45,18 +44,14 @@ public interface BotPermissible extends Permissible<GuidoPermission, GuidoPermis
    * @return whether the permission was removed. True if it was removed false otherwise
    */
   default boolean removePermission(@NotNull String context, @NotNull String node) {
-    PermissionStack<GuidoPermission> stack = this.getPermissions(context);
+    PermissionStack stack = this.getPermissions(context);
     if (stack != null) {
       if (stack.containsPermission(node)) {
         stack.getPermissions().removeIf(permission -> permission.getNode().equalsIgnoreCase(node));
-        new PermissiblePermissionRemovedEvent(this, node);
+        new PermissiblePermissionRemovedEvent(this, context, node);
         return true;
       }
     }
     return false;
   }
-
-  @Override
-  @NotNull
-  Set<GuidoPermissionStack> getPermissions();
 }

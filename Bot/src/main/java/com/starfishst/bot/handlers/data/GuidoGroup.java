@@ -3,6 +3,7 @@ package com.starfishst.bot.handlers.data;
 import com.starfishst.bot.Guido;
 import com.starfishst.bot.api.data.BotGroup;
 import com.starfishst.bot.api.events.data.group.GroupUnloadedEvent;
+import com.starfishst.guido.api.data.PermissionStack;
 import java.util.HashSet;
 import java.util.Set;
 import me.googas.commons.cache.Catchable;
@@ -22,7 +23,7 @@ public class GuidoGroup extends Catchable implements BotGroup {
   @NotNull private final GuidoValuesMap preferences;
 
   /** The permissions of the group */
-  @NotNull private final Set<GuidoPermissionStack> permissions;
+  @NotNull private final Set<PermissionStack> permissions;
 
   /**
    * Create the group
@@ -37,7 +38,7 @@ public class GuidoGroup extends Catchable implements BotGroup {
       @NotNull String id,
       @NotNull String name,
       @NotNull GuidoValuesMap preferences,
-      @NotNull Set<GuidoPermissionStack> permissions,
+      @NotNull Set<PermissionStack> permissions,
       boolean addToCache) {
     super(Time.fromString("5m"), addToCache);
     this.id = id;
@@ -54,9 +55,7 @@ public class GuidoGroup extends Catchable implements BotGroup {
    * @param permissions the permissions of the group
    */
   public GuidoGroup(
-      @NotNull GuidoValuesMap preferences,
-      @NotNull Set<GuidoPermissionStack> permissions,
-      String name) {
+      @NotNull GuidoValuesMap preferences, @NotNull Set<PermissionStack> permissions, String name) {
     this(Guido.getDataLoader().nextGroupId(), name, preferences, permissions, true);
   }
 
@@ -74,7 +73,7 @@ public class GuidoGroup extends Catchable implements BotGroup {
   }
 
   @Override
-  public @NotNull Set<GuidoPermissionStack> getPermissions() {
+  public @NotNull Set<PermissionStack> getPermissions() {
     return this.permissions;
   }
 

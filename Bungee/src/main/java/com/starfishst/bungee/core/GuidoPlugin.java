@@ -102,6 +102,7 @@ public class GuidoPlugin extends Plugin implements Implementation {
     Guido.setPlugin(this);
     this.loadConfiguration();
     this.client.setToken(this.bungeeConfiguration.getToken());
+    this.client.addReceptors(new BungeeReceptors());
     try {
       this.client.startConnection();
     } catch (IOException e) {

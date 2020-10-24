@@ -5,9 +5,7 @@ import com.starfishst.bot.api.data.BotGuild;
 import com.starfishst.bot.api.data.BotLinkedData;
 import com.starfishst.bot.api.data.BotMatch;
 import com.starfishst.bot.api.data.BotRole;
-import com.starfishst.bot.api.data.BotUser;
 import com.starfishst.bot.handlers.GuidoEventHandler;
-import com.starfishst.guido.api.data.UserData;
 import com.starfishst.guido.api.data.ValuesMap;
 import com.starfishst.guido.api.data.links.LinkedDataType;
 import com.starfishst.guido.api.data.loader.DataLoader;
@@ -54,16 +52,8 @@ public interface BotDataLoader extends DataLoader, GuidoEventHandler {
   @NotNull
   BotRole getRoleData(long id, long guildId);
 
-  @Override
-  @Nullable
-  BotUser getUserData(@Nullable String id);
-
   @Nullable
   BotLinkedData getLinkedData(@NotNull LinkedDataType type, @NotNull ValuesMap identifications);
-
-  @Override
-  @NotNull
-  Collection<BotLinkedData> getLinks(@NotNull UserData user);
 
   @Override
   @Nullable

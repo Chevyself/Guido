@@ -1,21 +1,21 @@
 package com.starfishst.bot.api.events.data.user;
 
-import com.starfishst.bot.api.data.BotUser;
 import com.starfishst.bot.api.events.GuidoEvent;
+import com.starfishst.guido.api.data.UserData;
 import org.jetbrains.annotations.NotNull;
 
 /** An event that involves user data */
-public class BotUserEvent implements GuidoEvent {
+public class UserDataEvent implements GuidoEvent {
 
   /** The data involved in the event */
-  @NotNull private final BotUser data;
+  @NotNull private final UserData data;
 
   /**
    * Create the event
    *
    * @param data the user data involved in the event
    */
-  public BotUserEvent(@NotNull BotUser data) {
+  public UserDataEvent(@NotNull UserData data) {
     this.data = data;
   }
 
@@ -25,12 +25,12 @@ public class BotUserEvent implements GuidoEvent {
    * @return the user data involved in the event
    */
   @NotNull
-  public BotUser getData() {
+  public UserData getData() {
     return this.data;
   }
 
   @Override
   public String toString() {
-    return "BotUserEvent{" + "data=" + this.data + '}';
+    return "UserDataEvent{" + "data=" + this.data + '}';
   }
 }

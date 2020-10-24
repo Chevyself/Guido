@@ -13,12 +13,16 @@ import com.starfishst.jda.annotations.Perm;
 import com.starfishst.jda.result.Result;
 import com.starfishst.jda.result.ResultType;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
+import me.googas.commons.Lots;
 import me.googas.commons.Pagination;
 import me.googas.commons.Strings;
 import me.googas.commons.maps.MapBuilder;
 import me.googas.commons.maps.Maps;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /** Commands for ladders */
 public class LadderCommands {
@@ -114,7 +118,7 @@ public class LadderCommands {
       aliases = {"delete", "del"},
       description = "ladders.del.desc",
       permission = @Perm(node = "guido.ladders.del"))
-  public Result dedlete(
+  public Result delete(
       LocaleFile locale,
       BotGuild guild,
       @Required(name = "ladders.del.name", description = "ladders.del.name.desc") String name) {
@@ -125,5 +129,78 @@ public class LadderCommands {
       guild.getLadders().removeIf(ladder -> ladder.getName().equalsIgnoreCase(name));
       return new Result(locale.get("ladders.del.success", placeholder));
     }
+  }
+
+  /**
+   * @see #setValue(LocaleFile, Ladder, String, Object). This sets string values
+   * @param locale the locale of the command sender
+   * @param ladder the ladder to edit
+   * @param key the key of the new value
+   * @param value the new value
+   * @return whether the value was set
+   */
+  @Command(
+      aliases = "string",
+      description = "ladder.edit.string",
+      permission = @Perm(node = "guido.ladders.edit"))
+  public Result string(
+      LocaleFile locale,
+      @Required(name = "ladder.edit.ladder", description = "ladder.edit.ladder.desc") Ladder ladder,
+      @Optional(name = "ladder.edit.key", description = "ladder.edit.key.desc") String key,
+      @Required(name = "ladder.edit.value", description = "ladder.edit.value.desc") String value) {
+    return this.setValue(locale, ladder, key, value);
+  }
+
+  /**
+   * @see #setValue(LocaleFile, Ladder, String, Object). This sets integer values
+   * @param locale the locale of the command sender
+   * @param ladder the ladder to edit
+   * @param key the key of the new value
+   * @param value the new value
+   * @return whether the value was set
+   */
+  @Command(
+      aliases = "integer",
+      description = "ladder.edit.integer",
+      permission = @Perm(node = "guido.ladders.edit"))
+  public Result integer(
+      LocaleFile locale,
+      @Required(name = "ladder.edit.ladder", description = "ladder.edit.ladder.desc") Ladder ladder,
+      @Optional(name = "ladder.edit.key", description = "ladder.edit.key.desc") String key,
+      @Required(name = "ladder.edit.value", description = "ladder.edit.value.desc") int value) {
+    return this.setValue(locale, ladder, key, value);
+  }
+
+  /**
+   * Set the value of an option in a ladder
+   *
+   * @param locale the locale of the command sender
+   * @param ladder the ladder to edit
+   * @param key the key of the new value
+   * @param value the new value
+   * @return whether the value was set
+   */
+  private Result setValue(
+      @NotNull LocaleFile locale,
+      @NotNull Ladder ladder,
+      @NotNull String key,
+      @Nullable Object value) {
+    if (value == null && ladder.getOptions().getMap().containsKey(key)) {
+      ladder.getOptions().removeValue(key);
+    } else if (value != null) {
+      ladder.getOptions().addValue(key, value);
+    }
+    String valueString;
+    if (value != null) {
+      if (value instanceof Collection) {
+        valueString = Lots.pretty((Collection<?>) value);
+      } else {
+        valueString = value.toString();
+      }
+    } else {
+      valueString = "null";
+    }
+    return new Result(
+        locale.get("ladder.edit.result", Maps.builder("key", key).append("value", valueString)));
   }
 }

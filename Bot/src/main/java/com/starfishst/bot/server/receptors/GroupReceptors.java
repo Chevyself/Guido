@@ -31,7 +31,7 @@ public class GroupReceptors {
    * @return the existing groups
    */
   @Receptor(method = "groups")
-  public Collection<Group<?, ?>> groups() {
+  public Collection<Group> groups() {
     return Guido.getDataLoader().getGroups();
   }
 

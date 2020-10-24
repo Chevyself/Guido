@@ -3,13 +3,14 @@ package com.starfishst.bot.handlers.decorations;
 import com.starfishst.bot.Guido;
 import com.starfishst.bot.api.data.BotGuild;
 import com.starfishst.bot.api.data.BotLinkedData;
-import com.starfishst.bot.api.data.BotLinkedInfo;
 import com.starfishst.bot.api.data.BotMatch;
-import com.starfishst.bot.api.data.BotTeam;
-import com.starfishst.bot.api.events.data.match.MatchStatusUpdatedEvent;
+import com.starfishst.bot.api.events.match.MatchStatusUpdatedEvent;
 import com.starfishst.bot.handlers.GuidoEventHandler;
+import com.starfishst.guido.api.data.links.LinkedData;
 import com.starfishst.guido.api.data.links.LinkedDataType;
+import com.starfishst.guido.api.data.links.LinkedInfo;
 import com.starfishst.guido.api.data.matches.Ladder;
+import com.starfishst.guido.api.data.matches.Team;
 import java.util.ArrayList;
 import java.util.List;
 import me.googas.commons.events.ListenPriority;
@@ -35,39 +36,41 @@ public class DecorationsHandler implements GuidoEventHandler {
       BotGuild guildData = Guido.getDataLoader().getGuildData(guildId);
       Ladder ladder = guildData.getLadder(ladderName);
       if (ladder != null) {
-        for (BotTeam team : event.getMatch().getTeams()) {
-          for (BotLinkedInfo info : team.getMembers().keySet()) {
-            BotLinkedData data = info.getData();
+        for (Team team : event.getMatch().getTeams()) {
+          for (LinkedInfo info : team.getMembers().keySet()) {
+            LinkedData data = info.getData();
             if (data != null && data.getType() == LinkedDataType.DISCORD_GUILD) {
-              Member member = data.getDiscordMember();
-              if (member != null) {
-                double elo = data.getElo(ladder);
-                double global = data.getGlobalElo(guildData);
-                List<Role> toAdd =
-                    new ArrayList<>(guildData.getRolesDiscord(ladder, (int) elo, false));
-                List<Role> toRemove =
-                    new ArrayList<>(guildData.getRolesDiscord(ladder, (int) elo, true));
-                toAdd.addAll(guildData.getGlobalRolesDiscord((int) global, false));
-                toRemove.addAll(guildData.getGlobalRolesDiscord((int) global, true));
-                for (Role role : toAdd) {
-                  if (!member.getRoles().contains(role)) {
-                    member.getGuild().addRoleToMember(member, role).queue();
+              double elo = data.getElo(ladder);
+              double global = data.getGlobalElo(guildData);
+              List<Role> toAdd =
+                  new ArrayList<>(guildData.getRolesDiscord(ladder, (int) elo, false));
+              List<Role> toRemove =
+                  new ArrayList<>(guildData.getRolesDiscord(ladder, (int) elo, true));
+              toAdd.addAll(guildData.getGlobalRolesDiscord((int) global, false));
+              toRemove.addAll(guildData.getGlobalRolesDiscord((int) global, true));
+              if (data instanceof BotLinkedData) {
+                Member member = ((BotLinkedData) data).getDiscordMember();
+                if (member != null) {
+                  for (Role role : toAdd) {
+                    if (!member.getRoles().contains(role)) {
+                      member.getGuild().addRoleToMember(member, role).queue();
+                    }
+                  }
+                  for (Role role : toRemove) {
+                    if (member.getRoles().contains(role)) {
+                      member.getGuild().removeRoleFromMember(member, role).queue();
+                    }
                   }
                 }
-                for (Role role : toRemove) {
-                  if (member.getRoles().contains(role)) {
-                    member.getGuild().removeRoleFromMember(member, role).queue();
-                  }
-                }
-                /*
-                Save this for latter to add the name of the users
-                if (!member.isOwner()) {
-                  member.modifyNickname(String.valueOf((int) global)).queue(ignoredVoid -> {}, ignoredException -> {
-                    // Exception can be thrown if user cannot be edited
-                  });
-                }
-                 */
               }
+              /*
+              Save this for latter to add the name of the users
+              if (!member.isOwner()) {
+                member.modifyNickname(String.valueOf((int) global)).queue(ignoredVoid -> {}, ignoredException -> {
+                  // Exception can be thrown if user cannot be edited
+                });
+              }
+               */
             }
           }
         }

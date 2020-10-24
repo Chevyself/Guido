@@ -101,7 +101,7 @@ public class AutoClickDetector extends PacketAdapter implements AntiCheatDetecto
           this.time.put(uniqueId, this.time.getOrDefault(uniqueId, 0) + ticks);
           this.clicks.put(uniqueId, this.clicks.getOrDefault(uniqueId, 0) + 1);
           float secs = this.time.get(uniqueId) / 20f;
-          float cps = clicks.get(uniqueId) / secs;
+          float cps = this.clicks.get(uniqueId) / secs;
           float deviation = this.averageSpeed.get(uniqueId) - cps;
           this.averageSpeed.put(uniqueId, cps);
           this.averageDeviation.put(

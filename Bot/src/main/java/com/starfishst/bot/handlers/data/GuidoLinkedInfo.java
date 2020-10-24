@@ -38,4 +38,22 @@ public class GuidoLinkedInfo implements BotLinkedInfo {
   public @NotNull GuidoValuesMap getIdentification() {
     return this.identification;
   }
+
+  @Override
+  public boolean equals(Object object) {
+    if (this == object) return true;
+    if (!(object instanceof GuidoLinkedInfo)) return false;
+
+    GuidoLinkedInfo that = (GuidoLinkedInfo) object;
+
+    if (this.type != that.type) return false;
+    return this.identification.equals(that.identification);
+  }
+
+  @Override
+  public int hashCode() {
+    int result = this.type.hashCode();
+    result = 31 * result + this.identification.hashCode();
+    return result;
+  }
 }

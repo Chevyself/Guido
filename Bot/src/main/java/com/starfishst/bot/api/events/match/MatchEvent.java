@@ -1,4 +1,4 @@
-package com.starfishst.bot.api.events.data.match;
+package com.starfishst.bot.api.events.match;
 
 import com.starfishst.bot.api.data.BotMatch;
 import com.starfishst.bot.api.events.GuidoEvent;

@@ -23,11 +23,11 @@ public class GuidoEvent extends Event {
    */
   @NotNull
   public static HandlerList getHandlerList() {
-    return handlers;
+    return GuidoEvent.handlers;
   }
 
   @Override
   public HandlerList getHandlers() {
-    return handlers;
+    return GuidoEvent.handlers;
   }
 }

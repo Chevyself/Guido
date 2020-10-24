@@ -2,21 +2,23 @@ package com.starfishst.bot;
 
 import com.starfishst.bot.api.data.loader.BotDataLoader;
 import com.starfishst.bot.commands.DeveloperCommands;
+import com.starfishst.bot.commands.GuidoPermissionChecker;
 import com.starfishst.bot.commands.HelpCommand;
 import com.starfishst.bot.commands.LadderCommands;
 import com.starfishst.bot.commands.LangCommands;
 import com.starfishst.bot.commands.MatchCommands;
 import com.starfishst.bot.commands.MultiplierCommands;
+import com.starfishst.bot.commands.QueueCommands;
 import com.starfishst.bot.commands.RangesCommand;
 import com.starfishst.bot.commands.TeamCommands;
 import com.starfishst.bot.commands.TokenCommands;
 import com.starfishst.bot.commands.UserCommands;
 import com.starfishst.bot.commands.providers.AuthLevelProvider;
-import com.starfishst.bot.commands.providers.BotGuildProvider;
-import com.starfishst.bot.commands.providers.BotUserProvider;
-import com.starfishst.bot.commands.providers.BotUserSenderProvider;
+import com.starfishst.bot.commands.providers.GuidoUserProvider;
+import com.starfishst.bot.commands.providers.GuildDataProvider;
 import com.starfishst.bot.commands.providers.LadderProvider;
 import com.starfishst.bot.commands.providers.LocaleFileProvider;
+import com.starfishst.bot.commands.providers.UserDataSenderProvider;
 import com.starfishst.bot.handlers.GuidoHandler;
 import com.starfishst.bot.handlers.data.loader.GuidoFileLoader;
 import com.starfishst.bot.handlers.data.loader.JsongoDataLoader;
@@ -29,6 +31,7 @@ import com.starfishst.bot.handlers.responsive.GuidoMessagesController;
 import com.starfishst.bot.handlers.test.TestHandler;
 import com.starfishst.bot.server.GuidoFallbackServer;
 import com.starfishst.bot.server.GuidoServer;
+import com.starfishst.bot.server.IGuidoServer;
 import com.starfishst.bot.util.console.Console;
 import com.starfishst.guido.api.data.loader.DataLoader;
 import com.starfishst.jda.CommandManager;
@@ -46,7 +49,6 @@ import me.googas.commons.events.Cancellable;
 import me.googas.commons.events.Event;
 import me.googas.commons.events.ListenerManager;
 import me.googas.commons.maps.Maps;
-import me.googas.messaging.api.Server;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.OnlineStatus;
 import net.dv8tion.jda.api.entities.Activity;
@@ -69,7 +71,8 @@ public class Guido {
 
   /** The language handler for the bot */
   @NotNull
-  private static GuidoLanguageHandler languageHandler = new GuidoLanguageHandler(Guido.dataLoader);
+  private static final GuidoLanguageHandler languageHandler =
+      new GuidoLanguageHandler(Guido.dataLoader);
 
   /** The list of handlers that the bot is using */
   @NotNull
@@ -88,7 +91,7 @@ public class Guido {
   @Nullable private static CommandManager commandManager;
 
   /** The server to receive implementations */
-  @NotNull private static Server server = new GuidoFallbackServer();
+  @NotNull private static IGuidoServer server = new GuidoFallbackServer();
 
   /**
    * The main method of the bot.
@@ -148,9 +151,9 @@ public class Guido {
     }
     JdaProvidersRegistry registry = new JdaProvidersRegistry(Guido.languageHandler);
     registry.addProvider(new AuthLevelProvider());
-    registry.addProvider(new BotGuildProvider());
-    registry.addProvider(new BotUserProvider());
-    registry.addProvider(new BotUserSenderProvider());
+    registry.addProvider(new GuildDataProvider());
+    registry.addProvider(new GuidoUserProvider());
+    registry.addProvider(new UserDataSenderProvider());
     registry.addProvider(new LadderProvider());
     registry.addProvider(new LocaleFileProvider());
     Guido.commandManager =
@@ -167,6 +170,7 @@ public class Guido {
     Guido.commandManager.registerCommand(new LangCommands());
     Guido.commandManager.registerCommand(new MatchCommands());
     Guido.commandManager.registerCommand(new MultiplierCommands());
+      Guido.commandManager.registerCommand(new QueueCommands());
     Guido.commandManager.registerCommand(new RangesCommand());
     Guido.commandManager.registerCommand(new TeamCommands());
     Guido.commandManager.registerCommand(new TokenCommands());
@@ -285,7 +289,7 @@ public class Guido {
    * @return the server
    */
   @NotNull
-  public static Server getServer() {
+  public static IGuidoServer getServer() {
     return Guido.server;
   }
 
@@ -305,6 +309,7 @@ public class Guido {
    *
    * @return the timer
    */
+  @NotNull
   public static Timer getTimer() {
     return Guido.timer;
   }

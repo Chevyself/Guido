@@ -8,7 +8,7 @@ import com.starfishst.bot.handlers.data.GuidoLinkedValuesMap;
 import java.lang.reflect.Type;
 import me.googas.commons.gson.adapters.JsonAdapter;
 
-/** Deserialize guido values map */
+/** Deserialize {@link GuidoLinkedValuesMap} */
 public class LinkedValuesMapAdapter implements JsonAdapter<GuidoLinkedValuesMap> {
   @Override
   public JsonElement serialize(

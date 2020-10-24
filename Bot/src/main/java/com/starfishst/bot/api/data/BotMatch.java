@@ -3,6 +3,7 @@ package com.starfishst.bot.api.data;
 import com.starfishst.bot.Guido;
 import com.starfishst.guido.api.data.lang.LocaleFile;
 import com.starfishst.guido.api.data.matches.Match;
+import com.starfishst.guido.api.data.matches.Team;
 import com.starfishst.jda.utils.embeds.EmbedQuery;
 import java.util.Collection;
 import java.util.Set;
@@ -12,32 +13,12 @@ import me.googas.commons.cache.ICatchable;
 import me.googas.commons.maps.Maps;
 import net.dv8tion.jda.api.EmbedBuilder;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 /** An extension of match */
 public interface BotMatch extends Match, ICatchable {
 
   /** The keys to ignore from the details of the match when making the information */
   Set<String> toIgnore = Lots.set("thumbnail", "guild");
-
-  /**
-   * Get the teams that are participating in the match
-   *
-   * @return collection of teams
-   */
-  @Override
-  @NotNull
-  Collection<? extends BotTeam> getTeams();
-
-  /**
-   * Get the team that won the match
-   *
-   * @return the team that won the match. This can return null in case that the match has not
-   *     finished yet
-   */
-  @Override
-  @Nullable
-  BotTeam getWinners();
 
   /**
    * Get the information from a match
@@ -71,7 +52,7 @@ public interface BotMatch extends Match, ICatchable {
                 builder.addField(locale.get(key), fieldDesc, true);
               }
             });
-    for (BotTeam team : this.getTeams()) {
+    for (Team team : this.getTeams()) {
       stringBuilder.append(
           locale.get(
               "match.team",

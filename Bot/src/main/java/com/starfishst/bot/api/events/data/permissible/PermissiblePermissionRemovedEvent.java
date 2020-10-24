@@ -1,6 +1,6 @@
 package com.starfishst.bot.api.events.data.permissible;
 
-import com.starfishst.guido.api.data.Permissible;
+import com.starfishst.bot.api.data.BotPermissible;
 import org.jetbrains.annotations.NotNull;
 
 /** Called when a permissible gets a permission removed */
@@ -13,10 +13,11 @@ public class PermissiblePermissionRemovedEvent extends PermissibleEvent {
    * Create the event
    *
    * @param permissible the permissible involved in the event
+   * @param context the context where the permission was removed
    * @param node the node of the permission that was removed
    */
   public PermissiblePermissionRemovedEvent(
-      @NotNull Permissible<?, ?> permissible, @NotNull String node) {
+      @NotNull BotPermissible permissible, @NotNull String context, @NotNull String node) {
     super(permissible);
     this.node = node;
   }

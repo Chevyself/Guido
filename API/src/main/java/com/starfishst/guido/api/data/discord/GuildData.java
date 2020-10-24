@@ -1,10 +1,9 @@
 package com.starfishst.guido.api.data.discord;
 
 import com.starfishst.guido.api.data.RankRange;
-import com.starfishst.guido.api.data.ValuesMap;
+import com.starfishst.guido.api.data.matches.GlobalLadder;
 import com.starfishst.guido.api.data.matches.Ladder;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -41,27 +40,7 @@ public interface GuildData extends ICatchable {
   @Nullable
   default Ladder getLadder(@NotNull String name) {
     if (name.equalsIgnoreCase("global")) {
-      return new Ladder() {
-        @Override
-        public int playersPerTeam() {
-          return -1;
-        }
-
-        @Override
-        public int baseValue() {
-          return -1;
-        }
-
-        @Override
-        public @NotNull String getName() {
-          return "global";
-        }
-
-        @Override
-        public @NotNull ValuesMap getOptions() {
-          return HashMap::new;
-        }
-      };
+      return new GlobalLadder();
     } else {
       for (Ladder ladder : this.getLadders()) {
         if (ladder.getName().equalsIgnoreCase(name)) {
@@ -114,6 +93,13 @@ public interface GuildData extends ICatchable {
     this.getRanges()
         .forEach(
             (id, range) -> {
+              if (!range.isBound(numb) && outside && range.getLadder().equalsIgnoreCase("global")) {
+                rolesId.add(id);
+              } else if (range.isBound(numb)
+                  && !outside
+                  && range.getLadder().equalsIgnoreCase("global")) {
+                rolesId.add(id);
+              }
               if (range.isBound(numb) && range.getLadder().equalsIgnoreCase("global")) {
                 rolesId.add(id);
               }
@@ -128,7 +114,7 @@ public interface GuildData extends ICatchable {
    * @return the ranges
    */
   @NotNull
-  Map<Long, ? extends RankRange> getRanges();
+  Map<Long, RankRange> getRanges();
 
   /**
    * Get the ladders of the guild and the ladder base value
@@ -136,7 +122,7 @@ public interface GuildData extends ICatchable {
    * @return the map of the ladders and its initial base value
    */
   @NotNull
-  Collection<? extends Ladder> getLadders();
+  Collection<Ladder> getLadders();
 
   /**
    * This map contains the string to identify a channel and its id

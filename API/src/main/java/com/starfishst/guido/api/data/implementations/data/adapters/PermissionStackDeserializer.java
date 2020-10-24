@@ -9,9 +9,9 @@ import com.starfishst.guido.api.data.implementations.data.PermissionStackImpl;
 import java.lang.reflect.Type;
 
 /** Deserializer for permission stack */
-public class PermissionStackDeserializer implements JsonDeserializer<PermissionStack<?>> {
+public class PermissionStackDeserializer implements JsonDeserializer<PermissionStack> {
   @Override
-  public PermissionStack<?> deserialize(
+  public PermissionStack deserialize(
       JsonElement json, Type typeOfT, JsonDeserializationContext context)
       throws JsonParseException {
     return context.deserialize(json, PermissionStackImpl.class);

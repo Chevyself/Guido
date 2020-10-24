@@ -10,6 +10,8 @@ import com.starfishst.core.annotations.Parent;
 import com.starfishst.core.annotations.Required;
 import com.starfishst.core.annotations.settings.Setting;
 import com.starfishst.core.annotations.settings.Settings;
+import com.starfishst.guido.api.data.Permission;
+import com.starfishst.guido.api.data.PermissionStack;
 import com.starfishst.guido.api.data.implementations.data.PermissionImpl;
 import com.starfishst.guido.api.data.implementations.data.PermissionStackImpl;
 import com.starfishst.guido.api.data.links.LinkedDataType;
@@ -53,7 +55,7 @@ public class PermissionCommands {
     Guido.getClient()
         .request(
             new Request<>(
-                PermissionStackImpl.class,
+                PermissionStack.class,
                 "permission",
                 Maps.objects("type", LinkedDataType.MINECRAFT)
                     .append("context", context)
@@ -63,7 +65,7 @@ public class PermissionCommands {
                     .build()),
             stack -> {
               if (stack != null && !stack.getPermissions().isEmpty()) {
-                Pagination<PermissionImpl> pagination =
+                Pagination<Permission> pagination =
                     new Pagination<>(new ArrayList<>(stack.getPermissions()), 20);
                 int finalPage = page;
                 if (finalPage < 1 || page > pagination.maxPage()) {
@@ -78,7 +80,7 @@ public class PermissionCommands {
                     .append("&8/")
                     .append(pagination.maxPage())
                     .append("\n");
-                for (PermissionImpl permission : pagination.getPage(finalPage)) {
+                for (Permission permission : pagination.getPage(finalPage)) {
                   builder.append("&8- ");
                   if (permission.isEnabled()) {
                     builder.append("&a");

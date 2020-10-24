@@ -2,6 +2,7 @@ package com.starfishst.bungee.core.listeners;
 
 import com.starfishst.bungee.api.Guido;
 import com.starfishst.bungee.api.events.GuidoListener;
+import com.starfishst.guido.api.data.Permission;
 import com.starfishst.guido.api.data.implementations.data.PermissionImpl;
 import com.starfishst.guido.api.data.implementations.data.PermissionStackImpl;
 import com.starfishst.guido.api.data.links.LinkedDataType;
@@ -48,7 +49,7 @@ public class JoinListener implements GuidoListener {
                           .append("context", "bungee")
                           .build()),
                   stack -> {
-                    for (PermissionImpl permission : stack.getPermissions()) {
+                    for (Permission permission : stack.getPermissions()) {
                       event.getPlayer().setPermission(permission.getNode(), permission.isEnabled());
                     }
                   });

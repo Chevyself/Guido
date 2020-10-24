@@ -3,13 +3,13 @@ package com.starfishst.bot.commands;
 import com.starfishst.bot.Guido;
 import com.starfishst.bot.api.data.BotGuild;
 import com.starfishst.bot.api.data.BotLinkedData;
-import com.starfishst.bot.api.data.BotLinkedInfo;
 import com.starfishst.bot.api.data.BotMatch;
 import com.starfishst.bot.handlers.data.GuidoLinkedValuesMap;
 import com.starfishst.bot.handlers.data.GuidoMatch;
 import com.starfishst.bot.handlers.data.GuidoTeam;
 import com.starfishst.core.annotations.Required;
 import com.starfishst.guido.api.data.lang.LocaleFile;
+import com.starfishst.guido.api.data.links.LinkedInfo;
 import com.starfishst.guido.api.data.matches.Ladder;
 import com.starfishst.guido.api.data.matches.TeamRole;
 import com.starfishst.jda.annotations.Command;
@@ -53,8 +53,8 @@ public class MatchCommands {
               Maps.builder("given", String.valueOf(message.getMentionedMembers().size()))
                   .append("expected", String.valueOf(ladder.baseValue() * 2))));
     }
-    HashMap<BotLinkedInfo, TeamRole> members1 = new HashMap<>();
-    HashMap<BotLinkedInfo, TeamRole> members2 = new HashMap<>();
+    HashMap<LinkedInfo, TeamRole> members1 = new HashMap<>();
+    HashMap<LinkedInfo, TeamRole> members2 = new HashMap<>();
     for (int i = 0; i < message.getMentionedMembers().size(); i++) {
       Member mentioned = message.getMentionedMembers().get(i);
       BotLinkedData member =

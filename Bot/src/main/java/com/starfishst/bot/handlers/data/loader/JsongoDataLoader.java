@@ -7,39 +7,48 @@ import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoCursor;
 import com.mongodb.client.MongoDatabase;
+import com.starfishst.bot.adapters.LadderDeserializer;
+import com.starfishst.bot.adapters.LinkedInfoDeserializer;
 import com.starfishst.bot.adapters.LinkedValuesMapAdapter;
 import com.starfishst.bot.adapters.LongMongoAdapter;
 import com.starfishst.bot.adapters.PermissionAdapter;
+import com.starfishst.bot.adapters.RankRangeDeserializer;
+import com.starfishst.bot.adapters.TeamDeserializer;
 import com.starfishst.bot.adapters.ValuesMapAdapter;
 import com.starfishst.bot.api.data.BotGroup;
 import com.starfishst.bot.api.data.BotGuild;
 import com.starfishst.bot.api.data.BotLinkedData;
 import com.starfishst.bot.api.data.BotMatch;
 import com.starfishst.bot.api.data.BotRole;
-import com.starfishst.bot.api.data.BotUser;
 import com.starfishst.bot.api.data.loader.BotDataLoader;
 import com.starfishst.bot.api.events.data.group.GroupUnloadedEvent;
 import com.starfishst.bot.api.events.data.guild.BotGuildUnloadedEvent;
 import com.starfishst.bot.api.events.data.links.LinkedDataUnloadedEvent;
-import com.starfishst.bot.api.events.data.match.MatchUnloadedEvent;
 import com.starfishst.bot.api.events.data.role.BotRoleUnloadedEvent;
 import com.starfishst.bot.api.events.data.token.AuthTokenUnloadedEvent;
-import com.starfishst.bot.api.events.data.user.BotUserUnloadedEvent;
+import com.starfishst.bot.api.events.data.user.UserUnloadedDataEvent;
+import com.starfishst.bot.api.events.match.MatchUnloadedEvent;
 import com.starfishst.bot.handlers.data.GuidoAuthToken;
 import com.starfishst.bot.handlers.data.GuidoGroup;
 import com.starfishst.bot.handlers.data.GuidoGuild;
 import com.starfishst.bot.handlers.data.GuidoLinkedData;
 import com.starfishst.bot.handlers.data.GuidoLinkedValuesMap;
 import com.starfishst.bot.handlers.data.GuidoMatch;
-import com.starfishst.bot.handlers.data.GuidoPermission;
 import com.starfishst.bot.handlers.data.GuidoRole;
 import com.starfishst.bot.handlers.data.GuidoUser;
 import com.starfishst.bot.handlers.data.GuidoValuesMap;
 import com.starfishst.guido.api.data.Group;
 import com.starfishst.guido.api.data.Permission;
+import com.starfishst.guido.api.data.PermissionStack;
+import com.starfishst.guido.api.data.RankRange;
 import com.starfishst.guido.api.data.UserData;
 import com.starfishst.guido.api.data.ValuesMap;
+import com.starfishst.guido.api.data.implementations.data.adapters.PermissionStackDeserializer;
+import com.starfishst.guido.api.data.links.LinkedData;
 import com.starfishst.guido.api.data.links.LinkedDataType;
+import com.starfishst.guido.api.data.links.LinkedInfo;
+import com.starfishst.guido.api.data.matches.Ladder;
+import com.starfishst.guido.api.data.matches.Team;
 import com.starfishst.guido.api.data.token.AuthToken;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
@@ -71,13 +80,17 @@ public class JsongoDataLoader implements BotDataLoader {
   private final Gson gson =
       new GsonBuilder()
           .setPrettyPrinting()
+          .registerTypeAdapter(Ladder.class, new LadderDeserializer())
+          .registerTypeAdapter(LinkedInfo.class, new LinkedInfoDeserializer())
+          .registerTypeAdapter(GuidoLinkedValuesMap.class, new LinkedValuesMapAdapter())
           .registerTypeAdapter(long.class, new LongMongoAdapter())
           .registerTypeAdapter(Long.class, new LongMongoAdapter())
           .registerTypeAdapter(Permission.class, new PermissionAdapter())
-          .registerTypeAdapter(GuidoPermission.class, new PermissionAdapter())
+          .registerTypeAdapter(PermissionStack.class, new PermissionStackDeserializer())
+          .registerTypeAdapter(RankRange.class, new RankRangeDeserializer())
+          .registerTypeAdapter(Team.class, new TeamDeserializer())
           .registerTypeAdapter(ValuesMap.class, new ValuesMapAdapter())
           .registerTypeAdapter(GuidoValuesMap.class, new ValuesMapAdapter())
-          .registerTypeAdapter(GuidoLinkedValuesMap.class, new LinkedValuesMapAdapter())
           .create();
 
   /** The mongo client to have access to collections */
@@ -158,7 +171,7 @@ public class JsongoDataLoader implements BotDataLoader {
    * @param event the event of an user being unloaded
    */
   @Listener(priority = ListenPriority.HIGHEST)
-  public void onBotUserUnloaded(@NotNull BotUserUnloadedEvent event) {
+  public void onBotUserUnloaded(@NotNull UserUnloadedDataEvent event) {
     this.save(this.users, new Document("id", event.getData().getId()), event.getData());
   }
 
@@ -223,7 +236,7 @@ public class JsongoDataLoader implements BotDataLoader {
    * @return the user. If the user is null we will create one
    */
   @NotNull
-  private BotUser getUserData(long discordId) {
+  private UserData getUserData(long discordId) {
     Collection<BotLinkedData> discordData = this.getDiscordData(discordId);
     for (BotLinkedData link : discordData) {
       if (link.getLinkedUser() != null) {
@@ -483,7 +496,7 @@ public class JsongoDataLoader implements BotDataLoader {
   }
 
   @Override
-  public @Nullable BotUser getUserData(@Nullable String id) {
+  public @Nullable UserData getUserData(@Nullable String id) {
     return Cache.getCatchableOrGet(
         GuidoUser.class,
         user -> user.getId().equals(id),
@@ -550,27 +563,42 @@ public class JsongoDataLoader implements BotDataLoader {
   }
 
   @Override
-  public @NotNull Collection<Group<?, ?>> getGroups() {
+  public @NotNull Collection<Group> getGroups() {
     return new ArrayList<>(
         this.supplyManyAndCache(
             GuidoGroup.class, group -> true, this.groups, new Document(), -1, -1));
   }
 
   @Override
-  public @NotNull Collection<BotLinkedData> getLinks(@NotNull UserData user) {
+  public @NotNull Collection<LinkedData> getLinks(@NotNull UserData user) {
+    return this.getLinks(user, LinkedDataType.values());
+  }
+
+  @Override
+  public @NotNull Collection<LinkedData> getLinks(
+      @NotNull UserData user, @NotNull LinkedDataType... types) {
+    List<String> typesName = new ArrayList<>();
+    for (LinkedDataType type : types) {
+      typesName.add(type.toString());
+    }
     return new ArrayList<>(
         this.supplyManyAndCache(
             GuidoLinkedData.class,
-            link -> user.getId().equals(link.getLinkedUserId()),
+            link -> {
+              for (LinkedDataType type : types) {
+                return type == link.getType() && user.equals(link.getLinkedUser());
+              }
+              return false;
+            },
             this.links,
-            new Document("linked-id", user.getId()),
+            new Document("type", new Document("$in", typesName)),
             -1,
             -1));
   }
 
   @NotNull
   @Override
-  public Collection<? extends AuthToken> getTokens(@NotNull UserData user) {
+  public Collection<AuthToken> getTokens(@NotNull UserData user) {
     return this.supplyManyFromQuery(
         GuidoAuthToken.class, this.tokens, new Document("user", user.getId()), -1, -1);
   }

@@ -2,6 +2,9 @@ package com.starfishst.guido.api.data.matches;
 
 import com.starfishst.guido.api.data.links.LinkedData;
 import com.starfishst.guido.api.data.links.LinkedInfo;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 import org.jetbrains.annotations.NotNull;
 
@@ -17,8 +20,8 @@ public interface Team {
   default float getElo(@NotNull Ladder ladder) {
     float sum = 0;
     int size = 0;
-    for (LinkedInfo<?, ?> linkedInfo : this.getMembers().keySet()) {
-      LinkedData<?, ?> data = linkedInfo.getData();
+    for (LinkedInfo linkedInfo : this.getMembers().keySet()) {
+      LinkedData data = linkedInfo.getData();
       if (data != null) {
         sum += data.getElo(ladder);
         size++;
@@ -28,12 +31,29 @@ public interface Team {
   }
 
   /**
+   * Get the single identification for all the members
+   *
+   * @return the single identification
+   */
+  @NotNull
+  default Collection<String> getMemberSingles() {
+    List<String> singles = new ArrayList<>();
+    for (LinkedInfo info : this.getMembers().keySet()) {
+      LinkedData data = info.getData();
+      if (data != null) {
+        singles.add(data.getSingle());
+      }
+    }
+    return singles;
+  }
+
+  /**
    * Get the members of the team
    *
    * @return the members of the team
    */
   @NotNull
-  Map<? extends LinkedInfo<?, ?>, TeamRole> getMembers();
+  Map<LinkedInfo, TeamRole> getMembers();
 
   /**
    * Get the name of the team

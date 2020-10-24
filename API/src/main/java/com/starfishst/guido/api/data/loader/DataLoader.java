@@ -34,7 +34,7 @@ public interface DataLoader {
    * @return the data of the role or null if not found
    */
   @NotNull
-  RoleData<?, ?> getRoleData(long id, long guildId);
+  RoleData getRoleData(long id, long guildId);
 
   /**
    * Load the data of an user
@@ -61,8 +61,17 @@ public interface DataLoader {
    * @return the links
    */
   @NotNull
-  Collection<? extends LinkedData<?, ?>> getLinks(@NotNull UserData user);
+  Collection<LinkedData> getLinks(@NotNull UserData user);
 
+  /**
+   * Get the links from an user in a certain type
+   *
+   * @param user the user to get the links from
+   * @param types the types to get the team from
+   * @return the links
+   */
+  @NotNull
+  Collection<LinkedData> getLinks(@NotNull UserData user, @NotNull LinkedDataType... types);
   /**
    * Get the tokens from an user
    *
@@ -70,7 +79,7 @@ public interface DataLoader {
    * @return the tokens gene rated by an user
    */
   @NotNull
-  Collection<? extends AuthToken> getTokens(@NotNull UserData user);
+  Collection<AuthToken> getTokens(@NotNull UserData user);
 
   /**
    * Get some linked data using identification
@@ -80,7 +89,7 @@ public interface DataLoader {
    * @return the linked data if found else null
    */
   @Nullable
-  LinkedData<?, ?> getLinkedData(@NotNull LinkedDataType type, @NotNull ValuesMap identification);
+  LinkedData getLinkedData(@NotNull LinkedDataType type, @NotNull ValuesMap identification);
 
   /**
    * Get a match using its id
@@ -131,7 +140,7 @@ public interface DataLoader {
   @NotNull
   default String nextGroupId() {
     String id = RandomUtils.nextString(6);
-    Group<?, ?> group = this.getGroup(id);
+    Group group = this.getGroup(id);
     while (group != null) {
       id = RandomUtils.nextString(6);
       group = this.getGroup(id);
@@ -146,7 +155,7 @@ public interface DataLoader {
    * @return the group if found else null
    */
   @Nullable
-  Group<?, ?> getGroup(@NotNull String id);
+  Group getGroup(@NotNull String id);
 
   /**
    * Get all the created groups
@@ -154,5 +163,5 @@ public interface DataLoader {
    * @return the created groups
    */
   @NotNull
-  Collection<Group<?, ?>> getGroups();
+  Collection<Group> getGroups();
 }

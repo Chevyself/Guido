@@ -1,7 +1,5 @@
 package com.starfishst.guido.api.data.links;
 
-import com.starfishst.guido.api.data.Permission;
-import com.starfishst.guido.api.data.PermissionStack;
 import com.starfishst.guido.api.data.ValuesMap;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -10,7 +8,7 @@ import org.jetbrains.annotations.Nullable;
  * LinkedInf represents the linked data as an object to get it. This means that this contains the
  * way to identify it and the type
  */
-public interface LinkedInfo<T extends Permission, K extends PermissionStack<T>> {
+public interface LinkedInfo {
 
   /**
    * Get the type of the data
@@ -34,5 +32,5 @@ public interface LinkedInfo<T extends Permission, K extends PermissionStack<T>> 
    * @return the data
    */
   @Nullable
-  LinkedData<T, K> getData();
+  LinkedData getData();
 }
