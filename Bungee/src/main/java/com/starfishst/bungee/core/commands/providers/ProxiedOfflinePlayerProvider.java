@@ -5,8 +5,11 @@ import com.starfishst.bungee.context.CommandContext;
 import com.starfishst.bungee.core.data.ProxiedOfflinePlayer;
 import com.starfishst.bungee.providers.type.BungeeArgumentProvider;
 import com.starfishst.core.exceptions.ArgumentProviderException;
+import com.starfishst.guido.api.data.ValuesMap;
+import com.starfishst.guido.api.data.links.LinkedInfo;
 import java.util.ArrayList;
 import java.util.List;
+import me.googas.commons.UUIDUtils;
 import me.googas.commons.maps.Maps;
 import me.googas.messaging.Request;
 import me.googas.messaging.api.MessengerListenFailException;
@@ -41,15 +44,18 @@ public class ProxiedOfflinePlayerProvider implements BungeeArgumentProvider<Prox
       }
     }
     try {
-      ProxiedOfflinePlayer player =
+      LinkedInfo playerInfo =
           Guido.getClient()
               .request(
                   new Request<>(
-                      ProxiedOfflinePlayer.class,
-                      "get-mc-by-name",
-                      Maps.objects("nickname", s).build()));
-      if (player != null) {
-        return player;
+                      LinkedInfo.class, "get-mc-by-name", Maps.objects("nickname", s).build()));
+      if (playerInfo != null) {
+        ValuesMap identification = playerInfo.getIdentification();
+        String uuid = identification.getValue("uuid", String.class);
+        String nickname = identification.getValue("nickname", String.class);
+        if (nickname != null && uuid != null) {
+          return new ProxiedOfflinePlayer(UUIDUtils.untrim(uuid), nickname);
+        }
       }
     } catch (MessengerListenFailException e) {
       throw new ArgumentProviderException("&cRequest timed out");

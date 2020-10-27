@@ -28,11 +28,12 @@ public class LinkCommand {
     ProxiedOfflinePlayer offline = new ProxiedOfflinePlayer(player.getUniqueId(), player.getName());
     ClientImpl client = Guido.getClient();
     client.request(
-        new Request<>(Boolean.class, "is-linked", offline.getParams()),
+        new Request<>(Boolean.class, "is-linked", Maps.singleton("info", offline.getLinkedInfo())),
         linked -> {
           if (!linked) {
             client.request(
-                new Request<>(String.class, "link-code", offline.getParams()),
+                new Request<>(
+                    String.class, "link-code", Maps.singleton("info", offline.getLinkedInfo())),
                 code -> {
                   if (code != null) {
                     player.sendMessage(

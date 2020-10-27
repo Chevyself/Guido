@@ -46,6 +46,10 @@ public interface BotDataLoader extends DataLoader, GuidoEventHandler {
 
   @Override
   @NotNull
+  BotGuild getGuildDataOrCreate(long id);
+
+  @Override
+  @Nullable
   BotGuild getGuildData(long id);
 
   @Override
@@ -53,7 +57,8 @@ public interface BotDataLoader extends DataLoader, GuidoEventHandler {
   BotRole getRoleData(long id, long guildId);
 
   @Nullable
-  BotLinkedData getLinkedData(@NotNull LinkedDataType type, @NotNull ValuesMap identifications);
+  BotLinkedData getLinkedData(
+      @NotNull LinkedDataType type, @NotNull ValuesMap identifications, boolean equal);
 
   @Override
   @Nullable

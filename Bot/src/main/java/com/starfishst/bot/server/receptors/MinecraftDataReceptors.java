@@ -2,14 +2,14 @@ package com.starfishst.bot.server.receptors;
 
 import com.starfishst.bot.Guido;
 import com.starfishst.bot.api.data.BotLinkedData;
-import com.starfishst.bot.handlers.data.GuidoLinkedData;
-import com.starfishst.bot.handlers.data.GuidoValuesMap;
+import com.starfishst.bot.handlers.data.types.GuidoLinkedData;
+import com.starfishst.bot.handlers.data.types.maps.GuidoValuesMap;
 import com.starfishst.guido.api.data.links.LinkedDataType;
+import com.starfishst.guido.api.data.links.LinkedInfo;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.UUID;
 import me.googas.commons.UUIDUtils;
-import me.googas.commons.maps.Maps;
 import me.googas.messaging.json.ParamName;
 import me.googas.messaging.json.Receptor;
 
@@ -20,16 +20,18 @@ public class MinecraftDataReceptors {
    * Create the minecraft data
    *
    * @param uuid the uuid of the minecraft player
-   * @param nick the uuid of the minecraft player
+   * @param nickname the uuid of the minecraft player
    * @return true if it was created false otherwise
    */
-  @Receptor(method = "create-minecraft")
-  public boolean create(
-      @ParamName(name = "uuid") UUID uuid, @ParamName(name = "nickname") String nick) {
+  @Receptor("create-minecraft")
+  public boolean create(@ParamName("uuid") UUID uuid, @ParamName("nickname") String nickname) {
+    String trimmed = UUIDUtils.trim(uuid);
     BotLinkedData data =
         Guido.getDataLoader()
             .getLinkedData(
-                LinkedDataType.MINECRAFT, new GuidoValuesMap("uuid", UUIDUtils.trim(uuid)));
+                LinkedDataType.MINECRAFT,
+                new GuidoValuesMap("uuid", trimmed).addValue("nickname", nickname),
+                false);
     if (data != null) {
       data.refresh();
       return false;
@@ -38,7 +40,7 @@ public class MinecraftDataReceptors {
           true,
           LinkedDataType.MINECRAFT,
           null,
-          new GuidoValuesMap("uuid", UUIDUtils.trim(uuid)).addValue("nickname", nick),
+          new GuidoValuesMap("uuid", trimmed).addValue("nickname", nickname),
           new GuidoValuesMap(),
           new HashMap<>(),
           new HashSet<>());
@@ -50,41 +52,36 @@ public class MinecraftDataReceptors {
    * Updates the nickname of a player
    *
    * @param uuid the uuid of the minecraft player
-   * @param name the new name of the player
-   * @return true if the name was updated false otherwise
+   * @param nickname the new nickname of the player
+   * @return true if the nickname was updated false otherwise
    */
-  @Receptor(method = "update-nickname")
+  @Receptor("update-minecraft-nickname")
   public boolean updateNickname(
-      @ParamName(name = "uuid") UUID uuid, @ParamName(name = "new-name") String name) {
+      @ParamName("uuid") UUID uuid, @ParamName("nickname") String nickname) {
     BotLinkedData data =
         Guido.getDataLoader()
-            .getLinkedData(LinkedDataType.MINECRAFT, new GuidoValuesMap("uuid", uuid));
+            .getLinkedData(
+                LinkedDataType.MINECRAFT, new GuidoValuesMap("uuid", UUIDUtils.trim(uuid)), false);
     if (data != null) {
-      data.refresh().getIdentification().addValue("nickname", name);
+      data.refresh().getIdentification().addValue("nickname", nickname);
       return true;
     }
     return false;
   }
 
   /**
-   * Get the uuid matching a nick
+   * Get the link info from the matching a nick
    *
    * @param nick the nick to match
    * @return the uuid if matched else null
    */
-  @Receptor(method = "get-mc-by-name")
-  public HashMap<String, Object> getUuid(@ParamName(name = "nickname") String nick) {
+  @Receptor("get-mc-by-name")
+  public LinkedInfo getInfo(@ParamName("nickname") String nick) {
     BotLinkedData data =
         Guido.getDataLoader()
-            .getLinkedData(LinkedDataType.MINECRAFT, new GuidoValuesMap("nickname", nick));
+            .getLinkedData(LinkedDataType.MINECRAFT, new GuidoValuesMap("nickname", nick), false);
     if (data != null) {
-      data.refresh();
-      String trimmed = data.getIdentification().getValue("uuid", String.class);
-      String nickname = data.getIdentification().getValue("nickname", String.class);
-      if (trimmed != null && nickname != null) {
-        return Maps.objects("uuid", UUIDUtils.untrim(trimmed)).append("nickname", nickname).build();
-      }
-      return null;
+      return data.refresh().getInfo();
     }
     return null;
   }

@@ -14,9 +14,7 @@ public class TestListener implements GuidoListener {
    * @param event the guido event
    */
   @EventHandler
-  public void onGuidoEvent(GuidoEvent event) {
-    System.out.println("Called " + event);
-  }
+  public void onGuidoEvent(GuidoEvent event) {}
 
   @Override
   public @NotNull String getName() {

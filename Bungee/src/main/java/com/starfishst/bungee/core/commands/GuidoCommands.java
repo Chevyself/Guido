@@ -12,6 +12,7 @@ public class GuidoCommands {
   /**
    * This command reloads everything in guido bungee
    *
+   * @param context the context of the command
    * @return a result saying that everything was reloaded
    */
   @Parent

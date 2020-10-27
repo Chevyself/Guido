@@ -2,7 +2,7 @@ package com.starfishst.bot.commands;
 
 import com.starfishst.bot.Guido;
 import com.starfishst.bot.api.data.BotGuild;
-import com.starfishst.bot.handlers.matches.MatchMakingHandler;
+import com.starfishst.bot.handlers.matches.QueueHandler;
 import com.starfishst.core.annotations.Required;
 import com.starfishst.guido.api.data.lang.LocaleFile;
 import com.starfishst.guido.api.data.matches.Ladder;
@@ -15,6 +15,15 @@ import net.dv8tion.jda.api.entities.Member;
 /** Commands related to the queue */
 public class QueueCommands {
 
+  /**
+   * Makes a player join a queue
+   *
+   * @param locale the locale of the command sender
+   * @param guild the guild in which the player will join the queue
+   * @param member the player as a discord member
+   * @param ladder the ladder that the member wants to play
+   * @return whether the player joined the queue
+   */
   @Command(
       aliases = {"queue", "play", "jugar"},
       description = "queue.desc")
@@ -27,7 +36,10 @@ public class QueueCommands {
     if (state == null || state.getChannel() == null) {
       return new Result(ResultType.USAGE, locale.get("queue.join-voice"));
     } else {
-      if (Guido.getHandler(MatchMakingHandler.class).joinQueue(guild, member, ladder)) {
+      QueueHandler queues = Guido.getHandler(QueueHandler.class);
+      if (queues.isWaiting(guild, member, ladder)) {
+        return new Result(ResultType.USAGE, locale.get("queue.already"));
+      } else if (queues.joinQueue(guild, member, ladder)) {
         return new Result(locale.get("queue.success"));
       } else {
         return new Result(ResultType.ERROR, locale.get("queue.failed"));

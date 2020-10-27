@@ -1,5 +1,6 @@
 package com.starfishst.bungee.core;
 
+import com.starfishst.bungee.BungeeClient;
 import com.starfishst.bungee.CommandManager;
 import com.starfishst.bungee.api.Guido;
 import com.starfishst.bungee.api.configuration.BungeeConfiguration;
@@ -51,7 +52,7 @@ public class GuidoPlugin extends Plugin implements Implementation {
       Lots.list(this.languageHandler, new JoinListener(), new MotdListener());
 
   /** The client connected with the bot */
-  @NotNull private final ClientImpl client = new ClientImpl("0");
+  @NotNull private final BungeeClient client = new BungeeClient("0");
 
   /** Loads the configuration */
   public void loadConfiguration() {

@@ -8,9 +8,9 @@ import com.starfishst.bot.api.events.match.MatchStatusUpdatedEvent;
 import com.starfishst.bot.handlers.GuidoEventHandler;
 import com.starfishst.guido.api.data.links.LinkedData;
 import com.starfishst.guido.api.data.links.LinkedDataType;
-import com.starfishst.guido.api.data.links.LinkedInfo;
 import com.starfishst.guido.api.data.matches.Ladder;
 import com.starfishst.guido.api.data.matches.Team;
+import com.starfishst.guido.api.data.matches.TeamMember;
 import java.util.ArrayList;
 import java.util.List;
 import me.googas.commons.events.ListenPriority;
@@ -33,21 +33,21 @@ public class DecorationsHandler implements GuidoEventHandler {
     Long guildId = match.getDetails().getValue("guild", Long.class);
     String ladderName = match.getDetails().getValue("ladder", String.class);
     if (guildId != null && ladderName != null) {
-      BotGuild guildData = Guido.getDataLoader().getGuildData(guildId);
+      BotGuild guildData = Guido.getDataLoader().getGuildDataOrCreate(guildId);
       Ladder ladder = guildData.getLadder(ladderName);
       if (ladder != null) {
         for (Team team : event.getMatch().getTeams()) {
-          for (LinkedInfo info : team.getMembers().keySet()) {
-            LinkedData data = info.getData();
+          for (TeamMember teamMember : team.getMembers()) {
+            LinkedData data = teamMember.getLinkInfo().getLink();
             if (data != null && data.getType() == LinkedDataType.DISCORD_GUILD) {
               double elo = data.getElo(ladder);
               double global = data.getGlobalElo(guildData);
               List<Role> toAdd =
-                  new ArrayList<>(guildData.getRolesDiscord(ladder, (int) elo, false));
-              List<Role> toRemove =
                   new ArrayList<>(guildData.getRolesDiscord(ladder, (int) elo, true));
-              toAdd.addAll(guildData.getGlobalRolesDiscord((int) global, false));
-              toRemove.addAll(guildData.getGlobalRolesDiscord((int) global, true));
+              List<Role> toRemove =
+                  new ArrayList<>(guildData.getRolesDiscord(ladder, (int) elo, false));
+              toAdd.addAll(guildData.getGlobalRolesDiscord((int) global, true));
+              toRemove.addAll(guildData.getGlobalRolesDiscord((int) global, false));
               if (data instanceof BotLinkedData) {
                 Member member = ((BotLinkedData) data).getDiscordMember();
                 if (member != null) {

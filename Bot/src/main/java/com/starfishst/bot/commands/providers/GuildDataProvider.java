@@ -25,7 +25,7 @@ public class GuildDataProvider implements JdaExtraArgumentProvider<GuildData> {
   public GuildData getObject(@NotNull CommandContext context) throws ArgumentProviderException {
     if (context instanceof GuildCommandContext) {
       return Guido.getDataLoader()
-          .getGuildData(((GuildCommandContext) context).getGuild().getIdLong());
+          .getGuildDataOrCreate(((GuildCommandContext) context).getGuild().getIdLong());
     }
     throw new ArgumentProviderException(context.getMessagesProvider().guildOnly(context));
   }

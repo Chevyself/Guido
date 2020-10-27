@@ -4,20 +4,22 @@ import com.starfishst.bot.Guido;
 import com.starfishst.bot.api.data.BotGuild;
 import com.starfishst.bot.api.data.BotLinkedData;
 import com.starfishst.bot.api.data.BotMatch;
-import com.starfishst.bot.handlers.data.GuidoLinkedValuesMap;
-import com.starfishst.bot.handlers.data.GuidoMatch;
-import com.starfishst.bot.handlers.data.GuidoTeam;
+import com.starfishst.bot.handlers.data.types.GuidoMatch;
+import com.starfishst.bot.handlers.data.types.GuidoTeam;
+import com.starfishst.bot.handlers.data.types.GuidoTeamMember;
+import com.starfishst.bot.handlers.data.types.maps.GuidoLinkedValuesMap;
 import com.starfishst.core.annotations.Required;
 import com.starfishst.guido.api.data.lang.LocaleFile;
-import com.starfishst.guido.api.data.links.LinkedInfo;
 import com.starfishst.guido.api.data.matches.Ladder;
+import com.starfishst.guido.api.data.matches.TeamMember;
 import com.starfishst.guido.api.data.matches.TeamRole;
 import com.starfishst.jda.annotations.Command;
 import com.starfishst.jda.annotations.Perm;
 import com.starfishst.jda.context.CommandContext;
 import com.starfishst.jda.result.Result;
 import com.starfishst.jda.result.ResultType;
-import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Set;
 import me.googas.commons.Lots;
 import me.googas.commons.maps.Maps;
 import net.dv8tion.jda.api.entities.Member;
@@ -53,24 +55,24 @@ public class MatchCommands {
               Maps.builder("given", String.valueOf(message.getMentionedMembers().size()))
                   .append("expected", String.valueOf(ladder.baseValue() * 2))));
     }
-    HashMap<LinkedInfo, TeamRole> members1 = new HashMap<>();
-    HashMap<LinkedInfo, TeamRole> members2 = new HashMap<>();
+    Set<TeamMember> members1 = new HashSet<>();
+    Set<TeamMember> members2 = new HashSet<>();
     for (int i = 0; i < message.getMentionedMembers().size(); i++) {
       Member mentioned = message.getMentionedMembers().get(i);
       BotLinkedData member =
           Guido.getDataLoader()
               .getMemberData(mentioned.getIdLong(), mentioned.getGuild().getIdLong());
       if (i > ladder.playersPerTeam() - 1) {
-        members2.put(member.getInfo(), TeamRole.NORMAL);
+        members2.add(new GuidoTeamMember(member.getInfo(), TeamRole.NORMAL));
       } else {
-        members1.put(member.getInfo(), TeamRole.NORMAL);
+        members1.add(new GuidoTeamMember(member.getInfo(), TeamRole.NORMAL));
       }
     }
     GuidoTeam team1 = new GuidoTeam(members1, "Team 1");
     GuidoTeam team2 = new GuidoTeam(members2, "Team 2");
     GuidoMatch match =
         new GuidoMatch(
-            Guido.getDataLoader().nextMatchId(),
+            guild.getId(),
             Lots.set(team1, team2),
             new GuidoLinkedValuesMap("manual", true)
                 .addValue("ladder", ladder.getName())

@@ -25,7 +25,7 @@ public class ReceptorsImpl {
    *
    * @return true if successfully disconnected
    */
-  @Receptor(method = "disconnected")
+  @Receptor("disconnected")
   public boolean disconnected() {
     JsonClient connection = this.client.getConnection();
     if (connection != null) {

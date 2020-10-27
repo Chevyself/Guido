@@ -6,9 +6,10 @@ import com.starfishst.bot.api.data.BotMatch;
 import com.starfishst.bot.api.events.match.MatchStatusUpdatedEvent;
 import com.starfishst.bot.handlers.GuidoEventHandler;
 import com.starfishst.guido.api.data.links.LinkedData;
-import com.starfishst.guido.api.data.links.LinkedInfo;
 import com.starfishst.guido.api.data.matches.Ladder;
+import com.starfishst.guido.api.data.matches.Match;
 import com.starfishst.guido.api.data.matches.Team;
+import com.starfishst.guido.api.data.matches.TeamMember;
 import me.googas.commons.events.ListenPriority;
 import me.googas.commons.events.Listener;
 import org.jetbrains.annotations.NotNull;
@@ -28,53 +29,104 @@ public class MatchCalculator implements GuidoEventHandler {
   public void onMatchStatusUpdatedEvent(@NotNull MatchStatusUpdatedEvent event) {
     BotMatch match = event.getMatch();
     Team winners = match.getWinners();
-    Long guildId = match.getDetails().getValue("guild", Long.class);
     String ladderName = match.getDetails().getValue("ladder", String.class);
-    if (guildId != null && ladderName != null) {
-      BotGuild guildData = Guido.getDataLoader().getGuildData(guildId);
+    long guildId = match.getGuildId();
+    if (ladderName != null && guildId != -1) {
+      BotGuild guildData = Guido.getDataLoader().getGuildDataOrCreate(guildId);
       Ladder ladder = guildData.getLadder(ladderName);
       if (ladder != null) {
         if (winners != null) {
           float winnersElo = winners.getElo(ladder);
-          float losersElo = 0;
-          for (Team team : match.getTeams()) {
-            if (team != winners) {
-              losersElo += team.getElo(ladder);
-            }
-          }
-          double winnersExpected = 1 / (1 + Math.pow(10, (losersElo - winnersElo) / 400));
-          double losersExpected = 1 / (1 + Math.pow(10, (winnersElo - losersElo) / 400));
+          float losersElo = this.getLosersElo(match, ladder);
           double newWinners =
-              winnersElo
-                  + 32
-                      * (ladder.getOptions().getValueOr("win-multiplier", Integer.class, 1)
-                          - winnersExpected);
+              this.newElo(
+                  winnersElo,
+                  this.calculateExpected(winnersElo, losersElo),
+                  ladder.getOptions().getValueOr("win-multiplier", Integer.class, 1));
           double newLosers =
-              losersElo
-                  + 32
-                      * (ladder.getOptions().getValueOr("lose-multiplier", Integer.class, 0)
-                          - losersExpected);
+              this.newElo(
+                  losersElo,
+                  this.calculateExpected(losersElo, winnersElo),
+                  ladder.getOptions().getValueOr("lose-multiplier", Integer.class, 0));
           double winnersDifference = newWinners - winnersElo;
           double losersDifference = losersElo - newLosers;
           match.getDetails().addValue("winners-difference", winnersDifference);
           match.getDetails().addValue("losers-difference", losersDifference);
+          this.setElo(match, ladder, (float) winnersDifference, (float) losersDifference);
+        }
+      }
+    }
+  }
 
-          // Set the stats
-          for (Team team : event.getMatch().getTeams()) {
-            for (LinkedInfo member : team.getMembers().keySet()) {
-              LinkedData data = member.getData();
-              if (data != null) {
-                if (team == winners) {
-                  data.increaseElo(ladder, winnersDifference);
-                } else {
-                  data.decreaseElo(ladder, losersDifference);
-                }
-              }
-            }
+  /**
+   * Sets the elo for the match participants
+   *
+   * @param match the match for the participants to set the elo
+   * @param ladder the ladder which was played in the match
+   * @param winnersDifference the amount of elo that winners got
+   * @param losersDifference the amount of elo that the other teams lost
+   */
+  public void setElo(
+      @NotNull Match match, Ladder ladder, float winnersDifference, float losersDifference) {
+    Team winners = match.getWinners();
+    String ladderName = ladder.getName();
+    for (Team team : match.getTeams()) {
+      for (TeamMember member : team.getMembers()) {
+        LinkedData data = member.getLinkInfo().getLink();
+        if (data != null) {
+          data.refresh();
+          if (team == winners) {
+            data.increaseElo(ladder, winnersDifference);
+            data.increaseStat(ladderName + "-wins", 1);
+          } else {
+            data.decreaseElo(ladder, losersDifference);
+            data.increaseStat(ladderName + "-loses", 1);
           }
         }
       }
     }
+  }
+
+  /**
+   * Calculate new elo
+   *
+   * @param oldElo the old elo
+   * @param expected the chances to win
+   * @param multiplier the multiplier it can depend on whether it is a win or lose. It is used to
+   *     give a different amount of elo
+   * @return the new elo
+   */
+  public double newElo(float oldElo, double expected, int multiplier) {
+    return oldElo + 32 * (multiplier - expected);
+  }
+
+  /**
+   * Calculate the elo for losers
+   *
+   * @param match the match that finished
+   * @param ladder the ladder which was played in the match
+   * @return the elo of the losers
+   */
+  public float getLosersElo(BotMatch match, Ladder ladder) {
+    float losersElo = 0;
+    Team winners = match.getWinners();
+    for (Team team : match.getTeams()) {
+      if (team != winners) {
+        losersElo += team.getElo(ladder);
+      }
+    }
+    return losersElo;
+  }
+
+  /**
+   * Calculate the expected chances of winning for a team
+   *
+   * @param elo the elo of the entity which is being calculated the chances of winning
+   * @param thatElo the other entity elo
+   * @return the expected chances of winning
+   */
+  public double calculateExpected(float elo, float thatElo) {
+    return 1 / (1 + Math.pow(10, (elo - thatElo) / 400));
   }
 
   @Override

@@ -72,4 +72,8 @@ public interface BotMatch extends Match, ICatchable {
     }
     return new EmbedQuery(builder);
   }
+
+  @Override
+  @NotNull
+  BotMatch refresh();
 }

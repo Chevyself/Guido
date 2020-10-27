@@ -13,12 +13,9 @@ import com.starfishst.core.annotations.settings.Settings;
 import com.starfishst.guido.api.data.Permission;
 import com.starfishst.guido.api.data.PermissionStack;
 import com.starfishst.guido.api.data.implementations.data.PermissionImpl;
-import com.starfishst.guido.api.data.implementations.data.PermissionStackImpl;
-import com.starfishst.guido.api.data.links.LinkedDataType;
 import java.util.ArrayList;
 import me.googas.commons.Pagination;
 import me.googas.commons.Strings;
-import me.googas.commons.UUIDUtils;
 import me.googas.commons.maps.Maps;
 import me.googas.messaging.Request;
 import net.md_5.bungee.api.CommandSender;
@@ -57,12 +54,7 @@ public class PermissionCommands {
             new Request<>(
                 PermissionStack.class,
                 "permission",
-                Maps.objects("type", LinkedDataType.MINECRAFT)
-                    .append("context", context)
-                    .append(
-                        "identification",
-                        Maps.singleton("uuid", UUIDUtils.trim(player.getUniqueId())))
-                    .build()),
+                Maps.objects("info", player.getLinkedInfo()).append("context", context).build()),
             stack -> {
               if (stack != null && !stack.getPermissions().isEmpty()) {
                 Pagination<Permission> pagination =
@@ -137,12 +129,9 @@ public class PermissionCommands {
             new Request<>(
                 Boolean.class,
                 "add-permission",
-                Maps.objects("type", LinkedDataType.MINECRAFT)
+                Maps.objects("info", player.getLinkedInfo())
                     .append("context", context)
                     .append("permission", new PermissionImpl(node, enabled).getNodeAppended())
-                    .append(
-                        "identification",
-                        Maps.singleton("uuid", UUIDUtils.trim(player.getUniqueId())))
                     .build()),
             bol -> {
               TextComponent message;
@@ -195,12 +184,9 @@ public class PermissionCommands {
             new Request<>(
                 Boolean.class,
                 "remove-permission",
-                Maps.objects("type", LinkedDataType.MINECRAFT)
+                Maps.objects("info", player.getLinkedInfo())
                     .append("context", context)
-                    .append("permission", new PermissionImpl(node, false).getNodeAppended())
-                    .append(
-                        "identification",
-                        Maps.singleton("uuid", UUIDUtils.trim(player.getUniqueId())))
+                    .append("permission", new PermissionImpl(node, true).getNodeAppended())
                     .build()),
             bol -> {
               TextComponent message;

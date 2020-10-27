@@ -43,6 +43,12 @@ public class CommandExecutionListener implements GuidoListener {
     }
   }
 
+  /**
+   * Check whether the name of the command is banned
+   *
+   * @param commandName the name of the command to check if it is banned
+   * @return if the name of the command is contained inside {@link #getBanned()} it will return true
+   */
   public boolean isBanned(@NotNull String commandName) {
     for (String bannedName : this.getBanned()) {
       if (bannedName.equalsIgnoreCase(commandName)) {
@@ -52,6 +58,13 @@ public class CommandExecutionListener implements GuidoListener {
     return false;
   }
 
+  /**
+   * Get the list of banned commands. The banned commands are the ones that this listener will
+   * ignore from printing
+   *
+   * @return the list of banned commands
+   */
+  @NotNull
   public List<String> getBanned() {
     return this.getSettings().getListSetting("banned", String.class);
   }

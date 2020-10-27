@@ -1,7 +1,7 @@
 package com.starfishst.bot.commands;
 
 import com.starfishst.bot.Guido;
-import com.starfishst.bot.handlers.data.GuidoAuthToken;
+import com.starfishst.bot.handlers.data.types.GuidoAuthToken;
 import com.starfishst.core.annotations.Parent;
 import com.starfishst.core.annotations.Required;
 import com.starfishst.guido.api.data.UserData;

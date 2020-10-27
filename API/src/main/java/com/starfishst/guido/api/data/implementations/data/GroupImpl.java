@@ -58,6 +58,16 @@ public class GroupImpl extends Catchable implements Group {
   }
 
   @Override
+  public boolean addPermission(@NotNull String context, @NotNull String node, boolean enabled) {
+    return false;
+  }
+
+  @Override
+  public boolean removePermission(@NotNull String context, @NotNull String node) {
+    return false;
+  }
+
+  @Override
   public @NotNull String getId() {
     return this.id;
   }

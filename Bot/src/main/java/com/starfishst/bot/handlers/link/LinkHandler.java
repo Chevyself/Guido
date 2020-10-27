@@ -3,7 +3,7 @@ package com.starfishst.bot.handlers.link;
 import com.starfishst.bot.Guido;
 import com.starfishst.bot.api.data.BotLinkedData;
 import com.starfishst.bot.handlers.GuidoHandler;
-import com.starfishst.bot.handlers.data.GuidoLinkedInfo;
+import com.starfishst.guido.api.data.links.LinkedInfo;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.TimerTask;
@@ -40,11 +40,9 @@ public class LinkHandler implements GuidoHandler {
    * @return the created code if the data is found and it is linked
    */
   @Nullable
-  public String createCode(@NotNull GuidoLinkedInfo info) {
+  public String createCode(@NotNull LinkedInfo info) {
     BotLinkedData data =
-        Guido.getDataLoader().getLinkedData(info.getType(), info.getIdentification());
-    // Check before if data is linked else it can be that the data is null which is an internal
-    // error
+        Guido.getDataLoader().getLinkedData(info.getType(), info.getIdentification(), false);
     if (data != null && !data.isLinked()) {
       String code = this.nextCode();
       this.queries.add(
@@ -91,7 +89,7 @@ public class LinkHandler implements GuidoHandler {
    * @return the linked info if there is one for the given code else null
    */
   @Nullable
-  public GuidoLinkedInfo getInfo(String code) {
+  public LinkedInfo getInfo(String code) {
     for (LinkQuery query : this.queries) {
       if (query.getCode().equals(code)) {
         return query.getInfo();
@@ -113,7 +111,7 @@ public class LinkHandler implements GuidoHandler {
     @NotNull private final String code;
 
     /** The information that will get the link data from the database */
-    @NotNull private final GuidoLinkedInfo info;
+    @NotNull private final LinkedInfo info;
 
     /** When this link will expire */
     private final long toRemove;
@@ -127,10 +125,7 @@ public class LinkHandler implements GuidoHandler {
      * @param toRemove how long until it gets unloaded
      */
     LinkQuery(
-        @NotNull String code,
-        @NotNull GuidoLinkedInfo info,
-        long timeCreated,
-        @NotNull Time toRemove) {
+        @NotNull String code, @NotNull LinkedInfo info, long timeCreated, @NotNull Time toRemove) {
       this.code = code;
       this.info = info;
       this.toRemove = timeCreated + toRemove.millis();
@@ -152,7 +147,7 @@ public class LinkHandler implements GuidoHandler {
      * @return the info
      */
     @NotNull
-    public GuidoLinkedInfo getInfo() {
+    public LinkedInfo getInfo() {
       return this.info;
     }
 

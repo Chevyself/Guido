@@ -11,6 +11,7 @@ import com.starfishst.core.annotations.settings.Setting;
 import com.starfishst.core.annotations.settings.Settings;
 import java.util.Map;
 import me.googas.commons.Strings;
+import me.googas.commons.maps.Maps;
 import me.googas.messaging.Request;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.chat.TextComponent;
@@ -28,7 +29,7 @@ public class StatsCommand {
    */
   @Settings(settings = @Setting(key = "async", value = "true"))
   @Command(
-      aliases = {"globalStats"},
+      aliases = {"globalStats", "gStats"},
       permission = "guido.stats")
   public Result stats(
       CommandSender sender,
@@ -48,7 +49,7 @@ public class StatsCommand {
     }
     Guido.getClient()
         .request(
-            new Request<>(Map.class, "stats", toSee.getParams()),
+            new Request<>(Map.class, "stats", Maps.singleton("info", toSee.getLinkedInfo())),
             map -> {
               StringBuilder builder = Strings.getBuilder();
               if (map != null) {
@@ -93,7 +94,8 @@ public class StatsCommand {
           ProxiedOfflinePlayer player) {
     Guido.getClient()
         .request(
-            new Request<>(Boolean.class, "reset-stats", player.getParams()),
+            new Request<>(
+                Boolean.class, "reset-stats", Maps.singleton("info", player.getLinkedInfo())),
             bol -> {
               String message;
               if (bol) {

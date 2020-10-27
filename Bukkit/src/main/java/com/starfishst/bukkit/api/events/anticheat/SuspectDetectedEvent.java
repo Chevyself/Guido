@@ -35,7 +35,7 @@ public class SuspectDetectedEvent extends GuidoEvent {
       @NotNull Player player,
       @NotNull AntiCheatDetector detector,
       @NotNull String reason,
-      SuspectLevel suspectLevel) {
+      @NotNull SuspectLevel suspectLevel) {
     this.suspectLevel = suspectLevel;
     this.sentAt = System.currentTimeMillis();
     this.player = player;

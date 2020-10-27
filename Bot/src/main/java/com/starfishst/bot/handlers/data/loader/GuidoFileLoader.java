@@ -66,7 +66,12 @@ public class GuidoFileLoader implements BotDataLoader {
    * @return the data of the guild or null if not found
    */
   @Override
-  public @NotNull BotGuild getGuildData(long id) {
+  public @NotNull BotGuild getGuildDataOrCreate(long id) {
+    throw new UnsupportedOperationException("Guild data cannot be find using file loader");
+  }
+
+  @Override
+  public @Nullable BotGuild getGuildData(long id) {
     throw new UnsupportedOperationException("Guild data cannot be find using file loader");
   }
 
@@ -98,11 +103,12 @@ public class GuidoFileLoader implements BotDataLoader {
    *
    * @param type the type of data to find
    * @param identifications the way to identify the data
+   * @param equal
    * @return the linked data if found else null
    */
   @Override
   public @Nullable BotLinkedData getLinkedData(
-      @NotNull LinkedDataType type, @NotNull ValuesMap identifications) {
+      @NotNull LinkedDataType type, @NotNull ValuesMap identifications, boolean equal) {
     throw new UnsupportedOperationException("Linked data cannot be find using file loader");
   }
 

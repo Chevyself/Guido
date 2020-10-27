@@ -3,13 +3,13 @@ package com.starfishst.bot.commands;
 import com.starfishst.bot.Guido;
 import com.starfishst.bot.api.data.BotLinkedData;
 import com.starfishst.bot.api.data.loader.BotDataLoader;
-import com.starfishst.bot.handlers.data.GuidoLinkedInfo;
 import com.starfishst.bot.handlers.link.LinkHandler;
 import com.starfishst.core.annotations.Optional;
 import com.starfishst.core.annotations.Required;
 import com.starfishst.guido.api.data.UserData;
 import com.starfishst.guido.api.data.lang.LocaleFile;
 import com.starfishst.guido.api.data.links.LinkedData;
+import com.starfishst.guido.api.data.links.LinkedInfo;
 import com.starfishst.jda.annotations.Command;
 import com.starfishst.jda.result.Result;
 import com.starfishst.jda.result.ResultType;
@@ -66,7 +66,7 @@ public class UserCommands {
       LocaleFile locale,
       UserData user,
       @Required(name = "link.code", description = "link.code.desc") String code) {
-    GuidoLinkedInfo info = Guido.getHandler(LinkHandler.class).getInfo(code);
+    LinkedInfo info = Guido.getHandler(LinkHandler.class).getInfo(code);
     if (info != null) {
       Collection<LinkedData> links = Guido.getDataLoader().getLinks(user, info.getType());
       if (links.size() >= 1) {
@@ -76,7 +76,7 @@ public class UserCommands {
                 "link.only-one", Maps.singleton("type", info.getType().toString().toLowerCase())));
       } else {
         BotLinkedData data =
-            Guido.getDataLoader().getLinkedData(info.getType(), info.getIdentification());
+            Guido.getDataLoader().getLinkedData(info.getType(), info.getIdentification(), true);
         if (data != null) {
           data.setLinkedUser(user);
           return new Result(

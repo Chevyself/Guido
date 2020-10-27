@@ -65,3 +65,6 @@ listener-settings:
   reach-detector:
     ## Whether this detector should be enabled
     enabled: true
+  ## Whether to enable match making
+  match-making:
+    enabled: false

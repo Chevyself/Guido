@@ -24,6 +24,15 @@ public interface DataLoader {
    * @return the data of the guild or null if not found
    */
   @NotNull
+  GuildData getGuildDataOrCreate(long id);
+
+  /**
+   * Load the data of a guild
+   *
+   * @param id the id of the guild
+   * @return the data of the guild or null if not found
+   */
+  @Nullable
   GuildData getGuildData(long id);
 
   /**
@@ -86,10 +95,12 @@ public interface DataLoader {
    *
    * @param type the type of data to get
    * @param identification the identification to get the linked data from
+   * @param equal whether to equal or match the identification
    * @return the linked data if found else null
    */
   @Nullable
-  LinkedData getLinkedData(@NotNull LinkedDataType type, @NotNull ValuesMap identification);
+  LinkedData getLinkedData(
+      @NotNull LinkedDataType type, @NotNull ValuesMap identification, boolean equal);
 
   /**
    * Get a match using its id

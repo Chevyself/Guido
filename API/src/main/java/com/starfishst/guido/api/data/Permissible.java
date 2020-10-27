@@ -54,4 +54,23 @@ public interface Permissible {
    */
   @NotNull
   Collection<PermissionStack> getPermissions();
+
+  /**
+   * Adds a permission for this permissible
+   *
+   * @param context the context of the permission
+   * @param node the node of the permission
+   * @param enabled whether the permission is enabled
+   * @return whether the permission was added
+   */
+  boolean addPermission(@NotNull String context, @NotNull String node, boolean enabled);
+
+  /**
+   * Removes the permission from this permissible
+   *
+   * @param context the context of the permission
+   * @param node the node of the permission
+   * @return whether the permission was removed. True if it was removed false otherwise
+   */
+  boolean removePermission(@NotNull String context, @NotNull String node);
 }

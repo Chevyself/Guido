@@ -5,7 +5,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 import com.google.gson.JsonSerializationContext;
-import com.starfishst.bot.handlers.data.GuidoValuesMap;
+import com.starfishst.bot.handlers.data.types.maps.GuidoValuesMap;
 import com.starfishst.guido.api.data.ValuesMap;
 import java.lang.reflect.Type;
 import java.util.ArrayList;

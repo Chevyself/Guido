@@ -5,7 +5,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonParseException;
 import com.google.gson.JsonPrimitive;
 import com.google.gson.JsonSerializationContext;
-import com.starfishst.bot.handlers.data.GuidoPermission;
+import com.starfishst.bot.handlers.data.types.GuidoPermission;
 import com.starfishst.guido.api.data.Permission;
 import java.lang.reflect.Type;
 import me.googas.commons.gson.adapters.JsonAdapter;

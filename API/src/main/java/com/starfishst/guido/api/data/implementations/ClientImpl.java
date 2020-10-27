@@ -5,11 +5,22 @@ import com.starfishst.guido.api.data.Group;
 import com.starfishst.guido.api.data.Permission;
 import com.starfishst.guido.api.data.PermissionStack;
 import com.starfishst.guido.api.data.ValuesMap;
+import com.starfishst.guido.api.data.implementations.data.ValuesMapImpl;
 import com.starfishst.guido.api.data.implementations.data.adapters.GroupDeserializer;
+import com.starfishst.guido.api.data.implementations.data.adapters.LadderDeserializer;
+import com.starfishst.guido.api.data.implementations.data.adapters.LinkedInfoDeserializer;
+import com.starfishst.guido.api.data.implementations.data.adapters.MatchDeserializer;
 import com.starfishst.guido.api.data.implementations.data.adapters.PermissionAdapter;
 import com.starfishst.guido.api.data.implementations.data.adapters.PermissionStackDeserializer;
+import com.starfishst.guido.api.data.implementations.data.adapters.TeamDeserializer;
+import com.starfishst.guido.api.data.implementations.data.adapters.TeamMemberDeserializer;
 import com.starfishst.guido.api.data.implementations.data.adapters.ValuesMapAdapter;
 import com.starfishst.guido.api.data.implementations.receptors.ReceptorsImpl;
+import com.starfishst.guido.api.data.links.LinkedInfo;
+import com.starfishst.guido.api.data.matches.Ladder;
+import com.starfishst.guido.api.data.matches.Match;
+import com.starfishst.guido.api.data.matches.Team;
+import com.starfishst.guido.api.data.matches.TeamMember;
 import java.io.IOException;
 import java.net.Socket;
 import java.util.Arrays;
@@ -32,7 +43,7 @@ import org.jetbrains.annotations.Nullable;
 public class ClientImpl {
 
   /** The ip of the bot */
-  @NotNull private static final String IP = "104.243.43.176";
+  @NotNull private static final String IP = "104.243.43.175";
 
   /** The ip of the bot in case of debug */
   @Deprecated @NotNull private static final String DEBUG_IP = "localhost";
@@ -72,14 +83,20 @@ public class ClientImpl {
             this.handler,
             new GsonBuilder()
                 .registerTypeAdapter(Group.class, new GroupDeserializer())
+                .registerTypeAdapter(Ladder.class, new LadderDeserializer())
+                .registerTypeAdapter(LinkedInfo.class, new LinkedInfoDeserializer())
+                .registerTypeAdapter(Match.class, new MatchDeserializer())
                 .registerTypeAdapter(Permission.class, new PermissionAdapter())
                 .registerTypeAdapter(PermissionStack.class, new PermissionStackDeserializer())
+                .registerTypeAdapter(Team.class, new TeamDeserializer())
+                .registerTypeAdapter(TeamMember.class, new TeamMemberDeserializer())
                 .registerTypeAdapter(ValuesMap.class, new ValuesMapAdapter())
+                .registerTypeAdapter(ValuesMapImpl.class, new ValuesMapAdapter())
                 .registerTypeAdapter(Message.class, new MessageDeserializer())
                 .setPrettyPrinting()
                 .create(),
             5000);
-    this.client.addReceptors(this.receptors);
+    this.client.addReceptors(this.receptors.toArray());
     this.client.start();
     this.client.sendRequest(
         new Request<>(Boolean.class, "auth", Maps.objects("token", this.token).build()),

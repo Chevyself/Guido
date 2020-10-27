@@ -1,14 +1,25 @@
 package com.starfishst.bot.server;
 
 import com.google.gson.GsonBuilder;
+import com.starfishst.bot.adapters.LinkedInfoAdapter;
+import com.starfishst.bot.adapters.LinkedValuesMapAdapter;
+import com.starfishst.bot.adapters.PermissionAdapter;
+import com.starfishst.bot.adapters.ValuesMapAdapter;
 import com.starfishst.bot.api.events.server.GuidoServerConnectionEvent;
 import com.starfishst.bot.api.events.server.GuidoServerDisconnectionEvent;
-import com.starfishst.bot.server.providers.DataParameterProviders;
+import com.starfishst.bot.handlers.data.types.maps.GuidoLinkedValuesMap;
+import com.starfishst.bot.handlers.data.types.maps.GuidoValuesMap;
 import com.starfishst.bot.server.receptors.GroupReceptors;
+import com.starfishst.bot.server.receptors.LadderReceptors;
 import com.starfishst.bot.server.receptors.LinkReceptors;
 import com.starfishst.bot.server.receptors.LinkedDataReceptors;
+import com.starfishst.bot.server.receptors.MatchReceptors;
 import com.starfishst.bot.server.receptors.MinecraftDataReceptors;
+import com.starfishst.bot.server.receptors.QueueReceptors;
 import com.starfishst.bot.util.console.Console;
+import com.starfishst.guido.api.data.Permission;
+import com.starfishst.guido.api.data.ValuesMap;
+import com.starfishst.guido.api.data.links.LinkedInfo;
 import java.io.IOException;
 import java.util.HashSet;
 import java.util.Set;
@@ -38,17 +49,26 @@ public class GuidoServer extends JsonSocketServer implements IGuidoServer {
         throwable -> Console.exception(throwable, "An exception was cached in the socket server"),
         null,
         new GsonBuilder()
+            // Required by Commons-Communication
             .registerTypeAdapter(Message.class, new MessageDeserializer())
+            // For custom receptors
+            .registerTypeAdapter(LinkedInfo.class, new LinkedInfoAdapter())
+            .registerTypeAdapter(GuidoLinkedValuesMap.class, new LinkedValuesMapAdapter())
+            .registerTypeAdapter(Permission.class, new PermissionAdapter())
+            .registerTypeAdapter(ValuesMap.class, new ValuesMapAdapter())
+            .registerTypeAdapter(GuidoValuesMap.class, new ValuesMapAdapter())
             .setPrettyPrinting()
             .create(),
         timeout);
     this.setAuthenticator(this.authenticator);
-    this.addProviders(new DataParameterProviders());
     this.addReceptors(
         new GroupReceptors(),
+        new LadderReceptors(),
         new LinkedDataReceptors(),
         new LinkReceptors(),
+        new MatchReceptors(),
         new MinecraftDataReceptors(),
+        new QueueReceptors(),
         this.authenticator);
   }
 

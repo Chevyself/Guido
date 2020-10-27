@@ -1,6 +1,9 @@
 package com.starfishst.bungee.core.data;
 
+import com.starfishst.guido.api.data.implementations.data.LinkedInfoImpl;
+import com.starfishst.guido.api.data.implementations.data.ValuesMapImpl;
 import com.starfishst.guido.api.data.links.LinkedDataType;
+import com.starfishst.guido.api.data.links.LinkedInfo;
 import java.util.HashMap;
 import java.util.UUID;
 import me.googas.commons.UUIDUtils;
@@ -53,6 +56,7 @@ public class ProxiedOfflinePlayer {
   /**
    * Get the map of parameters for the player
    *
+   * @deprecated use {@link #getLinkedInfo()}
    * @return the parameters of the player
    */
   public HashMap<String, Object> getParams() {
@@ -62,11 +66,27 @@ public class ProxiedOfflinePlayer {
   /**
    * Get the map of parameters builder for the player
    *
+   * @deprecated use {@link #getLinkedInfo()}
    * @return the parameters of the player
    */
   public MapBuilder<String, Object> getBuilder() {
     return Maps.objects(
             "identification", Maps.singleton("uuid", UUIDUtils.trim(this.getUniqueId())))
         .append("type", LinkedDataType.MINECRAFT);
+  }
+
+  /**
+   * Get the link information of this offline proxied player
+   *
+   * @return the link information
+   */
+  @NotNull
+  public LinkedInfo getLinkedInfo() {
+    return new LinkedInfoImpl(
+        LinkedDataType.MINECRAFT,
+        new ValuesMapImpl(
+            Maps.objects("uuid", UUIDUtils.trim(this.getUniqueId()))
+                .append("nickname", this.getNickname())
+                .build()));
   }
 }

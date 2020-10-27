@@ -1,8 +1,8 @@
 package com.starfishst.bot.commands;
 
 import com.starfishst.bot.api.data.BotGuild;
-import com.starfishst.bot.handlers.data.GuidoLadder;
-import com.starfishst.bot.handlers.data.GuidoValuesMap;
+import com.starfishst.bot.handlers.data.types.GuidoLadder;
+import com.starfishst.bot.handlers.data.types.maps.GuidoValuesMap;
 import com.starfishst.core.annotations.Optional;
 import com.starfishst.core.annotations.Parent;
 import com.starfishst.core.annotations.Required;

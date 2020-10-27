@@ -1,13 +1,13 @@
 package com.starfishst.bot.server.receptors;
 
 import com.starfishst.bot.Guido;
-import com.starfishst.bot.api.data.BotLinkedData;
-import com.starfishst.bot.handlers.data.GuidoPermission;
-import com.starfishst.bot.handlers.data.GuidoPermissionStack;
-import com.starfishst.bot.handlers.data.GuidoValuesMap;
+import com.starfishst.bot.handlers.data.types.GuidoPermission;
+import com.starfishst.bot.handlers.data.types.GuidoPermissionStack;
+import com.starfishst.guido.api.data.Permission;
 import com.starfishst.guido.api.data.PermissionStack;
 import com.starfishst.guido.api.data.UserData;
-import com.starfishst.guido.api.data.links.LinkedDataType;
+import com.starfishst.guido.api.data.links.LinkedData;
+import com.starfishst.guido.api.data.links.LinkedInfo;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -20,34 +20,27 @@ public class LinkedDataReceptors {
   /**
    * Check if data exists for the next type and identification
    *
-   * @param type the type to check
-   * @param identification the identification of the type
+   * @param info the information of the link to check if it exists
    * @return true if the data exists else false
    */
-  @Receptor(method = "data-exists")
-  public boolean exists(
-      @ParamName(name = "type") LinkedDataType type,
-      @ParamName(name = "identification") Map<String, Object> identification) {
-    return Guido.getDataLoader().getLinkedData(type, new GuidoValuesMap(identification)) != null;
+  @Receptor("data-exists")
+  public boolean exists(@ParamName("info") LinkedInfo info) {
+    return info.getLink() != null;
   }
 
   /**
    * Set the linked user for the given data type
    *
-   * @param type the type to set the user t o
-   * @param identification the way to identify the data
-   * @param user the user to set as linked
+   * @param info the information of the link to set the user to
+   * @param userId the id of the user to set as linked
    * @return true if the user was set false if the data does not exist
    */
-  @Receptor(method = "set-user")
-  public boolean setUser(
-      @ParamName(name = "type") LinkedDataType type,
-      @ParamName(name = "identification") Map<String, Object> identification,
-      @ParamName(name = "user") UserData user) {
-    BotLinkedData linkedData =
-        Guido.getDataLoader().getLinkedData(type, new GuidoValuesMap(identification));
-    if (linkedData != null) {
-      linkedData.refresh().setLinkedUser(user);
+  @Receptor("set-user")
+  public boolean setUser(@ParamName("info") LinkedInfo info, @ParamName("user") String userId) {
+    LinkedData data = info.getLink();
+    if (data != null) {
+      UserData user = Guido.getDataLoader().getUserData(userId);
+      data.refresh().setLinkedUser(user);
       return true;
     }
     return false;
@@ -56,18 +49,14 @@ public class LinkedDataReceptors {
   /**
    * Get the permission of certain linked data in a given context
    *
-   * @param type the type of linked data to get
-   * @param identification the identification
+   * @param info the information of the data to get the permissions from
    * @param context the context to get the permissions on
    * @return the permission stack of the data
    */
-  @Receptor(method = "permission")
+  @Receptor("permission")
   public PermissionStack permissions(
-      @ParamName(name = "type") LinkedDataType type,
-      @ParamName(name = "identification") Map<String, Object> identification,
-      @ParamName(name = "context") String context) {
-    BotLinkedData linkedData =
-        Guido.getDataLoader().getLinkedData(type, new GuidoValuesMap(identification));
+      @ParamName("info") LinkedInfo info, @ParamName("context") String context) {
+    LinkedData linkedData = info.getLink();
     if (linkedData != null) {
       PermissionStack permissions = linkedData.refresh().getPermissions(context);
       if (permissions != null) {
@@ -80,16 +69,12 @@ public class LinkedDataReceptors {
   /**
    * Get the preferences that the linked data has
    *
-   * @param type the type of linked data
-   * @param identification the way to identify the data
+   * @param info the information of the data to get the preferences from
    * @return the preferences
    */
-  @Receptor(method = "preferences")
-  public Map<String, Object> preferences(
-      @ParamName(name = "type") LinkedDataType type,
-      @ParamName(name = "identification") Map<String, Object> identification) {
-    BotLinkedData data =
-        Guido.getDataLoader().getLinkedData(type, new GuidoValuesMap(identification));
+  @Receptor("preferences")
+  public Map<String, Object> preferences(@ParamName("info") LinkedInfo info) {
+    LinkedData data = info.getLink();
     if (data != null) {
       return data.refresh().getPreferences().getMap();
     }
@@ -99,16 +84,12 @@ public class LinkedDataReceptors {
   /**
    * Get the stats that the linked data has
    *
-   * @param type the type of linked data
-   * @param identification the way to identify the data
+   * @param info the information of the data to get the stats from
    * @return the stats
    */
-  @Receptor(method = "stats")
-  public Map<String, Double> stats(
-      @ParamName(name = "type") LinkedDataType type,
-      @ParamName(name = "identification") Map<String, Object> identification) {
-    BotLinkedData data =
-        Guido.getDataLoader().getLinkedData(type, new GuidoValuesMap(identification));
+  @Receptor("stats")
+  public Map<String, Float> stats(@ParamName("info") LinkedInfo info) {
+    LinkedData data = info.getLink();
     if (data != null) {
       return data.refresh().getStats();
     }
@@ -118,16 +99,12 @@ public class LinkedDataReceptors {
   /**
    * Reset the stats of the linked data
    *
-   * @param type the type of linked data to reset the stats to
-   * @param identification the identification for the linked data
+   * @param info the information of the data to reset the stats
    * @return whether the stats were reset
    */
-  @Receptor(method = "reset-stats")
-  public boolean resetStats(
-      @ParamName(name = "type") LinkedDataType type,
-      @ParamName(name = "identification") Map<String, Object> identification) {
-    BotLinkedData data =
-        Guido.getDataLoader().getLinkedData(type, new GuidoValuesMap(identification));
+  @Receptor("reset-stats")
+  public boolean resetStats(@ParamName("info") LinkedInfo info) {
+    LinkedData data = info.getLink();
     if (data != null) {
       data.refresh().getStats().clear();
       return true;
@@ -138,18 +115,14 @@ public class LinkedDataReceptors {
   /**
    * Check whether linked data is linked
    *
-   * @param type the type of linked data
-   * @param identification the way to identify the data
+   * @param info the information of the data to check whether it is linked
    * @return true if the data is linked
    */
-  @Receptor(method = "is-linked")
-  public boolean isLinked(
-      @ParamName(name = "type") LinkedDataType type,
-      @ParamName(name = "identification") Map<String, Object> identification) {
-    BotLinkedData data =
-        Guido.getDataLoader().getLinkedData(type, new GuidoValuesMap(identification));
+  @Receptor("is-linked")
+  public boolean isLinked(@ParamName("info") LinkedInfo info) {
+    LinkedData data = info.getLink();
     if (data != null) {
-      return data.isLinked();
+      return data.refresh().isLinked();
     }
     return false;
   }
@@ -157,22 +130,16 @@ public class LinkedDataReceptors {
   /**
    * Save the stats for the given data
    *
-   * @param type the type of the given data
-   * @param identification the way to identify the data
+   * @param info the information of the data to save the stats
    * @param stats the stats to save
    * @return true if the stats were saved false if the data does not exist
    */
-  @Receptor(method = "save-stats")
+  @Receptor("save-stats")
   public boolean saveStats(
-      @ParamName(name = "type") LinkedDataType type,
-      @ParamName(name = "identification") Map<String, Object> identification,
-      @ParamName(name = "stats") Map<String, Double> stats) {
-    BotLinkedData data =
-        Guido.getDataLoader().getLinkedData(type, new GuidoValuesMap(identification));
+      @ParamName("info") LinkedInfo info, @ParamName("stats") Map<String, Float> stats) {
+    LinkedData data = info.getLink();
     if (data != null) {
-      stats.forEach(
-          (key, value) ->
-              data.refresh().getStats().put(key, data.getStats().getOrDefault(key, 0D) + value));
+      stats.forEach((key, value) -> data.refresh().increaseStat(key, value));
       return true;
     }
     return false;
@@ -181,20 +148,17 @@ public class LinkedDataReceptors {
   /**
    * Adds a permission to the given linked type
    *
-   * @param type the type of the linked data
-   * @param identification the identification to get the linked data
+   * @param info the information of the data to add the permission to
    * @param context the context to add the permission on
    * @param permission the permission to add
    * @return true if the permission was added false otherwise
    */
-  @Receptor(method = "add-permission")
+  @Receptor("add-permission")
   public boolean addPermission(
-      @ParamName(name = "type") LinkedDataType type,
-      @ParamName(name = "identification") Map<String, Object> identification,
-      @ParamName(name = "context") String context,
-      @ParamName(name = "permission") GuidoPermission permission) {
-    BotLinkedData data =
-        Guido.getDataLoader().getLinkedData(type, new GuidoValuesMap(identification));
+      @ParamName("info") LinkedInfo info,
+      @ParamName("context") String context,
+      @ParamName("permission") Permission permission) {
+    LinkedData data = info.getLink();
     if (data != null) {
       return data.refresh().addPermission(context, permission.getNode(), permission.isEnabled());
     }
@@ -204,20 +168,17 @@ public class LinkedDataReceptors {
   /**
    * Removes a permission to the given linked type
    *
-   * @param type the type of the linked data
-   * @param identification the identification to get the linked data
+   * @param info the information of the data to remove the permission to
    * @param context the context to remove the permission from
    * @param permission the permission to remove
    * @return true if the permission was removed false otherwise
    */
-  @Receptor(method = "remove-permission")
+  @Receptor("remove-permission")
   public boolean removePermission(
-      @ParamName(name = "type") LinkedDataType type,
-      @ParamName(name = "identification") Map<String, Object> identification,
-      @ParamName(name = "context") String context,
-      @ParamName(name = "permission") GuidoPermission permission) {
-    BotLinkedData data =
-        Guido.getDataLoader().getLinkedData(type, new GuidoValuesMap(identification));
+      @ParamName("info") LinkedInfo info,
+      @ParamName("context") String context,
+      @ParamName("permission") GuidoPermission permission) {
+    LinkedData data = info.getLink();
     if (data != null) {
       return data.refresh().removePermission(context, permission.getNode());
     }

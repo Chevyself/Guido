@@ -46,7 +46,6 @@ public class GuidoPermissionChecker implements PermissionChecker {
 
   @Override
   public @Nullable Result checkPermission(@NotNull CommandContext context, @NotNull Perm perm) {
-    // If a node starts with user: it will check for user permissions not member
     if (!perm.node().isEmpty()) {
       if (this.developers.contains(context.getSender().getIdLong())) {
         return null;
@@ -70,7 +69,8 @@ public class GuidoPermissionChecker implements PermissionChecker {
                   .getRoleData(
                       role.getIdLong(), ((GuildCommandContext) context).getGuild().getIdLong())
                   .refresh();
-          if (roleData.hasPermission(perm.node(), "discord")) {
+          if (roleData.hasPermission(perm.node(), "discord")
+              || role.hasPermission(Permission.ADMINISTRATOR)) {
             return null;
           }
         }

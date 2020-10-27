@@ -4,7 +4,7 @@ import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParseException;
 import com.google.gson.JsonSerializationContext;
-import com.starfishst.bot.handlers.data.GuidoLinkedValuesMap;
+import com.starfishst.bot.handlers.data.types.maps.GuidoLinkedValuesMap;
 import java.lang.reflect.Type;
 import me.googas.commons.gson.adapters.JsonAdapter;
 

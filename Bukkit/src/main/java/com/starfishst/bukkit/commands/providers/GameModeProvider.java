@@ -43,12 +43,13 @@ public class GameModeProvider implements BukkitArgumentProvider<GameMode> {
 
   /** An implementation to easily get gamemodes */
   enum GuidoGameMode {
+    /** Minecraft survival gamemode */
     SURVIVAL(Lots.set("0", "s", "survival"), GameMode.SURVIVAL),
-
+    /** Minecraft creative gamemode */
     CREATIVE(Lots.set("1", "c", "creative"), GameMode.CREATIVE),
-
+    /** Minecraft adventure gamemode */
     ADVENTURE(Lots.set("2", "a", "adventure"), GameMode.ADVENTURE),
-
+    /** Minecraft spectator gamemode */
     SPECTATOR(Lots.set("3", "o", "spectator"), GameMode.SPECTATOR);
 
     /** The set of aliases that can be used to identify the gamemode */

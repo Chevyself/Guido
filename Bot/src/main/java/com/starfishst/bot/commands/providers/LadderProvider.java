@@ -25,7 +25,7 @@ public class LadderProvider implements JdaArgumentProvider<Ladder> {
     if (context instanceof GuildCommandContext) {
       BotGuild guild =
           Guido.getDataLoader()
-              .getGuildData(((GuildCommandContext) context).getGuild().getIdLong());
+              .getGuildDataOrCreate(((GuildCommandContext) context).getGuild().getIdLong());
       Ladder ladder = guild.getLadder(s);
       if (ladder != null) {
         return ladder;

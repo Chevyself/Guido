@@ -2,6 +2,7 @@ package com.starfishst.bukkit.dependencies;
 
 import com.starfishst.bukkit.api.dependencies.Dependency;
 import com.starfishst.bukkit.api.events.GuidoListener;
+import com.starfishst.bukkit.listeners.MatchMakingListener;
 import com.starfishst.bukkit.listeners.StatsListener;
 import java.util.Collection;
 import me.googas.commons.Lots;
@@ -31,6 +32,6 @@ public class PGMDependency implements Dependency {
 
   @Override
   public @NotNull Collection<GuidoListener> getListeners(@NotNull Plugin plugin) {
-    return Lots.list(new StatsListener());
+    return Lots.list(new StatsListener(), new MatchMakingListener());
   }
 }

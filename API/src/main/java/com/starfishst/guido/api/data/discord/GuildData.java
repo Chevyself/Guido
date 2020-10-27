@@ -52,29 +52,42 @@ public interface GuildData extends ICatchable {
   }
 
   /**
-   * Get the roles for certain ladder and
+   * Get the roles for certain ladder
    *
    * @param ladder the ladder that represents those roles
    * @param numb whether to get the roles inside or outside bounds. if what to get outside * this
    *     must be true
-   * @param outside whether to get the roles inside or outside bounds. if what to get outside * this
-   *     must be true
+   * @param bounds whether to get the roles inside or outside bounds. if what to get in bounds *
+   *     this must be true
    * @return the roles that are representative for the ladder and the number inside or outside
    *     bounds
    */
-  default Collection<Long> getRoles(@NotNull Ladder ladder, int numb, boolean outside) {
+  default Collection<Long> getRoles(@NotNull Ladder ladder, int numb, boolean bounds) {
+    return this.getRoles(ladder.getName(), numb, bounds);
+  }
+
+  /**
+   * Get the roles for certain ladder
+   *
+   * @param ladder the name of the ladder that represents those roles
+   * @param numb whether to get the roles inside or outside bounds. if what to get outside * this
+   *     must be true
+   * @param bounds whether to get the roles inside or outside bounds. if what to get in bounds *
+   *     this must be true
+   * @return the roles that are representative for the ladder and the number inside or outside
+   *     bounds
+   */
+  default Collection<Long> getRoles(@NotNull String ladder, int numb, boolean bounds) {
     Set<Long> rolesId = new HashSet<>();
     this.getRanges()
         .forEach(
             (id, range) -> {
-              if (!range.isBound(numb)
-                  && outside
-                  && range.getLadder().equalsIgnoreCase(ladder.getName())) {
-                rolesId.add(id);
-              } else if (range.isBound(numb)
-                  && !outside
-                  && range.getLadder().equalsIgnoreCase(ladder.getName())) {
-                rolesId.add(id);
+              if (range.getLadder().equalsIgnoreCase(ladder)) {
+                if (range.isBound(numb) && bounds) {
+                  rolesId.add(id);
+                } else if (!range.isBound(numb) && !bounds) {
+                  rolesId.add(id);
+                }
               }
             });
     return rolesId;
@@ -84,27 +97,12 @@ public interface GuildData extends ICatchable {
    * Get the global roles for the given number
    *
    * @param numb the number to be in or off bounds of the range
-   * @param outside whether to get the roles inside or outside bounds. if what to get outside this
+   * @param bounds whether to get the roles inside or outside bounds. if what to get is bounds this
    *     must be true
    * @return the global roles
    */
-  default Collection<Long> getGlobalRoles(int numb, boolean outside) {
-    Set<Long> rolesId = new HashSet<>();
-    this.getRanges()
-        .forEach(
-            (id, range) -> {
-              if (!range.isBound(numb) && outside && range.getLadder().equalsIgnoreCase("global")) {
-                rolesId.add(id);
-              } else if (range.isBound(numb)
-                  && !outside
-                  && range.getLadder().equalsIgnoreCase("global")) {
-                rolesId.add(id);
-              }
-              if (range.isBound(numb) && range.getLadder().equalsIgnoreCase("global")) {
-                rolesId.add(id);
-              }
-            });
-    return rolesId;
+  default Collection<Long> getGlobalRoles(int numb, boolean bounds) {
+    return this.getRoles("global", numb, bounds);
   }
 
   /**

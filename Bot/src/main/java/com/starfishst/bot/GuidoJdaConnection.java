@@ -26,7 +26,7 @@ public class GuidoJdaConnection {
    */
   @NotNull
   public static String getTokenFromInput(@NotNull Scanner scanner) {
-    System.out.println("Insert the bot token");
+    Console.info("Insert the bot token");
     while (true) {
       if (scanner.hasNext()) {
         String input = scanner.nextLine();
@@ -54,7 +54,7 @@ public class GuidoJdaConnection {
       try {
         this.jda = this.connect(token);
       } catch (LoginException e) {
-        System.out.println("Discord authentication failed");
+        Console.exception("Discord authentication failed");
         token = GuidoJdaConnection.getTokenFromInput(new Scanner(System.in));
       }
     }

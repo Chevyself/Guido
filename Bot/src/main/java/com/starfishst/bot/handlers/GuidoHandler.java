@@ -19,5 +19,7 @@ public interface GuidoHandler {
   void close();
 
   /** Unregisters a guido handler */
-  void unregister();
+  default void unregister() {
+    this.close();
+  }
 }

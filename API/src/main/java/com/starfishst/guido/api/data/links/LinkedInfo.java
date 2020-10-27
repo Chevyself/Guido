@@ -32,5 +32,5 @@ public interface LinkedInfo {
    * @return the data
    */
   @Nullable
-  LinkedData getData();
+  LinkedData getLink();
 }

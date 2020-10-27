@@ -9,6 +9,7 @@ import com.starfishst.jda.utils.responsive.controller.ResponsiveMessageControlle
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
+import me.googas.commons.events.ListenPriority;
 import me.googas.commons.events.Listener;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.Guild;
@@ -37,7 +38,7 @@ public class GuidoMessagesController implements ResponsiveMessageController, Gui
    *
    * @param event the event of a message being unloaded
    */
-  @Listener(priority = 5)
+  @Listener(priority = ListenPriority.HIGHEST)
   public void onResponsiveMessageUnload(@NotNull ResponsiveMessageUnloadedEvent event) {
     JDA jda = Guido.getConnection().getJda();
     if (jda != null && event.getMessage() instanceof GuidoResponsiveMessage) {

@@ -3,11 +3,11 @@ package com.starfishst.bungee.core.listeners;
 import com.starfishst.bungee.api.Guido;
 import com.starfishst.bungee.api.events.GuidoListener;
 import com.starfishst.guido.api.data.Permission;
-import com.starfishst.guido.api.data.implementations.data.PermissionImpl;
+import com.starfishst.guido.api.data.implementations.data.LinkedInfoImpl;
 import com.starfishst.guido.api.data.implementations.data.PermissionStackImpl;
+import com.starfishst.guido.api.data.implementations.data.ValuesMapImpl;
 import com.starfishst.guido.api.data.links.LinkedDataType;
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.UUID;
 import me.googas.commons.UUIDUtils;
 import me.googas.commons.maps.Maps;
@@ -30,29 +30,25 @@ public class JoinListener implements GuidoListener {
     UUID uuid = event.getPlayer().getUniqueId();
     try {
       JsonClient connection = Guido.getClient().validatedConnection();
-      HashMap<String, Object> identification = Maps.objects("uuid", UUIDUtils.trim(uuid)).build();
+      LinkedInfoImpl info =
+          new LinkedInfoImpl(
+              LinkedDataType.MINECRAFT,
+              new ValuesMapImpl(Maps.singleton("uuid", UUIDUtils.trim(uuid))));
       connection.sendRequest(
-          new Request<>(
-              Boolean.class,
-              "data-exists",
-              Maps.objects("type", LinkedDataType.MINECRAFT)
-                  .append("identification", identification)
-                  .build()),
+          new Request<>(Boolean.class, "data-exists", Maps.singleton("info", info)),
           exists -> {
             if (exists) {
               connection.sendRequest(
                   new Request<>(
                       PermissionStackImpl.class,
                       "permission",
-                      Maps.objects("type", LinkedDataType.MINECRAFT)
-                          .append("identification", identification)
-                          .append("context", "bungee")
-                          .build()),
+                      Maps.objects("info", info).append("context", "bungee").build()),
                   stack -> {
                     for (Permission permission : stack.getPermissions()) {
                       event.getPlayer().setPermission(permission.getNode(), permission.isEnabled());
                     }
                   });
+              // TODO update name
             } else {
               connection.sendRequest(
                   new Request<>(

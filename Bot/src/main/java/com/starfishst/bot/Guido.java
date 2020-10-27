@@ -1,24 +1,21 @@
 package com.starfishst.bot;
 
 import com.starfishst.bot.api.data.loader.BotDataLoader;
+import com.starfishst.bot.api.events.GuidoCancellable;
+import com.starfishst.bot.commands.CategoryCommands;
+import com.starfishst.bot.commands.ChannelCommands;
 import com.starfishst.bot.commands.DeveloperCommands;
 import com.starfishst.bot.commands.GuidoPermissionChecker;
 import com.starfishst.bot.commands.HelpCommand;
 import com.starfishst.bot.commands.LadderCommands;
 import com.starfishst.bot.commands.LangCommands;
-import com.starfishst.bot.commands.MatchCommands;
 import com.starfishst.bot.commands.MultiplierCommands;
 import com.starfishst.bot.commands.QueueCommands;
 import com.starfishst.bot.commands.RangesCommand;
 import com.starfishst.bot.commands.TeamCommands;
 import com.starfishst.bot.commands.TokenCommands;
 import com.starfishst.bot.commands.UserCommands;
-import com.starfishst.bot.commands.providers.AuthLevelProvider;
-import com.starfishst.bot.commands.providers.GuidoUserProvider;
-import com.starfishst.bot.commands.providers.GuildDataProvider;
-import com.starfishst.bot.commands.providers.LadderProvider;
-import com.starfishst.bot.commands.providers.LocaleFileProvider;
-import com.starfishst.bot.commands.providers.UserDataSenderProvider;
+import com.starfishst.bot.commands.providers.GuidoProvidersRegistry;
 import com.starfishst.bot.handlers.GuidoHandler;
 import com.starfishst.bot.handlers.data.loader.GuidoFileLoader;
 import com.starfishst.bot.handlers.data.loader.JsongoDataLoader;
@@ -27,6 +24,8 @@ import com.starfishst.bot.handlers.lang.GuidoLanguageHandler;
 import com.starfishst.bot.handlers.link.LinkHandler;
 import com.starfishst.bot.handlers.matches.MatchCalculator;
 import com.starfishst.bot.handlers.matches.MatchMakingHandler;
+import com.starfishst.bot.handlers.matches.PGMMatchHandler;
+import com.starfishst.bot.handlers.matches.QueueHandler;
 import com.starfishst.bot.handlers.responsive.GuidoMessagesController;
 import com.starfishst.bot.handlers.test.TestHandler;
 import com.starfishst.bot.server.GuidoFallbackServer;
@@ -36,7 +35,6 @@ import com.starfishst.bot.util.console.Console;
 import com.starfishst.guido.api.data.loader.DataLoader;
 import com.starfishst.jda.CommandManager;
 import com.starfishst.jda.ManagerOptions;
-import com.starfishst.jda.providers.registry.JdaProvidersRegistry;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
@@ -45,7 +43,6 @@ import me.googas.commons.Lots;
 import me.googas.commons.Validate;
 import me.googas.commons.cache.Cache;
 import me.googas.commons.cache.ICatchable;
-import me.googas.commons.events.Cancellable;
 import me.googas.commons.events.Event;
 import me.googas.commons.events.ListenerManager;
 import me.googas.commons.maps.Maps;
@@ -56,7 +53,7 @@ import net.dv8tion.jda.api.hooks.AnnotatedEventManager;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-/** El bot para las rankeds de radiator springs */
+/** The match making bot */
 public class Guido {
 
   /** The timer which can be used in other instances of the bot */
@@ -83,6 +80,8 @@ public class Guido {
           new LinkHandler(),
           new MatchCalculator(),
           new MatchMakingHandler(),
+          new PGMMatchHandler(),
+          new QueueHandler(),
           new GuidoMessagesController(),
           new TestHandler(),
           Guido.dataLoader);
@@ -118,11 +117,75 @@ public class Guido {
    */
   public static void main(String[] args) {
     HashMap<String, String> argsMaps = Maps.fromStringArray("=", args);
+    JDA jda = Guido.setupJda(argsMaps);
 
-    JDA jda = Guido.connection.createConnection(argsMaps.getOrDefault("token", ""));
-    jda.getPresence().setPresence(OnlineStatus.DO_NOT_DISTURB, Activity.playing(".help .ayuda .?"));
-    jda.setEventManager(new AnnotatedEventManager());
+    Guido.setupDataLoader(argsMaps);
+    Guido.createServer(argsMaps);
+    Guido.registerCommands(argsMaps, jda);
+    // Setups language
+    Guido.languageHandler.load("en", "es", "fr");
+    // Registers handlers
+    for (GuidoHandler handler : Guido.handlers) {
+      handler.register(jda);
+    }
+  }
 
+  /**
+   * Register all the commands for the bot
+   *
+   * @param argsMaps the arguments to get the prefix
+   * @param jda the instance of jda for the command manager
+   */
+  public static void registerCommands(HashMap<String, String> argsMaps, JDA jda) {
+    Guido.commandManager =
+        new CommandManager(
+            jda,
+            argsMaps.getOrDefault("prefix", argsMaps.getOrDefault("prefix", ".")),
+            new ManagerOptions(),
+            Guido.languageHandler,
+            new GuidoProvidersRegistry(Guido.languageHandler),
+            new GuidoPermissionChecker(Guido.languageHandler, Guido.dataLoader));
+    for (Object cmd :
+        Lots.list(
+            new CategoryCommands(),
+            new ChannelCommands(),
+            new DeveloperCommands(jda),
+            new HelpCommand(),
+            new LadderCommands(),
+            new LangCommands(),
+            new MultiplierCommands(),
+            new QueueCommands(),
+            new RangesCommand(),
+            new TeamCommands(),
+            new TokenCommands(),
+            new UserCommands())) {
+      Guido.commandManager.registerCommand(cmd);
+    }
+  }
+
+  /**
+   * Creates the server and the receptors
+   *
+   * @param argsMaps the map to get the port and timeout of the server
+   */
+  public static void createServer(HashMap<String, String> argsMaps) {
+    try {
+      Guido.server =
+          new GuidoServer(
+              Integer.parseInt(argsMaps.getOrDefault("port", "3000")),
+              Long.parseLong(argsMaps.getOrDefault("timeout", "3000")));
+      Guido.server.start();
+    } catch (IOException e) {
+      Console.exception(e, "Socket server could not be initialized");
+    }
+  }
+
+  /**
+   * Setups the data loader for the server
+   *
+   * @param argsMaps the map to get the desired type of loader and the parameters of it
+   */
+  public static void setupDataLoader(HashMap<String, String> argsMaps) {
     if (argsMaps.get("loader") != null) {
       if (argsMaps.get("loader").equalsIgnoreCase("jsongo")) {
         try {
@@ -140,69 +203,57 @@ public class Guido {
       }
       Console.info("Using data loader: " + Guido.dataLoader.getClass());
     }
-    try {
-      Guido.server =
-          new GuidoServer(
-              Integer.parseInt(argsMaps.getOrDefault("port", "3000")),
-              Long.parseLong(argsMaps.getOrDefault("timeout", "3000")));
-      Guido.server.start();
-    } catch (IOException e) {
-      Console.exception(e, "Socket server could not be initialized");
-    }
-    JdaProvidersRegistry registry = new JdaProvidersRegistry(Guido.languageHandler);
-    registry.addProvider(new AuthLevelProvider());
-    registry.addProvider(new GuildDataProvider());
-    registry.addProvider(new GuidoUserProvider());
-    registry.addProvider(new UserDataSenderProvider());
-    registry.addProvider(new LadderProvider());
-    registry.addProvider(new LocaleFileProvider());
-    Guido.commandManager =
-        new CommandManager(
-            jda,
-            argsMaps.getOrDefault("prefix", argsMaps.getOrDefault("prefix", ".")),
-            new ManagerOptions(),
-            Guido.languageHandler,
-            registry,
-            new GuidoPermissionChecker(Guido.languageHandler, Guido.dataLoader));
-    Guido.commandManager.registerCommand(new DeveloperCommands(jda));
-    Guido.commandManager.registerCommand(new HelpCommand());
-    Guido.commandManager.registerCommand(new LadderCommands());
-    Guido.commandManager.registerCommand(new LangCommands());
-    Guido.commandManager.registerCommand(new MatchCommands());
-    Guido.commandManager.registerCommand(new MultiplierCommands());
-      Guido.commandManager.registerCommand(new QueueCommands());
-    Guido.commandManager.registerCommand(new RangesCommand());
-    Guido.commandManager.registerCommand(new TeamCommands());
-    Guido.commandManager.registerCommand(new TokenCommands());
-    Guido.commandManager.registerCommand(new UserCommands());
-    Guido.languageHandler.load("en", "es", "fr");
-    for (GuidoHandler handler : Guido.handlers) {
-      handler.register(jda);
-    }
+  }
+
+  /**
+   * Creates the jda connection for the bot
+   *
+   * @param argsMaps the arguments to get the token
+   * @return the instance of the jda setup
+   */
+  @NotNull
+  public static JDA setupJda(HashMap<String, String> argsMaps) {
+    JDA jda = Guido.connection.createConnection(argsMaps.getOrDefault("token", ""));
+    jda.getPresence().setPresence(OnlineStatus.DO_NOT_DISTURB, Activity.playing(".help .ayuda .?"));
+    jda.setEventManager(new AnnotatedEventManager());
+    return jda;
   }
 
   /** Stops the bot */
   public static void stop() {
-    List<ICatchable> copy = Cache.copy();
-    for (ICatchable catchable : copy) {
-      catchable.onRemove();
-      catchable.unload();
+    Guido.clearCache();
+    Guido.closeServer();
+    Guido.languageHandler.stop();
+    // Close handlers
+    for (GuidoHandler handler : Guido.handlers) {
+      handler.close();
+      handler.unregister();
     }
+    // Close jda
+    JDA jda = Guido.connection.getJda();
+    if (jda != null) {
+      jda.shutdown();
+    }
+    // Exit finally
+    System.exit(0);
+  }
+
+  /** CLoses the bot server */
+  public static void closeServer() {
     try {
       Guido.server.close();
     } catch (IOException e) {
       Console.exception(e, "Server could not be closed properly");
     }
-    Guido.languageHandler.stop();
-    for (GuidoHandler handler : Guido.handlers) {
-      handler.close();
-      handler.unregister();
+  }
+
+  /** Clears all the cached items from the bot */
+  public static void clearCache() {
+    List<ICatchable> copy = Cache.copy();
+    for (ICatchable catchable : copy) {
+      catchable.onRemove();
+      catchable.unload();
     }
-    JDA jda = Guido.connection.getJda();
-    if (jda != null) {
-      jda.shutdown();
-    }
-    System.exit(0);
   }
 
   /**
@@ -221,7 +272,7 @@ public class Guido {
    * @return true if the event was cancelled
    * @throws IllegalArgumentException cancellable is not an instance of {@link Event}
    */
-  public static boolean call(@NotNull Cancellable cancellable) {
+  public static boolean call(@NotNull GuidoCancellable cancellable) {
     return Guido.listenerManager.call(cancellable);
   }
 

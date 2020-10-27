@@ -15,6 +15,14 @@ public class GameModeCommand implements GuidoCommand {
   /** Whether the command is enabled */
   private boolean enabled = false;
 
+  /**
+   * Change the gamemode from a player
+   *
+   * @param sender the sender of the command
+   * @param gameMode the gamemode to set the optional or the player to
+   * @param optional the optional player to set the gamemode
+   * @return the result of the command depending on the execution
+   */
   @Command(
       aliases = {"gm", "gamemode"},
       description = "Change your gamemode or someone else",

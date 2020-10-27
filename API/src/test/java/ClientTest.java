@@ -1,7 +1,11 @@
 import com.starfishst.guido.api.data.Group;
 import com.starfishst.guido.api.data.implementations.ClientImpl;
+import com.starfishst.guido.api.data.implementations.data.LinkedInfoImpl;
 import com.starfishst.guido.api.data.implementations.data.PermissionStackImpl;
+import com.starfishst.guido.api.data.implementations.data.ValuesMapImpl;
 import com.starfishst.guido.api.data.links.LinkedDataType;
+import com.starfishst.guido.api.data.links.LinkedInfo;
+import com.starfishst.guido.api.data.matches.Ladder;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Scanner;
@@ -9,6 +13,7 @@ import java.util.UUID;
 import me.googas.commons.UUIDUtils;
 import me.googas.commons.maps.Maps;
 import me.googas.messaging.Request;
+import me.googas.messaging.api.MessengerListenFailException;
 import me.googas.messaging.json.client.JsonClient;
 
 /** A test for the client */
@@ -16,13 +21,17 @@ public class ClientTest {
 
   private static String groupId = "kI9w6F";
 
-  public static void main(String[] args) throws IOException {
+  public static void main(String[] args) throws IOException, MessengerListenFailException {
     ClientImpl client = new ClientImpl("1Uv2AZduciPKwUL8");
     String nick = "Selfie";
-    UUID uud = UUID.fromString("5eed208d-de58-4022-9ba7-6ccb5ea7e92a");
-    String trimmed = UUIDUtils.trim(uud);
+    UUID uuid = UUID.fromString("5eed208d-de58-4022-9ba7-6ccb5ea7e92a");
+    String trimmed = UUIDUtils.trim(uuid);
     JsonClient conn = client.startConnection();
     Scanner scanner = new Scanner(System.in);
+    LinkedInfoImpl info =
+        new LinkedInfoImpl(
+            LinkedDataType.MINECRAFT,
+            new ValuesMapImpl(Maps.objects("uuid", trimmed).append("nickname", nick).build()));
     while (true) {
       while (scanner.hasNextLine()) {
         String line = scanner.nextLine();
@@ -45,7 +54,7 @@ public class ClientTest {
               new Request<>(
                   Boolean.class,
                   "create-minecraft",
-                  Maps.objects("uuid", uud).append("nickname", nick).build()),
+                  Maps.objects("uuid", uuid).append("nickname", nick).build()),
               bol -> {
                 System.out.println("Created? " + bol);
               });
@@ -54,10 +63,7 @@ public class ClientTest {
               new Request<>(
                   PermissionStackImpl.class,
                   "permission",
-                  Maps.objects("context", "PGM")
-                      .append("type", LinkedDataType.MINECRAFT)
-                      .append("identification", Maps.singleton("uuid", trimmed))
-                      .build()),
+                  Maps.objects("context", "bungee").append("info", info).build()),
               stack -> {
                 System.out.println("Permission for bungee: " + stack.getPermissions());
               });
@@ -66,10 +72,9 @@ public class ClientTest {
               new Request<>(
                   Boolean.class,
                   "add-permission",
-                  Maps.objects("type", LinkedDataType.MINECRAFT)
-                      .append("context", "PGM")
-                      .append("permission", "pgm.group.mod")
-                      .append("identification", Maps.singleton("uuid", trimmed))
+                  Maps.objects("info", info)
+                      .append("context", "bungee")
+                      .append("permission", "guido.*")
                       .build()),
               bol -> {
                 System.out.println("Perm added? " + bol);
@@ -112,6 +117,20 @@ public class ClientTest {
                       .append("identification", Maps.singleton("uuid", trimmed))
                       .build()),
               System.out::println);
+        } else if (line.equalsIgnoreCase("by-name")) {
+          conn.sendRequest(
+              new Request<>(LinkedInfo.class, "get-mc-by-name", Maps.singleton("nickname", nick)),
+              linkInfo -> {
+                System.out.println(linkInfo.getType());
+                System.out.println(linkInfo.getIdentification().getMap());
+              });
+        } else if (line.equalsIgnoreCase("ladder")) {
+          System.out.println(
+              conn.sendRequest(
+                  new Request<>(
+                      Ladder.class,
+                      "ladder",
+                      Maps.objects("guild", 718281601112604675L).append("name", "1v1").build())));
         }
       }
     }

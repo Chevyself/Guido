@@ -13,6 +13,17 @@ import org.jetbrains.annotations.Nullable;
 public interface ValuesMap {
 
   /**
+   * Get the value of the given key
+   *
+   * @param key the key to get the value from
+   * @return the value or null if the map does not contain it
+   */
+  @Nullable
+  default Object getValue(@NotNull String key) {
+    return this.getMap().get(key);
+  }
+
+  /**
    * Get the preference casted to certain class or null if the preference is not inside the map
    *
    * @param name the name of the preference

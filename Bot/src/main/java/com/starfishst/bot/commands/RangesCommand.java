@@ -1,7 +1,7 @@
 package com.starfishst.bot.commands;
 
 import com.starfishst.bot.api.data.BotGuild;
-import com.starfishst.bot.handlers.data.GuidoRankRange;
+import com.starfishst.bot.handlers.data.types.GuidoRankRange;
 import com.starfishst.core.annotations.Parent;
 import com.starfishst.core.annotations.Required;
 import com.starfishst.guido.api.data.RankRange;

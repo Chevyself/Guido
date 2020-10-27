@@ -15,6 +15,7 @@ public interface GuidoEventHandler extends GuidoHandler {
 
   @Override
   default void unregister() {
+    GuidoHandler.super.unregister();
     Guido.getListenerManager().unregister(this);
   }
 }

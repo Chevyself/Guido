@@ -9,7 +9,15 @@ public interface BotLinkedInfo extends LinkedInfo {
 
   @Override
   @Nullable
-  default BotLinkedData getData() {
-    return Guido.getDataLoader().getLinkedData(this.getType(), this.getIdentification());
+  default BotLinkedData getLink() {
+    switch (this.getType()) {
+      case DISCORD_GUILD:
+        return Guido.getDataLoader().getLinkedData(this.getType(), this.getIdentification(), true);
+      case DISCORD:
+      case MINECRAFT:
+        return Guido.getDataLoader().getLinkedData(this.getType(), this.getIdentification(), false);
+      default:
+        throw new IllegalStateException(this.getType() + " is not a valid type");
+    }
   }
 }

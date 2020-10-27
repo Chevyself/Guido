@@ -13,4 +13,8 @@ public interface UserData extends ICatchable {
    */
   @NotNull
   String getId();
+
+  @Override
+  @NotNull
+  UserData refresh();
 }

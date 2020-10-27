@@ -19,6 +19,11 @@ public class GuidoDependencies implements DependencyManager {
   private final Set<Dependency> dependencies =
       Lots.set(new PGMDependency(), new ProtocolLibDependency());
 
+  /**
+   * Create the dependencies manager
+   *
+   * @param plugin the plugin that is handling this dependencies
+   */
   public GuidoDependencies(@NotNull Plugin plugin) {
     this.plugin = plugin;
   }

@@ -2,8 +2,8 @@ package com.starfishst.bot.api.data;
 
 import com.starfishst.bot.api.events.data.permissible.PermissiblePermissionAddedEvent;
 import com.starfishst.bot.api.events.data.permissible.PermissiblePermissionRemovedEvent;
-import com.starfishst.bot.handlers.data.GuidoPermission;
-import com.starfishst.bot.handlers.data.GuidoPermissionStack;
+import com.starfishst.bot.handlers.data.types.GuidoPermission;
+import com.starfishst.bot.handlers.data.types.GuidoPermissionStack;
 import com.starfishst.guido.api.data.Permissible;
 import com.starfishst.guido.api.data.PermissionStack;
 import java.util.HashSet;
@@ -12,14 +12,7 @@ import org.jetbrains.annotations.NotNull;
 /** A bot implementation for {@link Permissible} */
 public interface BotPermissible extends Permissible {
 
-  /**
-   * Adds a permission for this permissible
-   *
-   * @param context the context of the permission
-   * @param node the node of the permission
-   * @param enabled whether the permission is enabled
-   * @return whether the permission was added
-   */
+  @Override
   default boolean addPermission(@NotNull String context, @NotNull String node, boolean enabled) {
     PermissionStack stack = this.getPermissions(context);
     if (stack == null) {
@@ -28,21 +21,15 @@ public interface BotPermissible extends Permissible {
     }
     if (!stack.containsPermission(node)) {
       GuidoPermission permission = new GuidoPermission(node, enabled);
-      stack.add(permission);
-      new PermissiblePermissionAddedEvent(this, stack, permission);
-      return true;
-    } else {
-      return false;
+      if (stack.add(permission)) {
+        new PermissiblePermissionAddedEvent(this, stack, permission);
+        return true;
+      }
     }
+    return false;
   }
 
-  /**
-   * Removes the permission from this permissible
-   *
-   * @param context the context of the permission
-   * @param node the node of the permission
-   * @return whether the permission was removed. True if it was removed false otherwise
-   */
+  @Override
   default boolean removePermission(@NotNull String context, @NotNull String node) {
     PermissionStack stack = this.getPermissions(context);
     if (stack != null) {

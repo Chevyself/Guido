@@ -5,6 +5,7 @@ import com.starfishst.guido.api.data.Stateable;
 import com.starfishst.guido.api.data.UserData;
 import com.starfishst.guido.api.data.ValuesMap;
 import com.starfishst.guido.api.data.lang.LocaleFile;
+import java.util.Collection;
 import me.googas.commons.cache.ICatchable;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -44,6 +45,13 @@ public interface LinkedData extends Permissible, Stateable, ICatchable {
    * @param user the new linked user
    */
   void setLinkedUser(@Nullable UserData user);
+
+  /**
+   * Send a message to this linked data
+   *
+   * @param message the message to send
+   */
+  void sendMessage(@NotNull String message);
 
   /**
    * Get the preferences of a linked data
@@ -88,7 +96,27 @@ public interface LinkedData extends Permissible, Stateable, ICatchable {
   /**
    * Get whether this data is linked to an user
    *
-   * @return true if the data is linkeed
+   * @return true if the data is linked
    */
   boolean isLinked();
+
+  /**
+   * Get all the links to this data. This will look for other links of {@link #getLinkedUser()}
+   *
+   * @return the collection of connected links
+   */
+  @NotNull
+  Collection<LinkedData> getLinks();
+
+  /**
+   * @see #getLinks() this will get only the links of certain type
+   * @param types the types of links to get
+   * @return the links
+   */
+  @NotNull
+  Collection<LinkedData> getLinks(@NotNull LinkedDataType... types);
+
+  @Override
+  @NotNull
+  LinkedData refresh();
 }

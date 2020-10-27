@@ -38,14 +38,14 @@ public class LangChangeReactionResponse implements ReactionResponse {
     if (event.getUserIdLong() == this.userId) {
       BotLinkedData userData = Guido.getDataLoader().getDiscordUserData(event.getUserIdLong());
       userData
+          .refresh()
           .getPreferences()
           .addValue("lang", Guido.getLanguageHandler().getFileFromUnicode(this.unicode).getLang());
       ResponsiveMessage responsiveMessage =
           Guido.getHandler(GuidoMessagesController.class)
               .getResponsiveMessage(null, event.getMessageIdLong());
       if (responsiveMessage instanceof LangChangeResponsiveMessage) {
-        ((LangChangeResponsiveMessage) responsiveMessage).unload();
-        ((LangChangeResponsiveMessage) responsiveMessage).onRemove();
+        ((LangChangeResponsiveMessage) responsiveMessage).unload(true);
       }
     }
   }

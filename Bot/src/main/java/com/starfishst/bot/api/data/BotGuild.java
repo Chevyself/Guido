@@ -42,7 +42,7 @@ public interface BotGuild extends GuildData {
   @NotNull
   default Category getCategory(@NotNull String key) {
     Guild guild = this.getDiscord();
-    Category category = guild.getCategoryById(this.getChannels().getOrDefault(key, -1L));
+    Category category = guild.getCategoryById(this.getCategories().getOrDefault(key, -1L));
     if (category == null) {
       category = guild.createCategory(key).complete();
       this.getChannels().put(key, category.getIdLong());
@@ -54,27 +54,26 @@ public interface BotGuild extends GuildData {
    * Get the roles for certain ladder and
    *
    * @param ladder the ladder that represents those roles
-   * @param numb whether to get the roles inside or outside bounds. if what to get outside * this
-   *     must be true
-   * @param outside whether to get the roles inside or outside bounds. if what to get outside * this
+   * @param numb whether to get the roles inside or outside bounds
+   * @param bounds whether to get the roles inside or outside bounds. if what to get inside this
    *     must be true
    * @return the roles that are representative for the ladder and the number inside or outside
    *     bounds
    */
-  default Collection<Role> getRolesDiscord(@NotNull Ladder ladder, int numb, boolean outside) {
-    return this.getRolesById(this.getRoles(ladder, numb, outside));
+  default Collection<Role> getRolesDiscord(@NotNull Ladder ladder, int numb, boolean bounds) {
+    return this.getRolesById(this.getRoles(ladder, numb, bounds));
   }
 
   /**
    * Get the global roles for the given number
    *
    * @param numb the number to be in or off bounds of the range
-   * @param outside whether to get the roles inside or outside bounds. if what to get outside this
+   * @param bounds whether to get the roles inside or outside bounds. if what to get in bounds this
    *     must be true
    * @return the global roles
    */
-  default Collection<Role> getGlobalRolesDiscord(int numb, boolean outside) {
-    return this.getRolesById(this.getGlobalRoles(numb, outside));
+  default Collection<Role> getGlobalRolesDiscord(int numb, boolean bounds) {
+    return this.getRolesById(this.getGlobalRoles(numb, bounds));
   }
 
   /**

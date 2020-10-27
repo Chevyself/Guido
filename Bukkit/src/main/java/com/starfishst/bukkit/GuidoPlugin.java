@@ -9,11 +9,13 @@ import com.starfishst.bukkit.api.events.GuidoListener;
 import com.starfishst.bukkit.commands.FlyCommand;
 import com.starfishst.bukkit.commands.GameModeCommand;
 import com.starfishst.bukkit.commands.PingCommand;
+import com.starfishst.bukkit.commands.TestCommands;
 import com.starfishst.bukkit.commands.providers.GameModeProvider;
 import com.starfishst.bukkit.configuration.GuidoConfiguration;
 import com.starfishst.bukkit.dependencies.GuidoDependencies;
 import com.starfishst.bukkit.lang.BukkitLanguageHandler;
 import com.starfishst.bukkit.listeners.CommandExecutionListener;
+import com.starfishst.bukkit.listeners.MatchMakingListener;
 import com.starfishst.bukkit.listeners.PermissionListener;
 import com.starfishst.bukkit.listeners.TestListener;
 import com.starfishst.bukkit.utils.BukkitUtils;
@@ -53,7 +55,7 @@ public class GuidoPlugin extends JavaPlugin implements Implementation {
   /** The set of commands that the implementation is using */
   @NotNull
   private final Set<GuidoCommand> commands =
-      Lots.set(new FlyCommand(), new GameModeCommand(), new PingCommand());
+      Lots.set(new FlyCommand(), new GameModeCommand(), new PingCommand(), new TestCommands());
   /** The listeners that this requires */
   @NotNull private final List<GuidoListener> listeners = Lots.list(this.bukkitLanguageHandler);
   /** The guidoConfiguration that the implementation is using */
@@ -142,6 +144,10 @@ public class GuidoPlugin extends JavaPlugin implements Implementation {
   /** Start the connection with the bot */
   private void startConnection() {
     this.getClient().setToken(this.configuration.getToken());
+    MatchMakingListener makingListener = this.getListener(MatchMakingListener.class);
+    if (makingListener != null) {
+      this.getClient().addReceptors(makingListener);
+    }
     try {
       this.getClient().startConnection();
     } catch (IOException e) {

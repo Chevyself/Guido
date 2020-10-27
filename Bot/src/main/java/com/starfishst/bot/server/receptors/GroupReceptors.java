@@ -2,9 +2,9 @@ package com.starfishst.bot.server.receptors;
 
 import com.starfishst.bot.Guido;
 import com.starfishst.bot.api.data.BotGroup;
-import com.starfishst.bot.handlers.data.GuidoGroup;
-import com.starfishst.bot.handlers.data.GuidoPermission;
-import com.starfishst.bot.handlers.data.GuidoValuesMap;
+import com.starfishst.bot.handlers.data.types.GuidoGroup;
+import com.starfishst.bot.handlers.data.types.GuidoPermission;
+import com.starfishst.bot.handlers.data.types.maps.GuidoValuesMap;
 import com.starfishst.guido.api.data.Group;
 import java.util.Collection;
 import java.util.HashSet;
@@ -20,9 +20,13 @@ public class GroupReceptors {
    * @param id the id of the group to get
    * @return the group if found or null
    */
-  @Receptor(method = "group")
-  public BotGroup group(@ParamName(name = "id") String id) {
-    return Guido.getDataLoader().getGroup(id);
+  @Receptor("group")
+  public BotGroup group(@ParamName("id") String id) {
+    BotGroup group = Guido.getDataLoader().getGroup(id);
+    if (group != null) {
+      return group.refresh();
+    }
+    return null;
   }
 
   /**
@@ -30,7 +34,7 @@ public class GroupReceptors {
    *
    * @return the existing groups
    */
-  @Receptor(method = "groups")
+  @Receptor("groups")
   public Collection<Group> groups() {
     return Guido.getDataLoader().getGroups();
   }
@@ -41,8 +45,8 @@ public class GroupReceptors {
    * @param name the name of the group
    * @return the id of the group created
    */
-  @Receptor(method = "create-group")
-  public String createGroup(@ParamName(name = "name") String name) {
+  @Receptor("create-group")
+  public String createGroup(@ParamName("name") String name) {
     return new GuidoGroup(new GuidoValuesMap(), new HashSet<>(), name).getId();
   }
 
@@ -54,14 +58,14 @@ public class GroupReceptors {
    * @param value the value of the preference
    * @return whether the preference was set
    */
-  @Receptor(method = "group-set-preference")
+  @Receptor("group-set-preference")
   private boolean setPreference(
-      @ParamName(name = "id") String groupId,
-      @ParamName(name = "key") String key,
-      @ParamName(name = "value") Object value) {
+      @ParamName("id") String groupId,
+      @ParamName("key") String key,
+      @ParamName("value") Object value) {
     BotGroup group = Guido.getDataLoader().getGroup(groupId);
     if (group != null) {
-      group.getPreferences().addValue(key, value);
+      group.refresh().getPreferences().addValue(key, value);
       return true;
     }
     return false;
@@ -75,11 +79,11 @@ public class GroupReceptors {
    * @param permission the permission to add
    * @return true if the permission was added false otherwise
    */
-  @Receptor(method = "group-add-permission")
+  @Receptor("group-add-permission")
   public boolean addPermission(
-      @ParamName(name = "id") String id,
-      @ParamName(name = "context") String context,
-      @ParamName(name = "permission") GuidoPermission permission) {
+      @ParamName("id") String id,
+      @ParamName("context") String context,
+      @ParamName("permission") GuidoPermission permission) {
     BotGroup group = Guido.getDataLoader().getGroup(id);
     if (group != null) {
       return group.refresh().addPermission(context, permission.getNode(), permission.isEnabled());
@@ -95,11 +99,11 @@ public class GroupReceptors {
    * @param permission the permission to remove
    * @return true if the permission was removed false otherwise
    */
-  @Receptor(method = "group-remove-permission")
+  @Receptor("group-remove-permission")
   public boolean removePermission(
-      @ParamName(name = "id") String id,
-      @ParamName(name = "context") String context,
-      @ParamName(name = "permission") GuidoPermission permission) {
+      @ParamName("id") String id,
+      @ParamName("context") String context,
+      @ParamName("permission") GuidoPermission permission) {
     BotGroup group = Guido.getDataLoader().getGroup(id);
     if (group != null) {
       return group.refresh().removePermission(context, permission.getNode());

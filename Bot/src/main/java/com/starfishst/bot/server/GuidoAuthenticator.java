@@ -1,13 +1,13 @@
 package com.starfishst.bot.server;
 
 import com.starfishst.bot.Guido;
-import com.starfishst.bot.handlers.data.GuidoValuesMap;
+import com.starfishst.bot.handlers.data.types.maps.GuidoValuesMap;
 import com.starfishst.guido.api.data.token.AuthLevel;
 import com.starfishst.guido.api.data.token.AuthToken;
 import java.util.HashMap;
 import java.util.Map;
 import me.googas.commons.maps.Maps;
-import me.googas.messaging.Request;
+import me.googas.messaging.IRequest;
 import me.googas.messaging.json.JsonMessenger;
 import me.googas.messaging.json.ParamName;
 import me.googas.messaging.json.Receptor;
@@ -29,6 +29,7 @@ public class GuidoAuthenticator implements Authenticator {
   @NotNull
   private final HashMap<String, AuthLevel> requiredLevel =
       Maps.builder("auth", AuthLevel.NONE)
+          .append("client-info", AuthLevel.ADMINISTRATIVE)
           .append("permissions", AuthLevel.READ)
           .append("data-exists", AuthLevel.READ)
           .append("permission", AuthLevel.READ)
@@ -63,8 +64,8 @@ public class GuidoAuthenticator implements Authenticator {
    * @param token the token that the client used to authenticate
    * @return whether the user was authenticated
    */
-  @Receptor(method = "auth")
-  public boolean auth(@NotNull JsonMessenger messenger, @ParamName(name = "token") String token) {
+  @Receptor("auth")
+  public boolean auth(@NotNull JsonMessenger messenger, @ParamName("token") String token) {
     if (messenger instanceof JsonClientThread) {
       AuthToken authToken = Guido.getDataLoader().getAuthToken(token);
       if (authToken != null) {
@@ -83,20 +84,19 @@ public class GuidoAuthenticator implements Authenticator {
    * @param info the info of the client
    * @return true if the info was saved
    */
-  @Receptor(method = "client-info")
-  public boolean info(@NotNull JsonMessenger messenger, @ParamName(name = "info") Map<?, ?> info) {
+  @Receptor("client-info")
+  public boolean info(
+      @NotNull JsonMessenger messenger, @ParamName("info") Map<String, Object> info) {
     if (messenger instanceof JsonClientThread) {
       GuidoValuesMap map = new GuidoValuesMap();
       info.forEach(
           (key, value) -> {
-            if (key instanceof String) {
-              if (!((String) key).equalsIgnoreCase("bungee") || this.getBungee() == null) {
-                map.addValue((String) key, value);
-              }
+            if (!key.equalsIgnoreCase("bungee") || this.getBungee() == null) {
+              map.addValue(key, value);
             }
           });
       this.info.put((JsonClientThread) messenger, map);
-      return false;
+      return true;
     }
     return false;
   }
@@ -117,7 +117,7 @@ public class GuidoAuthenticator implements Authenticator {
   }
 
   @Override
-  public boolean isAuthenticated(@NotNull JsonClientThread client, @NotNull Request<?> request) {
+  public boolean isAuthenticated(@NotNull JsonClientThread client, @NotNull IRequest request) {
     if (this.levels.containsKey(client)) {
       AuthLevel authLevel = this.levels.get(client);
       AuthLevel required =
@@ -133,9 +133,8 @@ public class GuidoAuthenticator implements Authenticator {
    * @param client the client to disconnect
    * @return true if the client was disconnected
    */
-  @Receptor(method = "disconnect")
-  public boolean disconnect(@NotNull JsonClientThread client) {
+  @Receptor("disconnect")
+  public void disconnect(@NotNull JsonClientThread client) {
     client.close();
-    return true;
   }
 }

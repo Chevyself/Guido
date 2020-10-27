@@ -80,7 +80,6 @@ public class ReachDetector extends PacketAdapter implements AntiCheatDetector {
         double alpha = 180 - omega - pitch;
         double distance =
             Math.sin(Math.toRadians(alpha)) * hypotenuse / Math.sin(Math.toRadians(pitch));
-        System.out.println(distance);
         if (distance > 4f) {
           new SuspectDetectedEvent(
                   attacker,

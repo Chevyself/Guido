@@ -28,8 +28,14 @@ public class BungeeReceptors implements GuidoListener {
   /** The uuids of the player in queue */
   @NotNull private final Set<UUID> inQueue = new HashSet<>();
 
-  @Receptor(method = "is-online")
-  public boolean isOnline(@ParamName(name = "uuids") UUID uuid) {
+  /**
+   * Check whether the player with the given id is online the server
+   *
+   * @param uuid the uuid of the player to check
+   * @return true if the player is inside the server
+   */
+  @Receptor("is-online")
+  public boolean isOnline(@ParamName("uuid") UUID uuid) {
     for (ProxiedPlayer player : ProxyServer.getInstance().getPlayers()) {
       if (player.getUniqueId().equals(uuid)) {
         return true;
@@ -38,19 +44,37 @@ public class BungeeReceptors implements GuidoListener {
     return false;
   }
 
-  @Receptor(method = "add-queue")
-  public boolean addQueue(@ParamName(name = "uuid") UUID uuid) {
+  /**
+   * Adds to the queue the player with the given uuid
+   *
+   * @param uuid the uuid of the player to add to the queue
+   * @return true if the player was added in the queue
+   */
+  @Receptor("add-queue")
+  public boolean addQueue(@ParamName("uuid") UUID uuid) {
     return this.inQueue.add(uuid);
   }
 
-  @Receptor(method = "remove-queue")
-  public boolean removeQueue(@ParamName(name = "uuid") UUID uuid) {
+  /**
+   * Removes from the queue the player with the given uuid
+   *
+   * @param uuid the uuid of the player to add to the queue
+   * @return true if the player was added in the queue
+   */
+  @Receptor("remove-queue")
+  public boolean removeQueue(@ParamName("uuid") UUID uuid) {
     return this.inQueue.remove(uuid);
   }
 
-  @Receptor(method = "send-to-server")
-  public boolean sendToServer(
-      @ParamName(name = "uuid") UUID uuid, @ParamName(name = "server") String server) {
+  /**
+   * Sends a player to a server
+   *
+   * @param uuid the uuid of the player to send
+   * @param server the name of the server to send the player
+   * @return true if the player was sent or was already on the server
+   */
+  @Receptor("send-to-server")
+  public boolean sendToServer(@ParamName("uuid") UUID uuid, @ParamName("server") String server) {
     ServerInfo serverInfo = ProxyServer.getInstance().getServerInfo(server);
     ProxiedPlayer player = ProxyServer.getInstance().getPlayer(uuid);
     if (player != null && serverInfo != null) {
@@ -62,9 +86,16 @@ public class BungeeReceptors implements GuidoListener {
     return false;
   }
 
-  @Receptor(method = "send-to-server-by-ip")
-  public boolean sendToServerbyIp(
-      @ParamName(name = "uuids") List<String> uuidsStrings, @ParamName(name = "server") String ip) {
+  /**
+   * @see #sendToServer(UUID, String) but this method sends to the server using the ip of it instead
+   *     and it also accepts many players instead of one
+   * @param uuidsStrings the uuids of the players in a list of string
+   * @param ip the ip of the server to send
+   * @return true if at least was player was sent to the server or was already in the server
+   */
+  @Receptor("send-to-server-by-ip")
+  public boolean sendToServerByIp(
+      @ParamName("uuids") List<String> uuidsStrings, @ParamName("server") String ip) {
     List<UUID> uuids = new ArrayList<>();
     for (String string : uuidsStrings) {
       try {
@@ -87,8 +118,14 @@ public class BungeeReceptors implements GuidoListener {
     return false;
   }
 
-  @Receptor(method = "server-name")
-  public String serverName(@ParamName(name = "ip") String ip) {
+  /**
+   * Get the name of a server using its ip
+   *
+   * @param ip the ip of the server to get the name
+   * @return the name of the server if the ip matches one else null
+   */
+  @Receptor("server-name")
+  public String serverName(@ParamName("ip") String ip) {
     for (GuidoServer server : Guido.getConfiguration().getServers()) {
       if (server.getAddress().equalsIgnoreCase(ip)) {
         ServerInfo info = ProxyServer.getInstance().getServerInfo(server.getName());
@@ -101,6 +138,12 @@ public class BungeeReceptors implements GuidoListener {
     return null;
   }
 
+  /**
+   * Get a server from the given ip
+   *
+   * @param ip the ip to get the server from
+   * @return the server if the ip matches one else null
+   */
   @Nullable
   private ServerInfo getServer(@NotNull String ip) {
     for (GuidoServer server : Guido.getConfiguration().getServers()) {
@@ -111,6 +154,11 @@ public class BungeeReceptors implements GuidoListener {
     return null;
   }
 
+  /**
+   * This listener handles that a player left the server to remove them from the queue
+   *
+   * @param event the event of a player disconnecting from the server
+   */
   @EventHandler
   public void onPlayerDisconnect(PlayerDisconnectEvent event) {
     UUID uniqueId = event.getPlayer().getUniqueId();

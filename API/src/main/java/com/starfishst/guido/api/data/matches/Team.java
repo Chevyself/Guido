@@ -1,11 +1,9 @@
 package com.starfishst.guido.api.data.matches;
 
 import com.starfishst.guido.api.data.links.LinkedData;
-import com.starfishst.guido.api.data.links.LinkedInfo;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.Map;
 import org.jetbrains.annotations.NotNull;
 
 /** This object represents a team. Which is basically a collection of members */
@@ -20,10 +18,10 @@ public interface Team {
   default float getElo(@NotNull Ladder ladder) {
     float sum = 0;
     int size = 0;
-    for (LinkedInfo linkedInfo : this.getMembers().keySet()) {
-      LinkedData data = linkedInfo.getData();
+    for (TeamMember member : this.getMembers()) {
+      LinkedData data = member.getLinkInfo().getLink();
       if (data != null) {
-        sum += data.getElo(ladder);
+        sum += data.refresh().getElo(ladder);
         size++;
       }
     }
@@ -38,8 +36,8 @@ public interface Team {
   @NotNull
   default Collection<String> getMemberSingles() {
     List<String> singles = new ArrayList<>();
-    for (LinkedInfo info : this.getMembers().keySet()) {
-      LinkedData data = info.getData();
+    for (TeamMember member : this.getMembers()) {
+      LinkedData data = member.getLinkInfo().getLink();
       if (data != null) {
         singles.add(data.getSingle());
       }
@@ -53,7 +51,7 @@ public interface Team {
    * @return the members of the team
    */
   @NotNull
-  Map<LinkedInfo, TeamRole> getMembers();
+  Collection<TeamMember> getMembers();
 
   /**
    * Get the name of the team

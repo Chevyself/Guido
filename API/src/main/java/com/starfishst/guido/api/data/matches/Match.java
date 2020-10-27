@@ -1,7 +1,11 @@
 package com.starfishst.guido.api.data.matches;
 
 import com.starfishst.guido.api.data.ValuesMap;
+import com.starfishst.guido.api.data.links.LinkedInfo;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
 import me.googas.commons.cache.ICatchable;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -16,6 +20,13 @@ public interface Match extends ICatchable {
    */
   @NotNull
   String getId();
+
+  /**
+   * Get the id of the guild where this match occurred
+   *
+   * @return the id of the guild
+   */
+  long getGuildId();
 
   /**
    * Finishes the match
@@ -71,5 +82,26 @@ public interface Match extends ICatchable {
    *
    * @return the status of the match
    */
+  @NotNull
   MatchStatus getStatus();
+
+  /**
+   * Get the participants of a match. This collection must be immutable
+   *
+   * @return the collection of participants
+   */
+  @NotNull
+  default Collection<LinkedInfo> getParticipants() {
+    Set<LinkedInfo> participants = new HashSet<>();
+    for (Team team : this.getTeams()) {
+      for (TeamMember member : team.getMembers()) {
+        participants.add(member.getLinkInfo());
+      }
+    }
+    return Collections.unmodifiableSet(participants);
+  }
+
+  @Override
+  @NotNull
+  Match refresh();
 }

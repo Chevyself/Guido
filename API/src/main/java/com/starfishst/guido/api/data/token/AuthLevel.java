@@ -6,6 +6,8 @@ public enum AuthLevel {
   READ(1),
   /** The token has read and write permissions */
   READ_WRITE(2),
+  /** The token has every permission, does not require any further authentication */
+  ADMINISTRATIVE(3),
   /** Means that the token is not authenticated */
   NONE(0);
 
