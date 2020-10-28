@@ -4,6 +4,7 @@ import com.starfishst.bot.Guido;
 import com.starfishst.bot.api.events.responsive.ResponsiveMessageUnloadedEvent;
 import com.starfishst.bot.handlers.GuidoEventHandler;
 import com.starfishst.bot.handlers.responsive.types.GuidoResponsiveMessage;
+import com.starfishst.bot.util.console.Console;
 import com.starfishst.jda.utils.responsive.ResponsiveMessage;
 import com.starfishst.jda.utils.responsive.controller.ResponsiveMessageController;
 import java.util.Collection;
@@ -42,6 +43,7 @@ public class GuidoMessagesController implements ResponsiveMessageController, Gui
   public void onResponsiveMessageUnload(@NotNull ResponsiveMessageUnloadedEvent event) {
     JDA jda = Guido.getConnection().getJda();
     if (jda != null && event.getMessage() instanceof GuidoResponsiveMessage) {
+      Console.debug("Saving the message " + event.getMessage());
       ((GuidoResponsiveMessage) event.getMessage()).save(jda);
     }
   }

@@ -2,15 +2,16 @@ package com.starfishst.bot.handlers.lang;
 
 import com.starfishst.bot.api.data.loader.BotDataLoader;
 import com.starfishst.bot.handlers.GuidoHandler;
+import com.starfishst.bot.util.console.Console;
 import com.starfishst.guido.api.data.lang.LocaleFile;
 import com.starfishst.jda.context.CommandContext;
 import com.starfishst.jda.messages.MessagesProvider;
 import com.starfishst.jda.result.ResultType;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 import me.googas.commons.CoreFiles;
-import me.googas.commons.fallback.Fallback;
 import me.googas.commons.maps.Maps;
 import me.googas.commons.time.Time;
 import org.jetbrains.annotations.NotNull;
@@ -40,6 +41,7 @@ public class GuidoLanguageHandler implements MessagesProvider, GuidoHandler {
    * @param toLoad the locale files to load
    */
   public void load(String... toLoad) {
+    Console.debug("Loading languages: " + Arrays.toString(toLoad));
     for (String lang : toLoad) {
       try {
         this.files.add(
@@ -47,9 +49,9 @@ public class GuidoLanguageHandler implements MessagesProvider, GuidoHandler {
                 CoreFiles.getFileOrResource(
                     CoreFiles.currentDirectory() + "/assets/lang/" + lang + ".properties",
                     CoreFiles.getResource("lang/" + lang + ".properties"))));
+        Console.debug("Registered " + lang + ".properties language file");
       } catch (IOException e) {
-        Fallback.addError("IOException: File for the language " + lang + " could not be gotten");
-        e.printStackTrace();
+        Console.exception(e, "Failed to register " + lang + ".properties");
       }
     }
   }
@@ -298,7 +300,9 @@ public class GuidoLanguageHandler implements MessagesProvider, GuidoHandler {
 
   /** Stops the language handler */
   public void stop() {
+    Console.info("Stopping language");
     for (GuidoLocaleFile file : this.files) {
+      Console.debug(file + " has been saved");
       file.save();
     }
   }

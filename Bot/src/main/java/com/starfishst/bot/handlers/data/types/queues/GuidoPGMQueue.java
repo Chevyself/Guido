@@ -5,6 +5,7 @@ import com.starfishst.bot.handlers.data.types.GuidoMatch;
 import com.starfishst.bot.handlers.data.types.GuidoTeam;
 import com.starfishst.bot.handlers.data.types.GuidoTeamMember;
 import com.starfishst.bot.handlers.data.types.maps.GuidoLinkedValuesMap;
+import com.starfishst.bot.util.console.Console;
 import com.starfishst.guido.api.data.links.LinkedData;
 import com.starfishst.guido.api.data.links.LinkedDataType;
 import com.starfishst.guido.api.data.links.LinkedInfo;
@@ -46,7 +47,9 @@ public class GuidoPGMQueue extends GuidoQueue {
       for (int i = 0; i < ladder.playersPerTeam() * 2; i++) {
         participants.add(new GuidoTeamMember(this.getWaiting().get(i), TeamRole.NORMAL));
       }
-      this.getWaiting().removeAll(participants);
+      for (TeamMember participant : participants) {
+        this.getWaiting().remove(participant.getLinkInfo());
+      }
       return new GuidoMatch(
           this.getGuildId(),
           Lots.set(new GuidoTeam(participants, "participants")),
@@ -115,12 +118,13 @@ public class GuidoPGMQueue extends GuidoQueue {
         String trimmed = linked.getIdentification().getValue("uuid", String.class);
         if (trimmed != null) {
           try {
+            Console.debug("Removing from queue " + data);
             bungee.sendRequest(
                 new Request<>(
                     Boolean.class,
                     "remove-queue",
                     Maps.singleton("uuid", UUIDUtils.untrim(trimmed))),
-                bol -> {});
+                bol -> Console.debug(data + " has been removed from bungee queue too? " + bol));
           } catch (IllegalArgumentException ignored) {
           }
         }

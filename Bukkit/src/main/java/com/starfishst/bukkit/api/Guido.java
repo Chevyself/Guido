@@ -6,6 +6,7 @@ import com.starfishst.bukkit.api.events.GuidoEvent;
 import com.starfishst.bukkit.api.events.GuidoListener;
 import com.starfishst.bukkit.lang.BukkitLanguageHandler;
 import com.starfishst.guido.api.data.implementations.ClientImpl;
+import java.util.logging.Logger;
 import me.googas.commons.Validate;
 import org.bukkit.Bukkit;
 import org.jetbrains.annotations.NotNull;
@@ -105,5 +106,15 @@ public class Guido {
   @NotNull
   public static BukkitLanguageHandler getLanguageHandler() {
     return Guido.validated().getLanguageHandler();
+  }
+
+  /**
+   * Get the logger of the plugin
+   *
+   * @return the logger of the plugin
+   */
+  @NotNull
+  public static Logger getLogger() {
+    return Guido.validated().getLogger();
   }
 }

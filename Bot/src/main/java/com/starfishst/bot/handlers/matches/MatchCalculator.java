@@ -5,6 +5,7 @@ import com.starfishst.bot.api.data.BotGuild;
 import com.starfishst.bot.api.data.BotMatch;
 import com.starfishst.bot.api.events.match.MatchStatusUpdatedEvent;
 import com.starfishst.bot.handlers.GuidoEventHandler;
+import com.starfishst.bot.util.console.Console;
 import com.starfishst.guido.api.data.links.LinkedData;
 import com.starfishst.guido.api.data.matches.Ladder;
 import com.starfishst.guido.api.data.matches.Match;
@@ -32,10 +33,12 @@ public class MatchCalculator implements GuidoEventHandler {
     String ladderName = match.getDetails().getValue("ladder", String.class);
     long guildId = match.getGuildId();
     if (ladderName != null && guildId != -1) {
+      Console.debug("Saving the elo for " + match);
       BotGuild guildData = Guido.getDataLoader().getGuildDataOrCreate(guildId);
       Ladder ladder = guildData.getLadder(ladderName);
       if (ladder != null) {
         if (winners != null) {
+          Console.debug("There's a winner so there will be set");
           float winnersElo = winners.getElo(ladder);
           float losersElo = this.getLosersElo(match, ladder);
           double newWinners =
@@ -75,6 +78,7 @@ public class MatchCalculator implements GuidoEventHandler {
         LinkedData data = member.getLinkInfo().getLink();
         if (data != null) {
           data.refresh();
+          Console.debug("Setting the stat and elo to " + data);
           if (team == winners) {
             data.increaseElo(ladder, winnersDifference);
             data.increaseStat(ladderName + "-wins", 1);

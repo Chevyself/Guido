@@ -6,6 +6,7 @@ import com.starfishst.bot.api.data.BotMatch;
 import com.starfishst.bot.api.events.match.MatchStatusUpdatedEvent;
 import com.starfishst.bot.api.events.queue.QueueJoinEvent;
 import com.starfishst.bot.handlers.GuidoEventHandler;
+import com.starfishst.bot.util.console.Console;
 import com.starfishst.guido.api.data.lang.LocaleFile;
 import com.starfishst.guido.api.data.links.LinkedInfo;
 import com.starfishst.guido.api.data.matches.Match;
@@ -29,6 +30,7 @@ public class MatchMakingHandler implements GuidoEventHandler {
     BotMatch match = event.getMatch();
     LocaleFile locale = Guido.getLanguageHandler().getDefault();
     Long guildId = match.getDetails().getValue("guild", Long.class);
+    Console.debug(match + " has updated its event to " + event.getStatus());
     if (guildId != null) {
       BotGuild guildData = Guido.getDataLoader().getGuildDataOrCreate(guildId);
       TextChannel channel = guildData.getChannel("matches");
@@ -37,6 +39,7 @@ public class MatchMakingHandler implements GuidoEventHandler {
           .getEmbedBuilder()
           .setTitle(locale.get("match.announce.title", Maps.singleton("id", match.getId())));
       information.send(channel);
+      Console.debug(match + " has been announced in " + channel);
     }
   }
 
@@ -48,6 +51,7 @@ public class MatchMakingHandler implements GuidoEventHandler {
   @Listener(priority = ListenPriority.HIGHEST)
   public void onQueueJoin(QueueJoinEvent event) {
     Match match = event.getQueue().checkReady();
+    Console.debug("Is the queue " + event.getQueue() + " ready to create a match? " + match);
     if (match != null) {
       for (LinkedInfo participant : match.getParticipants()) {
         Guido.getHandler(QueueHandler.class).leaveQueue(participant);

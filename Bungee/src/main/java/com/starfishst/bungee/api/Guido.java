@@ -4,6 +4,7 @@ import com.starfishst.bungee.api.configuration.BungeeConfiguration;
 import com.starfishst.bungee.core.GuidoPlugin;
 import com.starfishst.bungee.core.lang.BungeeLanguageHandler;
 import com.starfishst.guido.api.data.implementations.ClientImpl;
+import java.util.logging.Logger;
 import me.googas.commons.Validate;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -64,5 +65,15 @@ public class Guido {
   @NotNull
   public static BungeeLanguageHandler getLanguageHandler() {
     return Guido.validated().getLanguageHandler();
+  }
+
+  /**
+   * Get the logger of guido
+   *
+   * @return the logger of the plugin
+   */
+  @NotNull
+  public static Logger getLogger() {
+    return Guido.validated().getLogger();
   }
 }

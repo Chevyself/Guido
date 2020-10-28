@@ -2,15 +2,19 @@ package com.starfishst.bot.util.console;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.io.Writer;
 import java.time.LocalDateTime;
 import java.util.logging.ConsoleHandler;
 import java.util.logging.FileHandler;
 import java.util.logging.Formatter;
+import java.util.logging.Handler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.logging.SimpleFormatter;
 import me.googas.commons.CoreFiles;
 import me.googas.commons.fallback.Fallback;
-import me.googas.commons.log.formatters.CustomFormatter;
 import me.googas.commons.time.TimeUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -22,9 +26,7 @@ public class Console {
   @NotNull private static final Logger logger = Logger.getLogger("Guido");
 
   static {
-    CustomFormatter formatter =
-        new CustomFormatter(
-            "[%hour%:%minute%:%second% - %day%/%month%/%year% %level%] %message% %stack% \n");
+    Formatter formatter = new SimpleFormatter();
     Console.logger.setUseParentHandlers(false);
     try {
       Console.logger.addHandler(Console.getFileHandler(formatter, null));
@@ -68,7 +70,16 @@ public class Console {
                   + ".txt");
     }
     handler.setFormatter(formatter);
+    handler.setLevel(Level.ALL);
     return handler;
+  }
+
+  /** Set the level of logging for the console to debug */
+  public static void setDebug() {
+    Console.logger.setLevel(Level.ALL);
+    for (Handler handler : Console.logger.getHandlers()) {
+      handler.setLevel(Level.ALL);
+    }
   }
 
   /**
@@ -120,7 +131,7 @@ public class Console {
    */
   public static void exception(@NotNull Throwable throwable, @NotNull String message) {
     Fallback.addError(message);
-    Console.logger.log(Level.SEVERE, message, throwable);
+    Console.logger.log(Level.SEVERE, message, Console.getStackTrace(throwable));
   }
 
   /**
@@ -141,5 +152,18 @@ public class Console {
   @NotNull
   public static Logger getLogger() {
     return Console.logger;
+  }
+
+  /**
+   * Create the stack trace for a throwable
+   *
+   * @param throwable the throwable to create the stack trace
+   * @return the stack trace
+   */
+  private static String getStackTrace(@NotNull Throwable throwable) {
+    Writer stringWriter = new StringWriter();
+    PrintWriter printWriter = new PrintWriter(stringWriter);
+    throwable.printStackTrace(printWriter);
+    return stringWriter.toString();
   }
 }

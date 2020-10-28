@@ -4,6 +4,7 @@ import com.starfishst.bot.Guido;
 import com.starfishst.bot.api.data.BotMatch;
 import com.starfishst.bot.api.events.match.MatchLoadedEvent;
 import com.starfishst.bot.server.IGuidoServer;
+import com.starfishst.bot.util.console.Console;
 import com.starfishst.guido.api.data.matches.MatchStatus;
 import com.starfishst.guido.api.data.matches.Team;
 import com.starfishst.guido.api.data.matches.TeamMember;
@@ -39,6 +40,7 @@ public class PGMMatchHandler implements MatchHandler {
     String type = match.getDetails().getValue("type", String.class);
     if (type != null && type.equalsIgnoreCase("pgm")) {
       if (match.getStatus() == MatchStatus.WAITING) {
+        Console.debug(match + " is ready to look for a server");
         this.waitingForServer.add(match);
         this.lookForServer(match);
       }
@@ -53,16 +55,20 @@ public class PGMMatchHandler implements MatchHandler {
   public void lookForServer(@NotNull BotMatch match) {
     IGuidoServer server = Guido.getServer();
     JsonClientThread bungee = server.getAuthenticator().getBungee();
+    Console.debug("Looking for a server to play " + match);
     if (bungee != null) {
       server.sendRequest(
           new Request<>(Boolean.class, "can-host", Maps.singleton("match", match)),
           ((messenger, canHost) -> {
+            Console.debug("Can messenger host? " + canHost);
             if (this.waitingForServer.contains(match)) {
               if (canHost != null && canHost) {
                 this.pleaseHost(match, bungee, messenger);
               }
             }
           }));
+    } else {
+      Console.debug("There's no connection with bungee");
     }
   }
 
@@ -75,11 +81,12 @@ public class PGMMatchHandler implements MatchHandler {
    */
   public void pleaseHost(
       @NotNull BotMatch match, JsonClientThread bungee, JsonMessenger messenger) {
+    Console.debug("Asking " + messenger + " to host " + match);
     messenger.sendRequest(
         new Request<>(String.class, "host", Maps.singleton("match", match)),
         serverIp -> {
+          Console.debug(messenger + " has the ip " + serverIp);
           if (serverIp != null) {
-
             this.waitingForServer.remove(match);
             List<UUID> participants = new ArrayList<>();
             for (Team team : match.getTeams()) {
@@ -105,14 +112,13 @@ public class PGMMatchHandler implements MatchHandler {
    */
   public void sendParticipantsToServer(
       JsonClientThread bungee, String serverIp, List<UUID> participants) {
+    Console.info("Sending participants to the server");
     bungee.sendRequest(
         new Request<>(
             Boolean.class,
             "send-to-server-by-ip",
             Maps.objects("uuids", participants).append("server", serverIp).build()),
-        joined -> {
-          // IGNORED
-        });
+        joined -> Console.debug("At least one of " + participants + " joined the server"));
   }
 
   @Override

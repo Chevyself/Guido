@@ -77,14 +77,17 @@ public class MatchMakingListener implements GuidoListener {
       Collection<Integer> maxPlayers = map.getMaxPlayers();
       if (maxPlayers.size() == 2) {
         int sum = 0;
+        int required = ladder.playersPerTeam() * 2;
         for (int maxPlayer : maxPlayers) {
           sum += maxPlayer;
         }
-        if (sum == ladder.playersPerTeam() * 2) {
+        Guido.getLogger().info(map + " sizes: " + sum + " required " + required);
+        if (sum == required) {
           suitableMaps.add(map);
         }
       }
     }
+    Guido.getLogger().info("Suitable maps for " + ladder + ": " + suitableMaps);
     return suitableMaps;
   }
 
@@ -118,7 +121,6 @@ public class MatchMakingListener implements GuidoListener {
               if (next != null) {
                 next.needModule(CycleMatchModule.class).cycleNow();
               }
-              next = PGM.get().getMatchManager().getMatches().next();
               // Set teams
               Server server = Bukkit.getServer();
               return server.getIp() + ":" + server.getPort();

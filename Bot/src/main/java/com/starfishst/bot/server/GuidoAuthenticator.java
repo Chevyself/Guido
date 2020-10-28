@@ -2,6 +2,7 @@ package com.starfishst.bot.server;
 
 import com.starfishst.bot.Guido;
 import com.starfishst.bot.handlers.data.types.maps.GuidoValuesMap;
+import com.starfishst.bot.util.console.Console;
 import com.starfishst.guido.api.data.token.AuthLevel;
 import com.starfishst.guido.api.data.token.AuthToken;
 import java.util.HashMap;
@@ -69,6 +70,7 @@ public class GuidoAuthenticator implements Authenticator {
     if (messenger instanceof JsonClientThread) {
       AuthToken authToken = Guido.getDataLoader().getAuthToken(token);
       if (authToken != null) {
+        Console.debug(messenger + " has been authenticated using the token " + authToken);
         this.levels.put((JsonClientThread) messenger, authToken.getLevel());
         return true;
       }
@@ -95,6 +97,7 @@ public class GuidoAuthenticator implements Authenticator {
               map.addValue(key, value);
             }
           });
+      Console.debug("Received client information from " + messenger + ": \n " + info);
       this.info.put((JsonClientThread) messenger, map);
       return true;
     }

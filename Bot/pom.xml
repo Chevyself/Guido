@@ -12,7 +12,7 @@
 
     <groupId>com.starfishst.bot</groupId>
     <artifactId>Bot</artifactId>
-    <version>1.1.0-SNAPSHOT-7</version>
+    <version>1.1.0-SNAPSHOT-8</version>
 
     <build>
         <plugins>
@@ -24,6 +24,7 @@
                 <configuration>
                     <archive>
                         <manifest>
+                            <addClasspath>true</addClasspath>
                             <mainClass>com.starfishst.bot.Guido</mainClass>
                         </manifest>
                     </archive>
@@ -84,13 +85,6 @@
             <groupId>com.starfishst.guido.api</groupId>
             <artifactId>API</artifactId>
             <version>1.0.0-SNAPSHOT-19</version>
-        </dependency>
-        <!-- Dependency to Commons-Messaging -->
-        <dependency>
-            <groupId>me.googas.messaging</groupId>
-            <artifactId>Commons-Messaging</artifactId>
-            <version>1.0.10-SNAPSHOT</version>
-            <scope>compile</scope>
         </dependency>
         <!-- Mongo dependency -->
         <dependency>

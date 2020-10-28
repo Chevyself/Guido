@@ -3,6 +3,7 @@ package com.starfishst.bot.handlers.link;
 import com.starfishst.bot.Guido;
 import com.starfishst.bot.api.data.BotLinkedData;
 import com.starfishst.bot.handlers.GuidoHandler;
+import com.starfishst.bot.util.console.Console;
 import com.starfishst.guido.api.data.links.LinkedInfo;
 import java.util.HashSet;
 import java.util.Set;
@@ -43,10 +44,12 @@ public class LinkHandler implements GuidoHandler {
   public String createCode(@NotNull LinkedInfo info) {
     BotLinkedData data =
         Guido.getDataLoader().getLinkedData(info.getType(), info.getIdentification(), false);
+    Console.debug("Attempting to generate code to " + data);
     if (data != null && !data.isLinked()) {
       String code = this.nextCode();
       this.queries.add(
           new LinkQuery(code, info, System.currentTimeMillis(), Time.fromString("3m")));
+      Console.debug("Code for " + data + " is " + code);
       return code;
     } else {
       return null;

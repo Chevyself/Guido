@@ -90,4 +90,17 @@ public class GuidoQueue implements Queue {
   public List<LinkedInfo> getWaiting() {
     return this.waiting;
   }
+
+  @Override
+  public String toString() {
+    return "GuidoQueue{"
+        + "guildId="
+        + this.guildId
+        + ", ladder='"
+        + this.ladder
+        + '\''
+        + ", waiting="
+        + this.waiting
+        + '}';
+  }
 }

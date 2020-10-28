@@ -16,7 +16,7 @@ public class TestHandler implements GuidoEventHandler {
    */
   @Listener
   public void onGuidoEvent(@NotNull GuidoEvent event) {
-    Console.debug(event.toString());
+    Console.debug("A guido event has been called: " + event.toString());
   }
 
   @Override

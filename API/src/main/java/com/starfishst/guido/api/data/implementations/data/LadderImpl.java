@@ -44,12 +44,12 @@ public class LadderImpl implements Ladder {
 
   @Override
   public int playersPerTeam() {
-    return 0;
+    return this.playersPerTeam;
   }
 
   @Override
   public int baseValue() {
-    return 0;
+    return this.baseValue;
   }
 
   @Override

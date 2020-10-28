@@ -1,5 +1,6 @@
 package com.starfishst.bungee.api.configuration;
 
+import com.starfishst.bungee.api.Guido;
 import java.net.InetSocketAddress;
 import me.googas.commons.fallback.Fallback;
 import org.jetbrains.annotations.NotNull;
@@ -24,6 +25,7 @@ public interface GuidoServer {
         Fallback.addError("Servers: " + Integer.parseInt(split[1]) + " is not a valid port");
       }
     }
+    Guido.getLogger().info("Using " + address + " and port " + port);
     return new InetSocketAddress(address, port);
   }
 

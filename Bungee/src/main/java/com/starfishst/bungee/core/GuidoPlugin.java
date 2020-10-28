@@ -1,11 +1,11 @@
 package com.starfishst.bungee.core;
 
-import com.starfishst.bungee.BungeeClient;
 import com.starfishst.bungee.CommandManager;
 import com.starfishst.bungee.api.Guido;
 import com.starfishst.bungee.api.configuration.BungeeConfiguration;
 import com.starfishst.bungee.api.configuration.GuidoServer;
 import com.starfishst.bungee.api.events.GuidoListener;
+import com.starfishst.bungee.core.client.BungeeClient;
 import com.starfishst.bungee.core.commands.GuidoCommands;
 import com.starfishst.bungee.core.commands.LinkCommand;
 import com.starfishst.bungee.core.commands.PermissionCommands;
@@ -19,11 +19,13 @@ import com.starfishst.guido.api.data.implementations.ClientImpl;
 import com.starfishst.guido.api.data.implementations.Implementation;
 import java.io.File;
 import java.io.IOException;
+import java.net.InetSocketAddress;
 import java.util.List;
 import me.googas.commons.CoreFiles;
 import me.googas.commons.Lots;
 import me.googas.commons.fallback.Fallback;
 import net.md_5.bungee.api.ProxyServer;
+import net.md_5.bungee.api.config.ServerInfo;
 import net.md_5.bungee.api.plugin.Plugin;
 import net.md_5.bungee.config.ConfigurationProvider;
 import net.md_5.bungee.config.YamlConfiguration;
@@ -78,12 +80,12 @@ public class GuidoPlugin extends Plugin implements Implementation {
     ProxyServer proxy = this.getProxy();
     for (GuidoServer server : this.bungeeConfiguration.getServers()) {
       if (proxy.getServerInfo(server.getName()) == null) {
-        proxy
-            .getServers()
-            .put(
-                server.getName(),
-                proxy.constructServerInfo(
-                    server.getName(), server.constructAddress(), "Ignored", server.isRestricted()));
+        InetSocketAddress address = server.constructAddress();
+        this.getLogger().info("Using address " + address);
+        ServerInfo serverInfo =
+            proxy.constructServerInfo(server.getName(), address, "Ignored", server.isRestricted());
+        this.getLogger().info(serverInfo + " has been created");
+        proxy.getServers().put(server.getName(), serverInfo);
       }
     }
   }
@@ -103,7 +105,6 @@ public class GuidoPlugin extends Plugin implements Implementation {
     Guido.setPlugin(this);
     this.loadConfiguration();
     this.client.setToken(this.bungeeConfiguration.getToken());
-    this.client.addReceptors(new BungeeReceptors());
     try {
       this.client.startConnection();
     } catch (IOException e) {
@@ -116,6 +117,7 @@ public class GuidoPlugin extends Plugin implements Implementation {
     this.manager.registerCommand(new LinkCommand());
     this.manager.registerCommand(new PermissionCommands());
     this.manager.registerCommand(new StatsCommand());
+    this.loadServers();
     super.onEnable();
   }
 

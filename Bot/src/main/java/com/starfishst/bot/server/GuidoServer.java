@@ -21,8 +21,6 @@ import com.starfishst.guido.api.data.Permission;
 import com.starfishst.guido.api.data.ValuesMap;
 import com.starfishst.guido.api.data.links.LinkedInfo;
 import java.io.IOException;
-import java.util.HashSet;
-import java.util.Set;
 import me.googas.messaging.Request;
 import me.googas.messaging.api.Message;
 import me.googas.messaging.json.adapters.MessageDeserializer;
@@ -76,24 +74,25 @@ public class GuidoServer extends JsonSocketServer implements IGuidoServer {
   protected void onRemove(@NotNull JsonClientThread client) {
     this.authenticator.remove(client);
     new GuidoServerDisconnectionEvent(this, client).call();
+    Console.debug(client + " has disconnected");
+    Console.debug("Threads currently running " + Thread.getAllStackTraces().keySet());
   }
 
   @Override
   protected void onConnection(@NotNull JsonClientThread client) {
     this.authenticator.add(client);
     new GuidoServerConnectionEvent(this, client).call();
+    Console.debug(client + " has connected");
+    Console.debug("Threads currently running " + Thread.getAllStackTraces().keySet());
   }
 
   @Override
   public void close() throws IOException {
-    Set<JsonClientThread> copy = new HashSet<>(this.getClients());
-    for (JsonClientThread client : copy) {
-      client.sendRequest(
-          new Request<>(Boolean.class, "disconnected"),
-          bol -> {
-            // IGNORED
-          });
-    }
+    this.sendRequest(
+        new Request<>(Boolean.class, "disconnected"),
+        (client, disconnected) -> {
+          Console.debug(client + " has been disconnected " + disconnected);
+        });
     super.close();
   }
 

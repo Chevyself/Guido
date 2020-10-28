@@ -1,4 +1,4 @@
-package com.starfishst.bungee.core;
+package com.starfishst.bungee.core.client;
 
 import com.starfishst.bungee.api.Guido;
 import com.starfishst.bungee.api.configuration.GuidoServer;
@@ -9,6 +9,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
+import me.googas.commons.Atomic;
 import me.googas.commons.UUIDUtils;
 import me.googas.commons.maps.Maps;
 import me.googas.messaging.Request;
@@ -52,6 +53,7 @@ public class BungeeReceptors implements GuidoListener {
    */
   @Receptor("add-queue")
   public boolean addQueue(@ParamName("uuid") UUID uuid) {
+    Guido.getLogger().info("Adding to queue " + uuid);
     return this.inQueue.add(uuid);
   }
 
@@ -63,6 +65,7 @@ public class BungeeReceptors implements GuidoListener {
    */
   @Receptor("remove-queue")
   public boolean removeQueue(@ParamName("uuid") UUID uuid) {
+    Guido.getLogger().info("Removing from queue " + uuid);
     return this.inQueue.remove(uuid);
   }
 
@@ -104,12 +107,28 @@ public class BungeeReceptors implements GuidoListener {
       }
     }
     ServerInfo server = this.getServer(ip);
+    Guido.getLogger().info("sending " + uuids + " to " + server);
+
     if (server != null) {
       for (UUID uuid : uuids) {
         ProxiedPlayer player = ProxyServer.getInstance().getPlayer(uuid);
         if (player != null) {
           if (!player.getServer().getInfo().equals(server)) {
-            player.connect(server);
+            ProxyServer.getInstance()
+                .getScheduler()
+                .runAsync(
+                    Guido.validated(),
+                    () -> {
+                      Atomic<Boolean> connected = new Atomic<>(false);
+                      Guido.getLogger().info(player.getName() + " connected? " + connected.get());
+                      while (!connected.get()) {
+                        player.connect(
+                            server,
+                            (result, error) -> {
+                              connected.set(result);
+                            });
+                      }
+                    });
           }
         }
       }

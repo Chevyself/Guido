@@ -3,6 +3,7 @@ package com.starfishst.bot.handlers.responsive.types.lang;
 import com.starfishst.bot.Guido;
 import com.starfishst.bot.api.data.BotLinkedData;
 import com.starfishst.bot.handlers.responsive.GuidoMessagesController;
+import com.starfishst.bot.util.console.Console;
 import com.starfishst.jda.utils.responsive.ReactionResponse;
 import com.starfishst.jda.utils.responsive.ResponsiveMessage;
 import net.dv8tion.jda.api.events.message.react.MessageReactionAddEvent;
@@ -36,11 +37,10 @@ public class LangChangeReactionResponse implements ReactionResponse {
   @Override
   public void onReaction(@NotNull MessageReactionAddEvent event) {
     if (event.getUserIdLong() == this.userId) {
+      String lang = Guido.getLanguageHandler().getFileFromUnicode(this.unicode).getLang();
       BotLinkedData userData = Guido.getDataLoader().getDiscordUserData(event.getUserIdLong());
-      userData
-          .refresh()
-          .getPreferences()
-          .addValue("lang", Guido.getLanguageHandler().getFileFromUnicode(this.unicode).getLang());
+      Console.debug("Changing the language for " + userData + " to " + lang);
+      userData.refresh().getPreferences().addValue("lang", lang);
       ResponsiveMessage responsiveMessage =
           Guido.getHandler(GuidoMessagesController.class)
               .getResponsiveMessage(null, event.getMessageIdLong());

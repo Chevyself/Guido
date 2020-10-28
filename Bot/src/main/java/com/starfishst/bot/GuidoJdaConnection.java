@@ -31,6 +31,7 @@ public class GuidoJdaConnection {
       if (scanner.hasNext()) {
         String input = scanner.nextLine();
         if (input.equalsIgnoreCase("exit")) {
+          Console.info("Received signal to stop the bot");
           System.exit(0);
         } else {
           return input;
@@ -49,6 +50,7 @@ public class GuidoJdaConnection {
    */
   @NotNull
   public JDA createConnection(@NotNull String token) {
+    Console.debug("Starting discord connection");
     this.jda = null;
     while (this.jda == null) {
       try {
@@ -71,12 +73,13 @@ public class GuidoJdaConnection {
   public JDA connect(@NotNull String token) throws LoginException {
     JDA jda = JDABuilder.create(token, Lots.list(GatewayIntent.values())).build();
     long millis = 0;
+    Console.info("Waiting for connection");
     while (jda.getStatus() != JDA.Status.CONNECTED) {
       try {
         Thread.sleep(1);
         millis++;
       } catch (InterruptedException e) {
-        Console.exception(e, "InterruptedException: Discord connection failed");
+        Console.exception(e, "Thread was interrupted while trying to connect to discord");
       }
     }
     Console.info("Discord took " + Time.fromMillis(millis).toEffectiveString() + " to connect");
