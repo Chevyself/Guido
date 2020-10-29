@@ -20,8 +20,8 @@ import com.starfishst.bukkit.listeners.PermissionListener;
 import com.starfishst.bukkit.listeners.TestListener;
 import com.starfishst.bukkit.utils.BukkitUtils;
 import com.starfishst.bukkit.utils.FilesUtils;
-import com.starfishst.guido.api.data.implementations.ClientImpl;
-import com.starfishst.guido.api.data.implementations.Implementation;
+import me.googas.api.client.Client;
+import com.starfishst.guido.api.data.client.Implementation;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -67,7 +67,7 @@ public class GuidoPlugin extends JavaPlugin implements Implementation {
   @NotNull private final DependencyManager dependencies = new GuidoDependencies(this);
 
   /** The client that the plugin is using */
-  @NotNull private final ClientImpl client = new ClientImpl("none");
+  @NotNull private final Client client = new Client("none", ip, port);
 
   /** Unregisters the commands registered by the implementation */
   private void unregisterCommands() {
@@ -214,7 +214,7 @@ public class GuidoPlugin extends JavaPlugin implements Implementation {
   }
 
   @Override
-  public @NotNull ClientImpl getClient() {
+  public @NotNull Client getClient() {
     return this.client;
   }
 

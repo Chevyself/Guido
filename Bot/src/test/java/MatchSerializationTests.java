@@ -10,26 +10,28 @@ import com.starfishst.bot.handlers.data.types.GuidoTeam;
 import com.starfishst.bot.handlers.data.types.GuidoTeamMember;
 import com.starfishst.bot.handlers.data.types.maps.GuidoLinkedValuesMap;
 import com.starfishst.bot.handlers.data.types.maps.GuidoValuesMap;
-import com.starfishst.guido.api.data.Group;
-import com.starfishst.guido.api.data.Permission;
-import com.starfishst.guido.api.data.PermissionStack;
-import com.starfishst.guido.api.data.ValuesMap;
-import com.starfishst.guido.api.data.implementations.data.ValuesMapImpl;
-import com.starfishst.guido.api.data.implementations.data.adapters.GroupDeserializer;
-import com.starfishst.guido.api.data.implementations.data.adapters.LadderDeserializer;
-import com.starfishst.guido.api.data.implementations.data.adapters.MatchDeserializer;
-import com.starfishst.guido.api.data.implementations.data.adapters.PermissionStackDeserializer;
-import com.starfishst.guido.api.data.implementations.data.adapters.TeamDeserializer;
-import com.starfishst.guido.api.data.implementations.data.adapters.TeamMemberDeserializer;
-import com.starfishst.guido.api.data.links.LinkedDataType;
-import com.starfishst.guido.api.data.links.LinkedInfo;
-import com.starfishst.guido.api.data.matches.Ladder;
-import com.starfishst.guido.api.data.matches.Match;
-import com.starfishst.guido.api.data.matches.Team;
-import com.starfishst.guido.api.data.matches.TeamMember;
-import com.starfishst.guido.api.data.matches.TeamRole;
+import me.googas.api.Group;
+import me.googas.api.Permission;
+import me.googas.api.PermissionStack;
+import me.googas.api.ValuesMap;
+import me.googas.api.client.data.ValuesMapImpl;
+import me.googas.api.client.data.adapters.GroupDeserializer;
+import me.googas.api.client.data.adapters.LadderDeserializer;
+import me.googas.api.client.data.adapters.MatchDeserializer;
+import me.googas.api.client.data.adapters.PermissionStackDeserializer;
+import me.googas.api.client.data.adapters.TeamDeserializer;
+import me.googas.api.client.data.adapters.TeamMemberDeserializer;
+import me.googas.api.links.LinkedDataType;
+import me.googas.api.links.LinkedInfo;
+import me.googas.api.matches.Ladder;
+import me.googas.api.matches.Match;
+import me.googas.api.matches.Team;
+import me.googas.api.matches.TeamMember;
+import me.googas.api.matches.TeamRole;
 import java.util.HashSet;
 import java.util.Set;
+
+import me.googas.api.client.data.adapters.LinkedInfoDeserializer;
 import me.googas.commons.Lots;
 import me.googas.messaging.api.Message;
 import me.googas.messaging.json.adapters.MessageDeserializer;
@@ -58,21 +60,20 @@ public class MatchSerializationTests {
             .registerTypeAdapter(Ladder.class, new LadderDeserializer())
             .registerTypeAdapter(
                 LinkedInfo.class,
-                new com.starfishst.guido.api.data.implementations.data.adapters
-                    .LinkedInfoDeserializer())
+                new LinkedInfoDeserializer())
             .registerTypeAdapter(Match.class, new MatchDeserializer())
             .registerTypeAdapter(
                 Permission.class,
-                new com.starfishst.guido.api.data.implementations.data.adapters.PermissionAdapter())
+                new me.googas.api.client.data.adapters.PermissionAdapter())
             .registerTypeAdapter(PermissionStack.class, new PermissionStackDeserializer())
             .registerTypeAdapter(Team.class, new TeamDeserializer())
             .registerTypeAdapter(TeamMember.class, new TeamMemberDeserializer())
             .registerTypeAdapter(
                 ValuesMap.class,
-                new com.starfishst.guido.api.data.implementations.data.adapters.ValuesMapAdapter())
+                new me.googas.api.client.data.adapters.ValuesMapAdapter())
             .registerTypeAdapter(
                 ValuesMapImpl.class,
-                new com.starfishst.guido.api.data.implementations.data.adapters.ValuesMapAdapter())
+                new me.googas.api.client.data.adapters.ValuesMapAdapter())
             .registerTypeAdapter(Message.class, new MessageDeserializer())
             .setPrettyPrinting()
             .create();

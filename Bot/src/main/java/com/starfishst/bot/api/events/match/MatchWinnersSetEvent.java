@@ -1,7 +1,7 @@
 package com.starfishst.bot.api.events.match;
 
 import com.starfishst.bot.api.data.BotMatch;
-import com.starfishst.guido.api.data.matches.Team;
+import me.googas.api.matches.Team;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

@@ -1,6 +1,6 @@
 package com.starfishst.bukkit.lang;
 
-import com.starfishst.guido.api.data.lang.LocaleFile;
+import me.googas.api.lang.LocaleFile;
 import java.io.File;
 import org.bukkit.configuration.ConfigurationSection;
 import org.jetbrains.annotations.NotNull;

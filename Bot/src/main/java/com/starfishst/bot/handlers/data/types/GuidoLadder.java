@@ -3,9 +3,9 @@ package com.starfishst.bot.handlers.data.types;
 import com.starfishst.bot.handlers.data.types.maps.GuidoValuesMap;
 import com.starfishst.bot.handlers.data.types.queues.GuidoPGMQueue;
 import com.starfishst.bot.handlers.data.types.queues.GuidoQueue;
-import com.starfishst.guido.api.data.discord.GuildData;
-import com.starfishst.guido.api.data.matches.Ladder;
-import com.starfishst.guido.api.data.matches.Queue;
+import me.googas.api.discord.GuildData;
+import me.googas.api.matches.Ladder;
+import me.googas.api.matches.Queue;
 import org.jetbrains.annotations.NotNull;
 
 /** An implementation for ladder */

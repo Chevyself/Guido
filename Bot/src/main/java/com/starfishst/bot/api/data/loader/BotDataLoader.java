@@ -6,9 +6,9 @@ import com.starfishst.bot.api.data.BotLinkedData;
 import com.starfishst.bot.api.data.BotMatch;
 import com.starfishst.bot.api.data.BotRole;
 import com.starfishst.bot.handlers.GuidoEventHandler;
-import com.starfishst.guido.api.data.ValuesMap;
-import com.starfishst.guido.api.data.links.LinkedDataType;
-import com.starfishst.guido.api.data.loader.DataLoader;
+import me.googas.api.ValuesMap;
+import me.googas.api.links.LinkedDataType;
+
 import java.util.Collection;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;

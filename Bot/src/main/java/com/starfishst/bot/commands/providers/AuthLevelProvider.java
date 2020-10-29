@@ -1,7 +1,7 @@
 package com.starfishst.bot.commands.providers;
 
 import com.starfishst.core.exceptions.ArgumentProviderException;
-import com.starfishst.guido.api.data.token.AuthLevel;
+import me.googas.api.token.AuthLevel;
 import com.starfishst.jda.context.CommandContext;
 import com.starfishst.jda.providers.type.JdaArgumentProvider;
 import org.jetbrains.annotations.NotNull;

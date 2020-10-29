@@ -1,6 +1,6 @@
 package com.starfishst.bot.api.data;
 
-import com.starfishst.guido.api.data.discord.RoleData;
+import me.googas.api.discord.RoleData;
 import org.jetbrains.annotations.NotNull;
 
 /** A role data for the bot */

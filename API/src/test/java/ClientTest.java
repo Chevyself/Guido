@@ -1,11 +1,11 @@
-import com.starfishst.guido.api.data.Group;
-import com.starfishst.guido.api.data.implementations.ClientImpl;
-import com.starfishst.guido.api.data.implementations.data.LinkedInfoImpl;
-import com.starfishst.guido.api.data.implementations.data.PermissionStackImpl;
-import com.starfishst.guido.api.data.implementations.data.ValuesMapImpl;
-import com.starfishst.guido.api.data.links.LinkedDataType;
-import com.starfishst.guido.api.data.links.LinkedInfo;
-import com.starfishst.guido.api.data.matches.Ladder;
+import me.googas.api.Group;
+import me.googas.api.client.Client;
+import me.googas.api.client.data.LinkedInfoImpl;
+import me.googas.api.client.data.PermissionStackImpl;
+import me.googas.api.client.data.ValuesMapImpl;
+import me.googas.api.links.LinkedDataType;
+import me.googas.api.links.LinkedInfo;
+import me.googas.api.matches.Ladder;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Scanner;
@@ -22,7 +22,7 @@ public class ClientTest {
   private static String groupId = "kI9w6F";
 
   public static void main(String[] args) throws IOException, MessengerListenFailException {
-    ClientImpl client = new ClientImpl("1Uv2AZduciPKwUL8");
+    Client client = new Client("1Uv2AZduciPKwUL8", "localhost", 3000);
     String nick = "Selfie";
     UUID uuid = UUID.fromString("5eed208d-de58-4022-9ba7-6ccb5ea7e92a");
     String trimmed = UUIDUtils.trim(uuid);

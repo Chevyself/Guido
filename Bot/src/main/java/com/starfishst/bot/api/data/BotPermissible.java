@@ -4,8 +4,7 @@ import com.starfishst.bot.api.events.data.permissible.PermissiblePermissionAdded
 import com.starfishst.bot.api.events.data.permissible.PermissiblePermissionRemovedEvent;
 import com.starfishst.bot.handlers.data.types.GuidoPermission;
 import com.starfishst.bot.handlers.data.types.GuidoPermissionStack;
-import com.starfishst.guido.api.data.Permissible;
-import com.starfishst.guido.api.data.PermissionStack;
+import me.googas.api.PermissionStack;
 import java.util.HashSet;
 import org.jetbrains.annotations.NotNull;
 

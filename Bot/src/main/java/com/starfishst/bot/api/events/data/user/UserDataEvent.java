@@ -1,7 +1,7 @@
 package com.starfishst.bot.api.events.data.user;
 
 import com.starfishst.bot.api.events.GuidoEvent;
-import com.starfishst.guido.api.data.UserData;
+import me.googas.api.UserData;
 import org.jetbrains.annotations.NotNull;
 
 /** An event that involves user data */

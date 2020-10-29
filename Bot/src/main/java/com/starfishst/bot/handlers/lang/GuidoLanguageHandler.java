@@ -3,7 +3,7 @@ package com.starfishst.bot.handlers.lang;
 import com.starfishst.bot.api.data.loader.BotDataLoader;
 import com.starfishst.bot.handlers.GuidoHandler;
 import com.starfishst.bot.util.console.Console;
-import com.starfishst.guido.api.data.lang.LocaleFile;
+import me.googas.api.lang.LocaleFile;
 import com.starfishst.jda.context.CommandContext;
 import com.starfishst.jda.messages.MessagesProvider;
 import com.starfishst.jda.result.ResultType;

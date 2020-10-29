@@ -1,8 +1,8 @@
 package com.starfishst.bot.api.events.data.permissible;
 
 import com.starfishst.bot.api.data.BotPermissible;
-import com.starfishst.guido.api.data.Permission;
-import com.starfishst.guido.api.data.PermissionStack;
+import me.googas.api.Permission;
+import me.googas.api.PermissionStack;
 import org.jetbrains.annotations.NotNull;
 
 /** Called when a permissible gets a new permission */

@@ -1,7 +1,7 @@
 package com.starfishst.bot.handlers.data.types;
 
-import com.starfishst.guido.api.data.Permission;
-import com.starfishst.guido.api.data.PermissionStack;
+import me.googas.api.Permission;
+import me.googas.api.PermissionStack;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;

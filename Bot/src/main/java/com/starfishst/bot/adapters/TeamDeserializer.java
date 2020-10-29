@@ -5,7 +5,7 @@ import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParseException;
 import com.starfishst.bot.handlers.data.types.GuidoTeam;
-import com.starfishst.guido.api.data.matches.Team;
+import me.googas.api.matches.Team;
 import java.lang.reflect.Type;
 
 /** Deserializes teams */

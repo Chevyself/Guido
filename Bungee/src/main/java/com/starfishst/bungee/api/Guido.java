@@ -3,7 +3,7 @@ package com.starfishst.bungee.api;
 import com.starfishst.bungee.api.configuration.BungeeConfiguration;
 import com.starfishst.bungee.core.GuidoPlugin;
 import com.starfishst.bungee.core.lang.BungeeLanguageHandler;
-import com.starfishst.guido.api.data.implementations.ClientImpl;
+import me.googas.api.client.Client;
 import java.util.logging.Logger;
 import me.googas.commons.Validate;
 import org.jetbrains.annotations.NotNull;
@@ -53,7 +53,7 @@ public class Guido {
    * @return the client used in the bot
    */
   @NotNull
-  public static ClientImpl getClient() {
+  public static Client getClient() {
     return Guido.validated().getClient();
   }
 

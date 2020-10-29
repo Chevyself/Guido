@@ -2,8 +2,8 @@ package com.starfishst.bukkit.listeners;
 
 import com.starfishst.bukkit.api.Guido;
 import com.starfishst.bukkit.api.events.GuidoListener;
-import com.starfishst.guido.api.data.implementations.data.MatchImpl;
-import com.starfishst.guido.api.data.matches.Ladder;
+import me.googas.api.client.data.MatchImpl;
+import me.googas.api.matches.Ladder;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;

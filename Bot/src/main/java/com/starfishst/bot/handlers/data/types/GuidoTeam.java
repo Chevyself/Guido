@@ -1,7 +1,7 @@
 package com.starfishst.bot.handlers.data.types;
 
-import com.starfishst.guido.api.data.matches.Team;
-import com.starfishst.guido.api.data.matches.TeamMember;
+import me.googas.api.matches.Team;
+import me.googas.api.matches.TeamMember;
 import java.util.Collection;
 import java.util.Set;
 import org.jetbrains.annotations.NotNull;

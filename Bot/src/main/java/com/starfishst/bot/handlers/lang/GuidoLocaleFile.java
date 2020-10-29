@@ -1,6 +1,6 @@
 package com.starfishst.bot.handlers.lang;
 
-import com.starfishst.guido.api.data.lang.LocaleFile;
+import me.googas.api.lang.LocaleFile;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;

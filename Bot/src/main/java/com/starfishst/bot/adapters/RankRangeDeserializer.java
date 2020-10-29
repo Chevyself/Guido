@@ -5,7 +5,7 @@ import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParseException;
 import com.starfishst.bot.handlers.data.types.GuidoRankRange;
-import com.starfishst.guido.api.data.RankRange;
+import me.googas.api.RankRange;
 import java.lang.reflect.Type;
 
 /** Deserializes rank ranges */

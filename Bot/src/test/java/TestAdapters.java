@@ -1,7 +1,7 @@
 import com.starfishst.bot.adapters.ValuesMapAdapter;
 import com.starfishst.bot.api.data.BotLinkedData;
 import com.starfishst.bot.handlers.data.types.maps.GuidoValuesMap;
-import com.starfishst.guido.api.data.ValuesMap;
+import me.googas.api.ValuesMap;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import me.googas.commons.CoreFiles;

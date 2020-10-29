@@ -3,7 +3,7 @@ package com.starfishst.bukkit.commands.providers;
 import com.starfishst.bukkit.api.Guido;
 import com.starfishst.bukkit.context.CommandContext;
 import com.starfishst.bukkit.providers.type.BukkitExtraArgumentProvider;
-import com.starfishst.guido.api.data.lang.LocaleFile;
+import me.googas.api.lang.LocaleFile;
 import org.jetbrains.annotations.NotNull;
 
 /** Provides the locale file in commands */

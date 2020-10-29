@@ -2,7 +2,7 @@ package com.starfishst.bot.handlers.data.types;
 
 import com.starfishst.bot.api.events.data.user.UserLoadedDataEvent;
 import com.starfishst.bot.api.events.data.user.UserUnloadedDataEvent;
-import com.starfishst.guido.api.data.UserData;
+import me.googas.api.UserData;
 import me.googas.commons.cache.Catchable;
 import me.googas.commons.time.Time;
 import org.jetbrains.annotations.NotNull;

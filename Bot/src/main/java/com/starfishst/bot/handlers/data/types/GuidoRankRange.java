@@ -1,6 +1,6 @@
 package com.starfishst.bot.handlers.data.types;
 
-import com.starfishst.guido.api.data.RankRange;
+import me.googas.api.RankRange;
 import org.jetbrains.annotations.NotNull;
 
 /** Rank range implementation for the guido bot */

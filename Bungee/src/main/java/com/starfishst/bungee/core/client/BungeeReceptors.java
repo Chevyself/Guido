@@ -3,7 +3,7 @@ package com.starfishst.bungee.core.client;
 import com.starfishst.bungee.api.Guido;
 import com.starfishst.bungee.api.configuration.GuidoServer;
 import com.starfishst.bungee.api.events.GuidoListener;
-import com.starfishst.guido.api.data.links.LinkedDataType;
+import me.googas.api.links.LinkedDataType;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;

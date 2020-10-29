@@ -1,7 +1,7 @@
 package com.starfishst.bungee.core.client;
 
 import com.starfishst.bungee.api.Guido;
-import com.starfishst.guido.api.data.implementations.ClientImpl;
+import me.googas.api.client.Client;
 import java.io.IOException;
 import me.googas.commons.maps.Maps;
 import me.googas.messaging.Request;
@@ -9,7 +9,7 @@ import me.googas.messaging.json.client.JsonClient;
 import org.jetbrains.annotations.NotNull;
 
 /** An extension for client */
-public class BungeeClient extends ClientImpl {
+public class BungeeClient extends Client {
 
   /**
    * Create the client
@@ -17,7 +17,7 @@ public class BungeeClient extends ClientImpl {
    * @param token the token
    */
   public BungeeClient(@NotNull String token) {
-    super(token);
+    super(token, this.ip, this.port);
     this.addReceptors(new BungeeReceptors());
   }
 

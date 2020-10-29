@@ -5,7 +5,7 @@ import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParseException;
 import com.starfishst.bot.handlers.data.types.GuidoPermissionStack;
-import com.starfishst.guido.api.data.PermissionStack;
+import me.googas.api.PermissionStack;
 import java.lang.reflect.Type;
 
 /** Deserializes permission stacks */

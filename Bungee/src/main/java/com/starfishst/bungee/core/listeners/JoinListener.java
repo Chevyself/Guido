@@ -2,11 +2,11 @@ package com.starfishst.bungee.core.listeners;
 
 import com.starfishst.bungee.api.Guido;
 import com.starfishst.bungee.api.events.GuidoListener;
-import com.starfishst.guido.api.data.Permission;
-import com.starfishst.guido.api.data.implementations.data.LinkedInfoImpl;
-import com.starfishst.guido.api.data.implementations.data.PermissionStackImpl;
-import com.starfishst.guido.api.data.implementations.data.ValuesMapImpl;
-import com.starfishst.guido.api.data.links.LinkedDataType;
+import me.googas.api.Permission;
+import me.googas.api.client.data.LinkedInfoImpl;
+import me.googas.api.client.data.PermissionStackImpl;
+import me.googas.api.client.data.ValuesMapImpl;
+import me.googas.api.links.LinkedDataType;
 import java.io.IOException;
 import java.util.UUID;
 import me.googas.commons.UUIDUtils;

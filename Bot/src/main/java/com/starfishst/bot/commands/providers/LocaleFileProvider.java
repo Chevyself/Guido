@@ -1,7 +1,7 @@
 package com.starfishst.bot.commands.providers;
 
 import com.starfishst.bot.Guido;
-import com.starfishst.guido.api.data.lang.LocaleFile;
+import me.googas.api.lang.LocaleFile;
 import com.starfishst.jda.context.CommandContext;
 import com.starfishst.jda.providers.type.JdaExtraArgumentProvider;
 import org.jetbrains.annotations.NotNull;

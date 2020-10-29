@@ -4,7 +4,7 @@ import com.starfishst.bot.Guido;
 import com.starfishst.bot.api.data.BotLinkedData;
 import com.starfishst.bot.handlers.GuidoHandler;
 import com.starfishst.bot.util.console.Console;
-import com.starfishst.guido.api.data.links.LinkedInfo;
+import me.googas.api.links.LinkedInfo;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.TimerTask;

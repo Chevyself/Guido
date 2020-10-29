@@ -5,7 +5,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonParseException;
 import com.google.gson.JsonSerializationContext;
 import com.starfishst.bot.handlers.data.types.GuidoLadder;
-import com.starfishst.guido.api.data.matches.Ladder;
+import me.googas.api.matches.Ladder;
 import java.lang.reflect.Type;
 import me.googas.commons.gson.adapters.JsonAdapter;
 

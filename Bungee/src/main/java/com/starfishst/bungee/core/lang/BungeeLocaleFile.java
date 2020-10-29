@@ -1,7 +1,7 @@
 package com.starfishst.bungee.core.lang;
 
 import com.starfishst.bungee.utils.BungeeUtils;
-import com.starfishst.guido.api.data.lang.LocaleFile;
+import me.googas.api.lang.LocaleFile;
 import java.io.File;
 import java.util.HashMap;
 import me.googas.commons.maps.MapBuilder;

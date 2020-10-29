@@ -12,7 +12,7 @@
 
     <groupId>com.starfishst.bot</groupId>
     <artifactId>Bot</artifactId>
-    <version>1.1.0-SNAPSHOT-8</version>
+    <version>1.1.0-PRE-0</version>
 
     <build>
         <plugins>
@@ -84,7 +84,7 @@
         <dependency>
             <groupId>com.starfishst.guido.api</groupId>
             <artifactId>API</artifactId>
-            <version>1.0.0-SNAPSHOT-19</version>
+            <version>1.0.0-PRE-0</version>
         </dependency>
         <!-- Mongo dependency -->
         <dependency>

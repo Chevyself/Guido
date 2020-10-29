@@ -1,6 +1,6 @@
 package com.starfishst.bot.api.data;
 
-import com.starfishst.guido.api.data.Group;
+import me.googas.api.Group;
 import org.jetbrains.annotations.NotNull;
 
 /** An extension of group for the bot */

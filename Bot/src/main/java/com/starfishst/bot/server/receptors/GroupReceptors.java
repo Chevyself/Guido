@@ -5,7 +5,7 @@ import com.starfishst.bot.api.data.BotGroup;
 import com.starfishst.bot.handlers.data.types.GuidoGroup;
 import com.starfishst.bot.handlers.data.types.GuidoPermission;
 import com.starfishst.bot.handlers.data.types.maps.GuidoValuesMap;
-import com.starfishst.guido.api.data.Group;
+import me.googas.api.Group;
 import java.util.Collection;
 import java.util.HashSet;
 import me.googas.messaging.json.ParamName;

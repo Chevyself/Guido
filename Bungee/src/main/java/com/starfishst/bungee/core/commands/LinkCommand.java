@@ -7,7 +7,7 @@ import com.starfishst.bungee.core.lang.BungeeLocaleFile;
 import com.starfishst.bungee.result.Result;
 import com.starfishst.core.annotations.settings.Setting;
 import com.starfishst.core.annotations.settings.Settings;
-import com.starfishst.guido.api.data.implementations.ClientImpl;
+import me.googas.api.client.Client;
 import me.googas.commons.maps.Maps;
 import me.googas.messaging.Request;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
@@ -26,7 +26,7 @@ public class LinkCommand {
   @Command(aliases = "link")
   public Result link(ProxiedPlayer player, BungeeLocaleFile locale) {
     ProxiedOfflinePlayer offline = new ProxiedOfflinePlayer(player.getUniqueId(), player.getName());
-    ClientImpl client = Guido.getClient();
+    Client client = Guido.getClient();
     client.request(
         new Request<>(Boolean.class, "is-linked", Maps.singleton("info", offline.getLinkedInfo())),
         linked -> {

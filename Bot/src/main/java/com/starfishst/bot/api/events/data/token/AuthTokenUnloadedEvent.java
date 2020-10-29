@@ -1,6 +1,6 @@
 package com.starfishst.bot.api.events.data.token;
 
-import com.starfishst.guido.api.data.token.AuthToken;
+import me.googas.api.token.AuthToken;
 import org.jetbrains.annotations.NotNull;
 
 /** Called when an auth token gets unloaded */

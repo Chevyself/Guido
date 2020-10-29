@@ -1,6 +1,6 @@
 package com.starfishst.bot.handlers.data.types;
 
-import com.starfishst.guido.api.data.Permission;
+import me.googas.api.Permission;
 import org.jetbrains.annotations.NotNull;
 
 /** An implementation for guido permissions */

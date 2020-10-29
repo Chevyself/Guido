@@ -1,7 +1,7 @@
 import com.starfishst.bot.handlers.data.types.GuidoLinkedInfo;
 import com.starfishst.bot.handlers.data.types.maps.GuidoValuesMap;
-import com.starfishst.guido.api.data.links.LinkedDataType;
-import com.starfishst.guido.api.data.links.LinkedInfo;
+import me.googas.api.links.LinkedDataType;
+import me.googas.api.links.LinkedInfo;
 import java.util.ArrayList;
 import java.util.List;
 

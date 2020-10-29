@@ -1,9 +1,8 @@
 package com.starfishst.bot.api.data;
 
 import com.starfishst.bot.Guido;
-import com.starfishst.guido.api.data.lang.LocaleFile;
-import com.starfishst.guido.api.data.matches.Match;
-import com.starfishst.guido.api.data.matches.Team;
+import me.googas.api.lang.LocaleFile;
+import me.googas.api.matches.Team;
 import com.starfishst.jda.utils.embeds.EmbedQuery;
 import java.util.Collection;
 import java.util.Set;
@@ -45,7 +44,7 @@ public interface BotMatch extends Match, ICatchable {
               if (!BotMatch.toIgnore.contains(key)) {
                 String fieldDesc;
                 if (value instanceof Collection) {
-                  fieldDesc = Lots.pretty((Collection<?>) value);
+                  fieldDesc = Lots.pretty(value);
                 } else {
                   fieldDesc = value.toString();
                 }

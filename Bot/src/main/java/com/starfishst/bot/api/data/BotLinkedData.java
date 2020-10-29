@@ -1,10 +1,7 @@
 package com.starfishst.bot.api.data;
 
 import com.starfishst.bot.Guido;
-import com.starfishst.guido.api.data.UserData;
-import com.starfishst.guido.api.data.lang.LocaleFile;
-import com.starfishst.guido.api.data.links.LinkedData;
-import com.starfishst.guido.api.data.links.LinkedDataType;
+
 import java.util.Collection;
 import java.util.HashSet;
 import me.googas.commons.maps.Maps;

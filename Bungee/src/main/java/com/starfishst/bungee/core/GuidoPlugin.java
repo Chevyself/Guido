@@ -15,8 +15,8 @@ import com.starfishst.bungee.core.configuration.GuidoBungeeConfiguration;
 import com.starfishst.bungee.core.lang.BungeeLanguageHandler;
 import com.starfishst.bungee.core.listeners.JoinListener;
 import com.starfishst.bungee.core.listeners.MotdListener;
-import com.starfishst.guido.api.data.implementations.ClientImpl;
-import com.starfishst.guido.api.data.implementations.Implementation;
+import me.googas.api.client.Client;
+import com.starfishst.guido.api.data.client.Implementation;
 import java.io.File;
 import java.io.IOException;
 import java.net.InetSocketAddress;
@@ -128,7 +128,7 @@ public class GuidoPlugin extends Plugin implements Implementation {
   }
 
   @Override
-  public @NotNull ClientImpl getClient() {
+  public @NotNull Client getClient() {
     return this.client;
   }
 

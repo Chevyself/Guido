@@ -2,9 +2,9 @@ package com.starfishst.bot.server.receptors;
 
 import com.starfishst.bot.Guido;
 import com.starfishst.bot.handlers.matches.QueueHandler;
-import com.starfishst.guido.api.data.links.LinkedData;
-import com.starfishst.guido.api.data.links.LinkedInfo;
-import com.starfishst.guido.api.data.matches.Queue;
+import me.googas.api.links.LinkedData;
+import me.googas.api.links.LinkedInfo;
+import me.googas.api.matches.Queue;
 import java.util.Collection;
 import me.googas.messaging.json.ParamName;
 import me.googas.messaging.json.Receptor;

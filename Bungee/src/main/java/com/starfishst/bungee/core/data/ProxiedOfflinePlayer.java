@@ -1,9 +1,9 @@
 package com.starfishst.bungee.core.data;
 
-import com.starfishst.guido.api.data.implementations.data.LinkedInfoImpl;
-import com.starfishst.guido.api.data.implementations.data.ValuesMapImpl;
-import com.starfishst.guido.api.data.links.LinkedDataType;
-import com.starfishst.guido.api.data.links.LinkedInfo;
+import me.googas.api.client.data.LinkedInfoImpl;
+import me.googas.api.client.data.ValuesMapImpl;
+import me.googas.api.links.LinkedDataType;
+import me.googas.api.links.LinkedInfo;
 import java.util.HashMap;
 import java.util.UUID;
 import me.googas.commons.UUIDUtils;

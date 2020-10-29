@@ -1,7 +1,7 @@
 package com.starfishst.bot.api.events.queue;
 
 import com.starfishst.bot.api.events.GuidoEvent;
-import com.starfishst.guido.api.data.matches.Queue;
+import me.googas.api.matches.Queue;
 import org.jetbrains.annotations.NotNull;
 
 /** An event that is related to a queue */

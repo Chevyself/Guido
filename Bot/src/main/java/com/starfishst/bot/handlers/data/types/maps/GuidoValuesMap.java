@@ -1,6 +1,6 @@
 package com.starfishst.bot.handlers.data.types.maps;
 
-import com.starfishst.guido.api.data.ValuesMap;
+import me.googas.api.ValuesMap;
 import java.util.HashMap;
 import java.util.Map;
 import me.googas.commons.maps.Maps;

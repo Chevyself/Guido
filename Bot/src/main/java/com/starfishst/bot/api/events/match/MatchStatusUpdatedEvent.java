@@ -2,7 +2,7 @@ package com.starfishst.bot.api.events.match;
 
 import com.starfishst.bot.api.data.BotMatch;
 import com.starfishst.bot.api.events.GuidoCancellable;
-import com.starfishst.guido.api.data.matches.MatchStatus;
+import me.googas.api.matches.MatchStatus;
 import org.jetbrains.annotations.NotNull;
 
 /** Called when the status of a match gets updated */

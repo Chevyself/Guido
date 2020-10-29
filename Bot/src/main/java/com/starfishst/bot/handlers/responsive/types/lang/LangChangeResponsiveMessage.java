@@ -4,7 +4,7 @@ import com.starfishst.bot.Guido;
 import com.starfishst.bot.api.events.responsive.ResponsiveMessageUnloadedEvent;
 import com.starfishst.bot.handlers.lang.GuidoLocaleFile;
 import com.starfishst.bot.handlers.responsive.types.GuidoResponsiveMessage;
-import com.starfishst.guido.api.data.links.LinkedData;
+import me.googas.api.links.LinkedData;
 import com.starfishst.jda.utils.responsive.ReactionResponse;
 import java.util.HashSet;
 import java.util.Set;

@@ -1,8 +1,8 @@
 package com.starfishst.bot.server.receptors;
 
 import com.starfishst.bot.Guido;
-import com.starfishst.guido.api.data.discord.GuildData;
-import com.starfishst.guido.api.data.matches.Ladder;
+import me.googas.api.discord.GuildData;
+import me.googas.api.matches.Ladder;
 import me.googas.messaging.json.ParamName;
 import me.googas.messaging.json.Receptor;
 

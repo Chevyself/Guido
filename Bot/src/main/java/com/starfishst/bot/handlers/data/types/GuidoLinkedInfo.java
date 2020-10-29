@@ -2,7 +2,7 @@ package com.starfishst.bot.handlers.data.types;
 
 import com.starfishst.bot.api.data.BotLinkedInfo;
 import com.starfishst.bot.handlers.data.types.maps.GuidoValuesMap;
-import com.starfishst.guido.api.data.links.LinkedDataType;
+import me.googas.api.links.LinkedDataType;
 import org.jetbrains.annotations.NotNull;
 
 /** The uncompleted data from a linked data */
@@ -60,6 +60,6 @@ public class GuidoLinkedInfo implements BotLinkedInfo {
 
   @Override
   public String toString() {
-    return "GuidoLinkedInfo{" + "type=" + type + ", identification=" + identification + '}';
+    return "GuidoLinkedInfo{" + "type=" + this.type + ", identification=" + this.identification + '}';
   }
 }

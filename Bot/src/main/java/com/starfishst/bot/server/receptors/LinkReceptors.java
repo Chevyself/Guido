@@ -2,7 +2,7 @@ package com.starfishst.bot.server.receptors;
 
 import com.starfishst.bot.Guido;
 import com.starfishst.bot.handlers.link.LinkHandler;
-import com.starfishst.guido.api.data.links.LinkedInfo;
+import me.googas.api.links.LinkedInfo;
 import me.googas.messaging.json.ParamName;
 import me.googas.messaging.json.Receptor;
 

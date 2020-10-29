@@ -5,7 +5,7 @@ import com.starfishst.bukkit.api.config.Configuration;
 import com.starfishst.bukkit.api.events.GuidoEvent;
 import com.starfishst.bukkit.api.events.GuidoListener;
 import com.starfishst.bukkit.lang.BukkitLanguageHandler;
-import com.starfishst.guido.api.data.implementations.ClientImpl;
+import me.googas.api.client.Client;
 import java.util.logging.Logger;
 import me.googas.commons.Validate;
 import org.bukkit.Bukkit;
@@ -94,7 +94,7 @@ public class Guido {
    * @return the client
    */
   @NotNull
-  public static ClientImpl getClient() {
+  public static Client getClient() {
     return Guido.validated().getClient();
   }
 

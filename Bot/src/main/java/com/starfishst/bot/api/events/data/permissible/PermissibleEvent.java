@@ -2,9 +2,10 @@ package com.starfishst.bot.api.events.data.permissible;
 
 import com.starfishst.bot.api.data.BotPermissible;
 import com.starfishst.bot.api.events.GuidoEvent;
+import me.googas.api.Permissible;
 import org.jetbrains.annotations.NotNull;
 
-/** An event that involves a {@link com.starfishst.guido.api.data.Permissible} */
+/** An event that involves a {@link Permissible} */
 public class PermissibleEvent implements GuidoEvent {
 
   /** The permissible involved in the event */

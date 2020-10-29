@@ -3,7 +3,7 @@ package com.starfishst.bot.commands.providers;
 import com.starfishst.bot.Guido;
 import com.starfishst.bot.api.data.BotGuild;
 import com.starfishst.core.exceptions.ArgumentProviderException;
-import com.starfishst.guido.api.data.matches.Ladder;
+import me.googas.api.matches.Ladder;
 import com.starfishst.jda.context.CommandContext;
 import com.starfishst.jda.context.GuildCommandContext;
 import com.starfishst.jda.providers.type.JdaArgumentProvider;

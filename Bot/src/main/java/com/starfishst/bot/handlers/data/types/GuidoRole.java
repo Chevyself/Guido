@@ -3,7 +3,7 @@ package com.starfishst.bot.handlers.data.types;
 import com.starfishst.bot.api.data.BotRole;
 import com.starfishst.bot.api.events.data.role.BotRoleLoadedEvent;
 import com.starfishst.bot.api.events.data.role.BotRoleUnloadedEvent;
-import com.starfishst.guido.api.data.PermissionStack;
+import me.googas.api.PermissionStack;
 import java.util.HashSet;
 import java.util.Set;
 import me.googas.commons.cache.Catchable;

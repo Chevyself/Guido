@@ -4,7 +4,7 @@ import com.starfishst.bot.Guido;
 import com.starfishst.core.annotations.Optional;
 import com.starfishst.core.arguments.Argument;
 import com.starfishst.core.arguments.ISimpleArgument;
-import com.starfishst.guido.api.data.lang.LocaleFile;
+import me.googas.api.lang.LocaleFile;
 import com.starfishst.jda.AnnotatedCommand;
 import com.starfishst.jda.CommandManager;
 import com.starfishst.jda.ParentCommand;

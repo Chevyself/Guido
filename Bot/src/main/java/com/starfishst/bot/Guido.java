@@ -32,7 +32,7 @@ import com.starfishst.bot.server.GuidoFallbackServer;
 import com.starfishst.bot.server.GuidoServer;
 import com.starfishst.bot.server.IGuidoServer;
 import com.starfishst.bot.util.console.Console;
-import com.starfishst.guido.api.data.loader.DataLoader;
+import me.googas.api.loader.DataLoader;
 import com.starfishst.jda.CommandManager;
 import com.starfishst.jda.ManagerOptions;
 import java.io.IOException;

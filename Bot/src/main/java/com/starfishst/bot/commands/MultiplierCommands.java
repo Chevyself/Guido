@@ -4,7 +4,7 @@ import com.starfishst.bot.api.data.BotGuild;
 import com.starfishst.core.annotations.Optional;
 import com.starfishst.core.annotations.Parent;
 import com.starfishst.core.annotations.Required;
-import com.starfishst.guido.api.data.lang.LocaleFile;
+import me.googas.api.lang.LocaleFile;
 import com.starfishst.jda.annotations.Command;
 import com.starfishst.jda.annotations.Perm;
 import com.starfishst.jda.result.Result;

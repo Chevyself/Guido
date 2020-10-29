@@ -1,0 +1,38 @@
+package me.googas.api.client.data;
+
+import me.googas.api.ValuesMap;
+import java.util.HashMap;
+import java.util.Map;
+
+import org.jetbrains.annotations.NotNull;
+
+/** An implementation for values map */
+public class ValuesMapImpl implements ValuesMap {
+
+  /** The map to get values */
+  @NotNull private final Map<String, Object> map;
+
+  /**
+   * Create the values map
+   *
+   * @param map the initial map
+   */
+  public ValuesMapImpl(@NotNull Map<String, Object> map) {
+    this.map = map;
+  }
+
+  /** Create the values map */
+  public ValuesMapImpl() {
+    this(new HashMap<>());
+  }
+
+  @Override
+  public @NotNull Map<String, Object> getMap() {
+    return this.map;
+  }
+
+  @Override
+  public String toString() {
+    return "ValuesMap{" + "map=" + this.map + '}';
+  }
+}

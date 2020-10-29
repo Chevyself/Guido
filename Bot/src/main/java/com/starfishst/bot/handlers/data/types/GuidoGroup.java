@@ -4,7 +4,7 @@ import com.starfishst.bot.Guido;
 import com.starfishst.bot.api.data.BotGroup;
 import com.starfishst.bot.api.events.data.group.GroupUnloadedEvent;
 import com.starfishst.bot.handlers.data.types.maps.GuidoValuesMap;
-import com.starfishst.guido.api.data.PermissionStack;
+import me.googas.api.PermissionStack;
 import java.util.HashSet;
 import java.util.Set;
 import me.googas.commons.cache.Catchable;
