@@ -10,7 +10,7 @@
         <version>1.0.0</version>
     </parent>
 
-    <groupId>com.starfishst.bot</groupId>
+    <groupId>me.googas.bot</groupId>
     <artifactId>Bot</artifactId>
     <version>1.1.0-PRE-0</version>
 
@@ -25,7 +25,7 @@
                     <archive>
                         <manifest>
                             <addClasspath>true</addClasspath>
-                            <mainClass>com.starfishst.bot.Guido</mainClass>
+                            <mainClass>me.googas.bot.Guido</mainClass>
                         </manifest>
                     </archive>
                 </configuration>
@@ -82,7 +82,7 @@
         </dependency>
         <!-- Dependency to the API -->
         <dependency>
-            <groupId>com.starfishst.guido.api</groupId>
+            <groupId>me.googas.api</groupId>
             <artifactId>API</artifactId>
             <version>1.0.0-PRE-0</version>
         </dependency>

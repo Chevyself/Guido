@@ -12,7 +12,7 @@
 
     <groupId>com.starfishst.guido.bukkit</groupId>
     <artifactId>Bukkit</artifactId>
-    <version>1.2.0-SNAPSHOT-3</version>
+    <version>1.2.0-PRE-0</version>
     <description>Implementations for bukkit</description>
     <packaging>jar</packaging>
 
@@ -42,7 +42,7 @@
                                     <exclude>META-INF/**</exclude>
                                 </excludes>
                                 <includes>
-                                    <include>com.starfishst.guido.api:API</include>
+                                    <include>me.googas.api:API</include>
                                     <include>com.starfishst.bukkit:Bukkit</include>
                                     <include>me.googas.messaging:Commons-Messaging</include>
                                 </includes>
@@ -78,9 +78,9 @@
         </dependency>
         <!-- Dependency on the bot api -->
         <dependency>
-            <groupId>com.starfishst.guido.api</groupId>
+            <groupId>me.googas.api</groupId>
             <artifactId>API</artifactId>
-            <version>1.0.0-SNAPSHOT-19</version>
+            <version>1.0.0-PRE-0</version>
             <scope>compile</scope>
         </dependency>
         <!-- The bukkit command framework -->

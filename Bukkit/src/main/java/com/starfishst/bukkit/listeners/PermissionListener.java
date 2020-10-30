@@ -3,16 +3,16 @@ package com.starfishst.bukkit.listeners;
 import com.starfishst.bukkit.GuidoPlugin;
 import com.starfishst.bukkit.api.Guido;
 import com.starfishst.bukkit.api.events.GuidoListener;
-import me.googas.api.Permission;
-import me.googas.api.client.data.LinkedInfoImpl;
-import me.googas.api.client.data.PermissionStackImpl;
-import me.googas.api.client.data.ValuesMapImpl;
-import me.googas.api.links.LinkedDataType;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
+import me.googas.api.Permission;
+import me.googas.api.client.data.LinkedInfoImpl;
+import me.googas.api.client.data.PermissionStackImpl;
+import me.googas.api.client.data.ValuesMapImpl;
+import me.googas.api.links.LinkedDataType;
 import me.googas.commons.UUIDUtils;
 import me.googas.commons.maps.Maps;
 import me.googas.messaging.Request;
@@ -96,8 +96,8 @@ public class PermissionListener implements GuidoListener {
           new Request<>(
               PermissionStackImpl.class,
               "permission",
-              Maps.objects("info", info)
-                  .append("context", Guido.getConfiguration().getContext())
+              Maps.objects("context", Guido.getConfiguration().getContext())
+                  .append("info", info)
                   .build()),
           stack -> {
             if (stack != null && !stack.getPermissions().isEmpty()) {

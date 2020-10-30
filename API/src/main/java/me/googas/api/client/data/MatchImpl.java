@@ -1,14 +1,13 @@
 package me.googas.api.client.data;
 
-import me.googas.api.ValuesMap;
-import me.googas.api.matches.Match;
-import me.googas.api.matches.MatchStatus;
-import me.googas.api.matches.Team;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
-
+import me.googas.api.ValuesMap;
+import me.googas.api.matches.Match;
+import me.googas.api.matches.MatchStatus;
+import me.googas.api.matches.Team;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

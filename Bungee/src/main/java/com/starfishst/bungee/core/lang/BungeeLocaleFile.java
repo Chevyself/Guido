@@ -1,9 +1,9 @@
 package com.starfishst.bungee.core.lang;
 
 import com.starfishst.bungee.utils.BungeeUtils;
-import me.googas.api.lang.LocaleFile;
 import java.io.File;
 import java.util.HashMap;
+import me.googas.api.lang.LocaleFile;
 import me.googas.commons.maps.MapBuilder;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.config.Configuration;

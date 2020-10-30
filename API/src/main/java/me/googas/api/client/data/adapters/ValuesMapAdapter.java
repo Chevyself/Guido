@@ -5,11 +5,10 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonParseException;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.reflect.TypeToken;
-import me.googas.api.ValuesMap;
-import me.googas.api.client.data.ValuesMapImpl;
 import java.lang.reflect.Type;
 import java.util.Map;
-
+import me.googas.api.ValuesMap;
+import me.googas.api.client.data.ValuesMapImpl;
 import me.googas.commons.gson.adapters.JsonAdapter;
 
 /** Adapts values map */

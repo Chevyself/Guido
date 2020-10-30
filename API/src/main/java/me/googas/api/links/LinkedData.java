@@ -1,12 +1,11 @@
 package me.googas.api.links;
 
+import java.util.Collection;
 import me.googas.api.Permissible;
 import me.googas.api.Stateable;
 import me.googas.api.UserData;
 import me.googas.api.ValuesMap;
 import me.googas.api.lang.LocaleFile;
-import java.util.Collection;
-
 import me.googas.commons.cache.ICatchable;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;

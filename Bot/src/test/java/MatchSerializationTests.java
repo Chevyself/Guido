@@ -1,26 +1,19 @@
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.starfishst.bot.adapters.LinkedInfoAdapter;
-import com.starfishst.bot.adapters.PermissionAdapter;
-import com.starfishst.bot.adapters.TeamMemberAdapter;
-import com.starfishst.bot.adapters.ValuesMapAdapter;
-import com.starfishst.bot.handlers.data.types.GuidoLinkedInfo;
-import com.starfishst.bot.handlers.data.types.GuidoMatch;
-import com.starfishst.bot.handlers.data.types.GuidoTeam;
-import com.starfishst.bot.handlers.data.types.GuidoTeamMember;
-import com.starfishst.bot.handlers.data.types.maps.GuidoLinkedValuesMap;
-import com.starfishst.bot.handlers.data.types.maps.GuidoValuesMap;
+import java.util.HashSet;
+import java.util.Set;
 import me.googas.api.Group;
 import me.googas.api.Permission;
 import me.googas.api.PermissionStack;
 import me.googas.api.ValuesMap;
 import me.googas.api.client.data.ValuesMapImpl;
-import me.googas.api.client.data.adapters.GroupDeserializer;
-import me.googas.api.client.data.adapters.LadderDeserializer;
-import me.googas.api.client.data.adapters.MatchDeserializer;
-import me.googas.api.client.data.adapters.PermissionStackDeserializer;
-import me.googas.api.client.data.adapters.TeamDeserializer;
-import me.googas.api.client.data.adapters.TeamMemberDeserializer;
+import me.googas.api.client.data.adapters.GroupAdapter;
+import me.googas.api.client.data.adapters.LadderAdapter;
+import me.googas.api.client.data.adapters.LinkedInfoAdapter;
+import me.googas.api.client.data.adapters.MatchAdapter;
+import me.googas.api.client.data.adapters.PermissionStackAdapter;
+import me.googas.api.client.data.adapters.TeamAdapter;
+import me.googas.api.client.data.adapters.TeamMemberAdapter;
 import me.googas.api.links.LinkedDataType;
 import me.googas.api.links.LinkedInfo;
 import me.googas.api.matches.Ladder;
@@ -28,10 +21,14 @@ import me.googas.api.matches.Match;
 import me.googas.api.matches.Team;
 import me.googas.api.matches.TeamMember;
 import me.googas.api.matches.TeamRole;
-import java.util.HashSet;
-import java.util.Set;
-
-import me.googas.api.client.data.adapters.LinkedInfoDeserializer;
+import me.googas.bot.adapters.PermissionAdapter;
+import me.googas.bot.adapters.ValuesMapAdapter;
+import me.googas.bot.handlers.data.types.GuidoLinkedInfo;
+import me.googas.bot.handlers.data.types.GuidoMatch;
+import me.googas.bot.handlers.data.types.GuidoTeam;
+import me.googas.bot.handlers.data.types.GuidoTeamMember;
+import me.googas.bot.handlers.data.types.maps.GuidoLinkedValuesMap;
+import me.googas.bot.handlers.data.types.maps.GuidoValuesMap;
 import me.googas.commons.Lots;
 import me.googas.messaging.api.Message;
 import me.googas.messaging.json.adapters.MessageDeserializer;
@@ -44,11 +41,11 @@ public class MatchSerializationTests {
             // Required by Commons-Communication
             .registerTypeAdapter(Message.class, new MessageDeserializer())
             // For custom receptors
-            .registerTypeAdapter(LinkedInfo.class, new LinkedInfoAdapter())
+            .registerTypeAdapter(LinkedInfo.class, new me.googas.bot.adapters.LinkedInfoAdapter())
             .registerTypeAdapter(Permission.class, new PermissionAdapter())
             .registerTypeAdapter(ValuesMap.class, new ValuesMapAdapter())
-            .registerTypeAdapter(Team.class, new TeamDeserializer())
-            .registerTypeAdapter(TeamMember.class, new TeamMemberAdapter())
+            .registerTypeAdapter(Team.class, new TeamAdapter())
+            .registerTypeAdapter(TeamMember.class, new me.googas.bot.adapters.TeamMemberAdapter())
             .registerTypeAdapter(GuidoValuesMap.class, new ValuesMapAdapter())
             .registerTypeAdapter(GuidoLinkedValuesMap.class, new ValuesMapAdapter())
             .serializeNulls()
@@ -56,24 +53,19 @@ public class MatchSerializationTests {
             .create();
     Gson client =
         new GsonBuilder()
-            .registerTypeAdapter(Group.class, new GroupDeserializer())
-            .registerTypeAdapter(Ladder.class, new LadderDeserializer())
+            .registerTypeAdapter(Group.class, new GroupAdapter())
+            .registerTypeAdapter(Ladder.class, new LadderAdapter())
+            .registerTypeAdapter(LinkedInfo.class, new LinkedInfoAdapter())
+            .registerTypeAdapter(Match.class, new MatchAdapter())
             .registerTypeAdapter(
-                LinkedInfo.class,
-                new LinkedInfoDeserializer())
-            .registerTypeAdapter(Match.class, new MatchDeserializer())
+                Permission.class, new me.googas.api.client.data.adapters.PermissionAdapter())
+            .registerTypeAdapter(PermissionStack.class, new PermissionStackAdapter())
+            .registerTypeAdapter(Team.class, new TeamAdapter())
+            .registerTypeAdapter(TeamMember.class, new TeamMemberAdapter())
             .registerTypeAdapter(
-                Permission.class,
-                new me.googas.api.client.data.adapters.PermissionAdapter())
-            .registerTypeAdapter(PermissionStack.class, new PermissionStackDeserializer())
-            .registerTypeAdapter(Team.class, new TeamDeserializer())
-            .registerTypeAdapter(TeamMember.class, new TeamMemberDeserializer())
+                ValuesMap.class, new me.googas.api.client.data.adapters.ValuesMapAdapter())
             .registerTypeAdapter(
-                ValuesMap.class,
-                new me.googas.api.client.data.adapters.ValuesMapAdapter())
-            .registerTypeAdapter(
-                ValuesMapImpl.class,
-                new me.googas.api.client.data.adapters.ValuesMapAdapter())
+                ValuesMapImpl.class, new me.googas.api.client.data.adapters.ValuesMapAdapter())
             .registerTypeAdapter(Message.class, new MessageDeserializer())
             .setPrettyPrinting()
             .create();

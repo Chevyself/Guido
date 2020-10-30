@@ -15,12 +15,11 @@ import com.starfishst.bungee.core.configuration.GuidoBungeeConfiguration;
 import com.starfishst.bungee.core.lang.BungeeLanguageHandler;
 import com.starfishst.bungee.core.listeners.JoinListener;
 import com.starfishst.bungee.core.listeners.MotdListener;
-import me.googas.api.client.Client;
-import com.starfishst.guido.api.data.client.Implementation;
 import java.io.File;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.util.List;
+import me.googas.api.client.Client;
 import me.googas.commons.CoreFiles;
 import me.googas.commons.Lots;
 import me.googas.commons.fallback.Fallback;
@@ -32,7 +31,7 @@ import net.md_5.bungee.config.YamlConfiguration;
 import org.jetbrains.annotations.NotNull;
 
 /** The guido plugin for Bungee */
-public class GuidoPlugin extends Plugin implements Implementation {
+public class GuidoPlugin extends Plugin {
 
   /** The bungee language handler */
   @NotNull
@@ -100,6 +99,21 @@ public class GuidoPlugin extends Plugin implements Implementation {
     return this.bungeeConfiguration;
   }
 
+  /**
+   * Get the client that is connected to the bot
+   *
+   * @return the client
+   */
+  public @NotNull Client getClient() {
+    return this.client;
+  }
+
+  @Override
+  public void onDisable() {
+    this.client.disconnect();
+    super.onDisable();
+  }
+
   @Override
   public void onEnable() {
     Guido.setPlugin(this);
@@ -113,23 +127,14 @@ public class GuidoPlugin extends Plugin implements Implementation {
     for (GuidoListener listener : this.listeners) {
       listener.register(this);
     }
+    this.getClient().getReceptors();
+
     this.manager.registerCommand(new GuidoCommands());
     this.manager.registerCommand(new LinkCommand());
     this.manager.registerCommand(new PermissionCommands());
     this.manager.registerCommand(new StatsCommand());
     this.loadServers();
     super.onEnable();
-  }
-
-  @Override
-  public void onDisable() {
-    this.client.disconnect();
-    super.onDisable();
-  }
-
-  @Override
-  public @NotNull Client getClient() {
-    return this.client;
   }
 
   /**

@@ -2,13 +2,13 @@ package com.starfishst.bungee.core.listeners;
 
 import com.starfishst.bungee.api.Guido;
 import com.starfishst.bungee.api.events.GuidoListener;
+import java.io.IOException;
+import java.util.UUID;
 import me.googas.api.Permission;
 import me.googas.api.client.data.LinkedInfoImpl;
 import me.googas.api.client.data.PermissionStackImpl;
 import me.googas.api.client.data.ValuesMapImpl;
 import me.googas.api.links.LinkedDataType;
-import java.io.IOException;
-import java.util.UUID;
 import me.googas.commons.UUIDUtils;
 import me.googas.commons.maps.Maps;
 import me.googas.messaging.Request;
@@ -48,7 +48,6 @@ public class JoinListener implements GuidoListener {
                       event.getPlayer().setPermission(permission.getNode(), permission.isEnabled());
                     }
                   });
-              // TODO update name
             } else {
               connection.sendRequest(
                   new Request<>(

@@ -13,6 +13,7 @@ import java.util.Map;
 import me.googas.commons.Strings;
 import me.googas.commons.maps.Maps;
 import me.googas.messaging.Request;
+import me.googas.messaging.api.MessengerListenFailException;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
@@ -34,7 +35,8 @@ public class StatsCommand {
   public Result stats(
       CommandSender sender,
       @Optional(name = "player", description = "The player to see the stats from")
-          ProxiedOfflinePlayer player) {
+          ProxiedOfflinePlayer player)
+      throws MessengerListenFailException {
     final ProxiedOfflinePlayer toSee;
     if (sender.hasPermission("guido.stats.else") && player != null) {
       toSee = player;
@@ -91,7 +93,8 @@ public class StatsCommand {
   public Result statsReset(
       CommandSender sender,
       @Required(name = "player", description = "The player reset the stats to")
-          ProxiedOfflinePlayer player) {
+          ProxiedOfflinePlayer player)
+      throws MessengerListenFailException {
     Guido.getClient()
         .request(
             new Request<>(

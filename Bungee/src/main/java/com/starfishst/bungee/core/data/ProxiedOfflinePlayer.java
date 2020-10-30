@@ -1,11 +1,11 @@
 package com.starfishst.bungee.core.data;
 
+import java.util.HashMap;
+import java.util.UUID;
 import me.googas.api.client.data.LinkedInfoImpl;
 import me.googas.api.client.data.ValuesMapImpl;
 import me.googas.api.links.LinkedDataType;
 import me.googas.api.links.LinkedInfo;
-import java.util.HashMap;
-import java.util.UUID;
 import me.googas.commons.UUIDUtils;
 import me.googas.commons.maps.MapBuilder;
 import me.googas.commons.maps.Maps;

@@ -1,9 +1,9 @@
-import com.starfishst.bot.handlers.data.types.GuidoLinkedInfo;
-import com.starfishst.bot.handlers.data.types.maps.GuidoValuesMap;
-import me.googas.api.links.LinkedDataType;
-import me.googas.api.links.LinkedInfo;
 import java.util.ArrayList;
 import java.util.List;
+import me.googas.api.links.LinkedDataType;
+import me.googas.api.links.LinkedInfo;
+import me.googas.bot.handlers.data.types.GuidoLinkedInfo;
+import me.googas.bot.handlers.data.types.maps.GuidoValuesMap;
 
 public class LinkedDataHashCodeTest {
 

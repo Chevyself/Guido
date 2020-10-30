@@ -1,10 +1,9 @@
 package me.googas.api.client.data;
 
-import me.googas.api.Group;
-import me.googas.api.PermissionStack;
 import java.util.HashSet;
 import java.util.Set;
-
+import me.googas.api.Group;
+import me.googas.api.PermissionStack;
 import me.googas.api.ValuesMap;
 import me.googas.commons.cache.Catchable;
 import org.jetbrains.annotations.NotNull;

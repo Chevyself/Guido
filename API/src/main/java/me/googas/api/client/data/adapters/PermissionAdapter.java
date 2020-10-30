@@ -5,10 +5,9 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonParseException;
 import com.google.gson.JsonPrimitive;
 import com.google.gson.JsonSerializationContext;
+import java.lang.reflect.Type;
 import me.googas.api.Permission;
 import me.googas.api.client.data.PermissionImpl;
-import java.lang.reflect.Type;
-
 import me.googas.commons.gson.adapters.JsonAdapter;
 
 /** Adapts permission in json */

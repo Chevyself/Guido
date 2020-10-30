@@ -42,6 +42,24 @@ public interface ValuesMap {
   }
 
   /**
+   * Get the preference casted to certain class or null if the preference is not inside the map
+   *
+   * @param name the name of the preference
+   * @param clazz the clazz to which the value of the preference will be casted to
+   * @param <T> the type of the clazz to which the value of the preference will be casted to
+   * @return the value of the preference or null if it does not have one
+   */
+  @NotNull
+  default <T> T getValidatedValue(@NotNull String name, @NotNull Class<T> clazz) {
+    Object obj = this.getMap().get(name);
+    if (obj != null && clazz.isAssignableFrom(obj.getClass())) {
+      return clazz.cast(obj);
+    }
+    throw new NullPointerException(
+        this + " must contain the value " + name + " and it must be a " + clazz);
+  }
+
+  /**
    * Get a preference that happens to be a list
    *
    * @param name the name of the preference

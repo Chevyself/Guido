@@ -2,13 +2,16 @@ package com.starfishst.bukkit.listeners;
 
 import com.starfishst.bukkit.api.Guido;
 import com.starfishst.bukkit.api.events.GuidoListener;
-import me.googas.api.links.LinkedDataType;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
+import me.googas.api.client.data.LinkedInfoImpl;
+import me.googas.api.client.data.ValuesMapImpl;
+import me.googas.api.links.LinkedDataType;
 import me.googas.commons.UUIDUtils;
 import me.googas.commons.maps.Maps;
 import me.googas.messaging.Request;
+import me.googas.messaging.json.client.JsonClient;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.jetbrains.annotations.NotNull;
@@ -114,20 +117,25 @@ public class StatsListener implements GuidoListener {
       }
     }
     // Save them after we gave them the win and lose stats
-    this.stats.forEach(
-        (uuid, statsMap) ->
-            Guido.getClient()
-                .request(
-                    new Request<>(
-                        Boolean.class,
-                        "save-stats",
-                        Maps.objects("type", LinkedDataType.MINECRAFT)
-                            .append("stats", statsMap)
-                            .append("identification", Maps.singleton("uuid", UUIDUtils.trim(uuid)))
-                            .build()),
-                    bol -> {
-                      // IGNORED
-                    }));
+    JsonClient connection = Guido.getClient().getConnection();
+    if (connection != null) {
+      this.stats.forEach(
+          (uuid, statsMap) ->
+              connection.sendRequest(
+                  new Request<>(
+                      Boolean.class,
+                      "save-stats",
+                      Maps.objects(
+                              "info",
+                              new LinkedInfoImpl(
+                                  LinkedDataType.MINECRAFT,
+                                  new ValuesMapImpl(Maps.singleton("uuid", UUIDUtils.trim(uuid)))))
+                          .append("stats", statsMap)
+                          .build()),
+                  bol -> {
+                    Guido.getLogger().info("Were stats saved for " + uuid + " " + bol);
+                  }));
+    }
     this.stats.clear();
   }
 

@@ -7,9 +7,7 @@ import org.jetbrains.annotations.NotNull;
 /** The global ladder cannot be edited, this ladder calculates the global elo of the linked data */
 public class GlobalLadder implements Ladder {
 
-  /**
-   * A public static instance for global ladders
-   */
+  /** A public static instance for global ladders */
   public static Ladder INSTANCE = new GlobalLadder();
 
   @Override

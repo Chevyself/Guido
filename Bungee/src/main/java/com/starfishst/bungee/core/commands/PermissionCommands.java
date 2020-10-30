@@ -10,14 +10,15 @@ import com.starfishst.core.annotations.Parent;
 import com.starfishst.core.annotations.Required;
 import com.starfishst.core.annotations.settings.Setting;
 import com.starfishst.core.annotations.settings.Settings;
+import java.util.ArrayList;
 import me.googas.api.Permission;
 import me.googas.api.PermissionStack;
 import me.googas.api.client.data.PermissionImpl;
-import java.util.ArrayList;
 import me.googas.commons.Pagination;
 import me.googas.commons.Strings;
 import me.googas.commons.maps.Maps;
 import me.googas.messaging.Request;
+import me.googas.messaging.api.MessengerListenFailException;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.chat.TextComponent;
 
@@ -48,7 +49,8 @@ public class PermissionCommands {
               suggestions = "bungee")
           String context,
       @Optional(name = "page", description = "The page to see the permissions", suggestions = "1")
-          int page) {
+          int page)
+      throws MessengerListenFailException {
     Guido.getClient()
         .request(
             new Request<>(
@@ -122,7 +124,8 @@ public class PermissionCommands {
               name = "context",
               description = "The context to add the permission on",
               suggestions = "bungee")
-          String context) {
+          String context)
+      throws MessengerListenFailException {
 
     Guido.getClient()
         .request(
@@ -177,7 +180,8 @@ public class PermissionCommands {
               name = "context",
               description = "The context to add the permission on",
               suggestions = "bungee")
-          String context) {
+          String context)
+      throws MessengerListenFailException {
 
     Guido.getClient()
         .request(

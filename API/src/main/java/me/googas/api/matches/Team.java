@@ -1,9 +1,9 @@
 package me.googas.api.matches;
 
-import me.googas.api.links.LinkedData;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import me.googas.api.links.LinkedData;
 import org.jetbrains.annotations.NotNull;
 
 /** This object represents a team. Which is basically a collection of members */

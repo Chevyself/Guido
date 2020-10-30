@@ -1,13 +1,12 @@
 package me.googas.api.discord;
 
-import me.googas.api.RankRange;
-import me.googas.api.matches.GlobalLadder;
-import me.googas.api.matches.Ladder;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-
+import me.googas.api.RankRange;
+import me.googas.api.matches.GlobalLadder;
+import me.googas.api.matches.Ladder;
 import me.googas.commons.cache.ICatchable;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;

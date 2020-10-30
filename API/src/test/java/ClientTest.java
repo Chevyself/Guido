@@ -1,15 +1,17 @@
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Scanner;
+import java.util.UUID;
 import me.googas.api.Group;
 import me.googas.api.client.Client;
 import me.googas.api.client.data.LinkedInfoImpl;
 import me.googas.api.client.data.PermissionStackImpl;
+import me.googas.api.client.data.TeamImpl;
 import me.googas.api.client.data.ValuesMapImpl;
 import me.googas.api.links.LinkedDataType;
 import me.googas.api.links.LinkedInfo;
 import me.googas.api.matches.Ladder;
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.Scanner;
-import java.util.UUID;
 import me.googas.commons.UUIDUtils;
 import me.googas.commons.maps.Maps;
 import me.googas.messaging.Request;
@@ -22,7 +24,8 @@ public class ClientTest {
   private static String groupId = "kI9w6F";
 
   public static void main(String[] args) throws IOException, MessengerListenFailException {
-    Client client = new Client("1Uv2AZduciPKwUL8", "localhost", 3000);
+    String debug = "104.243.43.175";
+    Client client = new Client("1Uv2AZduciPKwUL8", debug, 3000);
     String nick = "Selfie";
     UUID uuid = UUID.fromString("5eed208d-de58-4022-9ba7-6ccb5ea7e92a");
     String trimmed = UUIDUtils.trim(uuid);
@@ -40,12 +43,7 @@ public class ClientTest {
           System.exit(0);
         } else if (line.equalsIgnoreCase("exists")) {
           conn.sendRequest(
-              new Request<>(
-                  Boolean.class,
-                  "data-exists",
-                  Maps.objects("type", LinkedDataType.MINECRAFT)
-                      .append("identification", Maps.singleton("uuid", trimmed))
-                      .build()),
+              new Request<>(Boolean.class, "data-exists", Maps.singleton("info", info)),
               bol -> {
                 System.out.println("Exists? " + bol);
               });
@@ -84,10 +82,7 @@ public class ClientTest {
               new Request<>(
                   Boolean.class,
                   "save-stats",
-                  Maps.objects("identification", Maps.singleton("uuid", trimmed))
-                      .append("stats", Maps.singleton("kills", 1))
-                      .append("type", LinkedDataType.MINECRAFT)
-                      .build()),
+                  Maps.objects("info", info).append("stats", Maps.singleton("kills", 1)).build()),
               bol -> {
                 System.out.println("Saved? " + bol);
               });
@@ -131,6 +126,17 @@ public class ClientTest {
                       Ladder.class,
                       "ladder",
                       Maps.objects("guild", 718281601112604675L).append("name", "1v1").build())));
+        } else if (line.equalsIgnoreCase("match-add-team")) {
+          conn.sendRequest(
+              new Request<>(
+                  Boolean.class,
+                  "match-add-team",
+                  Maps.objects("id", "KkxOWnAzlsiqMgcv")
+                      .append("team", new TeamImpl("a team", new HashSet<>()))
+                      .build()),
+              bol -> {
+                System.out.println("Was team added? " + bol);
+              });
         }
       }
     }

@@ -20,13 +20,12 @@ import com.starfishst.bukkit.listeners.PermissionListener;
 import com.starfishst.bukkit.listeners.TestListener;
 import com.starfishst.bukkit.utils.BukkitUtils;
 import com.starfishst.bukkit.utils.FilesUtils;
-import me.googas.api.client.Client;
-import com.starfishst.guido.api.data.client.Implementation;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.List;
 import java.util.Set;
+import me.googas.api.client.Client;
 import me.googas.commons.Lots;
 import me.googas.commons.fallback.Fallback;
 import org.bukkit.Bukkit;
@@ -37,7 +36,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 /** Guido implementation for Bukkit */
-public class GuidoPlugin extends JavaPlugin implements Implementation {
+public class GuidoPlugin extends JavaPlugin {
 
   /** The language handler for localized messages */
   @NotNull
@@ -67,7 +66,7 @@ public class GuidoPlugin extends JavaPlugin implements Implementation {
   @NotNull private final DependencyManager dependencies = new GuidoDependencies(this);
 
   /** The client that the plugin is using */
-  @NotNull private final Client client = new Client("none", ip, port);
+  @NotNull private final Client client = new Client("none", "104.243.43.175", 3000);
 
   /** Unregisters the commands registered by the implementation */
   private void unregisterCommands() {
@@ -213,7 +212,6 @@ public class GuidoPlugin extends JavaPlugin implements Implementation {
     return this.dependencies;
   }
 
-  @Override
   public @NotNull Client getClient() {
     return this.client;
   }

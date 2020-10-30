@@ -1,18 +1,52 @@
 package me.googas.api.matches;
 
-import me.googas.api.ValuesMap;
-import me.googas.api.links.LinkedInfo;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
-
+import me.googas.api.ValuesMap;
+import me.googas.api.links.LinkedDataType;
+import me.googas.api.links.LinkedInfo;
 import me.googas.commons.cache.ICatchable;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 /** This object represents a match which was played by one ore more teams */
 public interface Match extends ICatchable {
+
+  /**
+   * Get whether the given information nis inside a team of this match
+   *
+   * @param type the type of link
+   * @param identification the way to identify it
+   * @return true if it matches a member from a team
+   */
+  default boolean isParticipating(@NotNull LinkedDataType type, @NotNull ValuesMap identification) {
+    Collection<Team> teams = this.getTeams();
+    for (Team team : teams) {
+      for (TeamMember member : team.getMembers()) {
+        LinkedInfo info = member.getLinkInfo();
+        if (info.getType().equals(type)) {
+          switch (type) {
+            case NONE:
+            case MINECRAFT:
+            case DISCORD:
+            default:
+              if (info.getIdentification().matches(identification)) {
+                return true;
+              }
+              break;
+            case DISCORD_GUILD:
+              if (info.getIdentification().equals(identification)) {
+                return true;
+              }
+              break;
+          }
+        }
+      }
+    }
+    return false;
+  }
 
   /**
    * The unique id of the match
@@ -105,4 +139,20 @@ public interface Match extends ICatchable {
   @Override
   @NotNull
   Match refresh();
+
+  /**
+   * Get a team that is playing this match by its name
+   *
+   * @param name the name of the team to get
+   * @return the team if the name matches else null
+   */
+  @Nullable
+  default Team getTeam(@NotNull String name) {
+    for (Team team : this.getTeams()) {
+      if (team.getName().equalsIgnoreCase(name)) {
+        return team;
+      }
+    }
+    return null;
+  }
 }

@@ -1,8 +1,7 @@
 package me.googas.api.matches;
 
-import me.googas.api.links.LinkedInfo;
 import java.util.Collection;
-
+import me.googas.api.links.LinkedInfo;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

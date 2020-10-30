@@ -1,19 +1,25 @@
 package me.googas.api.client;
 
 import com.google.gson.GsonBuilder;
+import java.io.IOException;
+import java.net.Socket;
+import java.util.Arrays;
+import java.util.Set;
+import java.util.function.Consumer;
+import java.util.function.Predicate;
 import me.googas.api.Group;
 import me.googas.api.Permission;
 import me.googas.api.PermissionStack;
 import me.googas.api.ValuesMap;
 import me.googas.api.client.data.ValuesMapImpl;
-import me.googas.api.client.data.adapters.GroupDeserializer;
-import me.googas.api.client.data.adapters.LadderDeserializer;
-import me.googas.api.client.data.adapters.LinkedInfoDeserializer;
-import me.googas.api.client.data.adapters.MatchDeserializer;
+import me.googas.api.client.data.adapters.GroupAdapter;
+import me.googas.api.client.data.adapters.LadderAdapter;
+import me.googas.api.client.data.adapters.LinkedInfoAdapter;
+import me.googas.api.client.data.adapters.MatchAdapter;
 import me.googas.api.client.data.adapters.PermissionAdapter;
-import me.googas.api.client.data.adapters.PermissionStackDeserializer;
-import me.googas.api.client.data.adapters.TeamDeserializer;
-import me.googas.api.client.data.adapters.TeamMemberDeserializer;
+import me.googas.api.client.data.adapters.PermissionStackAdapter;
+import me.googas.api.client.data.adapters.TeamAdapter;
+import me.googas.api.client.data.adapters.TeamMemberAdapter;
 import me.googas.api.client.data.adapters.ValuesMapAdapter;
 import me.googas.api.client.receptors.ReceptorsImpl;
 import me.googas.api.links.LinkedInfo;
@@ -21,13 +27,6 @@ import me.googas.api.matches.Ladder;
 import me.googas.api.matches.Match;
 import me.googas.api.matches.Team;
 import me.googas.api.matches.TeamMember;
-import java.io.IOException;
-import java.net.Socket;
-import java.util.Arrays;
-import java.util.Set;
-import java.util.function.Consumer;
-import java.util.function.Predicate;
-
 import me.googas.commons.Lots;
 import me.googas.commons.cache.Cache;
 import me.googas.commons.cache.ICatchable;
@@ -46,15 +45,10 @@ public class Client {
   /** The token that will give access to read or writing */
   @NotNull private String token;
 
-  /**
-   * The ip of the server of the bot
-   */
-  @NotNull
-  private final String ip;
+  /** The ip of the server of the bot */
+  @NotNull private final String ip;
 
-  /**
-   * The port of the server ofo the bot
-   */
+  /** The port of the server ofo the bot */
   private final int port;
 
   /** The client to connect with the bot */
@@ -93,14 +87,14 @@ public class Client {
                 // Required by messengers
                 .registerTypeAdapter(Message.class, new MessageDeserializer())
                 // Required for requests
-                .registerTypeAdapter(Group.class, new GroupDeserializer())
-                .registerTypeAdapter(Ladder.class, new LadderDeserializer())
-                .registerTypeAdapter(LinkedInfo.class, new LinkedInfoDeserializer())
-                .registerTypeAdapter(Match.class, new MatchDeserializer())
+                .registerTypeAdapter(Group.class, new GroupAdapter())
+                .registerTypeAdapter(Ladder.class, new LadderAdapter())
+                .registerTypeAdapter(LinkedInfo.class, new LinkedInfoAdapter())
+                .registerTypeAdapter(Match.class, new MatchAdapter())
                 .registerTypeAdapter(Permission.class, new PermissionAdapter())
-                .registerTypeAdapter(PermissionStack.class, new PermissionStackDeserializer())
-                .registerTypeAdapter(Team.class, new TeamDeserializer())
-                .registerTypeAdapter(TeamMember.class, new TeamMemberDeserializer())
+                .registerTypeAdapter(PermissionStack.class, new PermissionStackAdapter())
+                .registerTypeAdapter(Team.class, new TeamAdapter())
+                .registerTypeAdapter(TeamMember.class, new TeamMemberAdapter())
                 .registerTypeAdapter(ValuesMap.class, new ValuesMapAdapter())
                 .registerTypeAdapter(ValuesMapImpl.class, new ValuesMapAdapter())
                 .setPrettyPrinting()
@@ -110,21 +104,20 @@ public class Client {
     this.connection.start();
     this.connection.sendRequest(
         new Request<>(Boolean.class, "auth", Maps.objects("token", this.token).build()),
-            this::onAuthentication);
+        this::onAuthentication);
     return this.connection;
   }
 
   /**
    * Called when the client is authenticated
+   *
    * @param authenticated whether the client was authenticated properly
    */
   private void onAuthentication(boolean authenticated) {
     System.out.println("Client has been authenticated? " + authenticated);
   }
 
-  /**
-   * Called when the client is disconnected
-   */
+  /** Called when the client is disconnected */
   public void onDisconnection() {
     if (this.connection != null) {
       this.connection.close();
@@ -143,7 +136,8 @@ public class Client {
    * @throws MessengerListenFailException if the connection times out or there's no connection
    */
   public <T extends ICatchable> void request(
-      @NotNull Request<T> request, @NotNull Predicate<T> predicate, @NotNull Consumer<T> consumer) throws MessengerListenFailException {
+      @NotNull Request<T> request, @NotNull Predicate<T> predicate, @NotNull Consumer<T> consumer)
+      throws MessengerListenFailException {
     T catchable = Cache.getCatchable(request.getClazz(), predicate);
     if (catchable != null) {
       consumer.accept(catchable);
@@ -163,7 +157,8 @@ public class Client {
    * @param <T> the type of the object requested
    * @throws MessengerListenFailException if the connection times out or there's no connection
    */
-  public <T> void request(@NotNull Request<T> request, @NotNull Consumer<T> consumer) throws MessengerListenFailException {
+  public <T> void request(@NotNull Request<T> request, @NotNull Consumer<T> consumer)
+      throws MessengerListenFailException {
     try {
       this.validatedConnection().sendRequest(request, consumer);
     } catch (IOException e) {
@@ -217,7 +212,8 @@ public class Client {
     if (connection != null) {
       connection.sendRequest(
           new Request<>(Boolean.class, "disconnect"),
-          disconnected -> this.onDisconnection(), this.handler::handle);
+          disconnected -> this.onDisconnection(),
+          this.handler::handle);
     }
   }
 
@@ -261,5 +257,15 @@ public class Client {
     if (connection != null) {
       connection.addReceptors(receptors);
     }
+  }
+
+  /**
+   * Get the receptors wich the client is using
+   *
+   * @return the receptors
+   */
+  @NotNull
+  public Set<Object> getReceptors() {
+    return this.receptors;
   }
 }

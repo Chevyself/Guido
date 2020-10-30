@@ -1,5 +1,6 @@
 package me.googas.api.loader;
 
+import java.util.Collection;
 import me.googas.api.Group;
 import me.googas.api.UserData;
 import me.googas.api.ValuesMap;
@@ -8,9 +9,8 @@ import me.googas.api.discord.RoleData;
 import me.googas.api.links.LinkedData;
 import me.googas.api.links.LinkedDataType;
 import me.googas.api.matches.Match;
+import me.googas.api.matches.MatchStatus;
 import me.googas.api.token.AuthToken;
-import java.util.Collection;
-
 import me.googas.commons.RandomUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -101,7 +101,7 @@ public interface DataLoader {
    */
   @Nullable
   LinkedData getLinkedData(
-          @NotNull LinkedDataType type, @NotNull ValuesMap identification, boolean equal);
+      @NotNull LinkedDataType type, @NotNull ValuesMap identification, boolean equal);
 
   /**
    * Get a match using its id
@@ -111,6 +111,20 @@ public interface DataLoader {
    */
   @Nullable
   Match getMatch(@NotNull String id);
+
+  /**
+   * Get all the matches in which a link is participating
+   *
+   * @param type the type of link
+   * @param identification the way to identify the link
+   * @param status the statutes that must match
+   * @return the matches in which the link is participating and have the given status
+   */
+  @NotNull
+  Collection<Match> getParticipating(
+      @NotNull LinkedDataType type,
+      @NotNull ValuesMap identification,
+      @NotNull MatchStatus... status);
 
   /**
    * Get a new id for an user

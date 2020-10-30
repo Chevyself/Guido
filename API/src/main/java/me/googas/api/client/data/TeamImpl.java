@@ -1,10 +1,10 @@
 package me.googas.api.client.data;
 
-import me.googas.api.matches.Team;
-import me.googas.api.matches.TeamMember;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
+import me.googas.api.matches.Team;
+import me.googas.api.matches.TeamMember;
 import org.jetbrains.annotations.NotNull;
 
 /** An implementation for teams */

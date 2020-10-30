@@ -1,8 +1,8 @@
 package me.googas.api;
 
+import java.util.Map;
 import me.googas.api.discord.GuildData;
 import me.googas.api.matches.Ladder;
-import java.util.Map;
 import org.jetbrains.annotations.NotNull;
 
 /** This object represents an entity that can have stats */
@@ -56,9 +56,9 @@ public interface Stateable {
    * @param data the data to get the elo from
    * @return the global elo inside the guild
    */
-  default double getGlobalElo(@NotNull GuildData data) {
-    double sum = 0;
-    double total = data.getLadders().size();
+  default float getGlobalElo(@NotNull GuildData data) {
+    float sum = 0;
+    float total = data.getLadders().size();
     for (Ladder ladder : data.getLadders()) {
       sum += this.getElo(ladder);
     }

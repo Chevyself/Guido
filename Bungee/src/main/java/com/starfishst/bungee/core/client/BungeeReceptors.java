@@ -3,18 +3,21 @@ package com.starfishst.bungee.core.client;
 import com.starfishst.bungee.api.Guido;
 import com.starfishst.bungee.api.configuration.GuidoServer;
 import com.starfishst.bungee.api.events.GuidoListener;
-import me.googas.api.links.LinkedDataType;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
+import java.util.concurrent.TimeUnit;
+import me.googas.api.client.data.LinkedInfoImpl;
+import me.googas.api.client.data.ValuesMapImpl;
+import me.googas.api.links.LinkedDataType;
 import me.googas.commons.Atomic;
-import me.googas.commons.UUIDUtils;
 import me.googas.commons.maps.Maps;
 import me.googas.messaging.Request;
 import me.googas.messaging.json.ParamName;
 import me.googas.messaging.json.Receptor;
+import me.googas.messaging.json.client.JsonClient;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.config.ServerInfo;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
@@ -114,21 +117,24 @@ public class BungeeReceptors implements GuidoListener {
         ProxiedPlayer player = ProxyServer.getInstance().getPlayer(uuid);
         if (player != null) {
           if (!player.getServer().getInfo().equals(server)) {
-            ProxyServer.getInstance()
-                .getScheduler()
-                .runAsync(
-                    Guido.validated(),
-                    () -> {
-                      Atomic<Boolean> connected = new Atomic<>(false);
-                      Guido.getLogger().info(player.getName() + " connected? " + connected.get());
-                      while (!connected.get()) {
-                        player.connect(
-                            server,
-                            (result, error) -> {
-                              connected.set(result);
-                            });
-                      }
-                    });
+            Atomic<Boolean> connected = new Atomic<>(false);
+            Atomic<Integer> taskId = new Atomic<>(-1);
+            taskId.set(
+                ProxyServer.getInstance()
+                    .getScheduler()
+                    .schedule(
+                        Guido.validated(),
+                        () -> {
+                          if (!connected.get()) {
+                            player.connect(server, (result, error) -> connected.set(result));
+                          } else {
+                            ProxyServer.getInstance().getScheduler().cancel(taskId.get());
+                          }
+                        },
+                        0,
+                        5,
+                        TimeUnit.SECONDS)
+                    .getId());
           }
         }
       }
@@ -182,17 +188,21 @@ public class BungeeReceptors implements GuidoListener {
   public void onPlayerDisconnect(PlayerDisconnectEvent event) {
     UUID uniqueId = event.getPlayer().getUniqueId();
     if (this.inQueue.contains(uniqueId)) {
-      Guido.getClient()
-          .request(
-              new Request<>(
-                  Boolean.class,
-                  "left-queue",
-                  Maps.objects("type", LinkedDataType.MINECRAFT)
-                      .append("identification", Maps.singleton("uuid", UUIDUtils.trim(uniqueId)))
-                      .build()),
-              removed -> {
-                // IGNORED
-              });
+      JsonClient connection = Guido.getClient().getConnection();
+      if (connection != null) {
+        connection.sendRequest(
+            new Request<>(
+                Boolean.class,
+                "left-queue",
+                Maps.singleton(
+                    "info",
+                    new LinkedInfoImpl(
+                        LinkedDataType.MINECRAFT,
+                        new ValuesMapImpl(Maps.singleton("uuid", uniqueId))))),
+            bol -> {
+              Guido.getLogger().info(uniqueId + " left the queue");
+            });
+      }
     }
   }
 
