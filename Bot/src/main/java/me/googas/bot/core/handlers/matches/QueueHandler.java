@@ -163,7 +163,7 @@ public class QueueHandler implements GuidoEventHandler {
    *     Ladder#createQueue(GuildData)}
    */
   @NotNull
-  private Queue getQueue(@NotNull BotGuild guild, @NotNull Ladder ladder) {
+  public Queue getQueue(@NotNull BotGuild guild, @NotNull Ladder ladder) {
     Set<Queue> queues = this.getQueues(guild.getId());
     for (Queue queue : queues) {
       if (queue.getLadderName().equalsIgnoreCase(ladder.getName())) {

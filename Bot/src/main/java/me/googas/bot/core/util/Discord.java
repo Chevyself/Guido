@@ -18,7 +18,7 @@ public class Discord {
   @NotNull
   public static final List<Permission> VOICE =
       Lots.list(
-              Permission.VIEW_CHANNEL,
+          Permission.VIEW_CHANNEL,
           Permission.VOICE_CONNECT,
           Permission.VOICE_SPEAK,
           Permission.VOICE_STREAM,
@@ -68,11 +68,13 @@ public class Discord {
 
   /**
    * Remove all permissions from a channel
+   *
    * @param channel the channel to remove all permissions
    */
   public static void removeAllPermission(@NotNull GuildChannel channel) {
     for (PermissionOverride override : channel.getPermissionOverrides()) {
-      if (override.getPermissionHolder() != null && !override.getPermissionHolder().equals(channel.getGuild().getPublicRole())) {
+      if (override.getPermissionHolder() != null
+          && !override.getPermissionHolder().equals(channel.getGuild().getPublicRole())) {
         override.delete().queue();
       }
     }
