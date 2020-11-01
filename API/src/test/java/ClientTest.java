@@ -27,7 +27,7 @@ public class ClientTest {
 
   public static void main(String[] args) throws IOException, MessengerListenFailException {
     String debug = "104.243.43.175";
-    Client client = new Client("1Uv2AZduciPKwUL8", debug, 3000);
+    Client client = new Client("1Uv2AZduciPKwUL8", "localhost", 3000);
     String nick = "Selfie";
     UUID uuid = UUID.fromString("5eed208d-de58-4022-9ba7-6ccb5ea7e92a");
     String trimmed = UUIDUtils.trim(uuid);

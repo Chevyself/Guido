@@ -131,7 +131,7 @@ public class Console {
    */
   public static void exception(@NotNull Throwable throwable, @NotNull String message) {
     Fallback.addError(message);
-    Console.logger.log(Level.SEVERE, message, Console.getStackTrace(throwable));
+    Console.logger.log(Level.SEVERE, Console.getStackTrace(throwable));
   }
 
   /**

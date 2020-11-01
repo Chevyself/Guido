@@ -22,6 +22,7 @@ import me.googas.api.links.LinkedData;
 import me.googas.api.links.LinkedDataType;
 import me.googas.api.links.LinkedInfo;
 import me.googas.api.loader.DataLoader;
+import me.googas.api.matches.GlobalLadder;
 import me.googas.api.matches.Ladder;
 import me.googas.api.matches.Match;
 import me.googas.api.matches.MatchStatus;
@@ -338,6 +339,41 @@ public class JsongoDataLoader implements BotDataLoader {
   }
 
   /**
+   * Supply all the objects matching the query. If the limit and skip are < 1 there will be no
+   * elements skipped nor limited and also sort them according to the sort document
+   *
+   * @param typeOfT the type of objects to supply
+   * @param collection the collection to find the objects from
+   * @param query the query to find the documents
+   * @param limit the limit of the documents to get
+   * @param skip the amount of documents to skip
+   * @param <T> the type of objects to get
+   * @return the list of objects
+   */
+  private <T> List<T> supplyManyFromQuerySorted(
+      @NotNull Type typeOfT,
+      @NotNull MongoCollection<Document> collection,
+      @NotNull Document query,
+      @NotNull Document sort,
+      int limit,
+      int skip) {
+    List<T> list = new ArrayList<>();
+    MongoCursor<Document> cursor;
+    if (limit != -1 && skip != -1) {
+      cursor = collection.find(query).sort(sort).limit(limit).skip(skip).cursor();
+    } else {
+      cursor = collection.find(query).sort(sort).cursor();
+    }
+    while (cursor.hasNext()) {
+      T obj = this.getObjectFromDocument(typeOfT, cursor.next());
+      if (obj != null) {
+        list.add(obj);
+      }
+    }
+    return list;
+  }
+
+  /**
    * Get the objects from cache or search them in a collection
    *
    * @param clazz the class of the object to get
@@ -376,7 +412,7 @@ public class JsongoDataLoader implements BotDataLoader {
    * @param query the query to match the object
    * @return the amount of documents found with the query
    */
-  private long count(@NotNull MongoCollection<Document> collection, @NotNull Document query) {
+  public long count(@NotNull MongoCollection<Document> collection, @NotNull Document query) {
     return collection.countDocuments(query);
   }
 
@@ -570,6 +606,14 @@ public class JsongoDataLoader implements BotDataLoader {
   }
 
   @Override
+  public long maxPageLeaderboard(@NotNull Ladder ladder, int size) {
+    return this.count(
+            this.links,
+            new Document("stats." + ladder.getName() + "-elo", new Document("$type", 1)))
+        / size;
+  }
+
+  @Override
   public @NotNull Collection<Match> getParticipating(
       @NotNull LinkedDataType type,
       @NotNull ValuesMap identification,
@@ -582,10 +626,7 @@ public class JsongoDataLoader implements BotDataLoader {
     toMatch.put("linkInfo.type", type.toString());
     identification
         .getMap()
-        .forEach(
-            (key, value) -> {
-              toMatch.put("linkInfo.identification." + key, value);
-            });
+        .forEach((key, value) -> toMatch.put("linkInfo.identification." + key, value));
     Document query =
         new Document("status", new Document("$in", statusNames))
             .append(
@@ -623,6 +664,20 @@ public class JsongoDataLoader implements BotDataLoader {
     return new ArrayList<>(
         this.supplyManyAndCache(
             GuidoGroup.class, group -> true, this.groups, new Document(), -1, -1));
+  }
+
+  @Override
+  public @NotNull List<LinkedData> getLeaderboard(@NotNull Ladder ladder, int page, int size) {
+    if (!(ladder instanceof GlobalLadder)) {
+      return this.supplyManyFromQuerySorted(
+          GuidoLinkedData.class,
+          this.links,
+          new Document("stats." + ladder.getName() + "-elo", new Document("$type", 1)),
+          new Document("stats." + ladder.getName() + "-elo", -1),
+          size,
+          page * size);
+    }
+    throw new IllegalArgumentException("Leaderboard is not available for global ladder");
   }
 
   @Override

@@ -3,6 +3,7 @@ package me.googas.bot.api.loader;
 import java.util.Collection;
 import me.googas.api.links.LinkedDataType;
 import me.googas.api.loader.DataLoader;
+import me.googas.api.matches.Ladder;
 import me.googas.api.utility.ValuesMap;
 import me.googas.bot.api.types.BotGroup;
 import me.googas.bot.api.types.BotGuild;
@@ -67,4 +68,13 @@ public interface BotDataLoader extends DataLoader, GuidoEventHandler {
   @Override
   @Nullable
   BotMatch getMatch(@NotNull String id);
+
+  /**
+   * Get the max page of the leaderboard in a ladder
+   *
+   * @param ladder the ladder to see the max page
+   * @param size the size of documents per page
+   * @return the maximum page of the leaderboard
+   */
+  long maxPageLeaderboard(@NotNull Ladder ladder, int size);
 }

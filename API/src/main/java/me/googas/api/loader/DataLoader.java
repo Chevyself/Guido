@@ -1,10 +1,12 @@
 package me.googas.api.loader;
 
 import java.util.Collection;
+import java.util.List;
 import me.googas.api.discord.GuildData;
 import me.googas.api.discord.RoleData;
 import me.googas.api.links.LinkedData;
 import me.googas.api.links.LinkedDataType;
+import me.googas.api.matches.Ladder;
 import me.googas.api.matches.Match;
 import me.googas.api.matches.MatchStatus;
 import me.googas.api.permissions.Group;
@@ -190,4 +192,15 @@ public interface DataLoader {
    */
   @NotNull
   Collection<Group> getGroups();
+
+  /**
+   * Get the leader board in certain ladder
+   *
+   * @param ladder the ladder to look the leaderboard from
+   * @param page the page to see of the leaderboard
+   * @param size the size to show of the leaderboard
+   * @return the leaderboard
+   */
+  @NotNull
+  List<LinkedData> getLeaderboard(@NotNull Ladder ladder, int page, int size);
 }

@@ -43,6 +43,26 @@ public interface Stateable {
   }
 
   /**
+   * Get the amount of time won in this ladder
+   *
+   * @param ladder the ladder to get the wins
+   * @return the amount of time won in the ladder
+   */
+  default float getWins(@NotNull Ladder ladder) {
+    return this.getStats().getOrDefault(ladder.getName() + "-wins", 0f);
+  }
+
+  /**
+   * The amount of times lost in a ladder
+   *
+   * @param ladder the ladder
+   * @return the amount of times lost
+   */
+  default float getLoses(@NotNull Ladder ladder) {
+    return this.getStats().getOrDefault(ladder.getName() + "-loses", 0f);
+  }
+
+  /**
    * Get the stats of the entity
    *
    * @return the map of the stats

@@ -63,7 +63,7 @@ public class GuidoLinkedData extends Catchable implements BotLinkedData, BotPerm
       @NotNull GuidoValuesMap preferences,
       @NotNull HashMap<String, Float> stats,
       @NotNull Set<PermissionStack> permissions) {
-    super(Time.fromString("3m"), addToCache);
+    super(Time.fromString("3m"), false);
     this.type = type;
     this.user = user;
     this.identification = identification;
@@ -71,6 +71,7 @@ public class GuidoLinkedData extends Catchable implements BotLinkedData, BotPerm
     this.stats = stats;
     this.permissions = permissions;
     if (addToCache) {
+      this.addToCache();
       new LinkedDataLoadedEvent(this).call();
     }
   }

@@ -89,14 +89,11 @@ public class MatchCommands {
             new GuidoLinkedValuesMap("manual", true)
                 .addValue("ladder", ladder.getName())
                 .addValue("guild", guild.getId()));
-    /*
     if (context.hasFlag("-t")) {
       match.finish(null);
     } else {
       match.finish(team1);
     }
-
-     */
     match.addToCache();
     return new Result(locale.get("match.saved", Maps.singleton("id", match.getId())));
   }

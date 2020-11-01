@@ -17,6 +17,7 @@ import me.googas.bot.core.commands.DeveloperCommands;
 import me.googas.bot.core.commands.HelpCommand;
 import me.googas.bot.core.commands.LadderCommands;
 import me.googas.bot.core.commands.LangCommands;
+import me.googas.bot.core.commands.LeaderboardCommands;
 import me.googas.bot.core.commands.MatchCommands;
 import me.googas.bot.core.commands.QueueCommands;
 import me.googas.bot.core.commands.RangesCommand;
@@ -161,6 +162,7 @@ public class Guido {
             new HelpCommand(),
             new LadderCommands(),
             new LangCommands(),
+            new LeaderboardCommands(),
             new MatchCommands(),
             new QueueCommands(),
             new RangesCommand(),

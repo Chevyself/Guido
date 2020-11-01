@@ -2,8 +2,10 @@ package me.googas.bot.core.handlers.loader;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import me.googas.api.links.LinkedData;
 import me.googas.api.links.LinkedDataType;
+import me.googas.api.matches.Ladder;
 import me.googas.api.matches.Match;
 import me.googas.api.matches.MatchStatus;
 import me.googas.api.permissions.Group;
@@ -94,6 +96,11 @@ public class GuidoFileLoader implements BotDataLoader {
   }
 
   @Override
+  public long maxPageLeaderboard(@NotNull Ladder ladder, int size) {
+    return 0;
+  }
+
+  @Override
   public @NotNull Collection<Match> getParticipating(
       @NotNull LinkedDataType type,
       @NotNull ValuesMap identification,
@@ -109,6 +116,11 @@ public class GuidoFileLoader implements BotDataLoader {
   @Override
   public @NotNull Collection<Group> getGroups() {
     throw new UnsupportedOperationException("There's no groups");
+  }
+
+  @Override
+  public @NotNull List<LinkedData> getLeaderboard(@NotNull Ladder ladder, int page, int size) {
+    return new ArrayList<>();
   }
 
   @Override

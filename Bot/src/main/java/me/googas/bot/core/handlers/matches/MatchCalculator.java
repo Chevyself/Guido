@@ -112,13 +112,15 @@ public class MatchCalculator implements GuidoEventHandler {
    */
   public float getLosersElo(Match match, Ladder ladder) {
     float losersElo = 0;
+    int total = 0;
     Team winners = match.getWinners();
     for (Team team : match.getTeams()) {
       if (team != winners) {
         losersElo += team.getElo(ladder);
+        total++;
       }
     }
-    return losersElo;
+    return losersElo / total;
   }
 
   /**
@@ -129,7 +131,7 @@ public class MatchCalculator implements GuidoEventHandler {
    * @return the expected chances of winning
    */
   public double calculateExpected(float elo, float thatElo) {
-    return 1 / (1 + Math.pow(10, (elo - thatElo) / 400));
+    return 1 / (1 + Math.pow(10, (thatElo - elo) / 400));
   }
 
   @Override
