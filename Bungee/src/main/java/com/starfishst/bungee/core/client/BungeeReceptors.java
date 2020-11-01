@@ -3,6 +3,7 @@ package com.starfishst.bungee.core.client;
 import com.starfishst.bungee.api.Guido;
 import com.starfishst.bungee.api.configuration.GuidoServer;
 import com.starfishst.bungee.api.events.GuidoListener;
+import com.starfishst.bungee.core.lang.BungeeLocaleFile;
 import com.starfishst.bungee.utils.BungeeUtils;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -10,6 +11,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
 import me.googas.api.client.data.LinkedInfoImpl;
 import me.googas.api.client.data.ValuesMapImpl;
 import me.googas.api.links.LinkedDataType;
@@ -130,13 +132,13 @@ public class BungeeReceptors implements GuidoListener {
     }
     ServerInfo server = this.getServer(ip);
     Guido.getLogger().info("sending " + uuids + " to " + server);
-
     if (server != null) {
       for (UUID uuid : uuids) {
         ProxiedPlayer player = ProxyServer.getInstance().getPlayer(uuid);
         if (player != null) {
+          BungeeLocaleFile locale = Guido.getLanguageHandler().getFile(player);
           if (!player.getServer().getInfo().equals(server)) {
-            Atomic<Boolean> connected = new Atomic<>(false);
+            AtomicBoolean connected = new AtomicBoolean(false);
             Atomic<Integer> taskId = new Atomic<>(-1);
             taskId.set(
                 ProxyServer.getInstance()
@@ -145,12 +147,24 @@ public class BungeeReceptors implements GuidoListener {
                         Guido.validated(),
                         () -> {
                           if (!connected.get()) {
+                            player.sendMessage(
+                                locale.getComponent(
+                                    "receptors.being-connected",
+                                    Maps.singleton("server", server.getName())));
                             player.connect(
                                 server,
                                 (result, error) -> {
                                   if (error != null) {
                                     connected.set(false);
+                                    player.sendMessage(
+                                        locale.getComponent(
+                                            "receptors.connected-error",
+                                            Maps.singleton("server", server.getName())));
                                   } else {
+                                    player.sendMessage(
+                                        locale.getComponent(
+                                            "receptors.connected",
+                                            Maps.singleton("server", server.getName())));
                                     connected.set(result);
                                   }
                                 });

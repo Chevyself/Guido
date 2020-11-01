@@ -8,6 +8,7 @@ import com.starfishst.bungee.api.events.GuidoListener;
 import com.starfishst.bungee.core.client.BungeeClient;
 import com.starfishst.bungee.core.commands.GuidoCommands;
 import com.starfishst.bungee.core.commands.LinkCommand;
+import com.starfishst.bungee.core.commands.LobbyCommands;
 import com.starfishst.bungee.core.commands.PermissionCommands;
 import com.starfishst.bungee.core.commands.StatsCommand;
 import com.starfishst.bungee.core.commands.providers.GuidoProvidersRegistry;
@@ -19,6 +20,7 @@ import java.io.File;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.util.List;
+import java.util.Set;
 import me.googas.api.client.Client;
 import me.googas.commons.CoreFiles;
 import me.googas.commons.Lots;
@@ -124,13 +126,21 @@ public class GuidoPlugin extends Plugin {
     } catch (IOException e) {
       e.printStackTrace();
     }
+
+    Set<Object> receptors = this.getClient().getReceptors();
+    for (Object receptor : receptors) {
+      if (receptor instanceof GuidoListener) {
+        this.listeners.add((GuidoListener) receptor);
+      }
+    }
     for (GuidoListener listener : this.listeners) {
       listener.register(this);
+      this.getLogger().info(listener.getName() + " has been registered");
     }
-    this.getClient().getReceptors();
 
     this.manager.registerCommand(new GuidoCommands());
     this.manager.registerCommand(new LinkCommand());
+    this.manager.registerCommand(new LobbyCommands());
     this.manager.registerCommand(new PermissionCommands());
     this.manager.registerCommand(new StatsCommand());
     this.loadServers();

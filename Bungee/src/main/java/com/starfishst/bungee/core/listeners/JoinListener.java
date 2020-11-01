@@ -37,6 +37,8 @@ public class JoinListener implements GuidoListener {
       connection.sendRequest(
           new Request<>(Boolean.class, "data-exists", Maps.singleton("info", info)),
           exists -> {
+            Guido.getLogger()
+                .info("The data for " + event.getPlayer().getName() + " exists? " + exists);
             if (exists) {
               connection.sendRequest(
                   new Request<>(
@@ -56,7 +58,13 @@ public class JoinListener implements GuidoListener {
                       Maps.objects("uuid", uuid)
                           .append("nickname", event.getPlayer().getName())
                           .build()),
-                  ignored -> {});
+                  bol ->
+                      Guido.getLogger()
+                          .info(
+                              "Attempting to create minecraft for "
+                                  + event.getPlayer().getName()
+                                  + " was it successful? "
+                                  + bol));
             }
           });
     } catch (IOException e) {

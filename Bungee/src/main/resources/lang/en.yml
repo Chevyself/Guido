@@ -16,3 +16,12 @@ link:
   linked: "&cYour account is already linked"
   code: "[\"\",{\"text\":\"&aYour code is &e\"},{\"text\":\"%code%\",\"hoverEvent\":{\"action\":\"show_text\",\"value\":\"&7Send the command &3.link %code%\"}},{\"text\":\" &asend it in the &e\"},{\"text\":\"discord server\",\"clickEvent\":{\"action\":\"open_url\",\"value\":\"https://discord.io/GOOGAS\"},\"hoverEvent\":{\"action\":\"show_text\",\"value\":\"&6Click here to join!\"}},{\"text\":\" &aor directly to the guido bot!\"}]"
   internal: "&cThere's been an internal error"
+## For receptors
+receptors:
+  being-connected: "&aYou are being connected to &e%server%"
+  connected-error: "&cThere's been an error while trying to connect you to &e%server%"
+  receptors-conneted: "&aYou've been connected"
+
+## Lobby command
+lobby:
+  success: "&aYou are being sent to the lobby"
