@@ -12,7 +12,7 @@
 
     <groupId>me.googas.bot</groupId>
     <artifactId>Bot</artifactId>
-    <version>1.1.0-BETA-0</version>
+    <version>1.1.0-BETA-1</version>
 
     <build>
         <plugins>

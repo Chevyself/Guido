@@ -111,7 +111,7 @@ public class MatchMakingHandler implements GuidoEventHandler {
           .queue(
               channel -> {
                 this.getVoices(match.getId()).put(team.getId(), channel.getIdLong());
-                Discord.removeEveryonePermissions(channel);
+                Discord.removeAllPermission(channel);
                 for (TeamMember member : team.getMembers()) {
                   LinkedData link = member.getLinkInfo().getLink();
                   if (link instanceof BotLinkedData) {
