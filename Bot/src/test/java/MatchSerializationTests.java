@@ -2,10 +2,6 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import java.util.HashSet;
 import java.util.Set;
-import me.googas.api.Group;
-import me.googas.api.Permission;
-import me.googas.api.PermissionStack;
-import me.googas.api.ValuesMap;
 import me.googas.api.client.data.ValuesMapImpl;
 import me.googas.api.client.data.adapters.GroupAdapter;
 import me.googas.api.client.data.adapters.LadderAdapter;
@@ -21,14 +17,18 @@ import me.googas.api.matches.Match;
 import me.googas.api.matches.Team;
 import me.googas.api.matches.TeamMember;
 import me.googas.api.matches.TeamRole;
+import me.googas.api.permissions.Group;
+import me.googas.api.permissions.Permission;
+import me.googas.api.permissions.PermissionStack;
+import me.googas.api.utility.ValuesMap;
 import me.googas.bot.adapters.PermissionAdapter;
 import me.googas.bot.adapters.ValuesMapAdapter;
-import me.googas.bot.handlers.data.types.GuidoLinkedInfo;
-import me.googas.bot.handlers.data.types.GuidoMatch;
-import me.googas.bot.handlers.data.types.GuidoTeam;
-import me.googas.bot.handlers.data.types.GuidoTeamMember;
-import me.googas.bot.handlers.data.types.maps.GuidoLinkedValuesMap;
-import me.googas.bot.handlers.data.types.maps.GuidoValuesMap;
+import me.googas.bot.core.types.GuidoLinkedInfo;
+import me.googas.bot.core.types.GuidoMatch;
+import me.googas.bot.core.types.GuidoTeam;
+import me.googas.bot.core.types.GuidoTeamMember;
+import me.googas.bot.core.types.maps.GuidoLinkedValuesMap;
+import me.googas.bot.core.types.maps.GuidoValuesMap;
 import me.googas.commons.Lots;
 import me.googas.messaging.api.Message;
 import me.googas.messaging.json.adapters.MessageDeserializer;
@@ -81,7 +81,7 @@ public class MatchSerializationTests {
             new GuidoMatch(
                 "asdasd",
                 20,
-                Lots.set(new GuidoTeam(members, "asd")),
+                Lots.set(new GuidoTeam(1, members, "asd")),
                 new GuidoLinkedValuesMap("asd", "asc")
                     .addValue("type", "pgm")
                     .addValue("pito", 30)));

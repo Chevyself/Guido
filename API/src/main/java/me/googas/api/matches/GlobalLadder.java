@@ -1,7 +1,7 @@
 package me.googas.api.matches;
 
-import me.googas.api.ValuesMap;
 import me.googas.api.discord.GuildData;
+import me.googas.api.utility.ValuesMap;
 import org.jetbrains.annotations.NotNull;
 
 /** The global ladder cannot be edited, this ladder calculates the global elo of the linked data */

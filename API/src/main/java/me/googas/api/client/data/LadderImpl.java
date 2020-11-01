@@ -1,9 +1,9 @@
 package me.googas.api.client.data;
 
-import me.googas.api.ValuesMap;
 import me.googas.api.discord.GuildData;
 import me.googas.api.matches.Ladder;
 import me.googas.api.matches.Queue;
+import me.googas.api.utility.ValuesMap;
 import org.jetbrains.annotations.NotNull;
 
 /** Create a ladder */

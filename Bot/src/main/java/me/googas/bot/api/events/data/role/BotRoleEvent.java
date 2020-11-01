@@ -1,7 +1,7 @@
 package me.googas.bot.api.events.data.role;
 
-import me.googas.bot.api.data.BotRole;
 import me.googas.bot.api.events.GuidoEvent;
+import me.googas.bot.api.types.BotRole;
 import org.jetbrains.annotations.NotNull;
 
 /** An event where the data of a role is involved */

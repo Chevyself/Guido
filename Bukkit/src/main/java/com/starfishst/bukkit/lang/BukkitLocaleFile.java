@@ -22,11 +22,6 @@ public class BukkitLocaleFile implements LocaleFile {
   }
 
   @Override
-  public void setLang(@NotNull String s) {
-    throw new UnsupportedOperationException("Language cannot be changed in locale files");
-  }
-
-  @Override
   public @NotNull String getLang() {
     return this.get("locale");
   }

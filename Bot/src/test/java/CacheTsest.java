@@ -1,10 +1,10 @@
 import java.util.Collection;
-import me.googas.api.UserData;
 import me.googas.api.links.LinkedData;
 import me.googas.api.matches.Match;
 import me.googas.api.matches.MatchStatus;
-import me.googas.bot.Guido;
-import me.googas.bot.handlers.data.loader.JsongoDataLoader;
+import me.googas.api.user.UserData;
+import me.googas.bot.core.Guido;
+import me.googas.bot.core.handlers.loader.JsongoDataLoader;
 import me.googas.commons.cache.Cache;
 import me.googas.commons.cache.ICatchable;
 

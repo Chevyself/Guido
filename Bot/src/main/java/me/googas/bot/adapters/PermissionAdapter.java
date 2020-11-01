@@ -6,8 +6,8 @@ import com.google.gson.JsonParseException;
 import com.google.gson.JsonPrimitive;
 import com.google.gson.JsonSerializationContext;
 import java.lang.reflect.Type;
-import me.googas.api.Permission;
-import me.googas.bot.handlers.data.types.permissions.GuidoPermission;
+import me.googas.api.permissions.Permission;
+import me.googas.bot.core.types.permissions.GuidoPermission;
 import me.googas.commons.gson.adapters.JsonAdapter;
 
 /** Adapts permission in json */

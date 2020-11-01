@@ -1,6 +1,6 @@
 package me.googas.bot.api.events.data.links;
 
-import me.googas.bot.api.data.BotLinkedData;
+import me.googas.bot.api.types.BotLinkedData;
 import org.jetbrains.annotations.NotNull;
 
 /** Called when linked data gets loaded */

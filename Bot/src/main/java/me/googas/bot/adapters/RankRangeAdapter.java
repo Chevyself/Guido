@@ -5,8 +5,8 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonParseException;
 import com.google.gson.JsonSerializationContext;
 import java.lang.reflect.Type;
-import me.googas.api.RankRange;
-import me.googas.bot.handlers.data.types.GuidoRankRange;
+import me.googas.api.ranks.RankRange;
+import me.googas.bot.core.types.GuidoRankRange;
 import me.googas.commons.gson.adapters.JsonAdapter;
 
 /** Deserializes rank ranges */

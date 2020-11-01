@@ -170,8 +170,8 @@ public class MatchMakingListener implements GuidoListener {
               connection.sendRequest(
                   new Request<>(
                       Boolean.class,
-                      "match-remove-team",
-                      Maps.objects("id", this.matchId).append("team", "participants").build()),
+                      "match-remove-team-by-id",
+                      Maps.objects("id", this.matchId).append("team", -2).build()),
                   bol -> {
                     logger.info("Was the team participants removed? " + bol);
                   });
@@ -251,7 +251,7 @@ public class MatchMakingListener implements GuidoListener {
                         Boolean.class,
                         "match-add-team",
                         Maps.objects("id", this.matchId)
-                            .append("team", new TeamImpl(name, members))
+                            .append("team", new TeamImpl(-3, name, members))
                             .build()),
                     bol -> {
                       logger.info("Team " + name + " was added to " + this.matchId + "? " + bol);

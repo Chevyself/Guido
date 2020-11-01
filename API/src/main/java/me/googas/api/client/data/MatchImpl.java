@@ -4,10 +4,11 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
-import me.googas.api.ValuesMap;
+import me.googas.api.discord.GuildData;
 import me.googas.api.matches.Match;
 import me.googas.api.matches.MatchStatus;
 import me.googas.api.matches.Team;
+import me.googas.api.utility.ValuesMap;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -23,8 +24,8 @@ public class MatchImpl implements Match {
   /** The teams that are playing the match */
   @NotNull private final Set<Team> teams;
 
-  /** The winners of the match */
-  @Nullable private final Team winners;
+  /** The id of the team winners of the match */
+  private final int winners;
 
   /** The details of the match */
   @NotNull private final ValuesMap details;
@@ -46,7 +47,7 @@ public class MatchImpl implements Match {
       @NotNull String id,
       long guildId,
       @NotNull Set<Team> teams,
-      @Nullable Team winners,
+      int winners,
       @NotNull ValuesMap details,
       @NotNull MatchStatus status) {
     this.id = id;
@@ -59,7 +60,7 @@ public class MatchImpl implements Match {
 
   /** @deprecated this may only be used by gson */
   public MatchImpl() {
-    this("", -1, new HashSet<>(), null, new ValuesMapImpl(), MatchStatus.FINISHED);
+    this("", -1, new HashSet<>(), -1, new ValuesMapImpl(), MatchStatus.FINISHED);
   }
 
   @Override
@@ -79,7 +80,7 @@ public class MatchImpl implements Match {
 
   @Override
   public @Nullable Team getWinners() {
-    return this.winners;
+    return this.getTeam(this.id);
   }
 
   @Override
@@ -102,6 +103,21 @@ public class MatchImpl implements Match {
   @Override
   public @NotNull Match refresh() {
     return this;
+  }
+
+  @Override
+  public @Nullable GuildData getGuildData() {
+    return null;
+  }
+
+  @Override
+  public boolean addTeam(@NotNull Team team) {
+    return false;
+  }
+
+  @Override
+  public boolean removeTeam(@NotNull Team team) {
+    return false;
   }
 
   @Override

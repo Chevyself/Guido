@@ -1,9 +1,9 @@
 package me.googas.api.client.data;
 
-import me.googas.api.ValuesMap;
 import me.googas.api.links.LinkedData;
 import me.googas.api.links.LinkedDataType;
 import me.googas.api.links.LinkedInfo;
+import me.googas.api.utility.ValuesMap;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

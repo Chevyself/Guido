@@ -6,7 +6,7 @@ import com.google.gson.JsonParseException;
 import com.google.gson.JsonSerializationContext;
 import java.lang.reflect.Type;
 import me.googas.api.matches.TeamMember;
-import me.googas.bot.handlers.data.types.GuidoTeamMember;
+import me.googas.bot.core.types.GuidoTeamMember;
 import me.googas.commons.gson.adapters.JsonAdapter;
 
 /** Deserializes team members */

@@ -1,12 +1,13 @@
 package me.googas.api.links;
 
 import java.util.Collection;
-import me.googas.api.Permissible;
-import me.googas.api.Stateable;
-import me.googas.api.UserData;
-import me.googas.api.ValuesMap;
+import java.util.Map;
 import me.googas.api.lang.LocaleFile;
+import me.googas.api.permissions.Permissible;
+import me.googas.api.user.UserData;
+import me.googas.api.utility.ValuesMap;
 import me.googas.commons.cache.ICatchable;
+import me.googas.commons.maps.MapBuilder;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -52,6 +53,32 @@ public interface LinkedData extends Permissible, Stateable, ICatchable {
    * @param message the message to send
    */
   void sendMessage(@NotNull String message);
+
+  /**
+   * Send a localized message using a given key
+   *
+   * @param key the key of the localized message
+   */
+  void sendLocalized(@NotNull String key);
+
+  /**
+   * Send a localized message using the given key and placeholders
+   *
+   * @param key the key of the localized message
+   * @param placeholders the placeholders of the message
+   */
+  void sendLocalized(@NotNull String key, @NotNull Map<String, String> placeholders);
+
+  /**
+   * Send a localized message using the given key and placeholders
+   *
+   * @param key the key of the localized message
+   * @param placeholders the placeholders of the message as a map builder
+   */
+  default void sendLocalized(
+      @NotNull String key, @NotNull MapBuilder<String, String> placeholders) {
+    this.sendLocalized(key, placeholders.build());
+  }
 
   /**
    * Get the preferences of a linked data

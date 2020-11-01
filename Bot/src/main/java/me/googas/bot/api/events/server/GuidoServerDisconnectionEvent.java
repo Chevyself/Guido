@@ -1,6 +1,6 @@
 package me.googas.bot.api.events.server;
 
-import me.googas.bot.server.GuidoServer;
+import me.googas.bot.core.server.GuidoServer;
 import me.googas.messaging.json.server.JsonClientThread;
 import org.jetbrains.annotations.NotNull;
 

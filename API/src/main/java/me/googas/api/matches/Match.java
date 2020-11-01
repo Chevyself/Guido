@@ -4,9 +4,11 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
-import me.googas.api.ValuesMap;
+import me.googas.api.discord.GuildData;
 import me.googas.api.links.LinkedDataType;
 import me.googas.api.links.LinkedInfo;
+import me.googas.api.utility.ValuesMap;
+import me.googas.commons.RandomUtils;
 import me.googas.commons.cache.ICatchable;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -155,4 +157,59 @@ public interface Match extends ICatchable {
     }
     return null;
   }
+
+  /**
+   * Get a team that is playing this match by its id
+   *
+   * @param id the id of the team to get
+   * @return the team if the id matches else null
+   */
+  @Nullable
+  default Team getTeam(int id) {
+    for (Team team : this.getTeams()) {
+      if (team.getId() == id) {
+        return team;
+      }
+    }
+    return null;
+  }
+
+  /**
+   * Add a team to this match
+   *
+   * @param team the team to add
+   * @return whether the team was added
+   */
+  boolean addTeam(@NotNull Team team);
+
+  /**
+   * Removes a team from this match
+   *
+   * @param team the team to remove
+   * @return whether the team was removed
+   */
+  boolean removeTeam(@NotNull Team team);
+
+  /**
+   * Get the next unused id for a team
+   *
+   * @return the unused team id
+   */
+  default int nextTeamId() {
+    int id = RandomUtils.nextInt(0, 20);
+    Team team = this.getTeam(id);
+    while (team != null) {
+      id = RandomUtils.nextInt(0, 20);
+      team = this.getTeam(id);
+    }
+    return id;
+  }
+
+  /**
+   * Get the data of the guild in which this match is being played
+   *
+   * @return the guild data of the guild of this match
+   */
+  @Nullable
+  GuildData getGuildData();
 }

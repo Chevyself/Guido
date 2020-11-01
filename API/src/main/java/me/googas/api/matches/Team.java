@@ -46,6 +46,14 @@ public interface Team {
   }
 
   /**
+   * Adds a member to the team
+   *
+   * @param member the member to add
+   * @return whether the member was added to the team
+   */
+  boolean addMember(@NotNull TeamMember member);
+
+  /**
    * Get the members of the team
    *
    * @return the members of the team
@@ -60,4 +68,19 @@ public interface Team {
    */
   @NotNull
   String getName();
+
+  /**
+   * Removes a member from the team
+   *
+   * @param member the member to remove
+   * @return whether the member was removed from the team
+   */
+  boolean removeMember(@NotNull TeamMember member);
+
+  /**
+   * Get an unique way to identify the team
+   *
+   * @return the unique way to identify the team
+   */
+  int getId();
 }

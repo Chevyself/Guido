@@ -1,6 +1,6 @@
 package com.starfishst.bungee.core.data;
 
-import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 import me.googas.api.client.data.LinkedInfoImpl;
 import me.googas.api.client.data.ValuesMapImpl;
@@ -59,7 +59,7 @@ public class ProxiedOfflinePlayer {
    * @deprecated use {@link #getLinkedInfo()}
    * @return the parameters of the player
    */
-  public HashMap<String, Object> getParams() {
+  public Map<String, Object> getParams() {
     return this.getBuilder().build();
   }
 

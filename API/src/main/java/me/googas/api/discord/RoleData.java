@@ -1,6 +1,6 @@
 package me.googas.api.discord;
 
-import me.googas.api.Permissible;
+import me.googas.api.permissions.Permissible;
 import me.googas.commons.cache.ICatchable;
 
 /**

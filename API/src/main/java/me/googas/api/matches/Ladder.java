@@ -1,7 +1,7 @@
 package me.googas.api.matches;
 
-import me.googas.api.ValuesMap;
 import me.googas.api.discord.GuildData;
+import me.googas.api.utility.ValuesMap;
 import org.jetbrains.annotations.NotNull;
 
 /** A ladder is a ranked system that users may use to climb */

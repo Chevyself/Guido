@@ -12,7 +12,7 @@
 
     <groupId>com.starfishst.guido.bukkit</groupId>
     <artifactId>Bukkit</artifactId>
-    <version>1.2.0-PRE-0</version>
+    <version>1.2.0-PRE-1</version>
     <description>Implementations for bukkit</description>
     <packaging>jar</packaging>
 
@@ -80,14 +80,14 @@
         <dependency>
             <groupId>me.googas.api</groupId>
             <artifactId>API</artifactId>
-            <version>1.0.0-PRE-0</version>
+            <version>1.0.0-PRE-1</version>
             <scope>compile</scope>
         </dependency>
         <!-- The bukkit command framework -->
         <dependency>
             <groupId>com.starfishst.bukkit</groupId>
             <artifactId>Bukkit</artifactId>
-            <version>1.0.4-SNAPSHOT</version>
+            <version>1.0.7-SNAPSHOT</version>
         </dependency>
         <!-- ProtocolLib -->
         <dependency>

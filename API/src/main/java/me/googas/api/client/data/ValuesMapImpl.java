@@ -2,7 +2,7 @@ package me.googas.api.client.data;
 
 import java.util.HashMap;
 import java.util.Map;
-import me.googas.api.ValuesMap;
+import me.googas.api.utility.ValuesMap;
 import org.jetbrains.annotations.NotNull;
 
 /** An implementation for values map */

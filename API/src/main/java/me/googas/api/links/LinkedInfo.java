@@ -1,6 +1,6 @@
 package me.googas.api.links;
 
-import me.googas.api.ValuesMap;
+import me.googas.api.utility.ValuesMap;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

@@ -1,6 +1,6 @@
 package me.googas.bot.api.events.data.permissible;
 
-import me.googas.bot.api.data.BotPermissible;
+import me.googas.bot.api.types.BotPermissible;
 import org.jetbrains.annotations.NotNull;
 
 /** Called when a permissible gets a permission removed */

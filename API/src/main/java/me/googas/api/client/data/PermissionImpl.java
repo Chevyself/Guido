@@ -1,6 +1,6 @@
 package me.googas.api.client.data;
 
-import me.googas.api.Permission;
+import me.googas.api.permissions.Permission;
 import org.jetbrains.annotations.NotNull;
 
 /** An implementation for permission */

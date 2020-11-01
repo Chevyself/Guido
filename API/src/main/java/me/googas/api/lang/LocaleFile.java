@@ -1,14 +1,14 @@
 package me.googas.api.lang;
 
 import java.io.File;
-import java.util.HashMap;
+import java.util.Map;
 import me.googas.commons.Strings;
 import me.googas.commons.maps.MapBuilder;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-/** The file of localized messages. Used to get the messages for {@link Localizable} */
-public interface LocaleFile extends Localizable {
+/** The file of localized messages */
+public interface LocaleFile {
 
   /** Saves the locale file */
   void save();
@@ -43,7 +43,7 @@ public interface LocaleFile extends Localizable {
    * @return the built string
    */
   @NotNull
-  default String get(@NotNull String path, @NotNull HashMap<String, String> placeholders) {
+  default String get(@NotNull String path, @NotNull Map<String, String> placeholders) {
     return Strings.buildMessage(this.get(path), placeholders);
   }
 
@@ -68,4 +68,12 @@ public interface LocaleFile extends Localizable {
    */
   @NotNull
   File getFile();
+
+  /**
+   * Get the language that this file provides
+   *
+   * @return the language that this entity is provides
+   */
+  @NotNull
+  String getLang();
 }

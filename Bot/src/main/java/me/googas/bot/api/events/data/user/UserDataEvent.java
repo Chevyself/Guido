@@ -1,6 +1,6 @@
 package me.googas.bot.api.events.data.user;
 
-import me.googas.api.UserData;
+import me.googas.api.user.UserData;
 import me.googas.bot.api.events.GuidoEvent;
 import org.jetbrains.annotations.NotNull;
 

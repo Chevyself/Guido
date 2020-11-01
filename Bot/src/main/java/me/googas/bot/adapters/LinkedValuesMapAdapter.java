@@ -5,7 +5,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonParseException;
 import com.google.gson.JsonSerializationContext;
 import java.lang.reflect.Type;
-import me.googas.bot.handlers.data.types.maps.GuidoLinkedValuesMap;
+import me.googas.bot.core.types.maps.GuidoLinkedValuesMap;
 import me.googas.commons.gson.adapters.JsonAdapter;
 
 /** Deserialize {@link GuidoLinkedValuesMap} */

@@ -6,7 +6,7 @@ import com.google.gson.JsonParseException;
 import com.google.gson.JsonSerializationContext;
 import java.lang.reflect.Type;
 import me.googas.api.links.LinkedInfo;
-import me.googas.bot.handlers.data.types.GuidoLinkedInfo;
+import me.googas.bot.core.types.GuidoLinkedInfo;
 import me.googas.commons.gson.adapters.JsonAdapter;
 
 /** Deserializes linked info */

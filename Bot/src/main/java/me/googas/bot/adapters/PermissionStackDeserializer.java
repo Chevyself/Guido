@@ -5,8 +5,8 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonParseException;
 import com.google.gson.JsonSerializationContext;
 import java.lang.reflect.Type;
-import me.googas.api.PermissionStack;
-import me.googas.bot.handlers.data.types.permissions.GuidoPermissionStack;
+import me.googas.api.permissions.PermissionStack;
+import me.googas.bot.core.types.permissions.GuidoPermissionStack;
 import me.googas.commons.gson.adapters.JsonAdapter;
 
 /** Deserializes permission stacks */

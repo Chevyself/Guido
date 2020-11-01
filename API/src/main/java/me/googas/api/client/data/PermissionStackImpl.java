@@ -2,8 +2,8 @@ package me.googas.api.client.data;
 
 import java.util.Collection;
 import java.util.Set;
-import me.googas.api.Permission;
-import me.googas.api.PermissionStack;
+import me.googas.api.permissions.Permission;
+import me.googas.api.permissions.PermissionStack;
 import org.jetbrains.annotations.NotNull;
 
 /** An implementation for permission stack */

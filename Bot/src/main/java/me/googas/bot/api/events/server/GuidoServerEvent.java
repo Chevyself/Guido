@@ -1,7 +1,7 @@
 package me.googas.bot.api.events.server;
 
 import me.googas.bot.api.events.GuidoEvent;
-import me.googas.bot.server.GuidoServer;
+import me.googas.bot.core.server.GuidoServer;
 import org.jetbrains.annotations.NotNull;
 
 /** An event that involves the guido server */

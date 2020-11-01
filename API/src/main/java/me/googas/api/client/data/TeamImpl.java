@@ -10,6 +10,8 @@ import org.jetbrains.annotations.NotNull;
 /** An implementation for teams */
 public class TeamImpl implements Team {
 
+  /** The id of the team */
+  private final int id;
   /** The name of the team */
   @NotNull private final String name;
 
@@ -19,17 +21,24 @@ public class TeamImpl implements Team {
   /**
    * Create the team
    *
+   * @param id the id of the team
    * @param name the name of the team
    * @param members the members of the team
    */
-  public TeamImpl(@NotNull String name, @NotNull Set<TeamMember> members) {
+  public TeamImpl(int id, @NotNull String name, @NotNull Set<TeamMember> members) {
+    this.id = id;
     this.name = name;
     this.members = members;
   }
 
   /** @deprecated this constructor may only be used by gson */
   public TeamImpl() {
-    this("", new HashSet<>());
+    this(-1, "", new HashSet<>());
+  }
+
+  @Override
+  public int getId() {
+    return this.id;
   }
 
   @Override
@@ -40,5 +49,15 @@ public class TeamImpl implements Team {
   @Override
   public @NotNull String getName() {
     return this.name;
+  }
+
+  @Override
+  public boolean addMember(@NotNull TeamMember member) {
+    return false;
+  }
+
+  @Override
+  public boolean removeMember(@NotNull TeamMember member) {
+    return false;
   }
 }

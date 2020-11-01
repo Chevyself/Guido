@@ -1,16 +1,16 @@
 package me.googas.api.loader;
 
 import java.util.Collection;
-import me.googas.api.Group;
-import me.googas.api.UserData;
-import me.googas.api.ValuesMap;
 import me.googas.api.discord.GuildData;
 import me.googas.api.discord.RoleData;
 import me.googas.api.links.LinkedData;
 import me.googas.api.links.LinkedDataType;
 import me.googas.api.matches.Match;
 import me.googas.api.matches.MatchStatus;
+import me.googas.api.permissions.Group;
 import me.googas.api.token.AuthToken;
+import me.googas.api.user.UserData;
+import me.googas.api.utility.ValuesMap;
 import me.googas.commons.RandomUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;

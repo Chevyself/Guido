@@ -1,6 +1,6 @@
 package me.googas.bot.api.events.data.group;
 
-import me.googas.api.Group;
+import me.googas.api.permissions.Group;
 import me.googas.bot.api.events.GuidoEvent;
 import org.jetbrains.annotations.NotNull;
 

@@ -2,8 +2,8 @@ import java.util.ArrayList;
 import java.util.List;
 import me.googas.api.links.LinkedDataType;
 import me.googas.api.links.LinkedInfo;
-import me.googas.bot.handlers.data.types.GuidoLinkedInfo;
-import me.googas.bot.handlers.data.types.maps.GuidoValuesMap;
+import me.googas.bot.core.types.GuidoLinkedInfo;
+import me.googas.bot.core.types.maps.GuidoValuesMap;
 
 public class LinkedDataHashCodeTest {
 

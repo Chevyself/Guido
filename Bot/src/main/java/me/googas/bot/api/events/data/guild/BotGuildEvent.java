@@ -1,7 +1,7 @@
 package me.googas.bot.api.events.data.guild;
 
-import me.googas.bot.api.data.BotGuild;
 import me.googas.bot.api.events.GuidoEvent;
+import me.googas.bot.api.types.BotGuild;
 import org.jetbrains.annotations.NotNull;
 
 /** This object represents an event which has {@link BotGuild} involved */

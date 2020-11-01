@@ -1,8 +1,8 @@
 package me.googas.bot.api.events.data.permissible;
 
-import me.googas.api.Permission;
-import me.googas.api.PermissionStack;
-import me.googas.bot.api.data.BotPermissible;
+import me.googas.api.permissions.Permission;
+import me.googas.api.permissions.PermissionStack;
+import me.googas.bot.api.types.BotPermissible;
 import org.jetbrains.annotations.NotNull;
 
 /** Called when a permissible gets a new permission */

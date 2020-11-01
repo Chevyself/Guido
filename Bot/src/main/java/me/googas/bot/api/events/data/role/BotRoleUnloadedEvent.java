@@ -1,6 +1,6 @@
 package me.googas.bot.api.events.data.role;
 
-import me.googas.bot.api.data.BotRole;
+import me.googas.bot.api.types.BotRole;
 import org.jetbrains.annotations.NotNull;
 
 /** Called when the data of a role gets unloaded */

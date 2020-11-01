@@ -1,17 +1,19 @@
 import java.io.IOException;
 import java.util.Arrays;
-import java.util.HashSet;
 import java.util.Scanner;
 import java.util.UUID;
-import me.googas.api.Group;
 import me.googas.api.client.Client;
 import me.googas.api.client.data.LinkedInfoImpl;
 import me.googas.api.client.data.PermissionStackImpl;
 import me.googas.api.client.data.TeamImpl;
+import me.googas.api.client.data.TeamMemberImpl;
 import me.googas.api.client.data.ValuesMapImpl;
 import me.googas.api.links.LinkedDataType;
 import me.googas.api.links.LinkedInfo;
 import me.googas.api.matches.Ladder;
+import me.googas.api.matches.TeamRole;
+import me.googas.api.permissions.Group;
+import me.googas.commons.Lots;
 import me.googas.commons.UUIDUtils;
 import me.googas.commons.maps.Maps;
 import me.googas.messaging.Request;
@@ -131,11 +133,30 @@ public class ClientTest {
               new Request<>(
                   Boolean.class,
                   "match-add-team",
-                  Maps.objects("id", "KkxOWnAzlsiqMgcv")
-                      .append("team", new TeamImpl("a team", new HashSet<>()))
+                  Maps.objects("id", "qu7XzgW73hW1gDDY")
+                      .append(
+                          "team",
+                          new TeamImpl(
+                              -3,
+                              "a team",
+                              Lots.set(
+                                  new TeamMemberImpl(
+                                      new LinkedInfoImpl(
+                                          LinkedDataType.MINECRAFT,
+                                          new ValuesMapImpl(Maps.singleton("nickname", "Chevi"))),
+                                      TeamRole.LEADER))))
                       .build()),
               bol -> {
                 System.out.println("Was team added? " + bol);
+              });
+        } else if (line.equalsIgnoreCase("match-remove-team-by-id")) {
+          conn.sendRequest(
+              new Request<>(
+                  Boolean.class,
+                  "match-remove-team-by-id",
+                  Maps.objects("id", "qu7XzgW73hW1gDDY").append("team", -2).build()),
+              bol -> {
+                System.out.println("Team removed? " + bol);
               });
         }
       }

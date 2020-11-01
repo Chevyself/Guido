@@ -12,7 +12,7 @@
 
     <groupId>com.starfishst.guido.bungee</groupId>
     <artifactId>Bungee</artifactId>
-    <version>1.0.0-PRE-0</version>
+    <version>1.0.0-PRE-1</version>
     <description>Implementations for bungee</description>
 
     <build>
@@ -75,13 +75,13 @@
         <dependency>
             <groupId>com.starfishst.bungee</groupId>
             <artifactId>bungee</artifactId>
-            <version>1.0.5-SNAPSHOT</version>
+            <version>1.0.6-SNAPSHOT</version>
         </dependency>
         <!-- Dependency on the bot api -->
         <dependency>
             <groupId>me.googas.api</groupId>
             <artifactId>API</artifactId>
-            <version>1.0.0-PRE-0</version>
+            <version>1.0.0-PRE-1</version>
             <scope>compile</scope>
         </dependency>
     </dependencies>

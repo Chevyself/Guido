@@ -1,8 +1,8 @@
 package me.googas.bot.api.events.data.permissible;
 
-import me.googas.api.Permissible;
-import me.googas.bot.api.data.BotPermissible;
+import me.googas.api.permissions.Permissible;
 import me.googas.bot.api.events.GuidoEvent;
+import me.googas.bot.api.types.BotPermissible;
 import org.jetbrains.annotations.NotNull;
 
 /** An event that involves a {@link Permissible} */

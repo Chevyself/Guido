@@ -1,9 +1,9 @@
 import java.util.HashMap;
 import java.util.HashSet;
 import me.googas.api.links.LinkedDataType;
-import me.googas.bot.handlers.data.types.GuidoLinkedData;
-import me.googas.bot.handlers.data.types.maps.GuidoLinkedValuesMap;
-import me.googas.bot.handlers.data.types.maps.GuidoValuesMap;
+import me.googas.bot.core.types.GuidoLinkedData;
+import me.googas.bot.core.types.maps.GuidoLinkedValuesMap;
+import me.googas.bot.core.types.maps.GuidoValuesMap;
 
 public class MapHashCode {
 

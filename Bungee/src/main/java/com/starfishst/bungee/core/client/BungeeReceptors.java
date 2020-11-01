@@ -3,6 +3,7 @@ package com.starfishst.bungee.core.client;
 import com.starfishst.bungee.api.Guido;
 import com.starfishst.bungee.api.configuration.GuidoServer;
 import com.starfishst.bungee.api.events.GuidoListener;
+import com.starfishst.bungee.utils.BungeeUtils;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -58,6 +59,24 @@ public class BungeeReceptors implements GuidoListener {
   public boolean addQueue(@ParamName("uuid") UUID uuid) {
     Guido.getLogger().info("Adding to queue " + uuid);
     return this.inQueue.add(uuid);
+  }
+
+  /**
+   * Send a message to a player
+   *
+   * @param uuid the uuid of the player to send the message
+   * @param message the message to send
+   * @return true if the message was sent
+   */
+  @Receptor("send-message")
+  public boolean sendMessage(
+      @ParamName("uuid") UUID uuid, @ParamName("message") @NotNull String message) {
+    ProxiedPlayer player = ProxyServer.getInstance().getPlayer(uuid);
+    if (player != null) {
+      player.sendMessage(BungeeUtils.getComponent(message));
+      return true;
+    }
+    return false;
   }
 
   /**
@@ -126,7 +145,15 @@ public class BungeeReceptors implements GuidoListener {
                         Guido.validated(),
                         () -> {
                           if (!connected.get()) {
-                            player.connect(server, (result, error) -> connected.set(result));
+                            player.connect(
+                                server,
+                                (result, error) -> {
+                                  if (error != null) {
+                                    connected.set(false);
+                                  } else {
+                                    connected.set(result);
+                                  }
+                                });
                           } else {
                             ProxyServer.getInstance().getScheduler().cancel(taskId.get());
                           }

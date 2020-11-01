@@ -1,6 +1,6 @@
 package me.googas.api.token;
 
-import me.googas.api.UserData;
+import me.googas.api.user.UserData;
 import me.googas.commons.cache.ICatchable;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
