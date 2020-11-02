@@ -63,7 +63,11 @@ public class MinecraftDataReceptors {
             .getLinkedData(
                 LinkedDataType.MINECRAFT, new GuidoValuesMap("uuid", UUIDUtils.trim(uuid)), false);
     if (data != null) {
-      data.refresh().getIdentification().addValue("nickname", nickname);
+      if (!data.getIdentification()
+          .getValueOr("nickname", String.class, "")
+          .equalsIgnoreCase(nickname)) {
+        data.refresh().getIdentification().addValue("nickname", nickname);
+      }
       return true;
     }
     return false;

@@ -4,15 +4,23 @@ import com.starfishst.bukkit.GuidoPlugin;
 import com.starfishst.bukkit.api.Guido;
 import com.starfishst.bukkit.api.events.GuidoListener;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 import me.googas.api.client.data.LinkedInfoImpl;
 import me.googas.api.client.data.PermissionStackImpl;
 import me.googas.api.client.data.ValuesMapImpl;
 import me.googas.api.links.LinkedDataType;
+import me.googas.api.permissions.Group;
 import me.googas.api.permissions.Permission;
+import me.googas.api.permissions.PermissionStack;
 import me.googas.commons.UUIDUtils;
 import me.googas.commons.maps.Maps;
 import me.googas.messaging.Request;
@@ -84,6 +92,11 @@ public class PermissionListener implements GuidoListener {
     }
   }
 
+  /**
+   * Listen to when a player logs in to give them a permission
+   *
+   * @param event the event of a player prematurely joining the game
+   */
   @EventHandler(priority = EventPriority.LOWEST)
   public void onPlayerLogin(AsyncPlayerPreLoginEvent event) {
     try {
@@ -92,21 +105,55 @@ public class PermissionListener implements GuidoListener {
           new LinkedInfoImpl(
               LinkedDataType.MINECRAFT,
               new ValuesMapImpl(Maps.singleton("uuid", UUIDUtils.trim(event.getUniqueId()))));
+      String context = Guido.getConfiguration().getContext();
       connection.sendRequest(
           new Request<>(
               PermissionStackImpl.class,
               "permission",
-              Maps.objects("context", Guido.getConfiguration().getContext())
-                  .append("info", info)
-                  .build()),
+              Maps.objects("context", context).append("info", info).build()),
           stack -> {
+            GroupListener groupListener = Guido.getListener(GroupListener.class);
+            Set<Permission> permissionsToGive = new HashSet<>();
+            List<Group> groups = new ArrayList<>();
             if (stack != null && !stack.getPermissions().isEmpty()) {
-              this.toGive.put(event.getUniqueId(), stack.getPermissions());
+              for (Permission permission : stack.getPermissions()) {
+                if (groupListener != null && permission.getNode().startsWith("guido.group.")) {
+                  Group group = groupListener.getGroupByPermission(permission.getNode());
+                  if (group != null) {
+                    groups.add(group);
+                  } else {
+                    permissionsToGive.add(permission);
+                  }
+                }
+              }
             }
+            groups.sort(Comparator.comparingInt(Group::getWeight));
+            Collections.reverse(groups);
+            for (Group group : groups) {
+              PermissionStack permissions = group.getPermissions(context);
+              if (permissions != null && !permissions.getPermissions().isEmpty()) {
+                for (Permission permission : permissions.getPermissions()) {
+                  this.replaceOrAdd(permissionsToGive, permission);
+                }
+              }
+            }
+            this.toGive.put(event.getUniqueId(), permissionsToGive);
           });
     } catch (IOException e) {
       e.printStackTrace();
     }
+  }
+
+  /**
+   * Replace or add the permission
+   *
+   * @param permissions the collection of permissions to replace
+   * @param permission the permission to add
+   */
+  public void replaceOrAdd(
+      @NotNull Collection<Permission> permissions, @NotNull Permission permission) {
+    permissions.removeIf(perm -> perm.getNode().equalsIgnoreCase(permission.getNode()));
+    permissions.add(permission);
   }
 
   @EventHandler(priority = EventPriority.LOWEST)

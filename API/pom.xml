@@ -12,7 +12,7 @@
 
     <groupId>me.googas.api</groupId>
     <artifactId>API</artifactId>
-    <version>1.0.0-PRE-2</version>
+    <version>1.0.0-PRE-3</version>
     <description>The API for implementations and the bot</description>
 
     <dependencies>

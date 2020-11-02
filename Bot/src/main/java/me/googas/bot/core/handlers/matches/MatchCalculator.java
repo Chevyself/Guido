@@ -40,21 +40,21 @@ public class MatchCalculator implements GuidoEventHandler {
           Console.debug("There's a winner so there will be set");
           float winnersElo = winners.getElo(ladder);
           float losersElo = this.getLosersElo(match, ladder);
-          double newWinners =
+          float newWinners =
               this.newElo(
                   winnersElo,
                   this.calculateExpected(winnersElo, losersElo),
                   ladder.getOptions().getValueOr("win-multiplier", Integer.class, 1));
-          double newLosers =
+          float newLosers =
               this.newElo(
                   losersElo,
                   this.calculateExpected(losersElo, winnersElo),
                   ladder.getOptions().getValueOr("lose-multiplier", Integer.class, 0));
-          double winnersDifference = newWinners - winnersElo;
-          double losersDifference = losersElo - newLosers;
+          float winnersDifference = newWinners - winnersElo;
+          float losersDifference = losersElo - newLosers;
           match.getDetails().addValue("winners-difference", winnersDifference);
           match.getDetails().addValue("losers-difference", losersDifference);
-          this.setElo(match, ladder, (float) winnersDifference, (float) losersDifference);
+          this.setElo(match, ladder, winnersDifference, losersDifference);
         }
       }
     }
@@ -99,8 +99,8 @@ public class MatchCalculator implements GuidoEventHandler {
    *     give a different amount of elo
    * @return the new elo
    */
-  public double newElo(float oldElo, double expected, int multiplier) {
-    return oldElo + 32 * (multiplier - expected);
+  public float newElo(float oldElo, double expected, int multiplier) {
+    return (float) Math.floor(oldElo + 32 * (multiplier - expected));
   }
 
   /**

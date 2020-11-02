@@ -2,9 +2,9 @@ package com.starfishst.bungee.core.lang;
 
 import com.starfishst.bungee.utils.BungeeUtils;
 import java.io.File;
-import java.util.HashMap;
 import java.util.Map;
 import me.googas.api.lang.LocaleFile;
+import me.googas.commons.maps.MapBuilder;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.config.Configuration;
 import org.jetbrains.annotations.NotNull;
@@ -55,7 +55,7 @@ public class BungeeLocaleFile implements LocaleFile {
    * @return the component from the given key
    */
   public @NotNull BaseComponent[] getComponent(
-      @NotNull String key, @NotNull HashMap<String, String> placeholders) {
+      @NotNull String key, @NotNull MapBuilder<String, String> placeholders) {
     return BungeeUtils.getComponent(BungeeUtils.build(this.get(key, placeholders)));
   }
 

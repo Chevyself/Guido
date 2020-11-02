@@ -2,8 +2,8 @@ package com.starfishst.bukkit.dependencies;
 
 import com.starfishst.bukkit.api.dependencies.Dependency;
 import com.starfishst.bukkit.api.events.GuidoListener;
-import com.starfishst.bukkit.listeners.MatchMakingListener;
 import com.starfishst.bukkit.listeners.StatsListener;
+import com.starfishst.bukkit.listeners.matches.MatchMakingListener;
 import java.util.Collection;
 import me.googas.commons.Lots;
 import org.bukkit.plugin.Plugin;

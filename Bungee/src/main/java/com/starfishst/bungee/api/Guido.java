@@ -1,6 +1,7 @@
 package com.starfishst.bungee.api;
 
 import com.starfishst.bungee.api.configuration.BungeeConfiguration;
+import com.starfishst.bungee.api.events.GuidoListener;
 import com.starfishst.bungee.core.GuidoPlugin;
 import com.starfishst.bungee.core.lang.BungeeLanguageHandler;
 import java.util.logging.Logger;
@@ -75,5 +76,16 @@ public class Guido {
   @NotNull
   public static Logger getLogger() {
     return Guido.validated().getLogger();
+  }
+
+  /**
+   * Delegated from {@link GuidoPlugin#getListener(Class)}
+   *
+   * @param clazz the class to match
+   * @param <T> the type of listener to get
+   * @return the listener
+   */
+  public static <T extends GuidoListener> T getListener(@NotNull Class<T> clazz) {
+    return Guido.validated().getListener(clazz);
   }
 }

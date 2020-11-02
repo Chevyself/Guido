@@ -7,7 +7,7 @@ import com.starfishst.bungee.providers.type.BungeeExtraArgumentProvider;
 import org.jetbrains.annotations.NotNull;
 
 /** Create the locale file provider */
-public class LocaleFileProvider implements BungeeExtraArgumentProvider<BungeeLocaleFile> {
+public class BungeeLocaleFileProvider implements BungeeExtraArgumentProvider<BungeeLocaleFile> {
   @Override
   public @NotNull Class<BungeeLocaleFile> getClazz() {
     return BungeeLocaleFile.class;

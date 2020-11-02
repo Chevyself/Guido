@@ -14,6 +14,9 @@ public class GroupImpl extends Catchable implements Group {
   /** The id of the group */
   @NotNull private final String id;
 
+  /** The weight of the group */
+  private final int weight;
+
   /** The name of the group */
   @NotNull private final String name;
 
@@ -27,16 +30,19 @@ public class GroupImpl extends Catchable implements Group {
    * Create the group
    *
    * @param id the id of the group
+   * @param weight the weight of the group
    * @param name the name of the group
    * @param preferences the preferences of the group
    * @param permissions the permissions of the group
    */
   public GroupImpl(
       @NotNull String id,
+      int weight,
       @NotNull String name,
       @NotNull ValuesMap preferences,
       @NotNull Set<PermissionStack> permissions) {
     this.id = id;
+    this.weight = weight;
     this.name = name;
     this.preferences = preferences;
     this.permissions = permissions;
@@ -44,7 +50,7 @@ public class GroupImpl extends Catchable implements Group {
 
   /** @deprecated this may only be used be used by json */
   public GroupImpl() {
-    this("", "", new ValuesMapImpl(), new HashSet<>());
+    this("", 1000, "", new ValuesMapImpl(), new HashSet<>());
   }
 
   @Override
@@ -71,6 +77,11 @@ public class GroupImpl extends Catchable implements Group {
   @Override
   public @NotNull String getId() {
     return this.id;
+  }
+
+  @Override
+  public int getWeight() {
+    return this.weight;
   }
 
   @Override

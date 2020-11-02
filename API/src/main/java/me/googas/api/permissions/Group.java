@@ -16,6 +16,13 @@ public interface Group extends Permissible, ICatchable {
   String getId();
 
   /**
+   * Get the weight of the group
+   *
+   * @return the weight
+   */
+  int getWeight();
+
+  /**
    * Get the group using its name. This is a more readable way to get it instead of an id
    *
    * @return the name of the group
@@ -26,7 +33,8 @@ public interface Group extends Permissible, ICatchable {
   /**
    * Get the preferences of the group
    *
-   * @return the preferences
+   * @return the preferences of the group
    */
+  @NotNull
   ValuesMap getPreferences();
 }

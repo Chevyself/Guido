@@ -6,6 +6,7 @@ import com.starfishst.bungee.api.configuration.BungeeConfiguration;
 import com.starfishst.bungee.api.configuration.GuidoServer;
 import com.starfishst.bungee.api.events.GuidoListener;
 import com.starfishst.bungee.core.client.BungeeClient;
+import com.starfishst.bungee.core.commands.GroupCommands;
 import com.starfishst.bungee.core.commands.GuidoCommands;
 import com.starfishst.bungee.core.commands.LinkCommand;
 import com.starfishst.bungee.core.commands.LobbyCommands;
@@ -14,6 +15,7 @@ import com.starfishst.bungee.core.commands.StatsCommand;
 import com.starfishst.bungee.core.commands.providers.GuidoProvidersRegistry;
 import com.starfishst.bungee.core.configuration.GuidoBungeeConfiguration;
 import com.starfishst.bungee.core.lang.BungeeLanguageHandler;
+import com.starfishst.bungee.core.listeners.GroupListener;
 import com.starfishst.bungee.core.listeners.JoinListener;
 import com.starfishst.bungee.core.listeners.MotdListener;
 import java.io.File;
@@ -52,7 +54,7 @@ public class GuidoPlugin extends Plugin {
   /** The listeners being used by the plugin */
   @NotNull
   private final List<GuidoListener> listeners =
-      Lots.list(this.languageHandler, new JoinListener(), new MotdListener());
+      Lots.list(this.languageHandler, new GroupListener(), new JoinListener(), new MotdListener());
 
   /** The client connected with the bot */
   @NotNull private final BungeeClient client = new BungeeClient("0");
@@ -116,6 +118,33 @@ public class GuidoPlugin extends Plugin {
     super.onDisable();
   }
 
+  /**
+   * Get a loaded listener by its class
+   *
+   * @param clazz the class to match
+   * @param <T> the type of listener to get
+   * @return the listener
+   */
+  public <T extends GuidoListener> T getListener(@NotNull Class<T> clazz) {
+    for (GuidoListener listener : this.listeners) {
+      if (clazz.isAssignableFrom(listener.getClass())) {
+        return clazz.cast(listener);
+      }
+    }
+    throw new IllegalStateException(
+        "The listener " + clazz.getSimpleName() + " has not been loaded");
+  }
+
+  /**
+   * Get the language handler that the plugin is using
+   *
+   * @return the language handler
+   */
+  @NotNull
+  public BungeeLanguageHandler getLanguageHandler() {
+    return this.languageHandler;
+  }
+
   @Override
   public void onEnable() {
     Guido.setPlugin(this);
@@ -138,6 +167,9 @@ public class GuidoPlugin extends Plugin {
       this.getLogger().info(listener.getName() + " has been registered");
     }
 
+    this.getListener(GroupListener.class).loadGroups(null);
+
+    this.manager.registerCommand(new GroupCommands());
     this.manager.registerCommand(new GuidoCommands());
     this.manager.registerCommand(new LinkCommand());
     this.manager.registerCommand(new LobbyCommands());
@@ -145,15 +177,5 @@ public class GuidoPlugin extends Plugin {
     this.manager.registerCommand(new StatsCommand());
     this.loadServers();
     super.onEnable();
-  }
-
-  /**
-   * Get the language handler that the plugin is using
-   *
-   * @return the language handler
-   */
-  @NotNull
-  public BungeeLanguageHandler getLanguageHandler() {
-    return this.languageHandler;
   }
 }

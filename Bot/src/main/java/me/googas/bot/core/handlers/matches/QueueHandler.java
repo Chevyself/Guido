@@ -11,6 +11,7 @@ import me.googas.api.links.LinkedData;
 import me.googas.api.links.LinkedInfo;
 import me.googas.api.matches.Ladder;
 import me.googas.api.matches.Queue;
+import me.googas.api.user.UserData;
 import me.googas.bot.api.events.queue.QueueLeaveEvent;
 import me.googas.bot.api.types.BotGuild;
 import me.googas.bot.api.types.BotLinkedData;
@@ -203,13 +204,28 @@ public class QueueHandler implements GuidoEventHandler {
    * @return the collection of queues where the link is waiting
    */
   public Collection<Queue> getQueues(@NotNull LinkedInfo info) {
+    LinkedData link = info.getLink();
+    if (link != null) {
+      UserData user = link.getLinkedUser();
+      if (user != null) {
+        return this.getQueues(user);
+      }
+    }
     Set<Queue> queues = new HashSet<>();
     for (Queue queue : this.queues) {
       if (queue.isWaiting(info)) {
         queues.add(queue);
       }
     }
-    Console.debug(info + " is inside the queues " + queues);
+    return queues;
+  }
+
+  public Collection<Queue> getQueues(@NotNull UserData data) {
+    Set<Queue> queues = new HashSet<>();
+    Collection<LinkedData> links = Guido.getDataLoader().getLinks(data);
+    for (LinkedData link : links) {
+      queues.addAll(this.getQueues(link.getInfo()));
+    }
     return queues;
   }
 

@@ -43,11 +43,12 @@ public class GroupReceptors {
    * Create a group and get an id for it
    *
    * @param name the name of the group
+   * @param weight the weight of the group
    * @return the id of the group created
    */
   @Receptor("create-group")
-  public String createGroup(@ParamName("name") String name) {
-    return new GuidoGroup(new GuidoValuesMap(), new HashSet<>(), name).getId();
+  public String createGroup(@ParamName("name") String name, @ParamName("weight") int weight) {
+    return new GuidoGroup(weight, new GuidoValuesMap(), new HashSet<>(), name).getId();
   }
 
   /**

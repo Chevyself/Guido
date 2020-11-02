@@ -1,4 +1,4 @@
-package com.starfishst.bukkit.listeners;
+package com.starfishst.bukkit.listeners.matches;
 
 import com.starfishst.bukkit.api.Guido;
 import com.starfishst.bukkit.api.events.GuidoListener;
@@ -238,9 +238,8 @@ public class MatchMakingListener implements GuidoListener {
                   MatchPlayer player = match.getPlayer(uuid);
                   if (player != null) {
                     match.setParty(player, party);
-                  } else {
-                    this.toAdd.put(uuid, party);
                   }
+                  this.toAdd.put(uuid, party);
                   members.add(new TeamMemberImpl(info, TeamRole.NORMAL));
                 }
                 logger.info(party + " has been assigned to " + team);
@@ -277,7 +276,6 @@ public class MatchMakingListener implements GuidoListener {
     Party party = this.toAdd.get(uuid);
     if (party != null) {
       event.setInitialParty(party);
-      this.toAdd.remove(uuid);
     }
   }
 
@@ -313,6 +311,7 @@ public class MatchMakingListener implements GuidoListener {
     this.nextMap = null;
     this.pgmMatchId = null;
     this.participants.clear();
+    this.toAdd.clear();
   }
 
   @Override
@@ -321,5 +320,37 @@ public class MatchMakingListener implements GuidoListener {
   @Override
   public @NotNull String getName() {
     return "match-making";
+  }
+
+  @Nullable
+  public String getMatchId() {
+    return this.matchId;
+  }
+
+  @NotNull
+  public Collection<LinkedInfo> getParticipants() {
+    return this.participants;
+  }
+
+  @NotNull
+  public Map<UUID, Party> getToAdd() {
+    return this.toAdd;
+  }
+
+  @NotNull
+  public MapInfo getNextMap() {
+    return this.nextMap;
+  }
+
+  public String getPgmMatchId() {
+    return this.pgmMatchId;
+  }
+
+  public String getTeamSelection() {
+    return this.teamSelection;
+  }
+
+  public int getPerTeam() {
+    return this.perTeam;
   }
 }

@@ -10,6 +10,7 @@ invalid:
   boolean: "&e%string% &cis not a valid boolean!"
   time: "&e%string% &cis not valid time!"
   player: "&e%string% &cis not online!"
+  group: "&e%string% &cis not a valid group!"
 missing-argument: "&cYou are missing &e%name% &cin the position &e%position% &cit is &e%description%"
 ## Link command
 link:
@@ -25,3 +26,8 @@ receptors:
 ## Lobby command
 lobby:
   success: "&aYou are being sent to the lobby"
+## Groups command
+groups:
+  crate:
+    success: "&aThe group has been created and it received the id &e%id%"
+    fail: "&cThe group could not be created"

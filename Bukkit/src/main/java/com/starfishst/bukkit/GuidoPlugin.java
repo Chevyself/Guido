@@ -15,9 +15,10 @@ import com.starfishst.bukkit.configuration.GuidoConfiguration;
 import com.starfishst.bukkit.dependencies.GuidoDependencies;
 import com.starfishst.bukkit.lang.BukkitLanguageHandler;
 import com.starfishst.bukkit.listeners.CommandExecutionListener;
-import com.starfishst.bukkit.listeners.MatchMakingListener;
+import com.starfishst.bukkit.listeners.GroupListener;
 import com.starfishst.bukkit.listeners.PermissionListener;
 import com.starfishst.bukkit.listeners.TestListener;
+import com.starfishst.bukkit.listeners.matches.MatchMakingListener;
 import com.starfishst.bukkit.utils.BukkitUtils;
 import com.starfishst.bukkit.utils.FilesUtils;
 import java.io.File;
@@ -61,7 +62,7 @@ public class GuidoPlugin extends JavaPlugin {
   @NotNull private Configuration configuration = new GuidoConfiguration();
   /**
    * The dependencies that the plugin can use. Those are soft dependencies meaning that it can run
-   * without them. The boolen is whether they are active
+   * without them. The boolean is whether they are active
    */
   @NotNull private final DependencyManager dependencies = new GuidoDependencies(this);
 
@@ -166,13 +167,21 @@ public class GuidoPlugin extends JavaPlugin {
   }
 
   /**
-   * Get the default listeners that the plugin needs
+   * Get a listener using its class
    *
-   * @return the default listeners
+   * @param clazz the class of the listener
+   * @param <T> the type of the listener class
+   * @return the listener if found or
+   * @throws IllegalStateException if the listener is not loaded
    */
-  private @NotNull List<GuidoListener> getDefaultListeners() {
-    return Lots.list(
-        new CommandExecutionListener(), new PermissionListener(this), new TestListener());
+  @Nullable
+  public <T extends GuidoListener> T requireListener(@NotNull Class<T> clazz) {
+    for (GuidoListener listener : this.listeners) {
+      if (listener.getClass() == clazz) {
+        return clazz.cast(listener);
+      }
+    }
+    return null;
   }
 
   /** Check the dependencies and add the listeners to them */
@@ -200,6 +209,19 @@ public class GuidoPlugin extends JavaPlugin {
       }
     }
     return null;
+  }
+
+  /**
+   * Get the default listeners that the plugin needs
+   *
+   * @return the default listeners
+   */
+  private @NotNull List<GuidoListener> getDefaultListeners() {
+    return Lots.list(
+        new CommandExecutionListener(),
+        new GroupListener(),
+        new PermissionListener(this),
+        new TestListener());
   }
 
   /**
@@ -233,6 +255,8 @@ public class GuidoPlugin extends JavaPlugin {
     this.registerCommands();
     this.registerListeners();
     this.startConnection();
+    this.requireListener(GroupListener.class).loadGroups(null);
+
     BukkitUtils.startCache(this);
     super.onEnable();
   }
