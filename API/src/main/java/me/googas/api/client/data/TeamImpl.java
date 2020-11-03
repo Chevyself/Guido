@@ -60,4 +60,22 @@ public class TeamImpl implements Team {
   public boolean removeMember(@NotNull TeamMember member) {
     return false;
   }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) return true;
+    if (!(o instanceof TeamImpl)) return false;
+
+    TeamImpl team = (TeamImpl) o;
+
+    if (this.id != team.id) return false;
+    return this.name.equals(team.name);
+  }
+
+  @Override
+  public int hashCode() {
+    int result = this.id;
+    result = 31 * result + this.name.hashCode();
+    return result;
+  }
 }

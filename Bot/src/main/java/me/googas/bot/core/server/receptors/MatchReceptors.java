@@ -6,6 +6,7 @@ import me.googas.api.matches.Team;
 import me.googas.bot.api.types.BotMatch;
 import me.googas.bot.core.Guido;
 import me.googas.bot.core.types.GuidoTeam;
+import me.googas.bot.core.util.console.Console;
 import me.googas.messaging.json.ParamName;
 import me.googas.messaging.json.Receptor;
 
@@ -56,9 +57,12 @@ public class MatchReceptors {
     BotMatch match = Guido.getDataLoader().getMatch(id);
     if (match != null) {
       if (team.getId() == -3) {
+        Console.info("Adding team " + team + " with a random id");
         return match.addTeam(new GuidoTeam(match.nextTeamId(), team.getMembers(), team.getName()));
+      } else {
+        Console.info("Adding team " + team + " with the id " + id);
+        return match.addTeam(team);
       }
-      return match.addTeam(team);
     }
     return false;
   }

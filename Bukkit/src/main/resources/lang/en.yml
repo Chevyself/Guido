@@ -11,6 +11,7 @@ invalid:
 missing-argument: "&cYou are missing &e%name% &cin the position &e%position% &cit is &e%description%"
 player-only: "&cThis command can only be used by players"
 not-allowed: "&cYou are not allowed to use this command"
+captain-only: "&cThis command may be used by a captain only!"
 # Help topic of the plugin
 help-topic:
   plugin:
@@ -40,3 +41,12 @@ fly:
     not-allowed: "&cYou are not allowed to toggle fly to someone else"
     enabled: "&a%display%&e allowed you to fly"
     disabled: "&a%display% &e disallowed you to fly"
+## For pick command
+pick:
+  not-picking: "&cYou are not currently picking"
+  not-match: "&cThis match does not support picks"
+match-making:
+  pick:
+    leader: "&aYou are a captain for this match please pick your players using &e/pick <name>"
+    turn-to-pick: "&aIts your turn to pick! Please pick a player using &e/pick <name>"
+    time-left: "&aYou got &e%time%&a left to pick a player"

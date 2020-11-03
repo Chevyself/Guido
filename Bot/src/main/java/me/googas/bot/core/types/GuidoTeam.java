@@ -67,11 +67,14 @@ public class GuidoTeam implements Team {
 
     GuidoTeam guidoTeam = (GuidoTeam) o;
 
-    return this.id == guidoTeam.id;
+    if (this.id != guidoTeam.id) return false;
+    return this.name.equals(guidoTeam.name);
   }
 
   @Override
   public int hashCode() {
-    return this.id;
+    int result = this.id;
+    result = 31 * result + this.name.hashCode();
+    return result;
   }
 }

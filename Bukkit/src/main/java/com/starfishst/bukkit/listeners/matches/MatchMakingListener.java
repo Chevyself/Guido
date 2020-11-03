@@ -2,6 +2,9 @@ package com.starfishst.bukkit.listeners.matches;
 
 import com.starfishst.bukkit.api.Guido;
 import com.starfishst.bukkit.api.events.GuidoListener;
+import com.starfishst.bukkit.listeners.matches.creation.PickTeamSelection;
+import com.starfishst.bukkit.listeners.matches.creation.RandomTeamCreation;
+import com.starfishst.bukkit.listeners.matches.creation.TeamCreation;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -9,18 +12,14 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.UUID;
 import java.util.logging.Logger;
+
+import com.starfishst.bukkit.utils.BukkitUtils;
 import me.googas.api.client.data.MatchImpl;
-import me.googas.api.client.data.TeamImpl;
-import me.googas.api.client.data.TeamMemberImpl;
 import me.googas.api.links.LinkedInfo;
 import me.googas.api.matches.Ladder;
-import me.googas.api.matches.TeamMember;
-import me.googas.api.matches.TeamRole;
 import me.googas.commons.RandomUtils;
-import me.googas.commons.UUIDUtils;
 import me.googas.commons.maps.Maps;
 import me.googas.messaging.Request;
 import me.googas.messaging.api.MessengerListenFailException;
@@ -36,6 +35,7 @@ import org.jetbrains.annotations.Nullable;
 import tc.oc.pgm.api.PGM;
 import tc.oc.pgm.api.map.MapInfo;
 import tc.oc.pgm.api.match.Match;
+import tc.oc.pgm.api.match.MatchManager;
 import tc.oc.pgm.api.match.event.MatchFinishEvent;
 import tc.oc.pgm.api.match.event.MatchLoadEvent;
 import tc.oc.pgm.api.party.Competitor;
@@ -43,11 +43,16 @@ import tc.oc.pgm.api.party.Party;
 import tc.oc.pgm.api.player.MatchPlayer;
 import tc.oc.pgm.api.player.event.MatchPlayerAddEvent;
 import tc.oc.pgm.cycle.CycleMatchModule;
-import tc.oc.pgm.start.StartMatchModule;
-import tc.oc.pgm.teams.Team;
 
-/** Match makes */
+/** Creates matches for the bot */
 public class MatchMakingListener implements GuidoListener {
+
+  /** The team creators for matches */
+  @NotNull
+  private final Map<String, TeamCreation> creator =
+      Maps.builder("random", (TeamCreation) new RandomTeamCreation())
+          .append("pick", new PickTeamSelection())
+          .build();
 
   /** The id of the match that is being hosted */
   @Nullable private String matchId;
@@ -65,8 +70,15 @@ public class MatchMakingListener implements GuidoListener {
   /** The amount of players per team */
   private int perTeam = 0;
 
+  /**
+   * Checks whether this match maker can host a match
+   *
+   * @param match the match querying to be hosted
+   * @return true if the match can be hosted
+   */
   @Receptor("can-host")
   public boolean canHost(@ParamName("match") MatchImpl match) {
+    this.wakeUpServer();
     Logger logger = Guido.getLogger();
     String type = match.getDetails().getValueOr("type", String.class, "none");
     String ladderName = match.getDetails().getValue("ladder", String.class);
@@ -160,13 +172,15 @@ public class MatchMakingListener implements GuidoListener {
               Match next = this.getCurrentPgm();
               if (next != null) {
                 next.needModule(CycleMatchModule.class).cycleNow();
+              } else {
+                PGM.get().getMatchManager().createMatch("");
               }
               this.nextMap = random;
               this.perTeam = ladder.playersPerTeam();
               this.participants.addAll(match.getParticipants());
               this.matchId = match.getId();
               this.teamSelection =
-                  match.getDetails().getValueOr("team-selection", String.class, "random");
+                  ladder.getOptions().getValueOr("team-selection", String.class, "random");
               connection.sendRequest(
                   new Request<>(
                       Boolean.class,
@@ -185,6 +199,18 @@ public class MatchMakingListener implements GuidoListener {
       }
     }
     return null;
+  }
+
+  public void add(@NotNull UUID uuid, @NotNull Party party) {
+    MatchManager matchManager = PGM.get().getMatchManager();
+    MatchPlayer player = matchManager.getPlayer(uuid);
+    if (player != null) {
+      Match match = matchManager.getMatch(player.getBukkit());
+      if (match != null) {
+        match.setParty(player, party);
+      }
+    }
+    this.toAdd.put(uuid, party);
   }
 
   /**
@@ -208,60 +234,13 @@ public class MatchMakingListener implements GuidoListener {
     JsonClient connection = Guido.getClient().getConnection();
 
     logger.info(
-        String.valueOf(
-            connection != null && match.getMap().equals(this.nextMap) && this.matchId != null));
+        "Match loaded is it a guido match? "
+            + (connection != null && match.getMap().equals(this.nextMap) && this.matchId != null));
     if (connection != null && match.getMap().equals(this.nextMap) && this.matchId != null) {
       this.pgmMatchId = match.getId();
       logger.info("PGM Match id: " + this.pgmMatchId + " and " + this.matchId);
-      switch (this.teamSelection) {
-        case "random":
-        default:
-          List<LinkedInfo> participantsCopy = new ArrayList<>(this.participants);
-          List<List<LinkedInfo>> teams = new ArrayList<>();
-          List<Party> occupied = new ArrayList<>();
-          Party observers = event.getMatch().getDefaultParty();
-          for (int i = 0; i < (this.participants.size() / this.perTeam); i++) {
-            List<LinkedInfo> aTeam = RandomUtils.getRandom(participantsCopy, this.perTeam);
-            teams.add(aTeam);
-            participantsCopy.removeAll(aTeam);
-          }
-          logger.info("Teams have been randomly selected: " + teams);
-          for (List<LinkedInfo> team : teams) {
-            for (Party party : event.getMatch().getParties()) {
-              if (party != observers && !occupied.contains(party) && party instanceof Team) {
-                occupied.add(party);
-                Set<TeamMember> members = new HashSet<>();
-                for (LinkedInfo info : team) {
-                  UUID uuid =
-                      UUIDUtils.untrim(
-                          info.getIdentification().getValidatedValue("uuid", String.class));
-                  MatchPlayer player = match.getPlayer(uuid);
-                  if (player != null) {
-                    match.setParty(player, party);
-                  }
-                  this.toAdd.put(uuid, party);
-                  members.add(new TeamMemberImpl(info, TeamRole.NORMAL));
-                }
-                logger.info(party + " has been assigned to " + team);
-                String name = "Team " + (teams.indexOf(team) + 1);
-                ((Team) party).setName(name);
-                connection.sendRequest(
-                    new Request<>(
-                        Boolean.class,
-                        "match-add-team",
-                        Maps.objects("id", this.matchId)
-                            .append("team", new TeamImpl(-3, name, members))
-                            .build()),
-                    bol -> {
-                      logger.info("Team " + name + " was added to " + this.matchId + "? " + bol);
-                    });
-                break;
-              }
-            }
-          }
-          match.needModule(StartMatchModule.class).forceStartCountdown();
-          break;
-      }
+      TeamCreation teamCreation = this.creator.get(this.teamSelection);
+      teamCreation.createTeams(this, event.getMatch());
     }
   }
 
@@ -298,6 +277,7 @@ public class MatchMakingListener implements GuidoListener {
       if (connection != null) {
         HashMap<String, Object> map = new HashMap<>();
         map.put("id", this.matchId);
+        // TODO this method should not use the winners name but the id of the team!
         map.put("winners", winnerName);
         connection.sendRequest(
             new Request<>(Boolean.class, "match-finish", map),
@@ -312,6 +292,9 @@ public class MatchMakingListener implements GuidoListener {
     this.pgmMatchId = null;
     this.participants.clear();
     this.toAdd.clear();
+    for (TeamCreation value : this.creator.values()) {
+      value.clear();
+    }
   }
 
   @Override
@@ -352,5 +335,20 @@ public class MatchMakingListener implements GuidoListener {
 
   public int getPerTeam() {
     return this.perTeam;
+  }
+
+  @Nullable
+  public TeamCreation getCreation(@NotNull String key) {
+    return this.creator.get(key);
+  }
+
+  /**
+   * In case that the server is suspended this will take care of it.
+   *
+   * This might be deleted in the future as PGM developers expect to remove dependency in
+   * SportPaper
+   */
+  public void wakeUpServer() {
+    BukkitUtils.dispatch("suspend false");
   }
 }

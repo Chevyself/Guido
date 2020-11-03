@@ -102,7 +102,7 @@ public class BukkitLanguageHandler implements GuidoListener, MessagesProvider {
    * @return the file or 'en' if not found
    */
   @NotNull
-  private BukkitLocaleFile getFile(@NotNull CommandSender sender) {
+  public BukkitLocaleFile getFile(@NotNull CommandSender sender) {
     return this.getFile(
         sender instanceof Player ? ((Player) sender).spigot().getLocale().split("_")[0] : "en");
   }

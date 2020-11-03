@@ -257,7 +257,7 @@ public class GuidoLanguageHandler implements MessagesProvider, GuidoHandler {
   @Override
   public @NotNull String cooldown(@NotNull Time time, @Nullable CommandContext commandContext) {
     return this.getFile(commandContext)
-        .get("cooldown", Maps.singleton("left", time.toEffectiveString()));
+        .get("cooldown", Maps.singleton("cooldown", time.toEffectiveString()));
   }
 
   @Override

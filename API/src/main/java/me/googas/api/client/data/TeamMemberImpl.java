@@ -40,4 +40,22 @@ public class TeamMemberImpl implements TeamMember {
   public @NotNull TeamRole getTeamRole() {
     return this.role;
   }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) return true;
+    if (!(o instanceof TeamMemberImpl)) return false;
+
+    TeamMemberImpl that = (TeamMemberImpl) o;
+
+    if (!this.linkInfo.equals(that.linkInfo)) return false;
+    return this.role == that.role;
+  }
+
+  @Override
+  public int hashCode() {
+    int result = this.linkInfo.hashCode();
+    result = 31 * result + this.role.hashCode();
+    return result;
+  }
 }

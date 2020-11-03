@@ -133,12 +133,12 @@ public class ClientTest {
               new Request<>(
                   Boolean.class,
                   "match-add-team",
-                  Maps.objects("id", "qu7XzgW73hW1gDDY")
+                  Maps.objects("id", "surHaun5TJ7CEHLo")
                       .append(
                           "team",
                           new TeamImpl(
                               -3,
-                              "a team",
+                              "2 teanm",
                               Lots.set(
                                   new TeamMemberImpl(
                                       new LinkedInfoImpl(

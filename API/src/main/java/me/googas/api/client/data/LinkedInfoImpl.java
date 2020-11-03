@@ -46,4 +46,22 @@ public class LinkedInfoImpl implements LinkedInfo {
   public String toString() {
     return "LinkedInfo{" + "type=" + this.type + ", identification=" + this.identification + '}';
   }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) return true;
+    if (!(o instanceof LinkedInfoImpl)) return false;
+
+    LinkedInfoImpl that = (LinkedInfoImpl) o;
+
+    if (this.type != that.type) return false;
+    return this.identification.equals(that.identification);
+  }
+
+  @Override
+  public int hashCode() {
+    int result = this.type.hashCode();
+    result = 31 * result + this.identification.hashCode();
+    return result;
+  }
 }

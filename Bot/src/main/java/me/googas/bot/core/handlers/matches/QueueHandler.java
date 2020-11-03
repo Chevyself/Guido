@@ -204,13 +204,6 @@ public class QueueHandler implements GuidoEventHandler {
    * @return the collection of queues where the link is waiting
    */
   public Collection<Queue> getQueues(@NotNull LinkedInfo info) {
-    LinkedData link = info.getLink();
-    if (link != null) {
-      UserData user = link.getLinkedUser();
-      if (user != null) {
-        return this.getQueues(user);
-      }
-    }
     Set<Queue> queues = new HashSet<>();
     for (Queue queue : this.queues) {
       if (queue.isWaiting(info)) {

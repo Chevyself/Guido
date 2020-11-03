@@ -8,6 +8,7 @@ import com.starfishst.bukkit.api.dependencies.DependencyManager;
 import com.starfishst.bukkit.api.events.GuidoListener;
 import com.starfishst.bukkit.commands.FlyCommand;
 import com.starfishst.bukkit.commands.GameModeCommand;
+import com.starfishst.bukkit.commands.PickCommands;
 import com.starfishst.bukkit.commands.PingCommand;
 import com.starfishst.bukkit.commands.TestCommands;
 import com.starfishst.bukkit.commands.providers.GameModeProvider;
@@ -55,7 +56,12 @@ public class GuidoPlugin extends JavaPlugin {
   /** The set of commands that the implementation is using */
   @NotNull
   private final Set<GuidoCommand> commands =
-      Lots.set(new FlyCommand(), new GameModeCommand(), new PingCommand(), new TestCommands());
+      Lots.set(
+          new FlyCommand(),
+          new GameModeCommand(),
+          new PickCommands(),
+          new PingCommand(),
+          new TestCommands());
   /** The listeners that this requires */
   @NotNull private final List<GuidoListener> listeners = Lots.list(this.bukkitLanguageHandler);
   /** The guidoConfiguration that the implementation is using */
