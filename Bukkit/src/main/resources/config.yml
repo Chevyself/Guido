@@ -67,4 +67,9 @@ listener-settings:
     enabled: true
   ## Whether to enable match making
   match-making:
+    ## True tp enable PGM match making
     enabled: false
+  ## Whether to force the players to spawn in a central location
+  spawn:
+    ## Whether to enable this function
+    enabled: true

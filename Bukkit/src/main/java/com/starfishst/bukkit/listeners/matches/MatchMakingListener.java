@@ -320,19 +320,6 @@ public class MatchMakingListener implements GuidoListener {
     return this.toAdd;
   }
 
-  @NotNull
-  public MapInfo getNextMap() {
-    return this.nextMap;
-  }
-
-  public String getPgmMatchId() {
-    return this.pgmMatchId;
-  }
-
-  public String getTeamSelection() {
-    return this.teamSelection;
-  }
-
   public int getPerTeam() {
     return this.perTeam;
   }
