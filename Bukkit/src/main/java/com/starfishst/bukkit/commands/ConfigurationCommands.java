@@ -2,6 +2,7 @@ package com.starfishst.bukkit.commands;
 
 import com.starfishst.bukkit.annotations.Command;
 import com.starfishst.bukkit.api.Guido;
+import com.starfishst.bukkit.api.commands.GuidoCommand;
 import com.starfishst.bukkit.lang.BukkitLocaleFile;
 import com.starfishst.bukkit.listeners.GroupListener;
 import com.starfishst.bukkit.result.Result;
@@ -9,9 +10,10 @@ import com.starfishst.core.annotations.settings.Setting;
 import com.starfishst.core.annotations.settings.Settings;
 import me.googas.commons.maps.Maps;
 import org.bukkit.command.CommandSender;
+import org.jetbrains.annotations.NotNull;
 
 /** Commands for configuration */
-public class ConfigurationCommands {
+public class ConfigurationCommands implements GuidoCommand {
 
   /**
    * Reload the loaded groups
@@ -33,5 +35,33 @@ public class ConfigurationCommands {
               }
             });
     return new Result();
+  }
+
+  /**
+   * Set whether the command is enabled
+   *
+   * @param bol the new value
+   */
+  @Override
+  public void setEnabled(boolean bol) {}
+
+  /**
+   * Get the name of the command. This is used to enable it or not from the configuration
+   *
+   * @return the name of the command
+   */
+  @Override
+  public @NotNull String getName() {
+    return "configuration";
+  }
+
+  /**
+   * Get whether the command is enabled
+   *
+   * @return true if the command is enabled
+   */
+  @Override
+  public boolean isEnabled() {
+    return true;
   }
 }

@@ -26,9 +26,7 @@ import tc.oc.pgm.api.player.MatchPlayer;
 import tc.oc.pgm.start.StartMatchModule;
 import tc.oc.pgm.teams.Team;
 
-/** Creates teams by randomly selecting players
- *  TODO refactor
- */
+/** Creates teams by randomly selecting players TODO refactor */
 public class RandomTeamCreation implements TeamCreation {
 
   @Override

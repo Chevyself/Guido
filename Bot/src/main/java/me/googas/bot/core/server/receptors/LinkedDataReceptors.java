@@ -9,7 +9,6 @@ import me.googas.api.permissions.Permission;
 import me.googas.api.permissions.PermissionStack;
 import me.googas.api.user.UserData;
 import me.googas.bot.core.Guido;
-import me.googas.bot.core.types.permissions.GuidoPermission;
 import me.googas.bot.core.types.permissions.GuidoPermissionStack;
 import me.googas.messaging.json.ParamName;
 import me.googas.messaging.json.Receptor;
@@ -177,7 +176,7 @@ public class LinkedDataReceptors {
   public boolean removePermission(
       @ParamName("info") LinkedInfo info,
       @ParamName("context") String context,
-      @ParamName("permission") GuidoPermission permission) {
+      @ParamName("permission") Permission permission) {
     LinkedData data = info.getLink();
     if (data != null) {
       return data.refresh().removePermission(context, permission.getNode());

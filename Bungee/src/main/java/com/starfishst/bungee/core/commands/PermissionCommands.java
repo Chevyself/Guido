@@ -2,6 +2,7 @@ package com.starfishst.bungee.core.commands;
 
 import com.starfishst.bungee.annotations.Command;
 import com.starfishst.bungee.api.Guido;
+import com.starfishst.bungee.core.client.requests.BungeeBooleanRequest;
 import com.starfishst.bungee.core.data.ProxiedOfflinePlayer;
 import com.starfishst.bungee.result.Result;
 import com.starfishst.bungee.utils.BungeeUtils;
@@ -165,13 +166,12 @@ public class PermissionCommands {
    * @param player the player getting the permission removed
    * @param node the node of the permission
    * @param context the context which the permission will be removed from
-   * @return an empty result
    */
   @Settings(settings = @Setting(key = "async", value = "true"))
   @Command(
       aliases = {"remove", "revoke"},
       permission = "guido.perms.remove")
-  public Result add(
+  public void add(
       CommandSender sender,
       @Required(name = "player", description = "The proxied player to revoke the permission from ")
           ProxiedOfflinePlayer player,
@@ -180,18 +180,15 @@ public class PermissionCommands {
               name = "context",
               description = "The context to add the permission on",
               suggestions = "bungee")
-          String context)
-      throws MessengerListenFailException {
+          String context) {
 
-    Guido.getClient()
-        .request(
-            new Request<>(
-                Boolean.class,
-                "remove-permission",
-                Maps.objects("info", player.getLinkedInfo())
-                    .append("context", context)
-                    .append("permission", new PermissionImpl(node, true).getNodeAppended())
-                    .build()),
+    new BungeeBooleanRequest(
+            "remove-permission",
+            Maps.objects("info", player.getLinkedInfo())
+                .append("context", context)
+                .append("permission", new PermissionImpl(node, true).getNodeAppended())
+                .build())
+        .send(
             bol -> {
               TextComponent message;
               if (bol) {
@@ -208,7 +205,11 @@ public class PermissionCommands {
                 message = new TextComponent(BungeeUtils.build("&cPermission could not be revoked"));
               }
               sender.sendMessage(message);
+            },
+            exception -> {
+              exception.printStackTrace();
+              sender.sendMessage(
+                  new TextComponent(BungeeUtils.build("&cPermission could not be revoked")));
             });
-    return new Result();
   }
 }

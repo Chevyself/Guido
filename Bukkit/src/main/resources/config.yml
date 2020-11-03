@@ -72,4 +72,4 @@ listener-settings:
   ## Whether to force the players to spawn in a central location
   spawn:
     ## Whether to enable this function
-    enabled: true
+    enabled: false

@@ -5,6 +5,7 @@ import com.starfishst.bukkit.api.events.GuidoListener;
 import com.starfishst.bukkit.listeners.matches.creation.PickTeamSelection;
 import com.starfishst.bukkit.listeners.matches.creation.RandomTeamCreation;
 import com.starfishst.bukkit.listeners.matches.creation.TeamCreation;
+import com.starfishst.bukkit.utils.BukkitUtils;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -14,8 +15,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.logging.Logger;
-
-import com.starfishst.bukkit.utils.BukkitUtils;
 import me.googas.api.client.data.MatchImpl;
 import me.googas.api.links.LinkedInfo;
 import me.googas.api.matches.Ladder;
@@ -332,7 +331,7 @@ public class MatchMakingListener implements GuidoListener {
   /**
    * In case that the server is suspended this will take care of it.
    *
-   * This might be deleted in the future as PGM developers expect to remove dependency in
+   * <p>This might be deleted in the future as PGM developers expect to remove dependency in
    * SportPaper
    */
   public void wakeUpServer() {

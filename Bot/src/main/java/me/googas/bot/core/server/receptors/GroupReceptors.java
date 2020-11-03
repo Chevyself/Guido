@@ -3,11 +3,11 @@ package me.googas.bot.core.server.receptors;
 import java.util.Collection;
 import java.util.HashSet;
 import me.googas.api.permissions.Group;
+import me.googas.api.permissions.Permission;
 import me.googas.bot.api.types.BotGroup;
 import me.googas.bot.core.Guido;
 import me.googas.bot.core.types.GuidoGroup;
 import me.googas.bot.core.types.maps.GuidoValuesMap;
-import me.googas.bot.core.types.permissions.GuidoPermission;
 import me.googas.messaging.json.ParamName;
 import me.googas.messaging.json.Receptor;
 
@@ -84,7 +84,7 @@ public class GroupReceptors {
   public boolean addPermission(
       @ParamName("id") String id,
       @ParamName("context") String context,
-      @ParamName("permission") GuidoPermission permission) {
+      @ParamName("permission") Permission permission) {
     BotGroup group = Guido.getDataLoader().getGroup(id);
     if (group != null) {
       return group.refresh().addPermission(context, permission.getNode(), permission.isEnabled());
@@ -104,7 +104,7 @@ public class GroupReceptors {
   public boolean removePermission(
       @ParamName("id") String id,
       @ParamName("context") String context,
-      @ParamName("permission") GuidoPermission permission) {
+      @ParamName("permission") Permission permission) {
     BotGroup group = Guido.getDataLoader().getGroup(id);
     if (group != null) {
       return group.refresh().removePermission(context, permission.getNode());

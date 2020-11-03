@@ -74,6 +74,18 @@ public class BungeeLocaleFile implements LocaleFile {
     return this.config.getString(s);
   }
 
+  /**
+   * Get the string or the path to create it
+   *
+   * @param path the path to the string
+   * @return the string if the path leads to one else the path
+   */
+  @Override
+  public @NotNull String get(@NotNull String path) {
+    String raw = this.getRaw(path);
+    return raw == null ? path : raw;
+  }
+
   @Override
   public @NotNull File getFile() {
     throw new UnsupportedOperationException("Bungee locale does not support files");

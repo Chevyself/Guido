@@ -12,6 +12,7 @@ invalid:
   player: "&e%string% &cis not online!"
   group: "&e%string% &cis not a valid group!"
 missing-argument: "&cYou are missing &e%name% &cin the position &e%position% &cit is &e%description%"
+not-allowed: "&cYou are not allowed to use this command"
 ## Link command
 link:
   linked: "&cYour account is already linked"
@@ -28,6 +29,13 @@ lobby:
   success: "&aYou are being sent to the lobby"
 ## Groups command
 groups:
-  crate:
+  create:
     success: "&aThe group has been created and it received the id &e%id%"
     fail: "&cThe group could not be created"
+  add:
+    success: "&aThe permission &e%node% &ain the state &e%enabled% &ahas been added to the group &e%name% &ain the context &e%context%"
+    fail: "&cThe permission &e%node%&c could not be given to the group &e%name% &cin the context &e%context%"
+  remove:
+    success: "&aThe permission &e%node% &ahas been removed from the group &e%name% &ain the context &e%context%"
+    fail: "&cThe permission &e%node%&c could not be removed from the group &e%name% &cin the context &e%context%"
+  reload: "&e%amount% &a groups have been reloaded"

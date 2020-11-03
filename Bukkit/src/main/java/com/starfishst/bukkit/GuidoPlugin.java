@@ -6,6 +6,7 @@ import com.starfishst.bukkit.api.config.Configuration;
 import com.starfishst.bukkit.api.dependencies.Dependency;
 import com.starfishst.bukkit.api.dependencies.DependencyManager;
 import com.starfishst.bukkit.api.events.GuidoListener;
+import com.starfishst.bukkit.commands.ConfigurationCommands;
 import com.starfishst.bukkit.commands.FlyCommand;
 import com.starfishst.bukkit.commands.GameModeCommand;
 import com.starfishst.bukkit.commands.PickCommands;
@@ -58,6 +59,7 @@ public class GuidoPlugin extends JavaPlugin {
   @NotNull
   private final Set<GuidoCommand> commands =
       Lots.set(
+          new ConfigurationCommands(),
           new FlyCommand(),
           new GameModeCommand(),
           new PickCommands(),

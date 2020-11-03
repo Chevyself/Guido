@@ -99,12 +99,13 @@ public class PermissionListener implements GuidoListener {
    */
   @EventHandler(priority = EventPriority.LOWEST)
   public void onPlayerLogin(AsyncPlayerPreLoginEvent event) {
+    UUID uniqueId = event.getUniqueId();
     try {
       JsonClient connection = Guido.getClient().validatedConnection();
       LinkedInfoImpl info =
           new LinkedInfoImpl(
               LinkedDataType.MINECRAFT,
-              new ValuesMapImpl(Maps.singleton("uuid", UUIDUtils.trim(event.getUniqueId()))));
+              new ValuesMapImpl(Maps.singleton("uuid", UUIDUtils.trim(uniqueId))));
       String context = Guido.getConfiguration().getContext();
       connection.sendRequest(
           new Request<>(
@@ -124,6 +125,8 @@ public class PermissionListener implements GuidoListener {
                   } else {
                     permissionsToGive.add(permission);
                   }
+                } else {
+                  permissionsToGive.add(permission);
                 }
               }
             }
@@ -137,7 +140,9 @@ public class PermissionListener implements GuidoListener {
                 }
               }
             }
-            this.toGive.put(event.getUniqueId(), permissionsToGive);
+            Guido.getLogger()
+                .info("Permissions to give " + permissionsToGive + " from stack " + stack);
+            this.toGive.put(uniqueId, permissionsToGive);
           });
     } catch (IOException e) {
       e.printStackTrace();
@@ -159,6 +164,7 @@ public class PermissionListener implements GuidoListener {
   @EventHandler(priority = EventPriority.LOWEST)
   public void onPlayerJoin(PlayerJoinEvent event) {
     Collection<Permission> permissions = this.toGive.get(event.getPlayer().getUniqueId());
+    Guido.getLogger().info("Permissions to give " + event.getPlayer() + " are " + permissions);
     if (permissions != null) {
       for (Permission permission : permissions) {
         if (permission.isEnabled()) {

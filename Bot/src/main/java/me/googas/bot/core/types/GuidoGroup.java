@@ -46,12 +46,15 @@ public class GuidoGroup extends Catchable implements BotGroup {
       @NotNull GuidoValuesMap preferences,
       @NotNull Set<PermissionStack> permissions,
       boolean addToCache) {
-    super(Time.fromString("5m"), addToCache);
+    super(Time.fromString("5m"), false);
     this.id = id;
     this.preferences = preferences;
     this.permissions = permissions;
     this.name = name;
     this.weight = weight;
+    if (addToCache) {
+      this.addToCache();
+    }
   }
 
   /**

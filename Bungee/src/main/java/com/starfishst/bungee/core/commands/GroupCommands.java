@@ -6,7 +6,6 @@ import com.starfishst.bungee.core.client.requests.BungeeBooleanRequest;
 import com.starfishst.bungee.core.client.requests.BungeeStringRequest;
 import com.starfishst.bungee.core.lang.BungeeLocaleFile;
 import com.starfishst.bungee.core.listeners.GroupListener;
-import com.starfishst.bungee.result.Result;
 import com.starfishst.core.annotations.Optional;
 import com.starfishst.core.annotations.Parent;
 import com.starfishst.core.annotations.Required;
@@ -29,9 +28,7 @@ public class GroupCommands {
   @Command(
       aliases = {"groups", "group"},
       permission = "guido.groups")
-  public Result groups() {
-    return new Result("This will show the loaded groups");
-  }
+  public void groups() {}
 
   /**
    * Create a new group
@@ -46,7 +43,7 @@ public class GroupCommands {
   @Command(
       aliases = {"create", "make"},
       permission = "guido.groups.create")
-  public Result create(
+  public void create(
       BungeeLocaleFile locale,
       CommandSender sender,
       @Required(name = "create.name", description = "create.name.desc") String name,
@@ -60,8 +57,11 @@ public class GroupCommands {
               } else {
                 sender.sendMessage(locale.getComponent("groups.create.fail"));
               }
+            },
+            exception -> {
+              exception.printStackTrace();
+              sender.sendMessage(locale.getComponent("groups.create.fail"));
             });
-    return new Result();
   }
 
   /**
@@ -79,7 +79,7 @@ public class GroupCommands {
   @Command(
       aliases = {"add", "give"},
       permission = "guido.groups.add")
-  public Result add(
+  public void add(
       BungeeLocaleFile locale,
       CommandSender sender,
       @Required(name = "add.group", description = "add.group.desc") Group group,
@@ -111,8 +111,16 @@ public class GroupCommands {
                             .append("enabled", String.valueOf(enabled))
                             .append("context", context)));
               }
+            },
+            exception -> {
+              sender.sendMessage(
+                  locale.getComponent(
+                      "groups.add.fail",
+                      Maps.builder("name", group.getName())
+                          .append("node", node)
+                          .append("enabled", String.valueOf(enabled))
+                          .append("context", context)));
             });
-    return new Result();
   }
 
   /**
@@ -129,7 +137,7 @@ public class GroupCommands {
   @Command(
       aliases = {"remove", "revoke"},
       permission = "guido.groups.remove")
-  public Result remove(
+  public void remove(
       BungeeLocaleFile locale,
       CommandSender sender,
       @Required(name = "remove.group", description = "remove.group.desc") Group group,
@@ -161,8 +169,15 @@ public class GroupCommands {
                             .append("node", node)
                             .append("context", context)));
               }
+            },
+            exception -> {
+              sender.sendMessage(
+                  locale.getComponent(
+                      "groups.remove.fail",
+                      Maps.builder("name", group.getName())
+                          .append("node", node)
+                          .append("context", context)));
             });
-    return new Result();
   }
 
   /**
@@ -176,7 +191,7 @@ public class GroupCommands {
   @Command(
       aliases = {"reload"},
       permission = "guido.groups.reload")
-  public Result reload(BungeeLocaleFile locale, CommandSender sender) {
+  public void reload(BungeeLocaleFile locale, CommandSender sender) {
     Guido.getListener(GroupListener.class)
         .reload(
             loaded -> {
@@ -186,6 +201,5 @@ public class GroupCommands {
                         "groups.reload", Maps.singleton("amount", String.valueOf(loaded.size()))));
               }
             });
-    return new Result();
   }
 }
