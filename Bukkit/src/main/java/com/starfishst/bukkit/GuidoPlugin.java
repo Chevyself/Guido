@@ -17,6 +17,7 @@ import com.starfishst.bukkit.context.CommandContext;
 import com.starfishst.bukkit.dependencies.GuidoDependencies;
 import com.starfishst.bukkit.lang.BukkitLanguageHandler;
 import com.starfishst.bukkit.listeners.CommandExecutionListener;
+import com.starfishst.bukkit.listeners.DecorationsListener;
 import com.starfishst.bukkit.listeners.GroupListener;
 import com.starfishst.bukkit.listeners.PermissionListener;
 import com.starfishst.bukkit.listeners.SpawnListener;
@@ -233,9 +234,10 @@ public class GuidoPlugin extends JavaPlugin {
     return Lots.list(
         new CommandExecutionListener(),
         new GroupListener(),
-        new SpawnListener(),
         new PermissionListener(this),
-        new TestListener());
+            new DecorationsListener(),
+            new SpawnListener(),
+            new TestListener());
   }
 
   /**

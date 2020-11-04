@@ -29,13 +29,20 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.player.AsyncPlayerPreLoginEvent;
-import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerLoginEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.permissions.PermissionAttachment;
 import org.jetbrains.annotations.NotNull;
 
 /** Listens to changes to the player and player data to add or remove permissions */
 public class PermissionListener implements GuidoListener {
+
+  /**
+   * A map of the users and the groups that they have. Groups must
+   * be sorted when added here
+   */
+  @NotNull
+  private final Map<UUID, Collection<Group>> groups = new HashMap<>();
 
   /** Permissions are given to the server in async then are added to the player */
   @NotNull private final Map<UUID, Collection<Permission>> toGive = new HashMap<>();
@@ -63,8 +70,10 @@ public class PermissionListener implements GuidoListener {
   @EventHandler
   public void onPlayerQuit(PlayerQuitEvent event) {
     Player player = event.getPlayer();
+    UUID uniqueId = player.getUniqueId();
     player.removeAttachment(this.getAttachment(player));
-    this.attachments.remove(player.getUniqueId());
+    this.attachments.remove(uniqueId);
+    this.groups.remove(uniqueId);
   }
 
   /**
@@ -143,6 +152,7 @@ public class PermissionListener implements GuidoListener {
             Guido.getLogger()
                 .info("Permissions to give " + permissionsToGive + " from stack " + stack);
             this.toGive.put(uniqueId, permissionsToGive);
+            this.groups.put(uniqueId, groups);
           });
     } catch (IOException e) {
       e.printStackTrace();
@@ -161,8 +171,13 @@ public class PermissionListener implements GuidoListener {
     permissions.add(permission);
   }
 
+  /**
+   * Listen to when the player has joined the game to give them the permissions
+   *
+   * @param event the event of a player joining the game
+   */
   @EventHandler(priority = EventPriority.LOWEST)
-  public void onPlayerJoin(PlayerJoinEvent event) {
+  public void onPlayerJoin(PlayerLoginEvent event) {
     Collection<Permission> permissions = this.toGive.get(event.getPlayer().getUniqueId());
     Guido.getLogger().info("Permissions to give " + event.getPlayer() + " are " + permissions);
     if (permissions != null) {
@@ -206,5 +221,16 @@ public class PermissionListener implements GuidoListener {
   @Override
   public void onUnload() {
     this.attachments.clear();
+  }
+
+  /**
+   * Get the groups for the specified uuid
+   *
+   * @param uuid the uuid to get the groups
+   * @return the groups
+   */
+  @NotNull
+  public Collection<Group> getGroups(@NotNull UUID uuid) {
+    return this.groups.getOrDefault(uuid, new ArrayList<>());
   }
 }

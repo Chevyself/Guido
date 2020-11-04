@@ -74,3 +74,7 @@ listener-settings:
   spawn:
     ## Whether to enable this function
     enabled: false
+  ## Decorations given by the groups of a player
+  decorations:
+    ## Whether there should be decorations
+    enabled: false
