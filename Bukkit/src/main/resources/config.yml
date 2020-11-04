@@ -6,6 +6,7 @@ token: none
 ## - fly: allows players to fly
 ## - ping: allows players to see their ping
 ## - gamemode: allows players to change their gamemode
+## - ready: when pgm is loaded players can /ready and /unready to start a match
 enabled-commands:
   - fly
   - ping

@@ -45,8 +45,23 @@ fly:
 pick:
   not-picking: "&cYou are not currently picking"
   not-match: "&cThis match does not support picks"
+  success: "&aYou've picked &e%name%"
+## For match making
 match-making:
   pick:
+    next: "&aIt's your turn to pick. Please use &e/pick <name> &ato pick a player. You can pick between: &e%picks%"
     leader: "&aYou are a captain for this match please pick your players using &e/pick <name>"
     turn-to-pick: "&aIts your turn to pick! Please pick a player using &e/pick <name>"
     time-left: "&aYou got &e%time%&a left to pick a player"
+ready:
+  observing: "&cYour team is not allowed to be ready"
+  success: "&aYour team is now ready"
+  already: "&cYour team is already prepared for the match"
+  now-ready: "%team% &ais now ready"
+  not-starting: "&cYou cannot be ready at this point"
+unready:
+  not-ready: "&cYour team is not ready"
+  unready-observing: "&cYOur team is not allowed to be unready"
+  not-starting: "&cYou cannot be unready at this point"
+  now-unready: "%team% &cis unready"
+  success: "&cYour team is now unready"

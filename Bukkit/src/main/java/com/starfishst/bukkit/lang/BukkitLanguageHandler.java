@@ -11,10 +11,12 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import me.googas.commons.Lots;
 import me.googas.commons.fallback.Fallback;
 import me.googas.commons.maps.MapBuilder;
 import me.googas.commons.maps.Maps;
+import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -116,6 +118,18 @@ public class BukkitLanguageHandler implements GuidoListener, MessagesProvider {
   @NotNull
   public BukkitLocaleFile getFile(@NotNull CommandContext context) {
     return this.getFile(context.getSender());
+  }
+
+  /**
+   * Send a localized message to all players
+   *
+   * @param key the key of the message
+   * @param placeholders the placeholders of the message
+   */
+  public void broadcast(@NotNull String key, @NotNull Map<String, String> placeholders) {
+    for (Player player : Bukkit.getOnlinePlayers()) {
+      player.sendMessage(this.getFile(player).get(key, placeholders));
+    }
   }
 
   /**

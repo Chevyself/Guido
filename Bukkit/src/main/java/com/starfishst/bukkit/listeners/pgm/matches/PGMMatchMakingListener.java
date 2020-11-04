@@ -1,10 +1,12 @@
-package com.starfishst.bukkit.listeners.matches;
+package com.starfishst.bukkit.listeners.pgm.matches;
 
+import com.starfishst.bukkit.AnnotatedCommand;
 import com.starfishst.bukkit.api.Guido;
 import com.starfishst.bukkit.api.events.GuidoListener;
-import com.starfishst.bukkit.listeners.matches.creation.PickTeamSelection;
-import com.starfishst.bukkit.listeners.matches.creation.RandomTeamCreation;
-import com.starfishst.bukkit.listeners.matches.creation.TeamCreation;
+import com.starfishst.bukkit.commands.ReadyCommand;
+import com.starfishst.bukkit.listeners.pgm.matches.creation.PickTeamSelection;
+import com.starfishst.bukkit.listeners.pgm.matches.creation.RandomTeamCreation;
+import com.starfishst.bukkit.listeners.pgm.matches.creation.TeamCreation;
 import com.starfishst.bukkit.utils.BukkitUtils;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -44,7 +46,10 @@ import tc.oc.pgm.api.player.event.MatchPlayerAddEvent;
 import tc.oc.pgm.cycle.CycleMatchModule;
 
 /** Creates matches for the bot */
-public class MatchMakingListener implements GuidoListener {
+public class PGMMatchMakingListener implements GuidoListener {
+
+  /** The seconds to start the matches */
+  public static final int secondsToStart = 120;
 
   /** The team creators for matches */
   @NotNull
@@ -203,11 +208,8 @@ public class MatchMakingListener implements GuidoListener {
   public void add(@NotNull UUID uuid, @NotNull Party party) {
     MatchManager matchManager = PGM.get().getMatchManager();
     MatchPlayer player = matchManager.getPlayer(uuid);
-    if (player != null) {
-      Match match = matchManager.getMatch(player.getBukkit());
-      if (match != null) {
-        match.setParty(player, party);
-      }
+    if (player != null && player.getMatch().equals(party.getMatch())) {
+      party.getMatch().setParty(player, party);
     }
     this.toAdd.put(uuid, party);
   }
@@ -291,8 +293,23 @@ public class MatchMakingListener implements GuidoListener {
     this.pgmMatchId = null;
     this.participants.clear();
     this.toAdd.clear();
+    this.clearTeamsReady();
+    this.cleanCreators();
+  }
+
+  /** Clean the team creators */
+  public void cleanCreators() {
     for (TeamCreation value : this.creator.values()) {
       value.clear();
+    }
+  }
+
+  public void clearTeamsReady() {
+    for (AnnotatedCommand command : Guido.getCommandManager().getCommands()) {
+      if (command.getClazz() instanceof ReadyCommand) {
+        ((ReadyCommand) command.getClazz()).clear();
+        break;
+      }
     }
   }
 
@@ -335,6 +352,6 @@ public class MatchMakingListener implements GuidoListener {
    * SportPaper
    */
   public void wakeUpServer() {
-    BukkitUtils.dispatch("suspend false");
+    Bukkit.getScheduler().runTask(Guido.validated(), () -> BukkitUtils.dispatch("suspend false"));
   }
 }

@@ -1,9 +1,9 @@
-package com.starfishst.bukkit.listeners.matches.creation;
+package com.starfishst.bukkit.listeners.pgm.matches.creation;
 
 import com.starfishst.bukkit.api.Guido;
-import com.starfishst.bukkit.client.BukkitBooleanRequest;
+import com.starfishst.bukkit.client.BukkitRequest;
 import com.starfishst.bukkit.lang.BukkitLocaleFile;
-import com.starfishst.bukkit.listeners.matches.MatchMakingListener;
+import com.starfishst.bukkit.listeners.pgm.matches.PGMMatchMakingListener;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -11,11 +11,13 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
+import java.util.logging.Logger;
 import me.googas.api.client.data.TeamImpl;
 import me.googas.api.client.data.TeamMemberImpl;
 import me.googas.api.links.LinkedInfo;
 import me.googas.api.matches.TeamMember;
 import me.googas.api.matches.TeamRole;
+import me.googas.commons.Lots;
 import me.googas.commons.RandomUtils;
 import me.googas.commons.UUIDUtils;
 import me.googas.commons.maps.Maps;
@@ -181,7 +183,7 @@ public class PickTeamSelection implements TeamCreation {
     if (selecting != null && this.isPicking(captain)) {
       TeamMemberImpl teamMember = new TeamMemberImpl(info, TeamRole.NORMAL);
       selecting.getMembers().add(teamMember);
-      MatchMakingListener listener = Guido.getListener(MatchMakingListener.class);
+      PGMMatchMakingListener listener = Guido.getListener(PGMMatchMakingListener.class);
       if (listener != null) {
         listener.add(this.getUuid(info), selecting.getParty());
       }
@@ -204,33 +206,58 @@ public class PickTeamSelection implements TeamCreation {
    * @param team the team that just selected a player
    */
   public void nextPick(@NotNull SelectingTeam team) {
+    Logger logger = Guido.getLogger();
     if (this.playersLeft.isEmpty()) {
-      MatchMakingListener listener = Guido.getListener(MatchMakingListener.class);
+      logger.info("Players left is now empty");
+      PGMMatchMakingListener listener = Guido.getListener(PGMMatchMakingListener.class);
       if (listener != null) {
         this.teams
             .get(0)
             .getParty()
             .getMatch()
             .needModule(StartMatchModule.class)
-            .forceStartCountdown(Duration.ofSeconds(120), Duration.ZERO);
+            .forceStartCountdown(
+                Duration.ofSeconds(PGMMatchMakingListener.secondsToStart), Duration.ZERO);
         for (SelectingTeam selectingTeam : this.teams) {
-          new BukkitBooleanRequest(
-              "match-add-team",
-              Maps.objects("id", listener.getMatchId()).append("team", selectingTeam.construct()));
+          new BukkitRequest<>(
+                  Integer.class,
+                  "match-add-team",
+                  Maps.objects("id", listener.getMatchId())
+                      .append("team", selectingTeam.construct()))
+              .send(id -> logger.info("Requested to save " + team + " was it saved? " + id));
         }
       }
       this.clear();
     } else if (this.playersLeft.size() == 2) {
-      this.currentLeader = team.getLeader();
-      this.secondsLeft = PickTeamSelection.timeToPick;
-    } else if (this.playersLeft.size() == 1) {
-      for (LinkedInfo linkedInfo : this.getPlayersLeft()) {
-        this.pick(this.getNext(team).getLeader(), linkedInfo);
-        break;
-      }
+      this.nextLeader(team.getLeader());
     } else {
-      this.currentLeader = this.getNext(team).getLeader();
-      this.secondsLeft = PickTeamSelection.timeToPick;
+      TeamMember leader = this.getNext(team).getLeader();
+      if (this.playersLeft.size() == 1) {
+        this.currentLeader = leader;
+        for (LinkedInfo linkedInfo : this.getPlayersLeft()) {
+          this.pick(leader, linkedInfo);
+          break;
+        }
+      } else {
+        this.nextLeader(this.getNext(team).getLeader());
+      }
+    }
+  }
+
+  /**
+   * Set the next leader to pick the next player
+   *
+   * @param nextLeader the next leader to play the match
+   */
+  public void nextLeader(@NotNull TeamMember nextLeader) {
+    this.currentLeader = nextLeader;
+    this.secondsLeft = PickTeamSelection.timeToPick;
+    Player player = this.getPlayer(this.currentLeader.getLinkInfo());
+    if (player != null) {
+      player.sendMessage(
+          Guido.getLanguageHandler()
+              .getFile(player)
+              .get("pick.next", Maps.singleton("picks", Lots.pretty(this.getParticipantsNames()))));
     }
   }
 
@@ -294,8 +321,33 @@ public class PickTeamSelection implements TeamCreation {
     return this.teams;
   }
 
+  /**
+   * Return the nicknames of the participants of the match
+   *
+   * @return the names of the participants
+   */
+  @NotNull
+  public List<String> getParticipantsNames() {
+    List<String> names = new ArrayList<>();
+    for (LinkedInfo linkedInfo : this.playersLeft) {
+      String nickname = linkedInfo.getIdentification().getValue("nickname", String.class);
+      if (nickname != null) {
+        names.add(nickname);
+      }
+    }
+    return names;
+  }
+
+  /** Clears the team creator */
   @Override
-  public void createTeams(@NotNull MatchMakingListener matchMaking, @NotNull Match match) {
+  public void clear() {
+    this.playersLeft.clear();
+    this.teams.clear();
+    this.currentLeader = null;
+  }
+
+  @Override
+  public void createTeams(@NotNull PGMMatchMakingListener matchMaking, @NotNull Match match) {
     this.playersLeft.addAll(matchMaking.getParticipants());
     List<TeamMember> leaders = this.pickLeaders();
     for (TeamMember leader : leaders) {
@@ -312,14 +364,6 @@ public class PickTeamSelection implements TeamCreation {
       }
     }
     this.currentLeader = RandomUtils.getRandom(leaders);
-  }
-
-  /** Clears the team creator */
-  @Override
-  public void clear() {
-    this.playersLeft.clear();
-    this.teams.clear();
-    this.currentLeader = null;
   }
 
   /**

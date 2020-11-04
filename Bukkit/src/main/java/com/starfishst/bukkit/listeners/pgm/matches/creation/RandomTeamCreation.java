@@ -1,7 +1,7 @@
-package com.starfishst.bukkit.listeners.matches.creation;
+package com.starfishst.bukkit.listeners.pgm.matches.creation;
 
 import com.starfishst.bukkit.api.Guido;
-import com.starfishst.bukkit.listeners.matches.MatchMakingListener;
+import com.starfishst.bukkit.listeners.pgm.matches.PGMMatchMakingListener;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -30,7 +30,7 @@ import tc.oc.pgm.teams.Team;
 public class RandomTeamCreation implements TeamCreation {
 
   @Override
-  public void createTeams(@NotNull MatchMakingListener matchMaking, @NotNull Match match) {
+  public void createTeams(@NotNull PGMMatchMakingListener matchMaking, @NotNull Match match) {
     JsonClient connection = Guido.getClient().getConnection();
     Logger logger = Guido.getLogger();
     List<LinkedInfo> participantsCopy = new ArrayList<>(matchMaking.getParticipants());
@@ -65,14 +65,14 @@ public class RandomTeamCreation implements TeamCreation {
             ((Team) party).setName(name);
             connection.sendRequest(
                 new Request<>(
-                    Boolean.class,
+                    Integer.class,
                     "match-add-team",
                     Maps.objects("id", matchMaking.getMatchId())
                         .append("team", new TeamImpl(-3, name, members))
                         .build()),
-                bol -> {
+                id -> {
                   logger.info(
-                      "Team " + name + " was added to " + matchMaking.getMatchId() + "? " + bol);
+                      "Team " + name + " was added to " + matchMaking.getMatchId() + "? " + id);
                 });
             break;
           }
@@ -80,7 +80,8 @@ public class RandomTeamCreation implements TeamCreation {
       }
       match
           .needModule(StartMatchModule.class)
-          .forceStartCountdown(Duration.ofSeconds(120), Duration.ZERO);
+          .forceStartCountdown(
+              Duration.ofSeconds(PGMMatchMakingListener.secondsToStart), Duration.ZERO);
     }
   }
 

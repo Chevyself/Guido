@@ -1,6 +1,9 @@
 package com.starfishst.bukkit.api.dependencies;
 
+import com.starfishst.bukkit.api.commands.GuidoCommand;
 import com.starfishst.bukkit.api.events.GuidoListener;
+import com.starfishst.bukkit.context.CommandContext;
+import com.starfishst.core.providers.type.IContextualProvider;
 import java.util.Collection;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
@@ -16,6 +19,21 @@ public interface Dependency {
    */
   @NotNull
   Collection<GuidoListener> getListeners(@NotNull Plugin plugin);
+
+  /**
+   * Get the commands to register with this dependency
+   *
+   * @return the collection of commands to register
+   */
+  @NotNull
+  Collection<GuidoCommand> getCommands();
+
+  /**
+   * The argument providers required for the commands in this dependency
+   *
+   * @return the providers
+   */
+  Collection<IContextualProvider<?, CommandContext>> getProviders();
 
   /**
    * Set whether the dependency is enabled

@@ -53,18 +53,23 @@ public class MatchReceptors {
    * @return whether the team has been set
    */
   @Receptor("match-add-team")
-  public boolean addTeam(@ParamName("id") String id, @ParamName("team") Team team) {
+  public int addTeam(@ParamName("id") String id, @ParamName("team") Team team) {
     BotMatch match = Guido.getDataLoader().getMatch(id);
     if (match != null) {
       if (team.getId() == -3) {
         Console.info("Adding team " + team + " with a random id");
-        return match.addTeam(new GuidoTeam(match.nextTeamId(), team.getMembers(), team.getName()));
+        GuidoTeam guidoTeam = new GuidoTeam(match.nextTeamId(), team.getMembers(), team.getName());
+        if (match.addTeam(guidoTeam)) {
+          return guidoTeam.getId();
+        }
       } else {
         Console.info("Adding team " + team + " with the id " + id);
-        return match.addTeam(team);
+        if (match.addTeam(team)) {
+          return team.getId();
+        }
       }
     }
-    return false;
+    return -4;
   }
 
   /**

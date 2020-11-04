@@ -1,5 +1,6 @@
 package com.starfishst.bukkit.api;
 
+import com.starfishst.bukkit.CommandManager;
 import com.starfishst.bukkit.GuidoPlugin;
 import com.starfishst.bukkit.api.config.Configuration;
 import com.starfishst.bukkit.api.events.GuidoEvent;
@@ -116,5 +117,15 @@ public class Guido {
   @NotNull
   public static Logger getLogger() {
     return Guido.validated().getLogger();
+  }
+
+  /**
+   * Get the command manager that the bot is using
+   *
+   * @return the command manager
+   */
+  @NotNull
+  public static CommandManager getCommandManager() {
+    return Guido.validated().getCommandManager();
   }
 }

@@ -1,4 +1,4 @@
-package com.starfishst.bukkit.listeners;
+package com.starfishst.bukkit.listeners.pgm;
 
 import com.starfishst.bukkit.api.Guido;
 import com.starfishst.bukkit.api.events.GuidoListener;
@@ -27,7 +27,7 @@ import tc.oc.pgm.goals.Contribution;
 import tc.oc.pgm.wool.PlayerWoolPlaceEvent;
 
 /** Track stats including pgm kills and deaths */
-public class StatsListener implements GuidoListener {
+public class PGMStatsListener implements GuidoListener {
 
   /** The map containing the stats of a player */
   @NotNull private final Map<UUID, Map<String, Double>> stats = new HashMap<>();

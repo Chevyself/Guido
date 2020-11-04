@@ -4,13 +4,14 @@ import com.starfishst.bukkit.annotations.Command;
 import com.starfishst.bukkit.api.Guido;
 import com.starfishst.bukkit.api.commands.GuidoCommand;
 import com.starfishst.bukkit.lang.BukkitLocaleFile;
-import com.starfishst.bukkit.listeners.matches.MatchMakingListener;
-import com.starfishst.bukkit.listeners.matches.creation.PickTeamSelection;
-import com.starfishst.bukkit.listeners.matches.creation.TeamCreation;
+import com.starfishst.bukkit.listeners.pgm.matches.PGMMatchMakingListener;
+import com.starfishst.bukkit.listeners.pgm.matches.creation.PickTeamSelection;
+import com.starfishst.bukkit.listeners.pgm.matches.creation.TeamCreation;
 import com.starfishst.bukkit.result.Result;
 import com.starfishst.core.annotations.Required;
 import me.googas.api.links.LinkedInfo;
 import me.googas.api.matches.TeamMember;
+import me.googas.commons.maps.Maps;
 import org.jetbrains.annotations.NotNull;
 
 public class PickCommands implements GuidoCommand {
@@ -20,13 +21,17 @@ public class PickCommands implements GuidoCommand {
       BukkitLocaleFile locale,
       TeamMember captain,
       @Required(name = "pick.player", description = "pick.player.desc") LinkedInfo info) {
-    MatchMakingListener listener = Guido.getListener(MatchMakingListener.class);
+    PGMMatchMakingListener listener = Guido.getListener(PGMMatchMakingListener.class);
     if (listener != null) {
       TeamCreation creation = listener.getCreation("pick");
       if (creation instanceof PickTeamSelection) {
         if (((PickTeamSelection) creation).isPicking(captain)) {
           ((PickTeamSelection) creation).pick(captain, info);
-          return new Result();
+          return new Result(
+              locale.get(
+                  "pick.success",
+                  Maps.singleton(
+                      "name", info.getIdentification().getValueOr("nickname", String.class, ""))));
         } else {
           return new Result(locale.get("pick.not-picking"));
         }

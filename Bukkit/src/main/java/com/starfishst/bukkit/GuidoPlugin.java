@@ -9,11 +9,11 @@ import com.starfishst.bukkit.api.events.GuidoListener;
 import com.starfishst.bukkit.commands.ConfigurationCommands;
 import com.starfishst.bukkit.commands.FlyCommand;
 import com.starfishst.bukkit.commands.GameModeCommand;
-import com.starfishst.bukkit.commands.PickCommands;
 import com.starfishst.bukkit.commands.PingCommand;
 import com.starfishst.bukkit.commands.TestCommands;
 import com.starfishst.bukkit.commands.providers.GameModeProvider;
 import com.starfishst.bukkit.configuration.GuidoConfiguration;
+import com.starfishst.bukkit.context.CommandContext;
 import com.starfishst.bukkit.dependencies.GuidoDependencies;
 import com.starfishst.bukkit.lang.BukkitLanguageHandler;
 import com.starfishst.bukkit.listeners.CommandExecutionListener;
@@ -21,9 +21,10 @@ import com.starfishst.bukkit.listeners.GroupListener;
 import com.starfishst.bukkit.listeners.PermissionListener;
 import com.starfishst.bukkit.listeners.SpawnListener;
 import com.starfishst.bukkit.listeners.TestListener;
-import com.starfishst.bukkit.listeners.matches.MatchMakingListener;
+import com.starfishst.bukkit.listeners.pgm.matches.PGMMatchMakingListener;
 import com.starfishst.bukkit.utils.BukkitUtils;
 import com.starfishst.bukkit.utils.FilesUtils;
+import com.starfishst.core.providers.type.IContextualProvider;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -62,7 +63,6 @@ public class GuidoPlugin extends JavaPlugin {
           new ConfigurationCommands(),
           new FlyCommand(),
           new GameModeCommand(),
-          new PickCommands(),
           new PingCommand(),
           new TestCommands());
   /** The listeners that this requires */
@@ -153,7 +153,7 @@ public class GuidoPlugin extends JavaPlugin {
   /** Start the connection with the bot */
   private void startConnection() {
     this.getClient().setToken(this.configuration.getToken());
-    MatchMakingListener makingListener = this.getListener(MatchMakingListener.class);
+    PGMMatchMakingListener makingListener = this.getListener(PGMMatchMakingListener.class);
     if (makingListener != null) {
       this.getClient().addReceptors(makingListener);
     }
@@ -199,6 +199,10 @@ public class GuidoPlugin extends JavaPlugin {
     for (Dependency dependency : this.dependencies.getDependencies()) {
       if (dependency.isEnabled()) {
         this.listeners.addAll(dependency.getListeners(this));
+        this.commands.addAll(dependency.getCommands());
+        for (IContextualProvider<?, CommandContext> provider : dependency.getProviders()) {
+          this.manager.getRegistry().addProvider(provider);
+        }
       }
     }
   }
@@ -279,5 +283,15 @@ public class GuidoPlugin extends JavaPlugin {
   @NotNull
   public BukkitLanguageHandler getLanguageHandler() {
     return this.bukkitLanguageHandler;
+  }
+
+  /**
+   * Get the command manager that the bot is using
+   *
+   * @return the command manager
+   */
+  @NotNull
+  public CommandManager getCommandManager() {
+    return this.manager;
   }
 }

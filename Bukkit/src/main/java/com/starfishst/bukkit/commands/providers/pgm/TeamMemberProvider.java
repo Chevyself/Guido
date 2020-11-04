@@ -1,11 +1,11 @@
-package com.starfishst.bukkit.commands.providers;
+package com.starfishst.bukkit.commands.providers.pgm;
 
 import com.starfishst.bukkit.api.Guido;
 import com.starfishst.bukkit.context.CommandContext;
 import com.starfishst.bukkit.lang.BukkitLocaleFile;
-import com.starfishst.bukkit.listeners.matches.MatchMakingListener;
-import com.starfishst.bukkit.listeners.matches.creation.PickTeamSelection;
-import com.starfishst.bukkit.listeners.matches.creation.TeamCreation;
+import com.starfishst.bukkit.listeners.pgm.matches.PGMMatchMakingListener;
+import com.starfishst.bukkit.listeners.pgm.matches.creation.PickTeamSelection;
+import com.starfishst.bukkit.listeners.pgm.matches.creation.TeamCreation;
 import com.starfishst.bukkit.providers.type.BukkitExtraArgumentProvider;
 import com.starfishst.core.exceptions.ArgumentProviderException;
 import me.googas.api.matches.TeamMember;
@@ -26,7 +26,7 @@ public class TeamMemberProvider implements BukkitExtraArgumentProvider<TeamMembe
   @NotNull
   @Override
   public TeamMember getObject(@NotNull CommandContext context) throws ArgumentProviderException {
-    MatchMakingListener listener = Guido.getListener(MatchMakingListener.class);
+    PGMMatchMakingListener listener = Guido.getListener(PGMMatchMakingListener.class);
     BukkitLocaleFile locale = Guido.getLanguageHandler().getFile(context);
     if (context.getSender() instanceof Player) {
       if (listener != null) {
