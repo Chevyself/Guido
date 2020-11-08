@@ -3,11 +3,10 @@ package me.googas.bot.core.types;
 import me.googas.api.token.AuthLevel;
 import me.googas.api.token.AuthToken;
 import me.googas.api.user.UserData;
-import me.googas.bot.api.events.data.token.AuthTokenLoadedEvent;
 import me.googas.bot.api.events.data.token.AuthTokenUnloadedEvent;
 import me.googas.bot.core.Guido;
 import me.googas.commons.RandomUtils;
-import me.googas.commons.cache.Catchable;
+import me.googas.commons.cache.thread.Catchable;
 import me.googas.commons.time.Time;
 import me.googas.commons.time.Unit;
 import org.jetbrains.annotations.NotNull;
@@ -35,11 +34,10 @@ public class GuidoAuthToken extends Catchable implements AuthToken {
    */
   public GuidoAuthToken(
       @NotNull String token, @NotNull AuthLevel level, @NotNull String user, boolean addToCache) {
-    super(new Time(1, Unit.MINUTES), addToCache);
+    super(addToCache);
     this.token = token;
     this.level = level;
     this.user = user;
-    new AuthTokenLoadedEvent(this).call();
   }
 
   /**
@@ -63,6 +61,11 @@ public class GuidoAuthToken extends Catchable implements AuthToken {
   @Override
   public void onRemove() {
     new AuthTokenUnloadedEvent(this).call();
+  }
+
+  @Override
+  public @NotNull Time getToRemove() {
+    return new Time(1, Unit.MINUTES);
   }
 
   @NotNull

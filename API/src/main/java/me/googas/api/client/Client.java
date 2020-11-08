@@ -28,8 +28,8 @@ import me.googas.api.permissions.Permission;
 import me.googas.api.permissions.PermissionStack;
 import me.googas.api.utility.ValuesMap;
 import me.googas.commons.Lots;
-import me.googas.commons.cache.Cache;
-import me.googas.commons.cache.ICatchable;
+import me.googas.commons.cache.thread.Cache;
+import me.googas.commons.cache.thread.ICatchable;
 import me.googas.commons.maps.Maps;
 import me.googas.messaging.Request;
 import me.googas.messaging.api.Message;
@@ -113,7 +113,7 @@ public class Client {
    *
    * @param authenticated whether the client was authenticated properly
    */
-  private void onAuthentication(boolean authenticated) {
+  public void onAuthentication(boolean authenticated) {
     System.out.println("Client has been authenticated? " + authenticated);
   }
 

@@ -8,8 +8,9 @@ import me.googas.bot.api.events.responsive.ResponsiveMessageUnloadedEvent;
 import me.googas.bot.core.Guido;
 import me.googas.bot.core.handlers.lang.GuidoLocaleFile;
 import me.googas.bot.core.handlers.responsive.GuidoResponsiveMessage;
-import me.googas.commons.cache.Catchable;
+import me.googas.commons.cache.thread.Catchable;
 import me.googas.commons.time.Time;
+import me.googas.commons.time.Unit;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.TextChannel;
@@ -35,7 +36,7 @@ public class LangChangeResponsiveMessage extends Catchable implements GuidoRespo
    * @param message the message that is the responsive message in discord
    */
   public LangChangeResponsiveMessage(@NotNull User toChange, @NotNull Message message) {
-    super(Time.fromString("30s"));
+    super(true);
     this.id = message.getIdLong();
     this.channelId = message.getChannel().getIdLong();
     LinkedData userData = Guido.getDataLoader().getDiscordUserData(toChange.getIdLong());
@@ -54,6 +55,11 @@ public class LangChangeResponsiveMessage extends Catchable implements GuidoRespo
   @Override
   public void onRemove() {
     new ResponsiveMessageUnloadedEvent(this).call();
+  }
+
+  @Override
+  public @NotNull Time getToRemove() {
+    return new Time(30, Unit.SECONDS);
   }
 
   @Override

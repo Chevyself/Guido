@@ -1,12 +1,12 @@
 package me.googas.api.token;
 
 import me.googas.api.user.UserData;
-import me.googas.commons.cache.ICatchable;
+import me.googas.commons.cache.Catchable;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 /** Token used by clients to authenticate */
-public interface AuthToken extends ICatchable {
+public interface AuthToken extends Catchable {
 
   /**
    * Get the token. This must be unique for every token

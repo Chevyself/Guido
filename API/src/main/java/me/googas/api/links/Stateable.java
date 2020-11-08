@@ -63,6 +63,16 @@ public interface Stateable {
   }
 
   /**
+   * Get an stat
+   *
+   * @param stat the key of the stat
+   * @return the stat or 0 if none
+   */
+  default float getStat(@NotNull String stat) {
+    return this.getStats().getOrDefault(stat, 0f);
+  }
+
+  /**
    * Get the stats of the entity
    *
    * @return the map of the stats

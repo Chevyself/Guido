@@ -37,12 +37,8 @@ import org.jetbrains.annotations.NotNull;
 /** Listens to changes to the player and player data to add or remove permissions */
 public class PermissionListener implements GuidoListener {
 
-  /**
-   * A map of the users and the groups that they have. Groups must
-   * be sorted when added here
-   */
-  @NotNull
-  private final Map<UUID, Collection<Group>> groups = new HashMap<>();
+  /** A map of the users and the groups that they have. Groups must be sorted when added here */
+  @NotNull private final Map<UUID, Collection<Group>> groups = new HashMap<>();
 
   /** Permissions are given to the server in async then are added to the player */
   @NotNull private final Map<UUID, Collection<Permission>> toGive = new HashMap<>();

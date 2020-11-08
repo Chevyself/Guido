@@ -39,7 +39,7 @@ public class LinkedDataReceptors {
     LinkedData data = info.getLink();
     if (data != null) {
       UserData user = Guido.getDataLoader().getUserData(userId);
-      data.refresh().setLinkedUser(user);
+      data.setLinkedUser(user);
       return true;
     }
     return false;
@@ -57,7 +57,7 @@ public class LinkedDataReceptors {
       @ParamName("info") LinkedInfo info, @ParamName("context") String context) {
     LinkedData linkedData = info.getLink();
     if (linkedData != null) {
-      PermissionStack permissions = linkedData.refresh().getPermissions(context);
+      PermissionStack permissions = linkedData.getPermissions(context);
       if (permissions != null) {
         return permissions;
       }
@@ -75,7 +75,7 @@ public class LinkedDataReceptors {
   public Map<String, Object> preferences(@ParamName("info") LinkedInfo info) {
     LinkedData data = info.getLink();
     if (data != null) {
-      return data.refresh().getPreferences().getMap();
+      return data.getPreferences().getMap();
     }
     return new HashMap<>();
   }
@@ -90,7 +90,7 @@ public class LinkedDataReceptors {
   public Map<String, Float> stats(@ParamName("info") LinkedInfo info) {
     LinkedData data = info.getLink();
     if (data != null) {
-      return data.refresh().getStats();
+      return data.getStats();
     }
     return new HashMap<>();
   }
@@ -105,7 +105,7 @@ public class LinkedDataReceptors {
   public boolean resetStats(@ParamName("info") LinkedInfo info) {
     LinkedData data = info.getLink();
     if (data != null) {
-      data.refresh().getStats().clear();
+      data.getStats().clear();
       return true;
     }
     return false;
@@ -121,7 +121,7 @@ public class LinkedDataReceptors {
   public boolean isLinked(@ParamName("info") LinkedInfo info) {
     LinkedData data = info.getLink();
     if (data != null) {
-      return data.refresh().isLinked();
+      return data.isLinked();
     }
     return false;
   }
@@ -138,7 +138,7 @@ public class LinkedDataReceptors {
       @ParamName("info") LinkedInfo info, @ParamName("stats") Map<String, Double> stats) {
     LinkedData data = info.getLink();
     if (data != null) {
-      stats.forEach((key, value) -> data.refresh().increaseStat(key, (float) value.doubleValue()));
+      stats.forEach((key, value) -> data.increaseStat(key, (float) value.doubleValue()));
       return true;
     }
     return false;
@@ -159,7 +159,7 @@ public class LinkedDataReceptors {
       @ParamName("permission") Permission permission) {
     LinkedData data = info.getLink();
     if (data != null) {
-      return data.refresh().addPermission(context, permission.getNode(), permission.isEnabled());
+      return data.addPermission(context, permission.getNode(), permission.isEnabled());
     }
     return false;
   }
@@ -179,7 +179,7 @@ public class LinkedDataReceptors {
       @ParamName("permission") Permission permission) {
     LinkedData data = info.getLink();
     if (data != null) {
-      return data.refresh().removePermission(context, permission.getNode());
+      return data.removePermission(context, permission.getNode());
     }
     return false;
   }

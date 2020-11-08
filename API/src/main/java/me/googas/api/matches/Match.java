@@ -9,12 +9,12 @@ import me.googas.api.links.LinkedDataType;
 import me.googas.api.links.LinkedInfo;
 import me.googas.api.utility.ValuesMap;
 import me.googas.commons.RandomUtils;
-import me.googas.commons.cache.ICatchable;
+import me.googas.commons.cache.Catchable;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 /** This object represents a match which was played by one ore more teams */
-public interface Match extends ICatchable {
+public interface Match extends Catchable {
 
   /**
    * Get whether the given information nis inside a team of this match
@@ -137,10 +137,6 @@ public interface Match extends ICatchable {
     }
     return Collections.unmodifiableSet(participants);
   }
-
-  @Override
-  @NotNull
-  Match refresh();
 
   /**
    * Get a team that is playing this match by its name

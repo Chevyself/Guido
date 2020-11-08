@@ -25,11 +25,23 @@ public class BungeeClient extends Client {
   public @NotNull JsonClient startConnection() throws IOException {
     Guido.getLogger().info("Starting connection");
     JsonClient client = super.startConnection();
-    client.sendRequest(
-        new Request<>(
-            Boolean.class, "client-info", Maps.singleton("info", Maps.singleton("bungee", true))),
-        saved -> {});
     Guido.getLogger().info("Connection with the bot as been stabilised in " + client);
     return client;
+  }
+
+  /**
+   * Called when the client is authenticated
+   *
+   * @param authenticated whether the client was authenticated properly
+   */
+  @Override
+  public void onAuthentication(boolean authenticated) {
+    JsonClient connection = this.getConnection();
+    if (authenticated && connection != null) {
+      connection.sendRequest(
+          new Request<>(
+              Boolean.class, "client-info", Maps.singleton("info", Maps.singleton("bungee", true))),
+          saved -> {});
+    }
   }
 }

@@ -77,4 +77,13 @@ public interface BotDataLoader extends DataLoader, GuidoEventHandler {
    * @return the maximum page of the leaderboard
    */
   long maxPageLeaderboard(@NotNull Ladder ladder, int size);
+
+  /**
+   * Get the max page of the leaderboard in a stat
+   *
+   * @param stat the stat to see the max page
+   * @param size the size of documents per page
+   * @return the maximum page of the leaderboard
+   */
+  long maxPageLeaderboard(@NotNull String stat, int size);
 }

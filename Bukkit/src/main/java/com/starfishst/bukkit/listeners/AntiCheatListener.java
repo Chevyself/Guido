@@ -39,11 +39,11 @@ public class AntiCheatListener implements GuidoListener {
       this.printed.put(uniqueId, event);
       for (Player player : Bukkit.getOnlinePlayers()) {
         if (player.hasPermission(
-            this.getSettings().getSettingOr("permission", String.class, "guido.adminchat"))) {
+            this.getSettings().getValueOr("permission", String.class, "guido.adminchat"))) {
           String msg =
               BukkitUtils.build(
                   this.getSettings()
-                      .getSettingOr(
+                      .getValueOr(
                           "chat", String.class, "[&6A&r] %player_display% &6cheats &r%command%"));
           MapBuilder<String, String> placeholders =
               Maps.builder("player", event.getPlayer().getName())
@@ -75,7 +75,7 @@ public class AntiCheatListener implements GuidoListener {
    */
   @NotNull
   public Time getDelay() {
-    return Time.fromString(this.getSettings().getSettingOr("delay", String.class, "5s"));
+    return Time.fromString(this.getSettings().getValueOr("delay", String.class, "5s"));
   }
 
   @Override

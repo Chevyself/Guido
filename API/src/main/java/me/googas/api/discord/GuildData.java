@@ -7,12 +7,12 @@ import java.util.Set;
 import me.googas.api.matches.GlobalLadder;
 import me.googas.api.matches.Ladder;
 import me.googas.api.ranks.RankRange;
-import me.googas.commons.cache.ICatchable;
+import me.googas.commons.cache.Catchable;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 /** This object represents the data for a guild */
-public interface GuildData extends ICatchable {
+public interface GuildData extends Catchable {
 
   /**
    * Get the unique id of the guild. This is an object in discord that must have its unique id

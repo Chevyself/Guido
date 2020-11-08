@@ -12,7 +12,7 @@
 
     <groupId>me.googas.api</groupId>
     <artifactId>API</artifactId>
-    <version>1.0.0-PRE-3</version>
+    <version>1.0.0-PRE-4</version>
     <description>The API for implementations and the bot</description>
 
     <dependencies>
@@ -20,7 +20,7 @@
         <dependency>
             <groupId>me.googas.commons</groupId>
             <artifactId>Commons</artifactId>
-            <version>1.0.9-SNAPSHOT</version>
+            <version>1.0.10-SNAPSHOT</version>
             <scope>compile</scope>
         </dependency>
         <!-- Dependency to Commons-Messaging -->

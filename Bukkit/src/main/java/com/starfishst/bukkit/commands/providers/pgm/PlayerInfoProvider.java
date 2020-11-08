@@ -41,7 +41,9 @@ public class PlayerInfoProvider implements BukkitArgumentProvider<LinkedInfo> {
       }
     }
     throw new ArgumentProviderException(
-        Guido.getLanguageHandler().getFile(context).get("invalid.player", Maps.singleton("s", s)));
+        Guido.getLanguageHandler()
+            .getFile(context)
+            .get("invalid.player", Maps.singleton("string", s)));
   }
 
   @Override

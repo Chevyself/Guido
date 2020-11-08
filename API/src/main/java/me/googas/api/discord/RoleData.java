@@ -1,13 +1,13 @@
 package me.googas.api.discord;
 
 import me.googas.api.permissions.Permissible;
-import me.googas.commons.cache.ICatchable;
+import me.googas.commons.cache.Catchable;
 
 /**
  * This object represents the data for a role. Roles can be permissible which makes them have their
  * own data
  */
-public interface RoleData extends Permissible, ICatchable {
+public interface RoleData extends Permissible, Catchable {
 
   /**
    * Get the unique id of the role. This is an object in discord that must have its unique id

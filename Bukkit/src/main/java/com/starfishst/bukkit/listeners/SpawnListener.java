@@ -31,12 +31,12 @@ public class SpawnListener implements GuidoListener {
    * @return the constructed location
    */
   public Location construct() {
-    String worldName = this.getSettings().getSetting("world", String.class);
-    double x = this.getSettings().getSettingOr("x", Double.class, 0D);
-    double y = this.getSettings().getSettingOr("y", Double.class, 0D);
-    double z = this.getSettings().getSettingOr("z", Double.class, 0D);
-    double yaw = this.getSettings().getSettingOr("yaw", Double.class, 0D);
-    double pitch = this.getSettings().getSettingOr("pitch", Double.class, 0D);
+    String worldName = this.getSettings().getValue("world", String.class);
+    double x = this.getSettings().getValueOr("x", Double.class, 0D);
+    double y = this.getSettings().getValueOr("y", Double.class, 0D);
+    double z = this.getSettings().getValueOr("z", Double.class, 0D);
+    double yaw = this.getSettings().getValueOr("yaw", Double.class, 0D);
+    double pitch = this.getSettings().getValueOr("pitch", Double.class, 0D);
     World world = Bukkit.getWorlds().get(0);
     if (worldName != null) {
       World byName = Bukkit.getWorld(worldName);

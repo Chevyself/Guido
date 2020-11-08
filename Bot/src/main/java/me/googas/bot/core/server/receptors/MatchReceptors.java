@@ -22,10 +22,7 @@ public class MatchReceptors {
   @Receptor("match")
   public Match match(@ParamName("id") String id) {
     BotMatch match = Guido.getDataLoader().getMatch(id);
-    if (match != null) {
-      return match.refresh();
-    }
-    return null;
+      return match;
   }
 
   /**
@@ -83,7 +80,7 @@ public class MatchReceptors {
   public boolean removeTeam(@ParamName("id") String id, @ParamName("team") String teamName) {
     BotMatch match = Guido.getDataLoader().getMatch(id);
     if (match != null) {
-      Team team = match.refresh().getTeam(teamName);
+      Team team = match.getTeam(teamName);
       if (team != null) {
         return match.removeTeam(team);
       }
@@ -102,7 +99,7 @@ public class MatchReceptors {
   public boolean removeTeam(@ParamName("id") String id, @ParamName("team") int teamId) {
     BotMatch match = Guido.getDataLoader().getMatch(id);
     if (match != null) {
-      Team team = match.refresh().getTeam(teamId);
+      Team team = match.getTeam(teamId);
       if (team != null) {
         return match.removeTeam(team);
       }

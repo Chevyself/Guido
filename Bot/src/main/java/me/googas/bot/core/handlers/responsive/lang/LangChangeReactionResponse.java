@@ -40,12 +40,16 @@ public class LangChangeReactionResponse implements ReactionResponse {
       String lang = Guido.getLanguageHandler().getFileFromUnicode(this.unicode).getLang();
       BotLinkedData userData = Guido.getDataLoader().getDiscordUserData(event.getUserIdLong());
       Console.debug("Changing the language for " + userData + " to " + lang);
-      userData.refresh().getPreferences().addValue("lang", lang);
+      userData.getPreferences().addValue("lang", lang);
       ResponsiveMessage responsiveMessage =
           Guido.getHandler(GuidoMessagesController.class)
               .getResponsiveMessage(null, event.getMessageIdLong());
       if (responsiveMessage instanceof LangChangeResponsiveMessage) {
-        ((LangChangeResponsiveMessage) responsiveMessage).unload(true);
+        try {
+          ((LangChangeResponsiveMessage) responsiveMessage).unload(true);
+        } catch (Throwable throwable) {
+          throwable.printStackTrace();
+        }
       }
     }
   }

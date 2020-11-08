@@ -10,14 +10,13 @@ import me.googas.api.matches.Team;
 import me.googas.bot.core.Guido;
 import me.googas.commons.Lots;
 import me.googas.commons.Strings;
-import me.googas.commons.cache.ICatchable;
 import me.googas.commons.maps.Maps;
 import net.dv8tion.jda.api.EmbedBuilder;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 /** An extension of match */
-public interface BotMatch extends Match, ICatchable {
+public interface BotMatch extends Match {
 
   /** The keys to ignore from the details of the match when making the information */
   Set<String> toIgnore = Lots.set("thumbnail", "guild", "type");
@@ -74,10 +73,6 @@ public interface BotMatch extends Match, ICatchable {
     }
     return new EmbedQuery(builder);
   }
-
-  @Override
-  @NotNull
-  BotMatch refresh();
 
   @Override
   @Nullable

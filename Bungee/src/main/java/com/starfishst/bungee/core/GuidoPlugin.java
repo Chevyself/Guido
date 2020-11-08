@@ -61,6 +61,7 @@ public class GuidoPlugin extends Plugin {
 
   /** Loads the configuration */
   public void loadConfiguration() {
+    this.getLogger().info("Loading configuration");
     File dataFolder = this.getDataFolder();
     if (!dataFolder.exists()) {
       dataFolder.mkdir();

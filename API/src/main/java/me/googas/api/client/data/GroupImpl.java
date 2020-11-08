@@ -5,11 +5,12 @@ import java.util.Set;
 import me.googas.api.permissions.Group;
 import me.googas.api.permissions.PermissionStack;
 import me.googas.api.utility.ValuesMap;
-import me.googas.commons.cache.Catchable;
+import me.googas.commons.time.Time;
+import me.googas.commons.time.Unit;
 import org.jetbrains.annotations.NotNull;
 
 /** An implementation for group */
-public class GroupImpl extends Catchable implements Group {
+public class GroupImpl implements Group {
 
   /** The id of the group */
   @NotNull private final String id;
@@ -54,10 +55,12 @@ public class GroupImpl extends Catchable implements Group {
   }
 
   @Override
-  public void onSecondPassed() {}
+  public void onRemove() {}
 
   @Override
-  public void onRemove() {}
+  public @NotNull Time getToRemove() {
+    return new Time(0, Unit.SECONDS);
+  }
 
   @Override
   public @NotNull Set<PermissionStack> getPermissions() {
@@ -72,6 +75,16 @@ public class GroupImpl extends Catchable implements Group {
   @Override
   public boolean removePermission(@NotNull String context, @NotNull String node) {
     return false;
+  }
+
+  @Override
+  public void setWeight(int weight) {
+    throw new UnsupportedOperationException("Cannot set the weight of implementation groups");
+  }
+
+  @Override
+  public void setName(@NotNull String name) {
+    throw new UnsupportedOperationException("Cannot change the name of implemented groups");
   }
 
   @Override

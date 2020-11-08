@@ -6,11 +6,11 @@ import java.util.Map;
 import java.util.Set;
 import me.googas.api.matches.Ladder;
 import me.googas.api.ranks.RankRange;
-import me.googas.bot.api.events.data.guild.BotGuildLoadedEvent;
 import me.googas.bot.api.events.data.guild.BotGuildUnloadedEvent;
 import me.googas.bot.api.types.BotGuild;
-import me.googas.commons.cache.Catchable;
+import me.googas.commons.cache.thread.Catchable;
 import me.googas.commons.time.Time;
+import me.googas.commons.time.Unit;
 import org.jetbrains.annotations.NotNull;
 
 /** This object represents the data for a guild that is using this bot */
@@ -46,13 +46,11 @@ public class GuidoGuild extends Catchable implements BotGuild {
       @NotNull HashMap<Long, RankRange> ranges,
       @NotNull HashMap<String, Long> channels,
       @NotNull HashMap<String, Long> categories) {
-    super(Time.fromString("10m"));
     this.id = id;
     this.ladders = ladders;
     this.ranges = ranges;
     this.channels = channels;
     this.categories = categories;
-    new BotGuildLoadedEvent(this).call();
   }
 
   /** @deprecated this constructor may only be used by gson */
@@ -93,5 +91,10 @@ public class GuidoGuild extends Catchable implements BotGuild {
   @Override
   public void onRemove() {
     new BotGuildUnloadedEvent(this).call();
+  }
+
+  @Override
+  public @NotNull Time getToRemove() {
+    return new Time(10, Unit.MINUTES);
   }
 }

@@ -22,11 +22,7 @@ public class GroupReceptors {
    */
   @Receptor("group")
   public BotGroup group(@ParamName("id") String id) {
-    BotGroup group = Guido.getDataLoader().getGroup(id);
-    if (group != null) {
-      return group.refresh();
-    }
-    return null;
+    return Guido.getDataLoader().getGroup(id);
   }
 
   /**
@@ -48,7 +44,28 @@ public class GroupReceptors {
    */
   @Receptor("create-group")
   public String createGroup(@ParamName("name") String name, @ParamName("weight") int weight) {
-    return new GuidoGroup(weight, new GuidoValuesMap(), new HashSet<>(), name).getId();
+    GuidoGroup group = new GuidoGroup(weight, new GuidoValuesMap(), new HashSet<>(), name);
+    group.addToCache();
+    return group.getId();
+  }
+
+  /**
+   * Updates the name and weight of a group
+   *
+   * @param id the id of the group
+   * @param name the new name of the group
+   * @param weight the new weight of the group
+   * @return whether the group was updated
+   */
+  @Receptor("group-update")
+  public boolean update(@ParamName("id") String id, @ParamName("name") String name, @ParamName("weight") int weight) {
+    BotGroup group = Guido.getDataLoader().getGroup(id);
+    if (group != null) {
+      group.setName(name);
+      group.setWeight(weight);
+      return true;
+    }
+    return false;
   }
 
   /**
@@ -66,7 +83,7 @@ public class GroupReceptors {
       @ParamName("value") Object value) {
     BotGroup group = Guido.getDataLoader().getGroup(groupId);
     if (group != null) {
-      group.refresh().getPreferences().addValue(key, value);
+      group.getPreferences().addValue(key, value);
       return true;
     }
     return false;
@@ -87,7 +104,7 @@ public class GroupReceptors {
       @ParamName("permission") Permission permission) {
     BotGroup group = Guido.getDataLoader().getGroup(id);
     if (group != null) {
-      return group.refresh().addPermission(context, permission.getNode(), permission.isEnabled());
+      return group.addPermission(context, permission.getNode(), permission.isEnabled());
     }
     return false;
   }
@@ -107,7 +124,7 @@ public class GroupReceptors {
       @ParamName("permission") Permission permission) {
     BotGroup group = Guido.getDataLoader().getGroup(id);
     if (group != null) {
-      return group.refresh().removePermission(context, permission.getNode());
+      return group.removePermission(context, permission.getNode());
     }
     return false;
   }

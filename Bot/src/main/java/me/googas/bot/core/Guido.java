@@ -3,7 +3,7 @@ package me.googas.bot.core;
 import com.starfishst.jda.CommandManager;
 import com.starfishst.jda.ManagerOptions;
 import java.io.IOException;
-import java.util.Collection;
+import java.lang.ref.SoftReference;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Timer;
@@ -22,6 +22,7 @@ import me.googas.bot.core.commands.MatchCommands;
 import me.googas.bot.core.commands.QueueCommands;
 import me.googas.bot.core.commands.RangesCommand;
 import me.googas.bot.core.commands.TeamCommands;
+import me.googas.bot.core.commands.TestCommands;
 import me.googas.bot.core.commands.TokenCommands;
 import me.googas.bot.core.commands.UserCommands;
 import me.googas.bot.core.commands.permissions.GuidoPermissionChecker;
@@ -43,8 +44,9 @@ import me.googas.bot.core.server.GuidoServer;
 import me.googas.bot.core.util.console.Console;
 import me.googas.commons.Lots;
 import me.googas.commons.Validate;
-import me.googas.commons.cache.Cache;
-import me.googas.commons.cache.ICatchable;
+import me.googas.commons.cache.Catchable;
+import me.googas.commons.cache.thread.Cache;
+import me.googas.commons.cache.thread.ICatchable;
 import me.googas.commons.events.Event;
 import me.googas.commons.events.ListenerManager;
 import me.googas.commons.maps.Maps;
@@ -167,6 +169,7 @@ public class Guido {
             new QueueCommands(),
             new RangesCommand(),
             new TeamCommands(),
+            new TestCommands(),
             new TokenCommands(),
             new UserCommands())) {
       Console.debug("Registering commands in " + cmd.getClass().getSimpleName());
@@ -271,12 +274,18 @@ public class Guido {
   /** Clears all the cached items from the bot */
   public static void clearCache() {
     Console.info("Clearing cache...");
-    Collection<ICatchable> copy = Cache.copy();
-    for (ICatchable catchable : copy) {
-      Console.debug(catchable + " is being cleaned");
-      catchable.onRemove();
-      catchable.unload();
+    for (SoftReference<Catchable> reference : Cache.copy()) {
+      Catchable catchable = reference.get();
+      if (catchable instanceof ICatchable) {
+        Console.debug(catchable + " is being cleaned");
+        try {
+          ((ICatchable) catchable).unload(true);
+        } catch (Throwable throwable) {
+          throwable.printStackTrace();
+        }
+      }
     }
+    Cache.getMap().clear();
   }
 
   /**

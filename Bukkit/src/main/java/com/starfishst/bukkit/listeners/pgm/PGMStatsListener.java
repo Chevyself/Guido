@@ -45,9 +45,9 @@ public class PGMStatsListener implements GuidoListener {
       killer = event.getKiller().getId();
     }
     String context = Guido.getConfiguration().getContext();
-    this.increase(victim, "deaths-" + context);
+    this.increase(victim, context + "-deaths");
     if (killer != null) {
-      this.increase(killer, "kills-" + context);
+      this.increase(killer, context + "-kills");
     }
   }
 
@@ -60,7 +60,7 @@ public class PGMStatsListener implements GuidoListener {
   public void onCoreLeakEvent(CoreLeakEvent event) {
     for (Contribution contribution : event.getCore().getContributions()) {
       this.increase(
-          contribution.getPlayerState().getId(), "cores-" + Guido.getConfiguration().getContext());
+          contribution.getPlayerState().getId(), Guido.getConfiguration().getContext() + "-cores");
     }
   }
 
@@ -71,7 +71,7 @@ public class PGMStatsListener implements GuidoListener {
    */
   @EventHandler(priority = EventPriority.MONITOR)
   public void onWoolPlaced(PlayerWoolPlaceEvent event) {
-    this.increase(event.getPlayer().getId(), "wools-" + Guido.getConfiguration().getContext());
+    this.increase(event.getPlayer().getId(), Guido.getConfiguration().getContext() + "-wools");
   }
 
   /**
@@ -84,7 +84,7 @@ public class PGMStatsListener implements GuidoListener {
     for (DestroyableContribution contribution : event.getDestroyable().getContributions()) {
       this.increase(
           contribution.getPlayerState().getId(),
-          "monuments-" + Guido.getConfiguration().getContext());
+          Guido.getConfiguration().getContext() + "monuments");
     }
   }
 
@@ -95,7 +95,7 @@ public class PGMStatsListener implements GuidoListener {
    */
   @EventHandler(priority = EventPriority.MONITOR)
   public void onFlagCaptureEvent(FlagCaptureEvent event) {
-    this.increase(event.getCarrier().getId(), "flags-" + Guido.getConfiguration().getContext());
+    this.increase(event.getCarrier().getId(), Guido.getConfiguration().getContext() + "-flags");
   }
 
   /**
@@ -105,15 +105,16 @@ public class PGMStatsListener implements GuidoListener {
    */
   @EventHandler(priority = EventPriority.MONITOR)
   public void onMatchEnd(MatchFinishEvent event) {
+    String context = Guido.getConfiguration().getContext();
     for (MatchPlayer player : event.getMatch().getPlayers()) {
       if (!event.getMatch().getWinners().isEmpty()) {
         if (this.didWin(event, player)) {
-          this.increase(player.getId(), "wins-" + Guido.getConfiguration().getContext());
+          this.increase(player.getId(), context + "-wins");
         } else {
-          this.increase(player.getId(), "loses-" + Guido.getConfiguration().getContext());
+          this.increase(player.getId(), context + "-loses");
         }
       } else {
-        this.increase(player.getId(), "ties-" + Guido.getConfiguration().getContext());
+        this.increase(player.getId(), context + "-ties");
       }
     }
     // Save them after we gave them the win and lose stats

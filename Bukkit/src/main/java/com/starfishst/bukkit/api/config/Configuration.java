@@ -3,6 +3,7 @@ package com.starfishst.bukkit.api.config;
 import com.starfishst.bukkit.api.events.GuidoListener;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import org.jetbrains.annotations.NotNull;
 
 /** The configuration for the guido implementation of pgm */
@@ -28,7 +29,7 @@ public interface Configuration {
       }
 
       @Override
-      public @NotNull HashMap<String, Object> getSettings() {
+      public @NotNull Map<String, Object> getMap() {
         return new HashMap<>();
       }
     };

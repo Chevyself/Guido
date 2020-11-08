@@ -3,11 +3,11 @@ package me.googas.bot.core.types;
 import java.util.HashSet;
 import java.util.Set;
 import me.googas.api.permissions.PermissionStack;
-import me.googas.bot.api.events.data.role.BotRoleLoadedEvent;
 import me.googas.bot.api.events.data.role.BotRoleUnloadedEvent;
 import me.googas.bot.api.types.BotRole;
-import me.googas.commons.cache.Catchable;
+import me.googas.commons.cache.thread.Catchable;
 import me.googas.commons.time.Time;
+import me.googas.commons.time.Unit;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -33,11 +33,9 @@ public class GuidoRole extends Catchable implements BotRole {
    * @param permissions the permission that the role posses
    */
   public GuidoRole(long id, long guildId, @NotNull Set<PermissionStack> permissions) {
-    super(Time.fromString("3m"));
     this.id = id;
     this.guildId = guildId;
     this.permissions = new HashSet<>(permissions);
-    new BotRoleLoadedEvent(this).call();
   }
 
   /** @deprecated this constructor may only be used by gson */
@@ -61,15 +59,12 @@ public class GuidoRole extends Catchable implements BotRole {
   }
 
   @Override
-  public void onSecondPassed() {}
-
-  @Override
   public void onRemove() {
     new BotRoleUnloadedEvent(this).call();
   }
 
   @Override
-  public @NotNull GuidoRole refresh() {
-    return (GuidoRole) super.refresh();
+  public @NotNull Time getToRemove() {
+    return new Time(3, Unit.MINUTES);
   }
 }

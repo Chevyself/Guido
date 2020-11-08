@@ -1,5 +1,7 @@
 package me.googas.api.utility;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import me.googas.commons.Atomic;
 import me.googas.commons.Validate;
@@ -111,6 +113,22 @@ public interface ValuesMap {
    */
   default void removeValue(@NotNull String key) {
     this.getMap().remove(key);
+  }
+
+  /**
+   * Get a preference that happens to be a list
+   *
+   * @param name the name of the preference
+   * @param <T> the type of the class
+   * @return the list or empty if the preference does not exist
+   */
+  @SuppressWarnings("unchecked")
+  @NotNull
+  default <T> List<T> getListValue(@NotNull String name) {
+    List<T> list = new ArrayList<>();
+    Class<List<T>> aClass = (Class<List<T>>) list.getClass();
+    list.addAll(this.getValueOr(name, aClass, new ArrayList<>()));
+    return list;
   }
 
   /**

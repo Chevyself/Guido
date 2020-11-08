@@ -12,7 +12,7 @@
 
     <groupId>me.googas.bot</groupId>
     <artifactId>Bot</artifactId>
-    <version>1.1.0-BETA-4</version>
+    <version>1.1.0-PRE-0</version>
 
     <build>
         <plugins>
@@ -84,7 +84,7 @@
         <dependency>
             <groupId>me.googas.api</groupId>
             <artifactId>API</artifactId>
-            <version>1.0.0-PRE-3</version>
+            <version>1.0.0-PRE-4</version>
         </dependency>
         <!-- Mongo dependency -->
         <dependency>

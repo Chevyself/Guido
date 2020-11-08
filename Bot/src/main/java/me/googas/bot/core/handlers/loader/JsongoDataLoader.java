@@ -67,8 +67,8 @@ import me.googas.bot.core.types.GuidoRole;
 import me.googas.bot.core.types.GuidoUser;
 import me.googas.bot.core.types.maps.GuidoLinkedValuesMap;
 import me.googas.bot.core.types.maps.GuidoValuesMap;
-import me.googas.commons.cache.Cache;
-import me.googas.commons.cache.ICatchable;
+import me.googas.commons.cache.thread.Cache;
+import me.googas.commons.cache.thread.ICatchable;
 import me.googas.commons.events.ListenPriority;
 import me.googas.commons.events.Listener;
 import org.bson.Document;
@@ -251,7 +251,7 @@ public class JsongoDataLoader implements BotDataLoader {
         return link.getLinkedUser();
       }
     }
-    return new GuidoUser(this.nextUserId(), true);
+    return new GuidoUser(this.nextUserId());
   }
 
   /**
@@ -467,7 +467,6 @@ public class JsongoDataLoader implements BotDataLoader {
     if (data == null) {
       data =
           new GuidoLinkedData(
-              true,
               LinkedDataType.DISCORD,
               this.getAllDiscordUserData(userId).getId(),
               new GuidoValuesMap("id", userId),
@@ -568,7 +567,6 @@ public class JsongoDataLoader implements BotDataLoader {
     if (data == null) {
       data =
           new GuidoLinkedData(
-              true,
               LinkedDataType.DISCORD_GUILD,
               this.getAllDiscordUserData(userId).getId(),
               identification,
@@ -607,10 +605,19 @@ public class JsongoDataLoader implements BotDataLoader {
 
   @Override
   public long maxPageLeaderboard(@NotNull Ladder ladder, int size) {
-    return this.count(
-            this.links,
-            new Document("stats." + ladder.getName() + "-elo", new Document("$type", 1)))
-        / size;
+    return this.maxPageLeaderboard(ladder.getName() + "-elo", size);
+  }
+
+  /**
+   * Get the max page of the leaderboard in a stat
+   *
+   * @param stat the stat to see the max page
+   * @param size the size of documents per page
+   * @return the maximum page of the leaderboard
+   */
+  @Override
+  public long maxPageLeaderboard(@NotNull String stat, int size) {
+    return this.count(this.links, new Document("stats." + stat, new Document("$type", 1))) / size;
   }
 
   @Override
@@ -669,15 +676,21 @@ public class JsongoDataLoader implements BotDataLoader {
   @Override
   public @NotNull List<LinkedData> getLeaderboard(@NotNull Ladder ladder, int page, int size) {
     if (!(ladder instanceof GlobalLadder)) {
-      return this.supplyManyFromQuerySorted(
-          GuidoLinkedData.class,
-          this.links,
-          new Document("stats." + ladder.getName() + "-elo", new Document("$type", 1)),
-          new Document("stats." + ladder.getName() + "-elo", -1),
-          size,
-          page * size);
+      return this.getLeaderboard(ladder.getName() + "-elo", page, size, false);
     }
     throw new IllegalArgumentException("Leaderboard is not available for global ladder");
+  }
+
+  @Override
+  public @NotNull List<LinkedData> getLeaderboard(
+      @NotNull String stat, int page, int size, boolean inverted) {
+    return this.supplyManyFromQuerySorted(
+        GuidoLinkedData.class,
+        this.links,
+        new Document("stats." + stat, new Document("$type", 1)),
+        new Document("stats." + stat, inverted ? 1 : -1),
+        size,
+        page * size);
   }
 
   @Override

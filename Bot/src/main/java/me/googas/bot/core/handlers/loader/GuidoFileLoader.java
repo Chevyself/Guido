@@ -100,6 +100,18 @@ public class GuidoFileLoader implements BotDataLoader {
     return 0;
   }
 
+  /**
+   * Get the max page of the leaderboard in a stat
+   *
+   * @param stat the stat to see the max page
+   * @param size the size of documents per page
+   * @return the maximum page of the leaderboard
+   */
+  @Override
+  public long maxPageLeaderboard(@NotNull String stat, int size) {
+    return 0;
+  }
+
   @Override
   public @NotNull Collection<Match> getParticipating(
       @NotNull LinkedDataType type,
@@ -121,6 +133,21 @@ public class GuidoFileLoader implements BotDataLoader {
   @Override
   public @NotNull List<LinkedData> getLeaderboard(@NotNull Ladder ladder, int page, int size) {
     return new ArrayList<>();
+  }
+
+  /**
+   * Get the leaderboard for certain stat
+   *
+   * @param stat the stat to look the leaderboard from
+   * @param page the page to see of the leaderboard
+   * @param size the size to show of the leaderboard
+   * @param inverted whether the leaderboard should be inverted this means low to high
+   * @return the leaderboard
+   */
+  @Override
+  public @NotNull List<LinkedData> getLeaderboard(
+      @NotNull String stat, int page, int size, boolean inverted) {
+    return null;
   }
 
   @Override

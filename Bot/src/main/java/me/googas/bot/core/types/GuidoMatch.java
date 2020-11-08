@@ -17,13 +17,15 @@ import me.googas.bot.api.types.BotMatch;
 import me.googas.bot.core.Guido;
 import me.googas.bot.core.types.maps.GuidoLinkedValuesMap;
 import me.googas.bot.core.types.maps.GuidoValuesMap;
-import me.googas.commons.cache.Catchable;
+import me.googas.commons.cache.thread.Catchable;
+import me.googas.commons.cache.thread.ICatchable;
 import me.googas.commons.time.Time;
+import me.googas.commons.time.Unit;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 /** An implementation for a match */
-public class GuidoMatch extends Catchable implements BotMatch {
+public class GuidoMatch extends Catchable implements BotMatch, ICatchable {
 
   /** The id of the match */
   @NotNull private final String id;
@@ -49,26 +51,22 @@ public class GuidoMatch extends Catchable implements BotMatch {
    * @param teams the teams inside the match
    * @param details the details of the match
    * @param winners the winners of the match
-   * @param addToCache whether to add the match to cache
    */
   public GuidoMatch(
-      @NotNull String id,
-      long guildId,
-      @NotNull MatchStatus status,
-      @NotNull Set<Team> teams,
-      @NotNull GuidoLinkedValuesMap details,
-      int winners,
-      boolean addToCache) {
-    super(Time.fromString("5m"), addToCache);
+          @NotNull String id,
+          long guildId,
+          @NotNull MatchStatus status,
+          @NotNull Set<Team> teams,
+          @NotNull GuidoLinkedValuesMap details,
+          int winners) {
     this.id = id;
     this.guildId = guildId;
     this.status = status;
     this.teams = teams;
     this.details = details;
     this.winners = winners;
-    if (addToCache) {
-      new MatchLoadedEvent(this).call();
-    }
+    this.addToCache();
+    new MatchLoadedEvent(this).call();
   }
 
   /**
@@ -84,7 +82,7 @@ public class GuidoMatch extends Catchable implements BotMatch {
       long guildId,
       @NotNull Set<Team> teams,
       @NotNull GuidoLinkedValuesMap details) {
-    this(id, guildId, MatchStatus.WAITING, teams, details, -1, true);
+    this(id, guildId, MatchStatus.WAITING, teams, details, -1);
   }
 
   /**
@@ -95,27 +93,22 @@ public class GuidoMatch extends Catchable implements BotMatch {
    * @param details the details of the match
    */
   public GuidoMatch(long guildId, @NotNull Set<Team> teams, @NotNull GuidoLinkedValuesMap details) {
-    this(
-        Guido.getDataLoader().nextMatchId(),
-        guildId,
-        MatchStatus.WAITING,
-        teams,
-        details,
-        -1,
-        false);
+    this(Guido.getDataLoader().nextMatchId(), guildId, MatchStatus.WAITING, teams, details, -1);
   }
 
   /** @deprecated this constructor may only be used by gson */
   public GuidoMatch() {
-    this("", -1, MatchStatus.FINISHED, new HashSet<>(), new GuidoLinkedValuesMap(), -1, false);
+    this("", -1, MatchStatus.FINISHED, new HashSet<>(), new GuidoLinkedValuesMap(), -1);
   }
-
-  @Override
-  public void onSecondPassed() {}
 
   @Override
   public void onRemove() {
     new MatchUnloadedEvent(this).call();
+  }
+
+  @Override
+  public @NotNull Time getToRemove() {
+    return new Time(3, Unit.MINUTES);
   }
 
   @Override
@@ -179,11 +172,6 @@ public class GuidoMatch extends Catchable implements BotMatch {
     if (!new MatchStatusUpdatedEvent(this, status).callAndGet()) {
       this.status = status;
     }
-  }
-
-  @Override
-  public @NotNull GuidoMatch refresh() {
-    return (GuidoMatch) super.refresh();
   }
 
   @Override

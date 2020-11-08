@@ -1,13 +1,27 @@
 package me.googas.api.permissions;
 
 import me.googas.api.utility.ValuesMap;
-import me.googas.commons.cache.ICatchable;
+import me.googas.commons.cache.Catchable;
 import org.jetbrains.annotations.NotNull;
 
 /** This class represents a group which can be used to have multiple permissions in one */
-public interface Group extends Permissible, ICatchable {
+public interface Group extends Permissible, Catchable {
 
   /**
+   * Set the weight of the group
+   *
+   * @param weight the new weight of the group
+   */
+  void setWeight(int weight);
+
+  /**
+   * Set the name of the group
+   *
+   * @param name the new name of the group
+   */
+    void setName(@NotNull String name);
+
+    /**
    * The unique way to identify the group
    *
    * @return the id of the group

@@ -27,11 +27,11 @@ public class CommandExecutionListener implements GuidoListener {
     if (this.isBanned(event.getMessage().split(" ")[0].replace("/", ""))) return;
     for (Player onlinePlayer : Bukkit.getOnlinePlayers()) {
       if (onlinePlayer.hasPermission(
-          this.getSettings().getSettingOr("permission", String.class, "guido.adminchat"))) {
+          this.getSettings().getValueOr("permission", String.class, "guido.adminchat"))) {
         String msg =
             BukkitUtils.build(
                 this.getSettings()
-                    .getSettingOr(
+                    .getValueOr(
                         "chat", String.class, "[&6A&r] %player_display% &6executed &r%command%"));
         onlinePlayer.sendMessage(
             Strings.buildMessage(
@@ -66,7 +66,7 @@ public class CommandExecutionListener implements GuidoListener {
    */
   @NotNull
   public List<String> getBanned() {
-    return this.getSettings().getListSetting("banned", String.class);
+    return this.getSettings().getListValue("banned");
   }
 
   @Override

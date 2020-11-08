@@ -21,7 +21,7 @@ public interface Team {
     for (TeamMember member : this.getMembers()) {
       LinkedData data = member.getLinkInfo().getLink();
       if (data != null) {
-        sum += data.refresh().getElo(ladder);
+        sum += data.getElo(ladder);
         size++;
       }
     }

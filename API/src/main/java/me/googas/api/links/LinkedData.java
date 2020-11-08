@@ -6,13 +6,13 @@ import me.googas.api.lang.LocaleFile;
 import me.googas.api.permissions.Permissible;
 import me.googas.api.user.UserData;
 import me.googas.api.utility.ValuesMap;
-import me.googas.commons.cache.ICatchable;
+import me.googas.commons.cache.Catchable;
 import me.googas.commons.maps.MapBuilder;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 /** This object represents data that has been linked to an user */
-public interface LinkedData extends Permissible, Stateable, ICatchable {
+public interface LinkedData extends Permissible, Stateable, Catchable {
 
   /**
    * Get the linked data as a readable string
@@ -142,8 +142,4 @@ public interface LinkedData extends Permissible, Stateable, ICatchable {
    */
   @NotNull
   Collection<LinkedData> getLinks(@NotNull LinkedDataType... types);
-
-  @Override
-  @NotNull
-  LinkedData refresh();
 }

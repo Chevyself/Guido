@@ -60,10 +60,6 @@ public interface BotLinkedData extends BotPermissible, LinkedData {
   }
 
   @Override
-  @NotNull
-  BotLinkedData refresh();
-
-  @Override
   @Nullable
   default UserData getLinkedUser() {
     return Guido.getDataLoader().getUserData(this.getLinkedUserId());
@@ -78,7 +74,7 @@ public interface BotLinkedData extends BotPermissible, LinkedData {
   default Collection<LinkedData> getLinks() {
     UserData user = this.getLinkedUser();
     if (user != null) {
-      return Guido.getDataLoader().getLinks(user.refresh());
+      return Guido.getDataLoader().getLinks(user);
     }
     return new HashSet<>();
   }
@@ -88,7 +84,7 @@ public interface BotLinkedData extends BotPermissible, LinkedData {
   default Collection<LinkedData> getLinks(@NotNull LinkedDataType... types) {
     UserData user = this.getLinkedUser();
     if (user != null) {
-      return Guido.getDataLoader().getLinks(user.refresh(), types);
+      return Guido.getDataLoader().getLinks(user, types);
     }
     return new HashSet<>();
   }

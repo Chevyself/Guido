@@ -86,7 +86,6 @@ public class MatchMakingHandler implements GuidoEventHandler {
     Match match = event.getQueue().checkReady();
     Console.debug("Is the queue " + event.getQueue() + " ready to create a match? " + match);
     if (match != null) {
-      match.addToCache();
       new MatchLoadedEvent(match).call();
       for (LinkedInfo participant : match.getParticipants()) {
         Guido.getHandler(QueueHandler.class).leaveQueue(participant);

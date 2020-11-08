@@ -9,6 +9,8 @@ import me.googas.api.matches.Match;
 import me.googas.api.matches.MatchStatus;
 import me.googas.api.matches.Team;
 import me.googas.api.utility.ValuesMap;
+import me.googas.commons.time.Time;
+import me.googas.commons.time.Unit;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -101,11 +103,6 @@ public class MatchImpl implements Match {
   }
 
   @Override
-  public @NotNull Match refresh() {
-    return this;
-  }
-
-  @Override
   public @Nullable GuildData getGuildData() {
     return null;
   }
@@ -121,17 +118,11 @@ public class MatchImpl implements Match {
   }
 
   @Override
-  public void reduceTime(long l) {}
-
-  @Override
-  public void onSecondPassed() {}
-
-  @Override
   public void onRemove() {}
 
   @Override
-  public long getSecondsLeft() {
-    return 0;
+  public @NotNull Time getToRemove() {
+    return new Time(0, Unit.SECONDS);
   }
 
   @Override

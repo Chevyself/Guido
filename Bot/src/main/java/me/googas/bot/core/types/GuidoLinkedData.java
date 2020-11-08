@@ -10,16 +10,16 @@ import me.googas.api.links.LinkedDataType;
 import me.googas.api.permissions.PermissionStack;
 import me.googas.api.user.UserData;
 import me.googas.api.utility.ValuesMap;
-import me.googas.bot.api.events.data.links.LinkedDataLoadedEvent;
 import me.googas.bot.api.events.data.links.LinkedDataUnloadedEvent;
 import me.googas.bot.api.types.BotLinkedData;
 import me.googas.bot.api.types.BotPermissible;
 import me.googas.bot.core.Guido;
 import me.googas.bot.core.types.maps.GuidoValuesMap;
 import me.googas.bot.core.util.console.Console;
-import me.googas.commons.cache.Catchable;
+import me.googas.commons.cache.thread.Catchable;
 import me.googas.commons.maps.Maps;
 import me.googas.commons.time.Time;
+import me.googas.commons.time.Unit;
 import me.googas.messaging.Request;
 import me.googas.messaging.json.server.JsonClientThread;
 import net.dv8tion.jda.api.entities.User;
@@ -47,7 +47,6 @@ public class GuidoLinkedData extends Catchable implements BotLinkedData, BotPerm
   /**
    * Create the linked data
    *
-   * @param addToCache whether to add it to cache
    * @param type the type of linked data that this is
    * @param user the id of the user linked to this data
    * @param identification the way to identify this data
@@ -56,30 +55,23 @@ public class GuidoLinkedData extends Catchable implements BotLinkedData, BotPerm
    * @param permissions the permissions of this data
    */
   public GuidoLinkedData(
-      boolean addToCache,
       @NotNull LinkedDataType type,
       @Nullable String user,
       @NotNull GuidoValuesMap identification,
       @NotNull GuidoValuesMap preferences,
-      @NotNull HashMap<String, Float> stats,
+      @NotNull Map<String, Float> stats,
       @NotNull Set<PermissionStack> permissions) {
-    super(Time.fromString("3m"), false);
     this.type = type;
     this.user = user;
     this.identification = identification;
     this.preferences = preferences;
     this.stats = stats;
     this.permissions = permissions;
-    if (addToCache) {
-      this.addToCache();
-      new LinkedDataLoadedEvent(this).call();
-    }
   }
 
   /** @deprecated this constructor may only be used by gson */
   public GuidoLinkedData() {
     this(
-        false,
         LinkedDataType.NONE,
         null,
         new GuidoValuesMap(),
@@ -94,11 +86,13 @@ public class GuidoLinkedData extends Catchable implements BotLinkedData, BotPerm
   }
 
   @Override
-  public void onSecondPassed() {}
-
-  @Override
   public void onRemove() {
     new LinkedDataUnloadedEvent(this).call();
+  }
+
+  @Override
+  public @NotNull Time getToRemove() {
+    return new Time(3, Unit.MINUTES);
   }
 
   @Override
@@ -186,11 +180,6 @@ public class GuidoLinkedData extends Catchable implements BotLinkedData, BotPerm
   @Override
   public void sendLocalized(@NotNull String key, @NotNull Map<String, String> placeholders) {
     this.sendMessage(Guido.getLanguageHandler().getDefault().get(key, placeholders));
-  }
-
-  @Override
-  public @NotNull GuidoLinkedData refresh() {
-    return (GuidoLinkedData) super.refresh();
   }
 
   @Override

@@ -9,13 +9,14 @@ import com.starfishst.jda.context.CommandContext;
 import com.starfishst.jda.context.GuildCommandContext;
 import com.starfishst.jda.result.Result;
 import com.starfishst.jda.result.ResultType;
+import java.lang.ref.SoftReference;
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;
 import me.googas.bot.core.Guido;
 import me.googas.bot.core.util.console.Console;
-import me.googas.commons.cache.Cache;
-import me.googas.commons.cache.ICatchable;
+import me.googas.commons.cache.Catchable;
+import me.googas.commons.cache.thread.Cache;
 import org.jetbrains.annotations.NotNull;
 
 /** Commands made for the developer */
@@ -65,8 +66,8 @@ public class DeveloperCommands {
    */
   @Command(aliases = "cache", permission = @Perm(node = "guido.cache"))
   public Result cache() {
-    for (ICatchable catchable : Cache.copy()) {
-      Console.info("Cache element: " + catchable);
+    for (SoftReference<Catchable> catchable : Cache.copy()) {
+      Console.info("Cache element: " + catchable.get());
     }
     return new Result("Check console for the output");
   }

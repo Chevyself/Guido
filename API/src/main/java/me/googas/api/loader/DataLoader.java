@@ -194,7 +194,7 @@ public interface DataLoader {
   Collection<Group> getGroups();
 
   /**
-   * Get the leader board in certain ladder
+   * Get the leaderboard in certain ladder
    *
    * @param ladder the ladder to look the leaderboard from
    * @param page the page to see of the leaderboard
@@ -203,4 +203,16 @@ public interface DataLoader {
    */
   @NotNull
   List<LinkedData> getLeaderboard(@NotNull Ladder ladder, int page, int size);
+
+  /**
+   * Get the leaderboard for certain stat
+   *
+   * @param stat the stat to look the leaderboard from
+   * @param page the page to see of the leaderboard
+   * @param size the size to show of the leaderboard
+   * @param inverted whether the leaderboard should be inverted this means low to high
+   * @return the leaderboard
+   */
+  @NotNull
+  List<LinkedData> getLeaderboard(@NotNull String stat, int page, int size, boolean inverted);
 }

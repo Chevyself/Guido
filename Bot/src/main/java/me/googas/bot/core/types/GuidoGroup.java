@@ -7,8 +7,9 @@ import me.googas.bot.api.events.data.group.GroupUnloadedEvent;
 import me.googas.bot.api.types.BotGroup;
 import me.googas.bot.core.Guido;
 import me.googas.bot.core.types.maps.GuidoValuesMap;
-import me.googas.commons.cache.Catchable;
+import me.googas.commons.cache.thread.Catchable;
 import me.googas.commons.time.Time;
+import me.googas.commons.time.Unit;
 import org.jetbrains.annotations.NotNull;
 
 /** An implementation for the bot group */
@@ -18,10 +19,10 @@ public class GuidoGroup extends Catchable implements BotGroup {
   @NotNull private final String id;
 
   /** The weight of the group */
-  private final int weight;
+  private int weight;
 
   /** The name of the group */
-  @NotNull private final String name;
+  @NotNull private String name;
 
   /** The preferences of the group */
   @NotNull private final GuidoValuesMap preferences;
@@ -37,24 +38,18 @@ public class GuidoGroup extends Catchable implements BotGroup {
    * @param name the name of the group
    * @param preferences the preferences of the group
    * @param permissions the permissions of the group
-   * @param addToCache whether to add this group to cache
    */
   public GuidoGroup(
       @NotNull String id,
       int weight,
       @NotNull String name,
       @NotNull GuidoValuesMap preferences,
-      @NotNull Set<PermissionStack> permissions,
-      boolean addToCache) {
-    super(Time.fromString("5m"), false);
+      @NotNull Set<PermissionStack> permissions) {
     this.id = id;
     this.preferences = preferences;
     this.permissions = permissions;
     this.name = name;
     this.weight = weight;
-    if (addToCache) {
-      this.addToCache();
-    }
   }
 
   /**
@@ -70,12 +65,21 @@ public class GuidoGroup extends Catchable implements BotGroup {
       @NotNull GuidoValuesMap preferences,
       @NotNull Set<PermissionStack> permissions,
       String name) {
-    this(Guido.getDataLoader().nextGroupId(), weight, name, preferences, permissions, true);
+    this(Guido.getDataLoader().nextGroupId(), weight, name, preferences, permissions);
   }
 
   /** @deprecated this may only be used be used by json */
   public GuidoGroup() {
-    this("", 1000, "", new GuidoValuesMap(), new HashSet<>(), false);
+    this("", 1000, "", new GuidoValuesMap(), new HashSet<>());
+  }
+
+  public void setWeight(int weight) {
+    this.weight = weight;
+  }
+
+  @Override
+  public void setName(@NotNull String name) {
+    this.name = name;
   }
 
   @Override
@@ -84,6 +88,11 @@ public class GuidoGroup extends Catchable implements BotGroup {
   @Override
   public void onRemove() {
     new GroupUnloadedEvent(this).call();
+  }
+
+  @Override
+  public @NotNull Time getToRemove() {
+    return new Time(5, Unit.MINUTES);
   }
 
   @Override
@@ -110,11 +119,6 @@ public class GuidoGroup extends Catchable implements BotGroup {
   @Override
   public GuidoValuesMap getPreferences() {
     return this.preferences;
-  }
-
-  @Override
-  public @NotNull GuidoGroup refresh() {
-    return (GuidoGroup) super.refresh();
   }
 
   @Override

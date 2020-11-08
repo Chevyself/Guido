@@ -257,7 +257,9 @@ public class PickTeamSelection implements TeamCreation {
       player.sendMessage(
           Guido.getLanguageHandler()
               .getFile(player)
-              .get("pick.next", Maps.singleton("picks", Lots.pretty(this.getParticipantsNames()))));
+              .get(
+                  "match-making.pick.next",
+                  Maps.singleton("picks", Lots.pretty(this.getParticipantsNames()))));
     }
   }
 

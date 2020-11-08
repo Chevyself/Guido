@@ -17,7 +17,6 @@ public class MapHashCode {
 
     GuidoLinkedData link1 =
         new GuidoLinkedData(
-            false,
             LinkedDataType.MINECRAFT,
             "a",
             map1,
@@ -26,7 +25,6 @@ public class MapHashCode {
             new HashSet<>());
     GuidoLinkedData link2 =
         new GuidoLinkedData(
-            false,
             LinkedDataType.MINECRAFT,
             "a",
             map2,

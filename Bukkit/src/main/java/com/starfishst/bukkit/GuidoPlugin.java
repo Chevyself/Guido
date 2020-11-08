@@ -235,9 +235,9 @@ public class GuidoPlugin extends JavaPlugin {
         new CommandExecutionListener(),
         new GroupListener(),
         new PermissionListener(this),
-            new DecorationsListener(),
-            new SpawnListener(),
-            new TestListener());
+        new DecorationsListener(),
+        new SpawnListener(),
+        new TestListener());
   }
 
   /**

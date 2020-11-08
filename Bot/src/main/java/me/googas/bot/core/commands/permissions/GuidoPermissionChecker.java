@@ -52,11 +52,9 @@ public class GuidoPermissionChecker implements PermissionChecker {
       }
       if (context instanceof GuildCommandContext) {
         BotLinkedData member =
-            this.dataLoader
-                .getMemberData(
-                    ((GuildCommandContext) context).getMember().getIdLong(),
-                    ((GuildCommandContext) context).getGuild().getIdLong())
-                .refresh();
+            this.dataLoader.getMemberData(
+                ((GuildCommandContext) context).getMember().getIdLong(),
+                ((GuildCommandContext) context).getGuild().getIdLong());
         if (member.hasPermission(perm.node(), "discord")
             || ((GuildCommandContext) context).getMember().hasPermission(Permission.ADMINISTRATOR)
             || (perm.permission() != Permission.UNKNOWN
@@ -65,10 +63,8 @@ public class GuidoPermissionChecker implements PermissionChecker {
         }
         for (Role role : ((GuildCommandContext) context).getMember().getRoles()) {
           BotRole roleData =
-              this.dataLoader
-                  .getRoleData(
-                      role.getIdLong(), ((GuildCommandContext) context).getGuild().getIdLong())
-                  .refresh();
+              this.dataLoader.getRoleData(
+                  role.getIdLong(), ((GuildCommandContext) context).getGuild().getIdLong());
           if (roleData.hasPermission(perm.node(), "discord")
               || role.hasPermission(Permission.ADMINISTRATOR)) {
             return null;
@@ -77,7 +73,7 @@ public class GuidoPermissionChecker implements PermissionChecker {
       } else {
         String node = perm.node().startsWith("user:") ? perm.node().substring(5) : perm.node();
         BotLinkedData userData =
-            this.dataLoader.getDiscordUserData(context.getSender().getIdLong()).refresh();
+            this.dataLoader.getDiscordUserData(context.getSender().getIdLong());
         if (userData.hasPermission(node, "discord")) {
           return null;
         }

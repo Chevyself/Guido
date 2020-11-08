@@ -22,7 +22,6 @@ public class QueueReceptors {
   public boolean leftQueue(@ParamName("info") LinkedInfo info) {
     LinkedData data = info.getLink();
     if (data != null) {
-      data.refresh();
       Collection<Queue> queues = Guido.getHandler(QueueHandler.class).getQueues(info);
       for (Queue queue : queues) {
         queue.leave(info);

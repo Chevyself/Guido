@@ -65,4 +65,38 @@ public class LeaderboardCommands {
       return new Result(ResultType.USAGE, locale.get("lb.not-global"));
     }
   }
+
+  @Command(
+      aliases = {"ranking", "table"},
+      description = "table.desc",
+      time = "30s")
+  public Result ranking(
+      LocaleFile locale,
+      @Required(name = "table.stat", description = "table.stat.desc") String stat,
+      @Optional(name = "table.page", description = "table.page.desc", suggestions = "0") int page) {
+    BotDataLoader loader = Guido.getDataLoader();
+    long max = loader.maxPageLeaderboard(stat, 20);
+    if (page < 0) {
+      page = 0;
+    }
+    if (page > max) {
+      page = (int) max;
+    }
+    StringBuilder builder = Strings.getBuilder();
+    builder.append(
+        locale.get(
+            "table.title",
+            Maps.builder("page", String.valueOf(page))
+                .append("max", String.valueOf(max))
+                .append("stat", stat)));
+    List<LinkedData> leaderboard = loader.getLeaderboard(stat, page, 20, false);
+    for (LinkedData data : leaderboard) {
+      builder.append(
+          locale.get(
+              "table.entry",
+              Maps.builder("single", data.getSingle())
+                  .append("stat", String.valueOf((int) data.getStat(stat)))));
+    }
+    return new Result(builder.toString());
+  }
 }

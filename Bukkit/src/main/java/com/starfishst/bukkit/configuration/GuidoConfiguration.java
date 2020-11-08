@@ -5,6 +5,7 @@ import com.starfishst.bukkit.api.config.GuidoListenerSettings;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import org.bukkit.configuration.ConfigurationSection;
 import org.jetbrains.annotations.NotNull;
 
@@ -54,14 +55,19 @@ public class GuidoConfiguration implements Configuration {
         }
         this.settings.add(
             new GuidoListenerSettings() {
+              /**
+               * The main preferences map to get the preferences from
+               *
+               * @return the preferences map
+               */
               @Override
-              public @NotNull String getName() {
-                return name;
+              public @NotNull Map<String, Object> getMap() {
+                return settings;
               }
 
               @Override
-              public @NotNull HashMap<String, Object> getSettings() {
-                return settings;
+              public @NotNull String getName() {
+                return name;
               }
             });
       }

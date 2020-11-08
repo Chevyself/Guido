@@ -1,10 +1,10 @@
 package me.googas.bot.core.types;
 
 import me.googas.api.user.UserData;
-import me.googas.bot.api.events.data.user.UserLoadedDataEvent;
 import me.googas.bot.api.events.data.user.UserUnloadedDataEvent;
-import me.googas.commons.cache.Catchable;
+import me.googas.commons.cache.thread.Catchable;
 import me.googas.commons.time.Time;
+import me.googas.commons.time.Unit;
 import org.jetbrains.annotations.NotNull;
 
 /** An user that operates this bot */
@@ -17,17 +17,14 @@ public class GuidoUser extends Catchable implements UserData {
    * Create the guido user
    *
    * @param id the user id
-   * @param addToCache whether to add the user to cache
    */
-  public GuidoUser(@NotNull String id, boolean addToCache) {
-    super(Time.fromString("5m"), true);
+  public GuidoUser(@NotNull String id) {
     this.id = id;
-    new UserLoadedDataEvent(this).call();
   }
 
   /** @deprecated this constructor may only be used by gson */
   public GuidoUser() {
-    this("", false);
+    this("");
   }
 
   @Override
@@ -36,6 +33,11 @@ public class GuidoUser extends Catchable implements UserData {
   @Override
   public void onRemove() {
     new UserUnloadedDataEvent(this).call();
+  }
+
+  @Override
+  public @NotNull Time getToRemove() {
+    return new Time(5, Unit.MINUTES);
   }
 
   @Override

@@ -37,7 +37,9 @@ public class ReadyCommand implements GuidoCommand {
           match.getCountdown().cancelAll(StartCountdown.class);
           module.forceStartCountdown(this.calculateDuration(match), null);
           Guido.getLanguageHandler()
-              .broadcast("ready.now-ready", Maps.singleton("team", party.getColor() + party.getNameLegacy()));
+              .broadcast(
+                  "ready.now-ready",
+                  Maps.singleton("team", party.getColor() + party.getNameLegacy()));
           return new Result(locale.get("ready.success"));
         }
       } else {
@@ -60,7 +62,9 @@ public class ReadyCommand implements GuidoCommand {
           match.getCountdown().cancelAll(StartCountdown.class);
           module.forceStartCountdown(this.calculateDuration(match), null);
           Guido.getLanguageHandler()
-              .broadcast("unready.now-unready", Maps.singleton("team", party.getColor() + party.getNameLegacy()));
+              .broadcast(
+                  "unready.now-unready",
+                  Maps.singleton("team", party.getColor() + party.getNameLegacy()));
           return new Result(locale.get("unready.success"));
         }
       } else {

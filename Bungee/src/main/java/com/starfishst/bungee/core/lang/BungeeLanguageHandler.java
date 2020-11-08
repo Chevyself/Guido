@@ -36,6 +36,7 @@ public class BungeeLanguageHandler implements GuidoListener, MessagesProvider {
       this.files.add(new BungeeLocaleFile(config));
       plugin.getLogger().info(lang + ".yml has been loaded");
     }
+    plugin.getLogger().info("Languages from resources have been loaded");
     return this;
   }
 

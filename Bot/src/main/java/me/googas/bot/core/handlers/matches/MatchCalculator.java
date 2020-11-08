@@ -76,7 +76,6 @@ public class MatchCalculator implements GuidoEventHandler {
       for (TeamMember member : team.getMembers()) {
         LinkedData data = member.getLinkInfo().getLink();
         if (data != null) {
-          data.refresh();
           Console.debug("Setting the stat and elo to " + data);
           if (team == winners) {
             data.increaseElo(ladder, winnersDifference);
