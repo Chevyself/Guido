@@ -46,7 +46,8 @@ public interface BotGuild extends GuildData, BotCatchable {
   @NotNull
   default VoiceChannel getVoiceChannel(@NotNull String key) {
     Guild guild = this.getDiscord();
-    VoiceChannel channel = guild.getVoiceChannelById(this.getVoiceChannels().getOrDefault(key, -1L));
+    VoiceChannel channel =
+        guild.getVoiceChannelById(this.getVoiceChannels().getOrDefault(key, -1L));
     if (channel == null) {
       channel = guild.createVoiceChannel(key).complete();
       this.getVoiceChannels().put(key, channel.getIdLong());

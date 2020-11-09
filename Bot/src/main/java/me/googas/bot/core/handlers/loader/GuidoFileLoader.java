@@ -2,8 +2,9 @@ package me.googas.bot.core.handlers.loader;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
+import java.util.Map;
 import me.googas.api.links.LinkableData;
 import me.googas.api.links.LinkableDataType;
 import me.googas.api.matches.Ladder;
@@ -143,8 +144,9 @@ public class GuidoFileLoader implements BotDataLoader {
   }
 
   @Override
-  public @NotNull List<LinkableData> getLeaderboard(@NotNull Ladder ladder, int page, int size) {
-    return new ArrayList<>();
+  public @NotNull Map<Integer, LinkableData> getLeaderboard(
+      @NotNull Ladder ladder, int page, int size) {
+    return new HashMap<>();
   }
 
   /**
@@ -157,7 +159,7 @@ public class GuidoFileLoader implements BotDataLoader {
    * @return the leaderboard
    */
   @Override
-  public @NotNull List<LinkableData> getLeaderboard(
+  public @NotNull Map<Integer, LinkableData> getLeaderboard(
       @NotNull String stat, int page, int size, boolean inverted) {
     return null;
   }

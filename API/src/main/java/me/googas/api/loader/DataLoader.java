@@ -1,7 +1,7 @@
 package me.googas.api.loader;
 
 import java.util.Collection;
-import java.util.List;
+import java.util.Map;
 import me.googas.api.discord.GuildData;
 import me.googas.api.discord.RoleData;
 import me.googas.api.links.LinkableData;
@@ -210,7 +210,7 @@ public interface DataLoader {
    * @return the leaderboard
    */
   @NotNull
-  List<LinkableData> getLeaderboard(@NotNull Ladder ladder, int page, int size);
+  Map<Integer, LinkableData> getLeaderboard(@NotNull Ladder ladder, int page, int size);
 
   /**
    * Get the leaderboard for certain stat
@@ -222,7 +222,8 @@ public interface DataLoader {
    * @return the leaderboard
    */
   @NotNull
-  List<LinkableData> getLeaderboard(@NotNull String stat, int page, int size, boolean inverted);
+  Map<Integer, LinkableData> getLeaderboard(
+      @NotNull String stat, int page, int size, boolean inverted);
 
   /**
    * Get all the matches

@@ -27,6 +27,9 @@ public class GuidoGuild implements BotGuild {
   /** The map of channels and its ids for the guild */
   @NotNull private final Map<String, Long> channels;
 
+  /** The map of voice channels and its ids for the guild */
+  @NotNull private final Map<String, Long> voiceChannels;
+
   /** The map of categories and its ids for the guild */
   @NotNull private final Map<String, Long> categories;
 
@@ -37,24 +40,27 @@ public class GuidoGuild implements BotGuild {
    * @param ladders the ladders of the guild
    * @param ranges the ranges of the guild
    * @param channels the channels map of the guild
+   * @param voiceChannels the voice channels map of the guild
    * @param categories the categories map of the guild
    */
   public GuidoGuild(
       long id,
       @NotNull Set<Ladder> ladders,
-      @NotNull HashMap<Long, RankRange> ranges,
-      @NotNull HashMap<String, Long> channels,
+      @NotNull Map<Long, RankRange> ranges,
+      @NotNull Map<String, Long> channels,
+      @NotNull Map<String, Long> voiceChannels,
       @NotNull HashMap<String, Long> categories) {
     this.id = id;
     this.ladders = ladders;
     this.ranges = ranges;
     this.channels = channels;
+    this.voiceChannels = voiceChannels;
     this.categories = categories;
   }
 
   /** @deprecated this constructor may only be used by gson */
   public GuidoGuild() {
-    this(0, new HashSet<>(), new HashMap<>(), new HashMap<>(), new HashMap<>());
+    this(0, new HashSet<>(), new HashMap<>(), new HashMap<>(), new HashMap<>(), new HashMap<>());
   }
 
   @Override
@@ -77,6 +83,16 @@ public class GuidoGuild implements BotGuild {
   @Override
   public @NotNull Map<String, Long> getChannels() {
     return this.channels;
+  }
+
+  /**
+   * This map contains the string to identify a voice channel and its id
+   *
+   * @return the map of channels
+   */
+  @Override
+  public @NotNull Map<String, Long> getVoiceChannels() {
+    return null;
   }
 
   @Override

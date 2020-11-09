@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.function.Consumer;
-
 import me.googas.commons.Lots;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.GuildChannel;
@@ -95,7 +94,8 @@ public class Discord {
   public static void addPermissions(
       @NotNull GuildChannel channel,
       @NotNull Collection<? extends IPermissionHolder> holders,
-      @NotNull Collection<Permission> permissions, @Nullable Consumer<Void> success) {
+      @NotNull Collection<Permission> permissions,
+      @Nullable Consumer<Void> success) {
     for (IPermissionHolder holder : holders) {
       Discord.addPermissions(channel, holder, permissions, success);
     }
@@ -110,27 +110,35 @@ public class Discord {
    * @param success what to call when the permission is given
    */
   public static void addPermissions(
-          @NotNull GuildChannel channel,
-          @NotNull IPermissionHolder holder,
-          @NotNull Collection<Permission> permissions,
-          @Nullable Consumer<Void> success) {
+      @NotNull GuildChannel channel,
+      @NotNull IPermissionHolder holder,
+      @NotNull Collection<Permission> permissions,
+      @Nullable Consumer<Void> success) {
     PermissionOverride override = channel.getPermissionOverride(holder);
     if (override != null) {
-      override.getManager().setAllow(permissions).queue(permOverride -> {
-        if (success != null) {
-          success.accept(null);
-        }
-      });
+      override
+          .getManager()
+          .setAllow(permissions)
+          .queue(
+              permOverride -> {
+                if (success != null) {
+                  success.accept(null);
+                }
+              });
     } else {
       channel
           .createPermissionOverride(holder)
           .queue(
               newOverride -> {
-                newOverride.getManager().setAllow(permissions).queue(permOverride -> {
-                  if (success != null) {
-                    success.accept(null);
-                  }
-                });
+                newOverride
+                    .getManager()
+                    .setAllow(permissions)
+                    .queue(
+                        permOverride -> {
+                          if (success != null) {
+                            success.accept(null);
+                          }
+                        });
               });
     }
   }

@@ -17,6 +17,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeMap;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
@@ -356,27 +357,29 @@ public class JsongoDataLoader implements BotDataLoader {
    * @param <T> the type of objects to get
    * @return the list of objects
    */
-  private <T> List<T> supplyManyFromQuerySorted(
+  private <T> Map<Integer, T> supplyManyFromQuerySorted(
       @NotNull Type typeOfT,
       @NotNull MongoCollection<Document> collection,
       @NotNull Document query,
       @NotNull Document sort,
       int limit,
       int skip) {
-    List<T> list = new ArrayList<>();
+    Map<Integer, T> map = new TreeMap<>();
     MongoCursor<Document> cursor;
     if (limit != -1 && skip != -1) {
       cursor = collection.find(query).sort(sort).limit(limit).skip(skip).cursor();
     } else {
       cursor = collection.find(query).sort(sort).cursor();
     }
+    int index = skip + 1;
     while (cursor.hasNext()) {
       T obj = this.getObjectFromDocument(typeOfT, cursor.next());
       if (obj != null) {
-        list.add(obj);
+        map.put(index, obj);
+        index++;
       }
     }
-    return list;
+    return map;
   }
 
   /**
@@ -406,7 +409,7 @@ public class JsongoDataLoader implements BotDataLoader {
           if (!cache.contains(data)) {
             cache.add(data);
           } else {
-            T catchable = cache.getCatchable(clazz, data::equals);
+            T catchable = cache.get(clazz, data::equals);
             if (catchable != null) {
               toAdd.add(catchable);
               return true;
@@ -416,7 +419,7 @@ public class JsongoDataLoader implements BotDataLoader {
         });
     list.addAll(toAdd);
     if (limit == -1 || list.size() <= limit) {
-      Collection<T> catchables = cache.getCatchables(clazz, predicate);
+      Collection<T> catchables = cache.getMany(clazz, predicate);
       for (T catchable : catchables) {
         if (!this.contains(list, catchable)) {
           list.add(catchable);
@@ -503,7 +506,7 @@ public class JsongoDataLoader implements BotDataLoader {
       @NotNull ValuesMap identification,
       @NotNull Predicate<GuidoLinkableData> predicate) {
     return Guido.getCache()
-        .getCatchableOrGet(
+        .getOrSupply(
             GuidoLinkableData.class,
             predicate,
             this.supplyObjectFromQuery(
@@ -561,7 +564,13 @@ public class JsongoDataLoader implements BotDataLoader {
   public @NotNull BotGuild getGuildDataOrCreate(long id) {
     BotGuild guild = this.getGuildData(id);
     if (guild == null) {
-      return new GuidoGuild(id, new HashSet<>(), new HashMap<>(), new HashMap<>(), new HashMap<>())
+      return new GuidoGuild(
+              id,
+              new HashSet<>(),
+              new HashMap<>(),
+              new HashMap<>(),
+              new HashMap<>(),
+              new HashMap<>())
           .cache();
     }
     return guild;
@@ -570,7 +579,7 @@ public class JsongoDataLoader implements BotDataLoader {
   @Override
   public @Nullable BotGuild getGuildData(long id) {
     return Guido.getCache()
-        .getCatchableOrGet(
+        .getOrSupply(
             GuidoGuild.class,
             guild -> guild.getId() == id,
             this.supplyObjectFromQuery(GuidoGuild.class, this.guilds, new Document("id", id)));
@@ -580,7 +589,7 @@ public class JsongoDataLoader implements BotDataLoader {
   public @NotNull BotRole getRoleData(long id, long guildId) {
     GuidoRole guidoRole =
         Guido.getCache()
-            .getCatchableOrGet(
+            .getOrSupply(
                 GuidoRole.class,
                 role -> role.getId() == id && role.getGuildId() == guildId,
                 this.supplyObjectFromQuery(
@@ -597,7 +606,7 @@ public class JsongoDataLoader implements BotDataLoader {
   @Override
   public @Nullable UserData getUserData(@Nullable String id) {
     return Guido.getCache()
-        .getCatchableOrGet(
+        .getOrSupply(
             GuidoUser.class,
             user -> user.getId().equals(id),
             this.supplyObjectFromQuery(GuidoUser.class, this.users, new Document("id", id)));
@@ -606,7 +615,7 @@ public class JsongoDataLoader implements BotDataLoader {
   @Override
   public @Nullable AuthToken getAuthToken(@NotNull String token) {
     return Guido.getCache()
-        .getCatchableOrGet(
+        .getOrSupply(
             GuidoAuthToken.class,
             guidoToken -> guidoToken.getToken().equals(token),
             this.supplyObjectFromQuery(
@@ -669,7 +678,7 @@ public class JsongoDataLoader implements BotDataLoader {
   @Override
   public @Nullable BotMatch getMatch(@NotNull String id) {
     return Guido.getCache()
-        .getCatchableOrGet(
+        .getOrSupply(
             GuidoMatch.class,
             match -> match.getId().equals(id),
             this.supplyObjectFromQuery(GuidoMatch.class, this.matches, new Document("id", id)));
@@ -708,7 +717,7 @@ public class JsongoDataLoader implements BotDataLoader {
   @Override
   public @Nullable BotGroup getGroup(@NotNull String id) {
     return Guido.getCache()
-        .getCatchableOrGet(
+        .getOrSupply(
             GuidoGroup.class,
             group -> group.getId().equals(id),
             this.supplyObjectFromQuery(GuidoGroup.class, this.groups, new Document("id", id)));
@@ -745,7 +754,8 @@ public class JsongoDataLoader implements BotDataLoader {
   }
 
   @Override
-  public @NotNull List<LinkableData> getLeaderboard(@NotNull Ladder ladder, int page, int size) {
+  public @NotNull Map<Integer, LinkableData> getLeaderboard(
+      @NotNull Ladder ladder, int page, int size) {
     if (!(ladder instanceof GlobalLadder)) {
       return this.getLeaderboard(ladder.getName() + "-elo", page, size, false);
     }
@@ -753,7 +763,7 @@ public class JsongoDataLoader implements BotDataLoader {
   }
 
   @Override
-  public @NotNull List<LinkableData> getLeaderboard(
+  public @NotNull Map<Integer, LinkableData> getLeaderboard(
       @NotNull String stat, int page, int size, boolean inverted) {
     return this.supplyManyFromQuerySorted(
         GuidoLinkableData.class,

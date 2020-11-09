@@ -115,17 +115,21 @@ public class MatchMakingHandler implements GuidoEventHandler {
                   if (link instanceof BotLinkableData) {
                     Member discordMember = ((BotLinkableData) link).getDiscordMember(data.getId());
                     if (discordMember != null) {
-                      Discord.addPermissions(channel, discordMember, Discord.VOICE, (aVoid -> {
-                        GuildVoiceState state = discordMember.getVoiceState();
-                        if (state != null) {
-                          if (state.getChannel() != null) {
-                            ((BotGuild) data)
+                      Discord.addPermissions(
+                          channel,
+                          discordMember,
+                          Discord.VOICE,
+                          (aVoid -> {
+                            GuildVoiceState state = discordMember.getVoiceState();
+                            if (state != null) {
+                              if (state.getChannel() != null) {
+                                ((BotGuild) data)
                                     .getDiscord()
                                     .moveVoiceMember(discordMember, channel)
                                     .queue();
-                          }
-                        }
-                      }));
+                              }
+                            }
+                          }));
                     }
                   }
                 }

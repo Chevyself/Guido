@@ -127,11 +127,11 @@ public class Guido {
     if (argsMaps.getOrDefault("debug", "false").equalsIgnoreCase("true")) {
       Console.setDebug();
     }
-      Guido.timer.schedule(
+    Guido.timer.schedule(
         new TimerTask() {
           @Override
           public void run() {
-              Guido.cache.run();
+            Guido.cache.run();
           }
         },
         0L,

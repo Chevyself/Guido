@@ -6,7 +6,6 @@ import java.util.Set;
 import me.googas.api.matches.MatchStatus;
 import me.googas.api.matches.Team;
 import me.googas.bot.api.events.match.MatchAddTeamEvent;
-import me.googas.bot.api.events.match.MatchLoadedEvent;
 import me.googas.bot.api.events.match.MatchPreAddTeamEvent;
 import me.googas.bot.api.events.match.MatchPreRemoveTeamEvent;
 import me.googas.bot.api.events.match.MatchRemoveTeamEvent;

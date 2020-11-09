@@ -54,7 +54,8 @@ public class PGMMatchHandler implements MatchHandler {
    */
   @Listener(priority = ListenPriority.HIGHEST)
   public void onMatchStatusUpdated(@NotNull MatchStatusUpdatedEvent event) {
-    if (event.getStatus() == MatchStatus.FINISHED && "pgm".equalsIgnoreCase(event.getMatch().getDetails().get("type", String.class))) {
+    if (event.getStatus() == MatchStatus.FINISHED
+        && "pgm".equalsIgnoreCase(event.getMatch().getDetails().get("type", String.class))) {
       for (Match match : this.waitingForServer) {
         this.lookForServer(match);
       }
