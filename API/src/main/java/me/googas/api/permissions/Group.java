@@ -19,9 +19,9 @@ public interface Group extends Permissible, Catchable {
    *
    * @param name the new name of the group
    */
-    void setName(@NotNull String name);
+  void setName(@NotNull String name);
 
-    /**
+  /**
    * The unique way to identify the group
    *
    * @return the id of the group

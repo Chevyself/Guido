@@ -5,7 +5,6 @@ import java.util.Set;
 import me.googas.api.permissions.PermissionStack;
 import me.googas.bot.api.events.data.role.BotRoleUnloadedEvent;
 import me.googas.bot.api.types.BotRole;
-import me.googas.commons.cache.thread.Catchable;
 import me.googas.commons.time.Time;
 import me.googas.commons.time.Unit;
 import org.jetbrains.annotations.NotNull;
@@ -14,7 +13,7 @@ import org.jetbrains.annotations.NotNull;
  * This object represents the data for a role. Roles can be permissible which makes them have their
  * own data
  */
-public class GuidoRole extends Catchable implements BotRole {
+public class GuidoRole implements BotRole {
 
   /** The unique id of the role */
   private final long id;
@@ -66,5 +65,15 @@ public class GuidoRole extends Catchable implements BotRole {
   @Override
   public @NotNull Time getToRemove() {
     return new Time(3, Unit.MINUTES);
+  }
+
+  /**
+   * Adds this catchable in cache
+   *
+   * @return this same object instance
+   */
+  @Override
+  public @NotNull GuidoRole cache() {
+    return (GuidoRole) BotRole.super.cache();
   }
 }

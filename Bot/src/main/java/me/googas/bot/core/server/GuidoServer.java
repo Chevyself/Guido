@@ -2,7 +2,7 @@ package me.googas.bot.core.server;
 
 import com.google.gson.GsonBuilder;
 import java.io.IOException;
-import me.googas.api.links.LinkedInfo;
+import me.googas.api.links.LinkableInfo;
 import me.googas.api.matches.Team;
 import me.googas.api.matches.TeamMember;
 import me.googas.api.permissions.Permission;
@@ -55,7 +55,7 @@ public class GuidoServer extends JsonSocketServer implements BotServer {
             // Required by Commons-Communication
             .registerTypeAdapter(Message.class, new MessageDeserializer())
             // For custom receptors
-            .registerTypeAdapter(LinkedInfo.class, new LinkedInfoAdapter())
+            .registerTypeAdapter(LinkableInfo.class, new LinkedInfoAdapter())
             .registerTypeAdapter(GuidoLinkedValuesMap.class, new LinkedValuesMapAdapter())
             .registerTypeAdapter(Permission.class, new PermissionAdapter())
             .registerTypeAdapter(ValuesMap.class, new ValuesMapAdapter())

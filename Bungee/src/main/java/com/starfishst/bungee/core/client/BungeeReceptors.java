@@ -12,9 +12,9 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
-import me.googas.api.client.data.LinkedInfoImpl;
+import me.googas.api.client.data.LinkableInfoImpl;
 import me.googas.api.client.data.ValuesMapImpl;
-import me.googas.api.links.LinkedDataType;
+import me.googas.api.links.LinkableDataType;
 import me.googas.commons.Atomic;
 import me.googas.commons.maps.Maps;
 import me.googas.messaging.Request;
@@ -237,8 +237,8 @@ public class BungeeReceptors implements GuidoListener {
                 "left-queue",
                 Maps.singleton(
                     "info",
-                    new LinkedInfoImpl(
-                        LinkedDataType.MINECRAFT,
+                    new LinkableInfoImpl(
+                        LinkableDataType.MINECRAFT,
                         new ValuesMapImpl(Maps.singleton("uuid", uniqueId))))),
             bol -> {
               Guido.getLogger().info(uniqueId + " left the queue");

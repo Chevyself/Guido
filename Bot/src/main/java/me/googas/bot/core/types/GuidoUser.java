@@ -1,34 +1,66 @@
 package me.googas.bot.core.types;
 
+import java.util.Collection;
+import java.util.Map;
+import me.googas.api.links.LinkableData;
 import me.googas.api.user.UserData;
+import me.googas.api.utility.ValuesMap;
 import me.googas.bot.api.events.data.user.UserUnloadedDataEvent;
-import me.googas.commons.cache.thread.Catchable;
+import me.googas.bot.api.types.BotCatchable;
+import me.googas.bot.core.Guido;
+import me.googas.bot.core.types.maps.GuidoValuesMap;
 import me.googas.commons.time.Time;
 import me.googas.commons.time.Unit;
 import org.jetbrains.annotations.NotNull;
 
 /** An user that operates this bot */
-public class GuidoUser extends Catchable implements UserData {
+public class GuidoUser implements UserData, BotCatchable {
 
   /** The unique id of the user */
   @NotNull private final String id;
+
+  /** The preferences of the user */
+  @NotNull private final GuidoValuesMap preferences;
 
   /**
    * Create the guido user
    *
    * @param id the user id
+   * @param preferences the preferences of the user
    */
-  public GuidoUser(@NotNull String id) {
+  public GuidoUser(@NotNull String id, @NotNull GuidoValuesMap preferences) {
     this.id = id;
+    this.preferences = preferences;
   }
 
   /** @deprecated this constructor may only be used by gson */
   public GuidoUser() {
-    this("");
+    this("", new GuidoValuesMap());
   }
 
   @Override
-  public void onSecondPassed() {}
+  public void sendMessage(@NotNull String message) {
+    for (LinkableData link : this.getLinks()) {
+      link.sendMessage(message);
+      break;
+    }
+  }
+
+  @Override
+  public void sendLocalized(@NotNull String key) {
+    for (LinkableData link : this.getLinks()) {
+      link.sendLocalized(key);
+      break;
+    }
+  }
+
+  @Override
+  public void sendLocalized(@NotNull String key, @NotNull Map<String, String> placeholders) {
+    for (LinkableData link : this.getLinks()) {
+      link.sendLocalized(key, placeholders);
+      break;
+    }
+  }
 
   @Override
   public void onRemove() {
@@ -47,8 +79,13 @@ public class GuidoUser extends Catchable implements UserData {
   }
 
   @Override
-  public @NotNull GuidoUser refresh() {
-    return (GuidoUser) super.refresh();
+  public @NotNull ValuesMap getPreferences() {
+    return this.preferences;
+  }
+
+  @Override
+  public Collection<LinkableData> getLinks() {
+    return Guido.getDataLoader().getLinks(this);
   }
 
   @Override
@@ -64,5 +101,15 @@ public class GuidoUser extends Catchable implements UserData {
   @Override
   public String toString() {
     return "GuidoUser{" + "id='" + this.id + '\'' + "} " + super.toString();
+  }
+
+  /**
+   * Adds this catchable in cache
+   *
+   * @return this same object instance
+   */
+  @Override
+  public @NotNull GuidoUser cache() {
+    return (GuidoUser) BotCatchable.super.cache();
   }
 }

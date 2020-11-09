@@ -1,15 +1,15 @@
 package me.googas.bot.api.types;
 
-import me.googas.api.links.LinkedInfo;
+import me.googas.api.links.LinkableInfo;
 import me.googas.bot.core.Guido;
 import org.jetbrains.annotations.Nullable;
 
 /** An extension of uncompleted linked data */
-public interface BotLinkedInfo extends LinkedInfo {
+public interface BotLinkableInfo extends LinkableInfo {
 
   @Override
   @Nullable
-  default BotLinkedData getLink() {
+  default BotLinkableData getLink() {
     switch (this.getType()) {
       case DISCORD_GUILD:
         return Guido.getDataLoader().getLinkedData(this.getType(), this.getIdentification(), true);

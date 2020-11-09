@@ -13,8 +13,11 @@ import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.entities.TextChannel;
 import org.jetbrains.annotations.NotNull;
 
-/** The data of a guild in jda */
-public interface BotGuild extends GuildData {
+/**
+ * The data of a guild in jda TODO the api does not need guild or roles they should be moved to just
+ * be used in here
+ */
+public interface BotGuild extends GuildData, BotCatchable {
 
   /**
    * Get the discord text channel for the given key

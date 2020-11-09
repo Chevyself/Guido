@@ -1,13 +1,13 @@
 package me.googas.bot.api.loader;
 
 import java.util.Collection;
-import me.googas.api.links.LinkedDataType;
+import me.googas.api.links.LinkableDataType;
 import me.googas.api.loader.DataLoader;
 import me.googas.api.matches.Ladder;
 import me.googas.api.utility.ValuesMap;
 import me.googas.bot.api.types.BotGroup;
 import me.googas.bot.api.types.BotGuild;
-import me.googas.bot.api.types.BotLinkedData;
+import me.googas.bot.api.types.BotLinkableData;
 import me.googas.bot.api.types.BotMatch;
 import me.googas.bot.api.types.BotRole;
 import me.googas.bot.core.handlers.GuidoEventHandler;
@@ -24,7 +24,7 @@ public interface BotDataLoader extends DataLoader, GuidoEventHandler {
    * @return the data of the user
    */
   @NotNull
-  BotLinkedData getDiscordUserData(long userId);
+  BotLinkableData getDiscordUserData(long userId);
 
   /**
    * Get the discord data for a member
@@ -34,7 +34,7 @@ public interface BotDataLoader extends DataLoader, GuidoEventHandler {
    * @return the data of the user
    */
   @NotNull
-  BotLinkedData getMemberData(long userId, long guildId);
+  BotLinkableData getMemberData(long userId, long guildId);
 
   /**
    * Get all the member data for an user
@@ -43,7 +43,7 @@ public interface BotDataLoader extends DataLoader, GuidoEventHandler {
    * @return the data of the user
    */
   @NotNull
-  Collection<BotLinkedData> getDiscordData(long userId);
+  Collection<BotLinkableData> getDiscordData(long userId);
 
   @Override
   @NotNull
@@ -58,8 +58,8 @@ public interface BotDataLoader extends DataLoader, GuidoEventHandler {
   BotRole getRoleData(long id, long guildId);
 
   @Nullable
-  BotLinkedData getLinkedData(
-      @NotNull LinkedDataType type, @NotNull ValuesMap identifications, boolean equal);
+  BotLinkableData getLinkedData(
+      @NotNull LinkableDataType type, @NotNull ValuesMap identifications, boolean equal);
 
   @Override
   @Nullable

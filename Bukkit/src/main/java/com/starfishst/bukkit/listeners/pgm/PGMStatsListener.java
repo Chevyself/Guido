@@ -5,9 +5,9 @@ import com.starfishst.bukkit.api.events.GuidoListener;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
-import me.googas.api.client.data.LinkedInfoImpl;
+import me.googas.api.client.data.LinkableInfoImpl;
 import me.googas.api.client.data.ValuesMapImpl;
-import me.googas.api.links.LinkedDataType;
+import me.googas.api.links.LinkableDataType;
 import me.googas.commons.UUIDUtils;
 import me.googas.commons.maps.Maps;
 import me.googas.messaging.Request;
@@ -128,8 +128,8 @@ public class PGMStatsListener implements GuidoListener {
                       "save-stats",
                       Maps.objects(
                               "info",
-                              new LinkedInfoImpl(
-                                  LinkedDataType.MINECRAFT,
+                              new LinkableInfoImpl(
+                                  LinkableDataType.MINECRAFT,
                                   new ValuesMapImpl(Maps.singleton("uuid", UUIDUtils.trim(uuid)))))
                           .append("stats", statsMap)
                           .build()),

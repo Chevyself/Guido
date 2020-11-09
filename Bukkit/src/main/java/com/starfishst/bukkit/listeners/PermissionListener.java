@@ -14,10 +14,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
-import me.googas.api.client.data.LinkedInfoImpl;
+import me.googas.api.client.data.LinkableInfoImpl;
 import me.googas.api.client.data.PermissionStackImpl;
 import me.googas.api.client.data.ValuesMapImpl;
-import me.googas.api.links.LinkedDataType;
+import me.googas.api.links.LinkableDataType;
 import me.googas.api.permissions.Group;
 import me.googas.api.permissions.Permission;
 import me.googas.api.permissions.PermissionStack;
@@ -107,9 +107,9 @@ public class PermissionListener implements GuidoListener {
     UUID uniqueId = event.getUniqueId();
     try {
       JsonClient connection = Guido.getClient().validatedConnection();
-      LinkedInfoImpl info =
-          new LinkedInfoImpl(
-              LinkedDataType.MINECRAFT,
+      LinkableInfoImpl info =
+          new LinkableInfoImpl(
+              LinkableDataType.MINECRAFT,
               new ValuesMapImpl(Maps.singleton("uuid", UUIDUtils.trim(uniqueId))));
       String context = Guido.getConfiguration().getContext();
       connection.sendRequest(

@@ -10,7 +10,7 @@ import me.googas.bot.core.types.permissions.GuidoPermissionStack;
 import org.jetbrains.annotations.NotNull;
 
 /** A bot implementation for {@link Permissible} */
-public interface BotPermissible extends Permissible {
+public interface BotPermissible extends Permissible, BotCatchable {
 
   @Override
   default boolean addPermission(@NotNull String context, @NotNull String node, boolean enabled) {

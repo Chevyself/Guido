@@ -7,7 +7,7 @@ import com.starfishst.jda.result.Result;
 import com.starfishst.jda.result.ResultType;
 import java.util.List;
 import me.googas.api.lang.LocaleFile;
-import me.googas.api.links.LinkedData;
+import me.googas.api.links.LinkableData;
 import me.googas.api.matches.GlobalLadder;
 import me.googas.api.matches.Ladder;
 import me.googas.bot.api.loader.BotDataLoader;
@@ -50,8 +50,8 @@ public class LeaderboardCommands {
               Maps.builder("page", String.valueOf(page))
                   .append("max", String.valueOf(max))
                   .append("ladder", ladder.getName())));
-      List<LinkedData> leaderboard = loader.getLeaderboard(ladder, page, 10);
-      for (LinkedData data : leaderboard) {
+      List<LinkableData> leaderboard = loader.getLeaderboard(ladder, page, 10);
+      for (LinkableData data : leaderboard) {
         builder.append(
             locale.get(
                 "lb.entry",
@@ -89,8 +89,8 @@ public class LeaderboardCommands {
             Maps.builder("page", String.valueOf(page))
                 .append("max", String.valueOf(max))
                 .append("stat", stat)));
-    List<LinkedData> leaderboard = loader.getLeaderboard(stat, page, 20, false);
-    for (LinkedData data : leaderboard) {
+    List<LinkableData> leaderboard = loader.getLeaderboard(stat, page, 20, false);
+    for (LinkableData data : leaderboard) {
       builder.append(
           locale.get(
               "table.entry",

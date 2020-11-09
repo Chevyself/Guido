@@ -48,14 +48,14 @@ public class ValuesMapAdapter implements JsonAdapter<ValuesMap> {
         if (values.size() == 1 && values.get(0).startsWith("$")) {
           Type type = ValuesMapAdapter.objectId.get(values.get(0).substring(1));
           if (type != null) {
-            map.addValue(key, context.deserialize(valueObject.get(values.get(0)), type));
+            map.put(key, context.deserialize(valueObject.get(values.get(0)), type));
           } else {
-            map.addValue(key, context.deserialize(valueObject.get(values.get(0)), Object.class));
+            map.put(key, context.deserialize(valueObject.get(values.get(0)), Object.class));
           }
           continue;
         }
       }
-      map.addValue(key, context.deserialize(object.get(key), Object.class));
+      map.put(key, context.deserialize(object.get(key), Object.class));
     }
   }
 

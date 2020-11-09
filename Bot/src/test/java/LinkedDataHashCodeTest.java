@@ -1,25 +1,25 @@
 import java.util.ArrayList;
 import java.util.List;
-import me.googas.api.links.LinkedDataType;
-import me.googas.api.links.LinkedInfo;
-import me.googas.bot.core.types.GuidoLinkedInfo;
+import me.googas.api.links.LinkableDataType;
+import me.googas.api.links.LinkableInfo;
+import me.googas.bot.core.types.GuidoLinkableInfo;
 import me.googas.bot.core.types.maps.GuidoValuesMap;
 
 public class LinkedDataHashCodeTest {
 
   public static void main(String[] args) {
-    List<LinkedInfo> data = new ArrayList<>();
+    List<LinkableInfo> data = new ArrayList<>();
 
-    GuidoLinkedInfo selfie =
-        new GuidoLinkedInfo(
-            LinkedDataType.MINECRAFT,
+    GuidoLinkableInfo selfie =
+        new GuidoLinkableInfo(
+            LinkableDataType.MINECRAFT,
             new GuidoValuesMap("uuid", "5eed208dde5840229ba76ccb5ea7e92a")
-                .addValue("nickname", "Selfie"));
-    GuidoLinkedInfo xinoo =
-        new GuidoLinkedInfo(
-            LinkedDataType.MINECRAFT,
+                .put("nickname", "Selfie"));
+    GuidoLinkableInfo xinoo =
+        new GuidoLinkableInfo(
+            LinkableDataType.MINECRAFT,
             new GuidoValuesMap("uuid", "554ee0077cc64ae589fb60d0e1e75871")
-                .addValue("nickname", "xinoooo"));
+                .put("nickname", "xinoooo"));
     data.add(selfie);
     // data.add(xinoo);
     System.out.println(data.contains(xinoo));

@@ -1,15 +1,15 @@
 package me.googas.bot.core.types;
 
-import me.googas.api.links.LinkedDataType;
-import me.googas.bot.api.types.BotLinkedInfo;
+import me.googas.api.links.LinkableDataType;
+import me.googas.bot.api.types.BotLinkableInfo;
 import me.googas.bot.core.types.maps.GuidoValuesMap;
 import org.jetbrains.annotations.NotNull;
 
 /** The uncompleted data from a linked data */
-public class GuidoLinkedInfo implements BotLinkedInfo {
+public class GuidoLinkableInfo implements BotLinkableInfo {
 
   /** The type of linked data */
-  @NotNull private final LinkedDataType type;
+  @NotNull private final LinkableDataType type;
 
   /** The way to identify this data */
   @NotNull private final GuidoValuesMap identification;
@@ -20,18 +20,18 @@ public class GuidoLinkedInfo implements BotLinkedInfo {
    * @param type the type of data
    * @param identification the way to identify the data
    */
-  public GuidoLinkedInfo(@NotNull LinkedDataType type, @NotNull GuidoValuesMap identification) {
+  public GuidoLinkableInfo(@NotNull LinkableDataType type, @NotNull GuidoValuesMap identification) {
     this.type = type;
     this.identification = identification;
   }
 
   /** @deprecated this constructor may only be used by gson */
-  public GuidoLinkedInfo() {
-    this(LinkedDataType.NONE, new GuidoValuesMap());
+  public GuidoLinkableInfo() {
+    this(LinkableDataType.NONE, new GuidoValuesMap());
   }
 
   @Override
-  public @NotNull LinkedDataType getType() {
+  public @NotNull LinkableDataType getType() {
     return this.type;
   }
 
@@ -43,9 +43,9 @@ public class GuidoLinkedInfo implements BotLinkedInfo {
   @Override
   public boolean equals(Object object) {
     if (this == object) return true;
-    if (!(object instanceof GuidoLinkedInfo)) return false;
+    if (!(object instanceof GuidoLinkableInfo)) return false;
 
-    GuidoLinkedInfo that = (GuidoLinkedInfo) object;
+    GuidoLinkableInfo that = (GuidoLinkableInfo) object;
 
     if (this.type != that.type) return false;
     switch (this.getType()) {

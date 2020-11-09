@@ -137,6 +137,18 @@ public class Console {
   /**
    * An exception message. This will add automatically the exception to the fallback
    *
+   * @param throwable the exception that was thrown
+   */
+  public static void exception(@NotNull Throwable throwable) {
+    if (throwable.getMessage() != null) {
+      Fallback.addError(throwable.getMessage());
+    }
+    Console.logger.log(Level.SEVERE, Console.getStackTrace(throwable));
+  }
+
+  /**
+   * An exception message. This will add automatically the exception to the fallback
+   *
    * @param message an information message
    */
   public static void exception(@NotNull String message) {

@@ -1,6 +1,6 @@
 package me.googas.bot.api.events.queue;
 
-import me.googas.api.links.LinkedInfo;
+import me.googas.api.links.LinkableInfo;
 import me.googas.api.matches.Queue;
 import me.googas.bot.api.events.GuidoCancellable;
 import org.jetbrains.annotations.NotNull;
@@ -9,7 +9,7 @@ import org.jetbrains.annotations.NotNull;
 public class QueuePreJoinEvent extends QueueEvent implements GuidoCancellable {
 
   /** The information of the user joining the queue */
-  @NotNull private final LinkedInfo data;
+  @NotNull private final LinkableInfo data;
 
   /** Why was the join event cancelled */
   @NotNull private final String reason;
@@ -26,7 +26,7 @@ public class QueuePreJoinEvent extends QueueEvent implements GuidoCancellable {
    * @param cancelled whether the event is cancelled
    */
   private QueuePreJoinEvent(
-      @NotNull Queue queue, @NotNull LinkedInfo data, @NotNull String reason, boolean cancelled) {
+      @NotNull Queue queue, @NotNull LinkableInfo data, @NotNull String reason, boolean cancelled) {
     super(queue);
     this.data = data;
     this.reason = reason;
@@ -39,7 +39,7 @@ public class QueuePreJoinEvent extends QueueEvent implements GuidoCancellable {
    * @param queue the queue involved in the event
    * @param data the data that joined the queue
    */
-  public QueuePreJoinEvent(@NotNull Queue queue, @NotNull LinkedInfo data) {
+  public QueuePreJoinEvent(@NotNull Queue queue, @NotNull LinkableInfo data) {
     this(queue, data, "No reason provided", false);
   }
 

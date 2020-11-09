@@ -7,6 +7,7 @@ import java.lang.ref.SoftReference;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Timer;
+import java.util.TimerTask;
 import me.googas.api.loader.DataLoader;
 import me.googas.bot.api.events.GuidoCancellable;
 import me.googas.bot.api.loader.BotDataLoader;
@@ -45,7 +46,7 @@ import me.googas.bot.core.util.console.Console;
 import me.googas.commons.Lots;
 import me.googas.commons.Validate;
 import me.googas.commons.cache.Catchable;
-import me.googas.commons.cache.thread.Cache;
+import me.googas.commons.cache.MemoryCache;
 import me.googas.commons.cache.thread.ICatchable;
 import me.googas.commons.events.Event;
 import me.googas.commons.events.ListenerManager;
@@ -60,6 +61,8 @@ import org.jetbrains.annotations.Nullable;
 /** The match making bot */
 public class Guido {
 
+  /** The cache of the bot */
+  @NotNull private static final MemoryCache cache = new MemoryCache();
   /** The timer which can be used in other instances of the bot */
   @NotNull private static final Timer timer = new Timer(Guido.class.getName());
   /** The connection of guido with discord */
@@ -124,9 +127,17 @@ public class Guido {
     if (argsMaps.getOrDefault("debug", "false").equalsIgnoreCase("true")) {
       Console.setDebug();
     }
-
+      Guido.timer.schedule(
+        new TimerTask() {
+          @Override
+          public void run() {
+              Guido.cache.run();
+          }
+        },
+        0L,
+        1000L);
+    Thread.setDefaultUncaughtExceptionHandler((thread, exception) -> Console.exception(exception));
     JDA jda = Guido.setupJda(argsMaps);
-
     Guido.setupDataLoader(argsMaps);
     Guido.createServer(argsMaps);
     Guido.registerCommands(argsMaps, jda);
@@ -274,9 +285,9 @@ public class Guido {
   /** Clears all the cached items from the bot */
   public static void clearCache() {
     Console.info("Clearing cache...");
-    for (SoftReference<Catchable> reference : Cache.copy()) {
+    for (SoftReference<Catchable> reference : Guido.cache.copy()) {
       Catchable catchable = reference.get();
-      if (catchable instanceof ICatchable) {
+      if (catchable instanceof Catchable) {
         Console.debug(catchable + " is being cleaned");
         try {
           ((ICatchable) catchable).unload(true);
@@ -285,7 +296,7 @@ public class Guido {
         }
       }
     }
-    Cache.getMap().clear();
+    Guido.cache.getMap().clear();
   }
 
   /**
@@ -333,6 +344,16 @@ public class Guido {
    */
   public static void setDataLoader(@NotNull BotDataLoader loader) {
     Guido.dataLoader = loader;
+  }
+
+  /**
+   * Get the cache of the bot
+   *
+   * @return the cache
+   */
+  @NotNull
+  public static MemoryCache getCache() {
+    return Guido.cache;
   }
 
   /**

@@ -9,7 +9,7 @@ import com.starfishst.bukkit.providers.type.BukkitArgumentProvider;
 import com.starfishst.core.exceptions.ArgumentProviderException;
 import java.util.ArrayList;
 import java.util.List;
-import me.googas.api.links.LinkedInfo;
+import me.googas.api.links.LinkableInfo;
 import me.googas.commons.maps.Maps;
 import org.jetbrains.annotations.NotNull;
 
@@ -17,23 +17,23 @@ import org.jetbrains.annotations.NotNull;
  * @deprecated This provider is temporal and may change in the future as it only should be used in
  *     {@link com.starfishst.bukkit.commands.PickCommands}
  */
-public class PlayerInfoProvider implements BukkitArgumentProvider<LinkedInfo> {
+public class PlayerInfoProvider implements BukkitArgumentProvider<LinkableInfo> {
 
   @Override
-  public @NotNull Class<LinkedInfo> getClazz() {
-    return LinkedInfo.class;
+  public @NotNull Class<LinkableInfo> getClazz() {
+    return LinkableInfo.class;
   }
 
   @NotNull
   @Override
-  public LinkedInfo fromString(@NotNull String s, @NotNull CommandContext context)
+  public LinkableInfo fromString(@NotNull String s, @NotNull CommandContext context)
       throws ArgumentProviderException {
     PGMMatchMakingListener listener = Guido.getListener(PGMMatchMakingListener.class);
     if (listener != null) {
       TeamCreation creation = listener.getCreation("pick");
       if (creation instanceof PickTeamSelection) {
-        for (LinkedInfo info : ((PickTeamSelection) creation).getPlayersLeft()) {
-          String nickname = info.getIdentification().getValue("nickname", String.class);
+        for (LinkableInfo info : ((PickTeamSelection) creation).getPlayersLeft()) {
+          String nickname = info.getIdentification().get("nickname", String.class);
           if (s.equalsIgnoreCase(nickname)) {
             return info;
           }
@@ -53,8 +53,8 @@ public class PlayerInfoProvider implements BukkitArgumentProvider<LinkedInfo> {
     if (listener != null) {
       TeamCreation creation = listener.getCreation("pick");
       if (creation instanceof PickTeamSelection) {
-        for (LinkedInfo info : ((PickTeamSelection) creation).getPlayersLeft()) {
-          String nickname = info.getIdentification().getValue("nickname", String.class);
+        for (LinkableInfo info : ((PickTeamSelection) creation).getPlayersLeft()) {
+          String nickname = info.getIdentification().get("nickname", String.class);
           if (nickname != null) {
             names.add(nickname);
           }

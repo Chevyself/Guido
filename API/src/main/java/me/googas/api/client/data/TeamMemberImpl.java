@@ -1,7 +1,7 @@
 package me.googas.api.client.data;
 
-import me.googas.api.links.LinkedDataType;
-import me.googas.api.links.LinkedInfo;
+import me.googas.api.links.LinkableDataType;
+import me.googas.api.links.LinkableInfo;
 import me.googas.api.matches.TeamMember;
 import me.googas.api.matches.TeamRole;
 import org.jetbrains.annotations.NotNull;
@@ -10,7 +10,7 @@ import org.jetbrains.annotations.NotNull;
 public class TeamMemberImpl implements TeamMember {
 
   /** The information of the team */
-  @NotNull private final LinkedInfo linkInfo;
+  @NotNull private final LinkableInfo linkInfo;
 
   /** The role of the member in the team */
   @NotNull private final TeamRole role;
@@ -21,18 +21,18 @@ public class TeamMemberImpl implements TeamMember {
    * @param linkInfo the info of the team
    * @param role the role of the team
    */
-  public TeamMemberImpl(@NotNull LinkedInfo linkInfo, @NotNull TeamRole role) {
+  public TeamMemberImpl(@NotNull LinkableInfo linkInfo, @NotNull TeamRole role) {
     this.linkInfo = linkInfo;
     this.role = role;
   }
 
   /** @deprecated constructor may only be used in gson */
   public TeamMemberImpl() {
-    this(new LinkedInfoImpl(LinkedDataType.NONE, new ValuesMapImpl()), TeamRole.NORMAL);
+    this(new LinkableInfoImpl(LinkableDataType.NONE, new ValuesMapImpl()), TeamRole.NORMAL);
   }
 
   @Override
-  public @NotNull LinkedInfo getLinkInfo() {
+  public @NotNull LinkableInfo getLinkInfo() {
     return this.linkInfo;
   }
 

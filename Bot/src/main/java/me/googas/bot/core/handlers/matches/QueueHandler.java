@@ -7,14 +7,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import me.googas.api.discord.GuildData;
-import me.googas.api.links.LinkedData;
-import me.googas.api.links.LinkedInfo;
+import me.googas.api.links.LinkableData;
+import me.googas.api.links.LinkableInfo;
 import me.googas.api.matches.Ladder;
 import me.googas.api.matches.Queue;
 import me.googas.api.user.UserData;
 import me.googas.bot.api.events.queue.QueueLeaveEvent;
 import me.googas.bot.api.types.BotGuild;
-import me.googas.bot.api.types.BotLinkedData;
+import me.googas.bot.api.types.BotLinkableData;
 import me.googas.bot.core.Guido;
 import me.googas.bot.core.handlers.GuidoEventHandler;
 import me.googas.bot.core.util.console.Console;
@@ -51,9 +51,9 @@ public class QueueHandler implements GuidoEventHandler {
     if (channelId == channel.getIdLong()) {
       Console.debug(
           event.getMember().getUser().getAsTag() + " has disconnected from the queue channel");
-      BotLinkedData member =
+      BotLinkableData member =
           Guido.getDataLoader().getMemberData(event.getMember().getIdLong(), guildId);
-      for (LinkedData data : member.getLinks()) {
+      for (LinkableData data : member.getLinks()) {
         this.leaveQueue(data.getInfo());
       }
       this.checkDeletion(channel, guildId);
@@ -67,10 +67,10 @@ public class QueueHandler implements GuidoEventHandler {
    */
   @Listener(priority = ListenPriority.HIGHEST)
   public void onQueueLeave(QueueLeaveEvent event) {
-    LinkedData link = event.getData().getLink();
+    LinkableData link = event.getData().getLink();
     Console.debug(link + " has left the queue " + event.getQueue());
-    if (link instanceof BotLinkedData) {
-      Member member = ((BotLinkedData) link).getDiscordMember(event.getQueue().getGuildId());
+    if (link instanceof BotLinkableData) {
+      Member member = ((BotLinkableData) link).getDiscordMember(event.getQueue().getGuildId());
       if (member != null) {
         GuildVoiceState voiceState = member.getVoiceState();
         if (voiceState != null) {
@@ -91,7 +91,7 @@ public class QueueHandler implements GuidoEventHandler {
    *
    * @param info the information of the data to leave all queues
    */
-  public void leaveQueue(@NotNull LinkedInfo info) {
+  public void leaveQueue(@NotNull LinkableInfo info) {
     for (Queue queue : this.getQueues(info)) {
       queue.leave(info);
       Console.info(info + " has leaving the queue " + queue);
@@ -203,7 +203,7 @@ public class QueueHandler implements GuidoEventHandler {
    * @param info the information of a link
    * @return the collection of queues where the link is waiting
    */
-  public Collection<Queue> getQueues(@NotNull LinkedInfo info) {
+  public Collection<Queue> getQueues(@NotNull LinkableInfo info) {
     Set<Queue> queues = new HashSet<>();
     for (Queue queue : this.queues) {
       if (queue.isWaiting(info)) {
@@ -215,8 +215,8 @@ public class QueueHandler implements GuidoEventHandler {
 
   public Collection<Queue> getQueues(@NotNull UserData data) {
     Set<Queue> queues = new HashSet<>();
-    Collection<LinkedData> links = Guido.getDataLoader().getLinks(data);
-    for (LinkedData link : links) {
+    Collection<LinkableData> links = Guido.getDataLoader().getLinks(data);
+    for (LinkableData link : links) {
       queues.addAll(this.getQueues(link.getInfo()));
     }
     return queues;
@@ -232,10 +232,10 @@ public class QueueHandler implements GuidoEventHandler {
    */
   public boolean isWaiting(
       @NotNull BotGuild guild, @NotNull Member member, @NotNull Ladder ladder) {
-    BotLinkedData memberData =
+    BotLinkableData memberData =
         Guido.getDataLoader().getMemberData(member.getIdLong(), guild.getId());
     Queue queue = this.getQueue(guild, ladder);
-    for (LinkedData link : memberData.getLinks()) {
+    for (LinkableData link : memberData.getLinks()) {
       if (queue.isWaiting(link.getInfo())) {
         Console.debug(link + " is waiting inside the queue " + queue);
         return true;

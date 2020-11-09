@@ -6,12 +6,12 @@ import com.starfishst.jda.result.Result;
 import com.starfishst.jda.result.ResultType;
 import java.util.Collection;
 import me.googas.api.lang.LocaleFile;
-import me.googas.api.links.LinkedData;
-import me.googas.api.links.LinkedInfo;
+import me.googas.api.links.LinkableData;
+import me.googas.api.links.LinkableInfo;
 import me.googas.api.matches.Ladder;
 import me.googas.api.user.UserData;
 import me.googas.bot.api.types.BotGuild;
-import me.googas.bot.api.types.BotLinkedData;
+import me.googas.bot.api.types.BotLinkableData;
 import me.googas.bot.core.Guido;
 import me.googas.bot.core.handlers.matches.MatchMakingHandler;
 import me.googas.bot.core.handlers.matches.QueueHandler;
@@ -73,16 +73,16 @@ public class QueueCommands {
       LocaleFile locale,
       BotGuild guild,
       @Required(name = "iq.ladder", description = "iq.ladder.desc") Ladder ladder) {
-    Collection<LinkedInfo> waiting =
+    Collection<LinkableInfo> waiting =
         Guido.getHandler(QueueHandler.class).getQueue(guild, ladder).getWaiting();
     if (waiting.isEmpty()) {
       return new Result(locale.get("iq.empty", Maps.singleton("ladder", ladder.getName())));
     } else {
       StringBuilder builder = Strings.getBuilder();
       builder.append(locale.get("iq.title", Maps.singleton("ladder", ladder.getName())));
-      for (LinkedInfo info : waiting) {
-        LinkedData link = info.getLink();
-        if (link instanceof BotLinkedData) {
+      for (LinkableInfo info : waiting) {
+        LinkableData link = info.getLink();
+        if (link instanceof BotLinkableData) {
           builder.append(link.getReadable(locale));
         }
       }

@@ -3,9 +3,9 @@ package me.googas.bot.core.types;
 import me.googas.api.discord.GuildData;
 import me.googas.api.matches.Ladder;
 import me.googas.api.matches.Queue;
-import me.googas.bot.core.handlers.matches.queues.GuidoPGMQueue;
-import me.googas.bot.core.handlers.matches.queues.GuidoQueue;
 import me.googas.bot.core.types.maps.GuidoValuesMap;
+import me.googas.bot.core.types.queues.GuidoPGMQueue;
+import me.googas.bot.core.types.queues.GuidoQueue;
 import org.jetbrains.annotations.NotNull;
 
 /** An implementation for ladder */
@@ -46,7 +46,7 @@ public class GuidoLadder implements Ladder {
 
   @Override
   public @NotNull Queue createQueue(@NotNull GuildData data) {
-    String type = this.getOptions().getValueOr("type", String.class, "none");
+    String type = this.getOptions().getOr("type", String.class, "none");
     switch (type) {
       case "pgm":
         return new GuidoPGMQueue(data.getId(), this.getName());

@@ -8,13 +8,12 @@ import me.googas.api.matches.Ladder;
 import me.googas.api.ranks.RankRange;
 import me.googas.bot.api.events.data.guild.BotGuildUnloadedEvent;
 import me.googas.bot.api.types.BotGuild;
-import me.googas.commons.cache.thread.Catchable;
 import me.googas.commons.time.Time;
 import me.googas.commons.time.Unit;
 import org.jetbrains.annotations.NotNull;
 
 /** This object represents the data for a guild that is using this bot */
-public class GuidoGuild extends Catchable implements BotGuild {
+public class GuidoGuild implements BotGuild {
 
   /** The unique id of the guild */
   private final long id;
@@ -86,9 +85,6 @@ public class GuidoGuild extends Catchable implements BotGuild {
   }
 
   @Override
-  public void onSecondPassed() {}
-
-  @Override
   public void onRemove() {
     new BotGuildUnloadedEvent(this).call();
   }
@@ -96,5 +92,15 @@ public class GuidoGuild extends Catchable implements BotGuild {
   @Override
   public @NotNull Time getToRemove() {
     return new Time(10, Unit.MINUTES);
+  }
+
+  /**
+   * Adds this catchable in cache
+   *
+   * @return this same object instance
+   */
+  @Override
+  public @NotNull GuidoGuild cache() {
+    return (GuidoGuild) BotGuild.super.cache();
   }
 }

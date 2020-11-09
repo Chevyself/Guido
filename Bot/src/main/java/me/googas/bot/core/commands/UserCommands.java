@@ -7,11 +7,11 @@ import com.starfishst.jda.result.Result;
 import com.starfishst.jda.result.ResultType;
 import java.util.Collection;
 import me.googas.api.lang.LocaleFile;
-import me.googas.api.links.LinkedData;
-import me.googas.api.links.LinkedInfo;
+import me.googas.api.links.LinkableData;
+import me.googas.api.links.LinkableInfo;
 import me.googas.api.user.UserData;
 import me.googas.bot.api.loader.BotDataLoader;
-import me.googas.bot.api.types.BotLinkedData;
+import me.googas.bot.api.types.BotLinkableData;
 import me.googas.bot.core.Guido;
 import me.googas.bot.core.handlers.link.LinkHandler;
 import me.googas.commons.Strings;
@@ -40,13 +40,13 @@ public class UserCommands {
       toSee = sender;
     }
     BotDataLoader loader = Guido.getDataLoader();
-    Collection<LinkedData> links = loader.getLinks(toSee);
+    Collection<LinkableData> links = loader.getLinks(toSee);
     if (links.isEmpty()) {
       return new Result(locale.get("links.empty", Maps.singleton("id", toSee.getId())));
     } else {
       StringBuilder builder = Strings.getBuilder();
       builder.append(locale.get("links.title", Maps.singleton("id", toSee.getId())));
-      for (LinkedData link : links) {
+      for (LinkableData link : links) {
         builder.append(link.getReadable(locale));
       }
       return new Result(builder.toString());
@@ -66,16 +66,16 @@ public class UserCommands {
       LocaleFile locale,
       UserData user,
       @Required(name = "link.code", description = "link.code.desc") String code) {
-    LinkedInfo info = Guido.getHandler(LinkHandler.class).getInfo(code);
+    LinkableInfo info = Guido.getHandler(LinkHandler.class).getInfo(code);
     if (info != null) {
-      Collection<LinkedData> links = Guido.getDataLoader().getLinks(user, info.getType());
+      Collection<LinkableData> links = Guido.getDataLoader().getLinks(user, info.getType());
       if (links.size() >= 1) {
         return new Result(
             ResultType.ERROR,
             locale.get(
                 "link.only-one", Maps.singleton("type", info.getType().toString().toLowerCase())));
       } else {
-        BotLinkedData data =
+        BotLinkableData data =
             Guido.getDataLoader().getLinkedData(info.getType(), info.getIdentification(), true);
         if (data != null) {
           data.setLinkedUser(user);

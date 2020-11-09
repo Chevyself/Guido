@@ -83,19 +83,20 @@ public class GuidoValuesMap implements ValuesMap {
     return code;
   }
 
+  @NotNull
   @Override
-  public GuidoValuesMap addValue(@NotNull String name, @NotNull Object value) {
-    return (GuidoValuesMap) ValuesMap.super.addValue(name, value);
+  public GuidoValuesMap put(@NotNull String name, @NotNull Object value) {
+    return (GuidoValuesMap) ValuesMap.super.put(name, value);
   }
 
   @Override
-  public GuidoValuesMap addValues(@NotNull Map<String, Object> map) {
-    return (GuidoValuesMap) ValuesMap.super.addValues(map);
+  public GuidoValuesMap put(@NotNull Map<String, Object> map) {
+    return (GuidoValuesMap) ValuesMap.super.put(map);
   }
 
   @Override
-  public GuidoValuesMap addValues(@NotNull ValuesMap map) {
-    return (GuidoValuesMap) ValuesMap.super.addValues(map);
+  public GuidoValuesMap put(@NotNull ValuesMap map) {
+    return (GuidoValuesMap) ValuesMap.super.put(map);
   }
 
   @Override

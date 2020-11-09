@@ -8,10 +8,10 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.UUID;
-import me.googas.api.client.data.LinkedInfoImpl;
+import me.googas.api.client.data.LinkableInfoImpl;
 import me.googas.api.client.data.PermissionStackImpl;
 import me.googas.api.client.data.ValuesMapImpl;
-import me.googas.api.links.LinkedDataType;
+import me.googas.api.links.LinkableDataType;
 import me.googas.api.permissions.Group;
 import me.googas.api.permissions.Permission;
 import me.googas.api.permissions.PermissionStack;
@@ -42,9 +42,9 @@ public class JoinListener implements GuidoListener {
     UUID uuid = player.getUniqueId();
     try {
       JsonClient connection = Guido.getClient().validatedConnection();
-      LinkedInfoImpl info =
-          new LinkedInfoImpl(
-              LinkedDataType.MINECRAFT,
+      LinkableInfoImpl info =
+          new LinkableInfoImpl(
+              LinkableDataType.MINECRAFT,
               new ValuesMapImpl(Maps.singleton("uuid", UUIDUtils.trim(uuid))));
       connection.sendRequest(
           new Request<>(Boolean.class, "data-exists", Maps.singleton("info", info)),

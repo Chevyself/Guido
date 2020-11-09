@@ -1,8 +1,8 @@
 package me.googas.bot.core.server.receptors;
 
 import java.util.Collection;
-import me.googas.api.links.LinkedData;
-import me.googas.api.links.LinkedInfo;
+import me.googas.api.links.LinkableData;
+import me.googas.api.links.LinkableInfo;
 import me.googas.api.matches.Queue;
 import me.googas.bot.core.Guido;
 import me.googas.bot.core.handlers.matches.QueueHandler;
@@ -19,8 +19,8 @@ public class QueueReceptors {
    * @return true if the user was removed from the queue
    */
   @Receptor("left-queue")
-  public boolean leftQueue(@ParamName("info") LinkedInfo info) {
-    LinkedData data = info.getLink();
+  public boolean leftQueue(@ParamName("info") LinkableInfo info) {
+    LinkableData data = info.getLink();
     if (data != null) {
       Collection<Queue> queues = Guido.getHandler(QueueHandler.class).getQueues(info);
       for (Queue queue : queues) {

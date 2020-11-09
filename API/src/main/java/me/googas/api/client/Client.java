@@ -6,7 +6,6 @@ import java.net.Socket;
 import java.util.Arrays;
 import java.util.Set;
 import java.util.function.Consumer;
-import java.util.function.Predicate;
 import me.googas.api.client.data.ValuesMapImpl;
 import me.googas.api.client.data.adapters.GroupAdapter;
 import me.googas.api.client.data.adapters.LadderAdapter;
@@ -18,7 +17,7 @@ import me.googas.api.client.data.adapters.TeamAdapter;
 import me.googas.api.client.data.adapters.TeamMemberAdapter;
 import me.googas.api.client.data.adapters.ValuesMapAdapter;
 import me.googas.api.client.receptors.ReceptorsImpl;
-import me.googas.api.links.LinkedInfo;
+import me.googas.api.links.LinkableInfo;
 import me.googas.api.matches.Ladder;
 import me.googas.api.matches.Match;
 import me.googas.api.matches.Team;
@@ -28,8 +27,6 @@ import me.googas.api.permissions.Permission;
 import me.googas.api.permissions.PermissionStack;
 import me.googas.api.utility.ValuesMap;
 import me.googas.commons.Lots;
-import me.googas.commons.cache.thread.Cache;
-import me.googas.commons.cache.thread.ICatchable;
 import me.googas.commons.maps.Maps;
 import me.googas.messaging.Request;
 import me.googas.messaging.api.Message;
@@ -89,7 +86,7 @@ public class Client {
                 // Required for requests
                 .registerTypeAdapter(Group.class, new GroupAdapter())
                 .registerTypeAdapter(Ladder.class, new LadderAdapter())
-                .registerTypeAdapter(LinkedInfo.class, new LinkedInfoAdapter())
+                .registerTypeAdapter(LinkableInfo.class, new LinkedInfoAdapter())
                 .registerTypeAdapter(Match.class, new MatchAdapter())
                 .registerTypeAdapter(Permission.class, new PermissionAdapter())
                 .registerTypeAdapter(PermissionStack.class, new PermissionStackAdapter())
@@ -124,30 +121,6 @@ public class Client {
     }
     this.connection = null;
     System.out.println("Client has been disconnected");
-  }
-
-  /**
-   * @see JsonClient#sendRequest(Request, Consumer) this method is delegated but it also allows to
-   *     get an object from cache
-   * @param request the request to make
-   * @param predicate the method to get the object from the cache
-   * @param consumer the method to execute with the given object
-   * @param <T> the type of the object
-   * @throws MessengerListenFailException if the connection times out or there's no connection
-   */
-  public <T extends ICatchable> void request(
-      @NotNull Request<T> request, @NotNull Predicate<T> predicate, @NotNull Consumer<T> consumer)
-      throws MessengerListenFailException {
-    T catchable = Cache.getCatchable(request.getClazz(), predicate);
-    if (catchable != null) {
-      consumer.accept(catchable);
-    } else {
-      try {
-        this.validatedConnection().sendRequest(request, consumer);
-      } catch (IOException e) {
-        throw new MessengerListenFailException("There's no connection with the bot", e);
-      }
-    }
   }
 
   /**

@@ -1,6 +1,6 @@
 package me.googas.api.matches;
 
-import me.googas.api.links.LinkedInfo;
+import me.googas.api.links.LinkableInfo;
 import org.jetbrains.annotations.NotNull;
 
 /** Represents the linked info inside a team */
@@ -12,7 +12,7 @@ public interface TeamMember {
    * @return the linked information
    */
   @NotNull
-  LinkedInfo getLinkInfo();
+  LinkableInfo getLinkInfo();
 
   /**
    * Get the role of the member inside the team

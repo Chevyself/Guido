@@ -118,7 +118,7 @@ public class GuidoLanguageHandler implements MessagesProvider, GuidoHandler {
     return this.dataLoader
         .getDiscordUserData(context.getSender().getIdLong())
         .getPreferences()
-        .getValueOr("lang", String.class, "en");
+        .getOr("lang", String.class, "en");
   }
 
   /**

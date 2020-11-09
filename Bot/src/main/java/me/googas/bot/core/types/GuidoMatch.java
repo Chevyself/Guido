@@ -17,15 +17,13 @@ import me.googas.bot.api.types.BotMatch;
 import me.googas.bot.core.Guido;
 import me.googas.bot.core.types.maps.GuidoLinkedValuesMap;
 import me.googas.bot.core.types.maps.GuidoValuesMap;
-import me.googas.commons.cache.thread.Catchable;
-import me.googas.commons.cache.thread.ICatchable;
 import me.googas.commons.time.Time;
 import me.googas.commons.time.Unit;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 /** An implementation for a match */
-public class GuidoMatch extends Catchable implements BotMatch, ICatchable {
+public class GuidoMatch implements BotMatch {
 
   /** The id of the match */
   @NotNull private final String id;
@@ -53,19 +51,18 @@ public class GuidoMatch extends Catchable implements BotMatch, ICatchable {
    * @param winners the winners of the match
    */
   public GuidoMatch(
-          @NotNull String id,
-          long guildId,
-          @NotNull MatchStatus status,
-          @NotNull Set<Team> teams,
-          @NotNull GuidoLinkedValuesMap details,
-          int winners) {
+      @NotNull String id,
+      long guildId,
+      @NotNull MatchStatus status,
+      @NotNull Set<Team> teams,
+      @NotNull GuidoLinkedValuesMap details,
+      int winners) {
     this.id = id;
     this.guildId = guildId;
     this.status = status;
     this.teams = teams;
     this.details = details;
     this.winners = winners;
-    this.addToCache();
     new MatchLoadedEvent(this).call();
   }
 
@@ -230,5 +227,15 @@ public class GuidoMatch extends Catchable implements BotMatch, ICatchable {
     int result = this.id.hashCode();
     result = 31 * result + (int) (this.guildId ^ (this.guildId >>> 32));
     return result;
+  }
+
+  /**
+   * Adds this catchable in cache
+   *
+   * @return this same object instance
+   */
+  @Override
+  public @NotNull GuidoMatch cache() {
+    return (GuidoMatch) BotMatch.super.cache();
   }
 }

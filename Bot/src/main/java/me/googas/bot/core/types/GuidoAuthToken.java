@@ -4,16 +4,16 @@ import me.googas.api.token.AuthLevel;
 import me.googas.api.token.AuthToken;
 import me.googas.api.user.UserData;
 import me.googas.bot.api.events.data.token.AuthTokenUnloadedEvent;
+import me.googas.bot.api.types.BotCatchable;
 import me.googas.bot.core.Guido;
 import me.googas.commons.RandomUtils;
-import me.googas.commons.cache.thread.Catchable;
 import me.googas.commons.time.Time;
 import me.googas.commons.time.Unit;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 /** An implementation for {@link AuthToken} */
-public class GuidoAuthToken extends Catchable implements AuthToken {
+public class GuidoAuthToken implements AuthToken, BotCatchable {
 
   /** The unique string token */
   @NotNull private final String token;
@@ -34,7 +34,6 @@ public class GuidoAuthToken extends Catchable implements AuthToken {
    */
   public GuidoAuthToken(
       @NotNull String token, @NotNull AuthLevel level, @NotNull String user, boolean addToCache) {
-    super(addToCache);
     this.token = token;
     this.level = level;
     this.user = user;
@@ -54,9 +53,6 @@ public class GuidoAuthToken extends Catchable implements AuthToken {
   public GuidoAuthToken() {
     this("", AuthLevel.NONE, "", false);
   }
-
-  @Override
-  public void onSecondPassed() {}
 
   @Override
   public void onRemove() {
@@ -107,5 +103,10 @@ public class GuidoAuthToken extends Catchable implements AuthToken {
     result = 31 * result + this.level.hashCode();
     result = 31 * result + this.user.hashCode();
     return result;
+  }
+
+  @Override
+  public @NotNull GuidoAuthToken cache() {
+    return (GuidoAuthToken) BotCatchable.super.cache();
   }
 }

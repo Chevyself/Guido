@@ -7,6 +7,6 @@ public interface GuidoPgmListener extends GuidoListener {
 
   @Override
   default boolean isEnabled() {
-    return Guido.isPgmConnected() && this.getSettings().getValueOr("enabled", Boolean.class, false);
+    return Guido.isPgmConnected() && this.getSettings().getOr("enabled", Boolean.class, false);
   }
 }

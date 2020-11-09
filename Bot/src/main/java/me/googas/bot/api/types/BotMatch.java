@@ -16,7 +16,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 /** An extension of match */
-public interface BotMatch extends Match {
+public interface BotMatch extends Match, BotCatchable {
 
   /** The keys to ignore from the details of the match when making the information */
   Set<String> toIgnore = Lots.set("thumbnail", "guild", "type");
@@ -30,7 +30,7 @@ public interface BotMatch extends Match {
   @NotNull
   default EmbedQuery getInformation(@NotNull LocaleFile locale) {
     EmbedBuilder builder = new EmbedBuilder();
-    String thumbnail = this.getDetails().getValue("thumbnail", String.class);
+    String thumbnail = this.getDetails().get("thumbnail", String.class);
     StringBuilder stringBuilder = Strings.getBuilder();
     builder.setTitle(locale.get("match.title", Maps.singleton("id", this.getId())));
     builder.setFooter(locale.get("footer"));

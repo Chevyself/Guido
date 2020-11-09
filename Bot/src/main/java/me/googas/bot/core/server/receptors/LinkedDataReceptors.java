@@ -3,8 +3,8 @@ package me.googas.bot.core.server.receptors;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
-import me.googas.api.links.LinkedData;
-import me.googas.api.links.LinkedInfo;
+import me.googas.api.links.LinkableData;
+import me.googas.api.links.LinkableInfo;
 import me.googas.api.permissions.Permission;
 import me.googas.api.permissions.PermissionStack;
 import me.googas.api.user.UserData;
@@ -23,7 +23,7 @@ public class LinkedDataReceptors {
    * @return true if the data exists else false
    */
   @Receptor("data-exists")
-  public boolean exists(@ParamName("info") LinkedInfo info) {
+  public boolean exists(@ParamName("info") LinkableInfo info) {
     return info.getLink() != null;
   }
 
@@ -35,8 +35,8 @@ public class LinkedDataReceptors {
    * @return true if the user was set false if the data does not exist
    */
   @Receptor("set-user")
-  public boolean setUser(@ParamName("info") LinkedInfo info, @ParamName("user") String userId) {
-    LinkedData data = info.getLink();
+  public boolean setUser(@ParamName("info") LinkableInfo info, @ParamName("user") String userId) {
+    LinkableData data = info.getLink();
     if (data != null) {
       UserData user = Guido.getDataLoader().getUserData(userId);
       data.setLinkedUser(user);
@@ -54,10 +54,10 @@ public class LinkedDataReceptors {
    */
   @Receptor("permission")
   public PermissionStack permissions(
-      @ParamName("info") LinkedInfo info, @ParamName("context") String context) {
-    LinkedData linkedData = info.getLink();
-    if (linkedData != null) {
-      PermissionStack permissions = linkedData.getPermissions(context);
+      @ParamName("info") LinkableInfo info, @ParamName("context") String context) {
+    LinkableData linkableData = info.getLink();
+    if (linkableData != null) {
+      PermissionStack permissions = linkableData.getPermissions(context);
       if (permissions != null) {
         return permissions;
       }
@@ -72,8 +72,8 @@ public class LinkedDataReceptors {
    * @return the preferences
    */
   @Receptor("preferences")
-  public Map<String, Object> preferences(@ParamName("info") LinkedInfo info) {
-    LinkedData data = info.getLink();
+  public Map<String, Object> preferences(@ParamName("info") LinkableInfo info) {
+    LinkableData data = info.getLink();
     if (data != null) {
       return data.getPreferences().getMap();
     }
@@ -87,8 +87,8 @@ public class LinkedDataReceptors {
    * @return the stats
    */
   @Receptor("stats")
-  public Map<String, Float> stats(@ParamName("info") LinkedInfo info) {
-    LinkedData data = info.getLink();
+  public Map<String, Float> stats(@ParamName("info") LinkableInfo info) {
+    LinkableData data = info.getLink();
     if (data != null) {
       return data.getStats();
     }
@@ -102,8 +102,8 @@ public class LinkedDataReceptors {
    * @return whether the stats were reset
    */
   @Receptor("reset-stats")
-  public boolean resetStats(@ParamName("info") LinkedInfo info) {
-    LinkedData data = info.getLink();
+  public boolean resetStats(@ParamName("info") LinkableInfo info) {
+    LinkableData data = info.getLink();
     if (data != null) {
       data.getStats().clear();
       return true;
@@ -118,8 +118,8 @@ public class LinkedDataReceptors {
    * @return true if the data is linked
    */
   @Receptor("is-linked")
-  public boolean isLinked(@ParamName("info") LinkedInfo info) {
-    LinkedData data = info.getLink();
+  public boolean isLinked(@ParamName("info") LinkableInfo info) {
+    LinkableData data = info.getLink();
     if (data != null) {
       return data.isLinked();
     }
@@ -135,8 +135,8 @@ public class LinkedDataReceptors {
    */
   @Receptor("save-stats")
   public boolean saveStats(
-      @ParamName("info") LinkedInfo info, @ParamName("stats") Map<String, Double> stats) {
-    LinkedData data = info.getLink();
+      @ParamName("info") LinkableInfo info, @ParamName("stats") Map<String, Double> stats) {
+    LinkableData data = info.getLink();
     if (data != null) {
       stats.forEach((key, value) -> data.increaseStat(key, (float) value.doubleValue()));
       return true;
@@ -154,10 +154,10 @@ public class LinkedDataReceptors {
    */
   @Receptor("add-permission")
   public boolean addPermission(
-      @ParamName("info") LinkedInfo info,
+      @ParamName("info") LinkableInfo info,
       @ParamName("context") String context,
       @ParamName("permission") Permission permission) {
-    LinkedData data = info.getLink();
+    LinkableData data = info.getLink();
     if (data != null) {
       return data.addPermission(context, permission.getNode(), permission.isEnabled());
     }
@@ -174,10 +174,10 @@ public class LinkedDataReceptors {
    */
   @Receptor("remove-permission")
   public boolean removePermission(
-      @ParamName("info") LinkedInfo info,
+      @ParamName("info") LinkableInfo info,
       @ParamName("context") String context,
       @ParamName("permission") Permission permission) {
-    LinkedData data = info.getLink();
+    LinkableData data = info.getLink();
     if (data != null) {
       return data.removePermission(context, permission.getNode());
     }

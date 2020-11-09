@@ -2,9 +2,10 @@ package me.googas.bot.core.handlers.loader;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
-import me.googas.api.links.LinkedData;
-import me.googas.api.links.LinkedDataType;
+import me.googas.api.links.LinkableData;
+import me.googas.api.links.LinkableDataType;
 import me.googas.api.matches.Ladder;
 import me.googas.api.matches.Match;
 import me.googas.api.matches.MatchStatus;
@@ -18,7 +19,7 @@ import me.googas.bot.api.events.data.user.UserUnloadedDataEvent;
 import me.googas.bot.api.loader.BotDataLoader;
 import me.googas.bot.api.types.BotGroup;
 import me.googas.bot.api.types.BotGuild;
-import me.googas.bot.api.types.BotLinkedData;
+import me.googas.bot.api.types.BotLinkableData;
 import me.googas.bot.api.types.BotMatch;
 import me.googas.bot.api.types.BotRole;
 import me.googas.commons.events.ListenPriority;
@@ -85,8 +86,8 @@ public class GuidoFileLoader implements BotDataLoader {
   }
 
   @Override
-  public @Nullable BotLinkedData getLinkedData(
-      @NotNull LinkedDataType type, @NotNull ValuesMap identifications, boolean equal) {
+  public @Nullable BotLinkableData getLinkedData(
+      @NotNull LinkableDataType type, @NotNull ValuesMap identifications, boolean equal) {
     throw new UnsupportedOperationException("Linked data cannot be find using file loader");
   }
 
@@ -114,7 +115,7 @@ public class GuidoFileLoader implements BotDataLoader {
 
   @Override
   public @NotNull Collection<Match> getParticipating(
-      @NotNull LinkedDataType type,
+      @NotNull LinkableDataType type,
       @NotNull ValuesMap identification,
       @NotNull MatchStatus... status) {
     return new ArrayList<>();
@@ -125,13 +126,24 @@ public class GuidoFileLoader implements BotDataLoader {
     throw new UnsupportedOperationException("Groups have not been implemented yet");
   }
 
+  /**
+   * Delete the group with the given id
+   *
+   * @param id the id of the group to delete
+   * @return true if the group was deleted
+   */
+  @Override
+  public boolean deleteGroup(String id) {
+    return false;
+  }
+
   @Override
   public @NotNull Collection<Group> getGroups() {
     throw new UnsupportedOperationException("There's no groups");
   }
 
   @Override
-  public @NotNull List<LinkedData> getLeaderboard(@NotNull Ladder ladder, int page, int size) {
+  public @NotNull List<LinkableData> getLeaderboard(@NotNull Ladder ladder, int page, int size) {
     return new ArrayList<>();
   }
 
@@ -145,29 +157,43 @@ public class GuidoFileLoader implements BotDataLoader {
    * @return the leaderboard
    */
   @Override
-  public @NotNull List<LinkedData> getLeaderboard(
+  public @NotNull List<LinkableData> getLeaderboard(
       @NotNull String stat, int page, int size, boolean inverted) {
     return null;
   }
 
+  /**
+   * Get all the matches
+   *
+   * @param page the page of matches to see
+   * @param size the size of the page
+   * @param statuses the status of the matches to get
+   * @return the collection of matches
+   */
   @Override
-  public @NotNull BotLinkedData getDiscordUserData(long userId) {
+  public @NotNull Collection<Match> getMatches(
+      int page, int size, @NotNull MatchStatus... statuses) {
+    return new HashSet<>();
+  }
+
+  @Override
+  public @NotNull BotLinkableData getDiscordUserData(long userId) {
     throw new UnsupportedOperationException("Linked data cannot be find using file loader");
   }
 
   @Override
-  public @NotNull BotLinkedData getMemberData(long userId, long guildId) {
+  public @NotNull BotLinkableData getMemberData(long userId, long guildId) {
     throw new UnsupportedOperationException("Link data cannot be find using file loader");
   }
 
   @Override
-  public @NotNull Collection<LinkedData> getLinks(@NotNull UserData user) {
+  public @NotNull Collection<LinkableData> getLinks(@NotNull UserData user) {
     throw new UnsupportedOperationException("Links data cannot be find using file loader");
   }
 
   @Override
-  public @NotNull Collection<LinkedData> getLinks(
-      @NotNull UserData user, @NotNull LinkedDataType... types) {
+  public @NotNull Collection<LinkableData> getLinks(
+      @NotNull UserData user, @NotNull LinkableDataType... types) {
     throw new UnsupportedOperationException("Links data cannot be find using file loader");
   }
 
@@ -178,7 +204,7 @@ public class GuidoFileLoader implements BotDataLoader {
   }
 
   @Override
-  public @NotNull Collection<BotLinkedData> getDiscordData(long userId) {
+  public @NotNull Collection<BotLinkableData> getDiscordData(long userId) {
     throw new UnsupportedOperationException("Links data cannot be find using file loader");
   }
 

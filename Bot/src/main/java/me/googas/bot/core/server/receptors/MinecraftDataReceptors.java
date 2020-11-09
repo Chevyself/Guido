@@ -3,11 +3,11 @@ package me.googas.bot.core.server.receptors;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.UUID;
-import me.googas.api.links.LinkedDataType;
-import me.googas.api.links.LinkedInfo;
-import me.googas.bot.api.types.BotLinkedData;
+import me.googas.api.links.LinkableDataType;
+import me.googas.api.links.LinkableInfo;
+import me.googas.bot.api.types.BotLinkableData;
 import me.googas.bot.core.Guido;
-import me.googas.bot.core.types.GuidoLinkedData;
+import me.googas.bot.core.types.GuidoLinkableData;
 import me.googas.bot.core.types.maps.GuidoValuesMap;
 import me.googas.commons.UUIDUtils;
 import me.googas.messaging.json.ParamName;
@@ -26,22 +26,23 @@ public class MinecraftDataReceptors {
   @Receptor("create-minecraft")
   public boolean create(@ParamName("uuid") UUID uuid, @ParamName("nickname") String nickname) {
     String trimmed = UUIDUtils.trim(uuid);
-    BotLinkedData data =
+    BotLinkableData data =
         Guido.getDataLoader()
             .getLinkedData(
-                LinkedDataType.MINECRAFT,
-                new GuidoValuesMap("uuid", trimmed).addValue("nickname", nickname),
+                LinkableDataType.MINECRAFT,
+                new GuidoValuesMap("uuid", trimmed).put("nickname", nickname),
                 false);
     if (data != null) {
       return false;
     } else {
-      new GuidoLinkedData(
-          LinkedDataType.MINECRAFT,
-          null,
-          new GuidoValuesMap("uuid", trimmed).addValue("nickname", nickname),
-          new GuidoValuesMap(),
-          new HashMap<>(),
-          new HashSet<>());
+      new GuidoLinkableData(
+              LinkableDataType.MINECRAFT,
+              null,
+              new GuidoValuesMap("uuid", trimmed).put("nickname", nickname),
+              new GuidoValuesMap(),
+              new HashMap<>(),
+              new HashSet<>())
+          .cache();
       return true;
     }
   }
@@ -56,15 +57,17 @@ public class MinecraftDataReceptors {
   @Receptor("update-minecraft-nickname")
   public boolean updateNickname(
       @ParamName("uuid") UUID uuid, @ParamName("nickname") String nickname) {
-    BotLinkedData data =
+    BotLinkableData data =
         Guido.getDataLoader()
             .getLinkedData(
-                LinkedDataType.MINECRAFT, new GuidoValuesMap("uuid", UUIDUtils.trim(uuid)), false);
+                LinkableDataType.MINECRAFT,
+                new GuidoValuesMap("uuid", UUIDUtils.trim(uuid)),
+                false);
     if (data != null) {
       if (!data.getIdentification()
-          .getValueOr("nickname", String.class, "")
+          .getOr("nickname", String.class, "")
           .equalsIgnoreCase(nickname)) {
-        data.getIdentification().addValue("nickname", nickname);
+        data.getIdentification().put("nickname", nickname);
       }
       return true;
     }
@@ -78,10 +81,10 @@ public class MinecraftDataReceptors {
    * @return the uuid if matched else null
    */
   @Receptor("get-mc-by-name")
-  public LinkedInfo getInfo(@ParamName("nickname") String nick) {
-    BotLinkedData data =
+  public LinkableInfo getInfo(@ParamName("nickname") String nick) {
+    BotLinkableData data =
         Guido.getDataLoader()
-            .getLinkedData(LinkedDataType.MINECRAFT, new GuidoValuesMap("nickname", nick), false);
+            .getLinkedData(LinkableDataType.MINECRAFT, new GuidoValuesMap("nickname", nick), false);
     if (data != null) {
       return data.getInfo();
     }

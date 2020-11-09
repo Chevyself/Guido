@@ -5,8 +5,8 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 import me.googas.api.discord.GuildData;
-import me.googas.api.links.LinkedDataType;
-import me.googas.api.links.LinkedInfo;
+import me.googas.api.links.LinkableDataType;
+import me.googas.api.links.LinkableInfo;
 import me.googas.api.utility.ValuesMap;
 import me.googas.commons.RandomUtils;
 import me.googas.commons.cache.Catchable;
@@ -23,11 +23,12 @@ public interface Match extends Catchable {
    * @param identification the way to identify it
    * @return true if it matches a member from a team
    */
-  default boolean isParticipating(@NotNull LinkedDataType type, @NotNull ValuesMap identification) {
+  default boolean isParticipating(
+      @NotNull LinkableDataType type, @NotNull ValuesMap identification) {
     Collection<Team> teams = this.getTeams();
     for (Team team : teams) {
       for (TeamMember member : team.getMembers()) {
-        LinkedInfo info = member.getLinkInfo();
+        LinkableInfo info = member.getLinkInfo();
         if (info.getType().equals(type)) {
           switch (type) {
             case NONE:
@@ -128,8 +129,8 @@ public interface Match extends Catchable {
    * @return the collection of participants
    */
   @NotNull
-  default Collection<LinkedInfo> getParticipants() {
-    Set<LinkedInfo> participants = new HashSet<>();
+  default Collection<LinkableInfo> getParticipants() {
+    Set<LinkableInfo> participants = new HashSet<>();
     for (Team team : this.getTeams()) {
       for (TeamMember member : team.getMembers()) {
         participants.add(member.getLinkInfo());

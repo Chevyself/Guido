@@ -1,12 +1,12 @@
-package me.googas.bot.core.handlers.matches.queues;
+package me.googas.bot.core.types.queues;
 
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
-import me.googas.api.links.LinkedData;
-import me.googas.api.links.LinkedDataType;
-import me.googas.api.links.LinkedInfo;
+import me.googas.api.links.LinkableData;
+import me.googas.api.links.LinkableDataType;
+import me.googas.api.links.LinkableInfo;
 import me.googas.api.matches.Ladder;
 import me.googas.api.matches.TeamMember;
 import me.googas.api.matches.TeamRole;
@@ -50,25 +50,29 @@ public class GuidoPGMQueue extends GuidoQueue {
       for (TeamMember participant : participants) {
         this.getWaiting().remove(participant.getLinkInfo());
       }
-      return new GuidoMatch(
-          this.getGuildId(),
-          Lots.set(new GuidoTeam(-2, participants, "participants")),
-          new GuidoLinkedValuesMap("type", "pgm").addValue("ladder", ladder.getName()));
+      GuidoMatch guidoMatch =
+          new GuidoMatch(
+                  this.getGuildId(),
+                  Lots.set(new GuidoTeam(-2, participants, "participants")),
+                  new GuidoLinkedValuesMap("type", "pgm").put("ladder", ladder.getName()))
+              .cache();
+      guidoMatch.cache();
+      return guidoMatch;
     }
     return null;
   }
 
   @Override
-  public boolean join(@NotNull LinkedInfo info) {
+  public boolean join(@NotNull LinkableInfo info) {
     JsonClientThread bungee = Guido.getServer().getAuthenticator().getBungee();
-    LinkedData data = info.getLink();
+    LinkableData data = info.getLink();
     if (bungee != null && data != null) {
-      Collection<LinkedData> links = data.getLinks(LinkedDataType.MINECRAFT);
+      Collection<LinkableData> links = data.getLinks(LinkableDataType.MINECRAFT);
       if (!links.isEmpty()) {
         UUID uuid = null;
-        LinkedInfo toPlay = null;
-        for (LinkedData link : links) {
-          String trimmed = link.getIdentification().getValue("uuid", String.class);
+        LinkableInfo toPlay = null;
+        for (LinkableData link : links) {
+          String trimmed = link.getIdentification().get("uuid", String.class);
           if (trimmed != null) {
             uuid = UUIDUtils.untrim(trimmed);
             toPlay = link.getInfo();
@@ -110,12 +114,12 @@ public class GuidoPGMQueue extends GuidoQueue {
   }
 
   @Override
-  public boolean leave(@NotNull LinkedInfo data) {
+  public boolean leave(@NotNull LinkableInfo data) {
     if (super.leave(data)) {
       JsonClientThread bungee = Guido.getServer().getAuthenticator().getBungee();
-      LinkedData linked = data.getLink();
+      LinkableData linked = data.getLink();
       if (bungee != null && linked != null) {
-        String trimmed = linked.getIdentification().getValue("uuid", String.class);
+        String trimmed = linked.getIdentification().get("uuid", String.class);
         if (trimmed != null) {
           try {
             Console.debug("Removing from queue " + data);

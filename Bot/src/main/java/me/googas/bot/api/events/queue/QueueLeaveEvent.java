@@ -1,6 +1,6 @@
 package me.googas.bot.api.events.queue;
 
-import me.googas.api.links.LinkedInfo;
+import me.googas.api.links.LinkableInfo;
 import me.googas.api.matches.Queue;
 import org.jetbrains.annotations.NotNull;
 
@@ -8,7 +8,7 @@ import org.jetbrains.annotations.NotNull;
 public class QueueLeaveEvent extends QueueEvent {
 
   /** The data that left the queue */
-  @NotNull private final LinkedInfo data;
+  @NotNull private final LinkableInfo data;
 
   /**
    * Create the event
@@ -16,7 +16,7 @@ public class QueueLeaveEvent extends QueueEvent {
    * @param queue the queue involved in the event
    * @param data the data that left the queue
    */
-  public QueueLeaveEvent(@NotNull Queue queue, @NotNull LinkedInfo data) {
+  public QueueLeaveEvent(@NotNull Queue queue, @NotNull LinkableInfo data) {
     super(queue);
     this.data = data;
   }
@@ -27,7 +27,7 @@ public class QueueLeaveEvent extends QueueEvent {
    * @return the data that left the queue
    */
   @NotNull
-  public LinkedInfo getData() {
+  public LinkableInfo getData() {
     return this.data;
   }
 }

@@ -3,12 +3,12 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import me.googas.api.client.data.LinkedInfoImpl;
+import me.googas.api.client.data.LinkableInfoImpl;
 import me.googas.api.client.data.TeamImpl;
 import me.googas.api.client.data.TeamMemberImpl;
 import me.googas.api.client.data.ValuesMapImpl;
-import me.googas.api.links.LinkedDataType;
-import me.googas.api.links.LinkedInfo;
+import me.googas.api.links.LinkableDataType;
+import me.googas.api.links.LinkableInfo;
 import me.googas.api.matches.Team;
 import me.googas.api.matches.TeamMember;
 import me.googas.api.matches.TeamRole;
@@ -23,31 +23,31 @@ public class PicksTest {
   @Nullable public static TeamMember currentlyPicking;
 
   public static void main(String[] args) {
-    LinkedInfoImpl player1 =
-        new LinkedInfoImpl(
-            LinkedDataType.MINECRAFT, new ValuesMapImpl(Maps.singleton("nickname", "Player 1")));
-    LinkedInfoImpl player2 =
-        new LinkedInfoImpl(
-            LinkedDataType.MINECRAFT, new ValuesMapImpl(Maps.singleton("nickname", "Player 2")));
-    LinkedInfoImpl player3 =
-        new LinkedInfoImpl(
-            LinkedDataType.MINECRAFT, new ValuesMapImpl(Maps.singleton("nickname", "Player 3")));
-    LinkedInfoImpl player4 =
-        new LinkedInfoImpl(
-            LinkedDataType.MINECRAFT, new ValuesMapImpl(Maps.singleton("nickname", "Player 4")));
-    LinkedInfoImpl player5 =
-        new LinkedInfoImpl(
-            LinkedDataType.MINECRAFT, new ValuesMapImpl(Maps.singleton("nickname", "Player 5")));
-    LinkedInfoImpl player6 =
-        new LinkedInfoImpl(
-            LinkedDataType.MINECRAFT, new ValuesMapImpl(Maps.singleton("nickname", "Player 6")));
-    Set<LinkedInfo> playersLeft =
+    LinkableInfoImpl player1 =
+        new LinkableInfoImpl(
+            LinkableDataType.MINECRAFT, new ValuesMapImpl(Maps.singleton("nickname", "Player 1")));
+    LinkableInfoImpl player2 =
+        new LinkableInfoImpl(
+            LinkableDataType.MINECRAFT, new ValuesMapImpl(Maps.singleton("nickname", "Player 2")));
+    LinkableInfoImpl player3 =
+        new LinkableInfoImpl(
+            LinkableDataType.MINECRAFT, new ValuesMapImpl(Maps.singleton("nickname", "Player 3")));
+    LinkableInfoImpl player4 =
+        new LinkableInfoImpl(
+            LinkableDataType.MINECRAFT, new ValuesMapImpl(Maps.singleton("nickname", "Player 4")));
+    LinkableInfoImpl player5 =
+        new LinkableInfoImpl(
+            LinkableDataType.MINECRAFT, new ValuesMapImpl(Maps.singleton("nickname", "Player 5")));
+    LinkableInfoImpl player6 =
+        new LinkableInfoImpl(
+            LinkableDataType.MINECRAFT, new ValuesMapImpl(Maps.singleton("nickname", "Player 6")));
+    Set<LinkableInfo> playersLeft =
         new HashSet<>(Lots.list(player1, player2, player3, player4, player5, player6));
-    List<LinkedInfo> captains = RandomUtils.getRandom(new ArrayList<>(playersLeft), 2);
+    List<LinkableInfo> captains = RandomUtils.getRandom(new ArrayList<>(playersLeft), 2);
     List<Team> teams = new ArrayList<>();
     playersLeft.removeAll(captains);
-    for (LinkedInfo captain : captains) {
-      String name = captain.getIdentification().getValueOr("nickname", String.class, "");
+    for (LinkableInfo captain : captains) {
+      String name = captain.getIdentification().getOr("nickname", String.class, "");
       name = name.isEmpty() ? "Team " + (captains.indexOf(captain) + 1) : name + "'s team";
       teams.add(
           new TeamImpl(
@@ -63,14 +63,14 @@ public class PicksTest {
   }
 
   public static void pick(
-      Set<LinkedInfo> playersLeft, List<Team> teams, Team team, @NotNull LinkedInfo selected) {
+      Set<LinkableInfo> playersLeft, List<Team> teams, Team team, @NotNull LinkableInfo selected) {
     team.getMembers().add(new TeamMemberImpl(selected, TeamRole.NORMAL));
     playersLeft.remove(selected);
     PicksTest.nextPick(playersLeft, teams, team);
   }
 
   public static void nextPick(
-      @NotNull Set<LinkedInfo> playersLeft, @NotNull List<Team> teams, @NotNull Team team) {
+      @NotNull Set<LinkableInfo> playersLeft, @NotNull List<Team> teams, @NotNull Team team) {
     if (playersLeft.isEmpty()) {
       System.out.println(teams);
       System.out.println("Finished picking");

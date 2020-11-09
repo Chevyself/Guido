@@ -1,7 +1,7 @@
 package me.googas.bot.core.types;
 
-import me.googas.api.links.LinkedDataType;
-import me.googas.api.links.LinkedInfo;
+import me.googas.api.links.LinkableDataType;
+import me.googas.api.links.LinkableInfo;
 import me.googas.api.matches.TeamMember;
 import me.googas.api.matches.TeamRole;
 import me.googas.bot.core.types.maps.GuidoValuesMap;
@@ -11,7 +11,7 @@ import org.jetbrains.annotations.NotNull;
 public class GuidoTeamMember implements TeamMember {
 
   /** The information of the team */
-  @NotNull private final LinkedInfo linkInfo;
+  @NotNull private final LinkableInfo linkInfo;
 
   /** The role of the member in the team */
   @NotNull private final TeamRole role;
@@ -22,18 +22,18 @@ public class GuidoTeamMember implements TeamMember {
    * @param linkInfo the info of the team
    * @param role the role of the team
    */
-  public GuidoTeamMember(@NotNull LinkedInfo linkInfo, @NotNull TeamRole role) {
+  public GuidoTeamMember(@NotNull LinkableInfo linkInfo, @NotNull TeamRole role) {
     this.linkInfo = linkInfo;
     this.role = role;
   }
 
   /** @deprecated constructor may only be used in gson */
   public GuidoTeamMember() {
-    this(new GuidoLinkedInfo(LinkedDataType.NONE, new GuidoValuesMap()), TeamRole.NORMAL);
+    this(new GuidoLinkableInfo(LinkableDataType.NONE, new GuidoValuesMap()), TeamRole.NORMAL);
   }
 
   @Override
-  public @NotNull LinkedInfo getLinkInfo() {
+  public @NotNull LinkableInfo getLinkInfo() {
     return this.linkInfo;
   }
 

@@ -23,7 +23,7 @@ import me.googas.api.matches.TeamMember;
 import me.googas.api.matches.TeamRole;
 import me.googas.api.user.UserData;
 import me.googas.bot.api.types.BotGuild;
-import me.googas.bot.api.types.BotLinkedData;
+import me.googas.bot.api.types.BotLinkableData;
 import me.googas.bot.api.types.BotMatch;
 import me.googas.bot.core.Guido;
 import me.googas.bot.core.handlers.matches.MatchMakingHandler;
@@ -71,7 +71,7 @@ public class MatchCommands {
     Set<TeamMember> members2 = new HashSet<>();
     for (int i = 0; i < message.getMentionedMembers().size(); i++) {
       Member mentioned = message.getMentionedMembers().get(i);
-      BotLinkedData member =
+      BotLinkableData member =
           Guido.getDataLoader()
               .getMemberData(mentioned.getIdLong(), mentioned.getGuild().getIdLong());
       if (i > ladder.playersPerTeam() - 1) {
@@ -84,17 +84,17 @@ public class MatchCommands {
     GuidoTeam team2 = new GuidoTeam(2, members2, "Team 2");
     GuidoMatch match =
         new GuidoMatch(
-            guild.getId(),
-            Lots.set(team1, team2),
-            new GuidoLinkedValuesMap("manual", true)
-                .addValue("ladder", ladder.getName())
-                .addValue("guild", guild.getId()));
+                guild.getId(),
+                Lots.set(team1, team2),
+                new GuidoLinkedValuesMap("manual", true)
+                    .put("ladder", ladder.getName())
+                    .put("guild", guild.getId()))
+            .cache();
     if (context.hasFlag("-t")) {
       match.finish(null);
     } else {
       match.finish(team1);
     }
-    match.addToCache();
     return new Result(locale.get("match.saved", Maps.singleton("id", match.getId())));
   }
 
@@ -180,7 +180,7 @@ public class MatchCommands {
     Collection<Match> playing;
     List<String> matchesId = new ArrayList<>();
     if (member != null) {
-      BotLinkedData link =
+      BotLinkableData link =
           Guido.getDataLoader().getMemberData(member.getIdLong(), member.getGuild().getIdLong());
       playing = handler.getPlaying(link.getInfo());
       single = link.getSingle();

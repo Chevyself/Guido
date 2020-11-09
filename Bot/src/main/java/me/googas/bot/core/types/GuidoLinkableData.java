@@ -6,17 +6,16 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
-import me.googas.api.links.LinkedDataType;
+import me.googas.api.links.LinkableDataType;
 import me.googas.api.permissions.PermissionStack;
 import me.googas.api.user.UserData;
 import me.googas.api.utility.ValuesMap;
 import me.googas.bot.api.events.data.links.LinkedDataUnloadedEvent;
-import me.googas.bot.api.types.BotLinkedData;
+import me.googas.bot.api.types.BotLinkableData;
 import me.googas.bot.api.types.BotPermissible;
 import me.googas.bot.core.Guido;
 import me.googas.bot.core.types.maps.GuidoValuesMap;
 import me.googas.bot.core.util.console.Console;
-import me.googas.commons.cache.thread.Catchable;
 import me.googas.commons.maps.Maps;
 import me.googas.commons.time.Time;
 import me.googas.commons.time.Unit;
@@ -27,10 +26,10 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 /** The implementation of bot linked ata */
-public class GuidoLinkedData extends Catchable implements BotLinkedData, BotPermissible {
+public class GuidoLinkableData implements BotLinkableData, BotPermissible {
 
   /** The type of the linked data */
-  @NotNull private final LinkedDataType type;
+  @NotNull private final LinkableDataType type;
   /** The way to identify this data */
   @NotNull private final GuidoValuesMap identification;
   /** The preferences of the user */
@@ -54,8 +53,8 @@ public class GuidoLinkedData extends Catchable implements BotLinkedData, BotPerm
    * @param stats the stats of this data
    * @param permissions the permissions of this data
    */
-  public GuidoLinkedData(
-      @NotNull LinkedDataType type,
+  public GuidoLinkableData(
+      @NotNull LinkableDataType type,
       @Nullable String user,
       @NotNull GuidoValuesMap identification,
       @NotNull GuidoValuesMap preferences,
@@ -70,9 +69,9 @@ public class GuidoLinkedData extends Catchable implements BotLinkedData, BotPerm
   }
 
   /** @deprecated this constructor may only be used by gson */
-  public GuidoLinkedData() {
+  public GuidoLinkableData() {
     this(
-        LinkedDataType.NONE,
+        LinkableDataType.NONE,
         null,
         new GuidoValuesMap(),
         new GuidoValuesMap(),
@@ -101,7 +100,7 @@ public class GuidoLinkedData extends Catchable implements BotLinkedData, BotPerm
   }
 
   @Override
-  public @NotNull LinkedDataType getType() {
+  public @NotNull LinkableDataType getType() {
     return this.type;
   }
 
@@ -183,8 +182,8 @@ public class GuidoLinkedData extends Catchable implements BotLinkedData, BotPerm
   }
 
   @Override
-  public @NotNull GuidoLinkedInfo getInfo() {
-    return new GuidoLinkedInfo(this.getType(), this.identification);
+  public @NotNull GuidoLinkableInfo getInfo() {
+    return new GuidoLinkableInfo(this.getType(), this.identification);
   }
 
   @Override
@@ -215,9 +214,9 @@ public class GuidoLinkedData extends Catchable implements BotLinkedData, BotPerm
   @Override
   public boolean equals(Object o) {
     if (this == o) return true;
-    if (!(o instanceof GuidoLinkedData)) return false;
+    if (!(o instanceof GuidoLinkableData)) return false;
 
-    GuidoLinkedData that = (GuidoLinkedData) o;
+    GuidoLinkableData that = (GuidoLinkableData) o;
 
     if (this.type != that.type) return false;
     return this.identification.equals(that.identification);
@@ -228,5 +227,15 @@ public class GuidoLinkedData extends Catchable implements BotLinkedData, BotPerm
     int result = this.type.hashCode();
     result = 31 * result + this.identification.hashCode();
     return result;
+  }
+
+  /**
+   * Adds this catchable in cache
+   *
+   * @return this same object instance
+   */
+  @Override
+  public @NotNull GuidoLinkableData cache() {
+    return (GuidoLinkableData) BotLinkableData.super.cache();
   }
 }

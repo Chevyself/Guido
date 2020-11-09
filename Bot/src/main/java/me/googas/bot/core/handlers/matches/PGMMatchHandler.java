@@ -5,7 +5,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
-import me.googas.api.links.LinkedInfo;
+import me.googas.api.links.LinkableInfo;
 import me.googas.api.matches.Match;
 import me.googas.api.matches.MatchStatus;
 import me.googas.bot.api.events.match.MatchLoadedEvent;
@@ -36,7 +36,7 @@ public class PGMMatchHandler implements MatchHandler {
   @Listener(priority = ListenPriority.HIGHEST)
   public void onMatchLoaded(@NotNull MatchLoadedEvent event) {
     Match match = event.getMatch();
-    String type = match.getDetails().getValue("type", String.class);
+    String type = match.getDetails().get("type", String.class);
     if (type != null && type.equalsIgnoreCase("pgm")) {
       if (match.getStatus() == MatchStatus.WAITING) {
         Console.debug(match + " is ready to look for a server");
@@ -80,8 +80,8 @@ public class PGMMatchHandler implements MatchHandler {
   public void pleaseHost(@NotNull Match match, JsonClientThread bungee, JsonMessenger messenger) {
     Console.debug("Asking " + messenger + " to host " + match);
     List<UUID> participants = new ArrayList<>();
-    for (LinkedInfo info : match.getParticipants()) {
-      String trimmed = info.getIdentification().getValue("uuid", String.class);
+    for (LinkableInfo info : match.getParticipants()) {
+      String trimmed = info.getIdentification().get("uuid", String.class);
       participants.add(
           UUIDUtils.untrim(Validate.notNull(trimmed, "Queueing user does not have uuid")));
     }

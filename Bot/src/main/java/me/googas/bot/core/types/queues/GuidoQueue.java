@@ -1,9 +1,9 @@
-package me.googas.bot.core.handlers.matches.queues;
+package me.googas.bot.core.types.queues;
 
 import java.util.ArrayList;
 import java.util.List;
-import me.googas.api.links.LinkedData;
-import me.googas.api.links.LinkedInfo;
+import me.googas.api.links.LinkableData;
+import me.googas.api.links.LinkableInfo;
 import me.googas.api.matches.Ladder;
 import me.googas.api.matches.Queue;
 import me.googas.bot.api.events.queue.QueueJoinEvent;
@@ -24,7 +24,7 @@ public class GuidoQueue implements Queue {
   private final String ladder;
 
   /** The waiting users in the queue */
-  private final List<LinkedInfo> waiting = new ArrayList<>();
+  private final List<LinkableInfo> waiting = new ArrayList<>();
 
   /**
    * Create the queue
@@ -60,13 +60,13 @@ public class GuidoQueue implements Queue {
   }
 
   @Override
-  public boolean join(@NotNull LinkedInfo data) {
+  public boolean join(@NotNull LinkableInfo data) {
     if (!this.isWaiting(data) && !new QueuePreJoinEvent(this, data).callAndGet()) {
       this.getWaiting().add(data);
       new QueueJoinEvent(this, data).call();
       return true;
     }
-    LinkedData link = data.getLink();
+    LinkableData link = data.getLink();
     if (link != null) {
       link.sendMessage("You're already waiting in this queue");
     }
@@ -74,7 +74,7 @@ public class GuidoQueue implements Queue {
   }
 
   @Override
-  public boolean leave(@NotNull LinkedInfo data) {
+  public boolean leave(@NotNull LinkableInfo data) {
     if (this.isWaiting(data)) {
       return this.getWaiting().remove(data);
     }
@@ -88,7 +88,7 @@ public class GuidoQueue implements Queue {
   }
 
   @NotNull
-  public List<LinkedInfo> getWaiting() {
+  public List<LinkableInfo> getWaiting() {
     return this.waiting;
   }
 

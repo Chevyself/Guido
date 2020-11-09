@@ -16,7 +16,9 @@ public interface Permissible {
    */
   default boolean hasPermission(@NotNull String node, @NotNull String context) {
     PermissionStack stack = this.getPermissions(context);
-    return stack != null && (stack.hasPermission(node) || stack.hasPermission("*"));
+    return (stack != null && (stack.hasPermission(node) || stack.hasPermission("*"))
+        || (!context.equalsIgnoreCase("global") && this.hasPermission(node, "global"))
+        || (this.hasPermission("*", context)));
   }
 
   /**
@@ -28,7 +30,9 @@ public interface Permissible {
    */
   default boolean containsPermission(@NotNull String node, @NotNull String context) {
     PermissionStack stack = this.getPermissions(context);
-    return stack != null && stack.containsPermission(node);
+    return (stack != null && stack.containsPermission(node))
+        || (!context.equalsIgnoreCase("global") && this.containsPermission(node, "global")
+            || (this.hasPermission("*", context)));
   }
 
   /**

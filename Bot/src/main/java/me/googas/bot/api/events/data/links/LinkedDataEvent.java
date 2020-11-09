@@ -1,21 +1,21 @@
 package me.googas.bot.api.events.data.links;
 
 import me.googas.bot.api.events.GuidoEvent;
-import me.googas.bot.api.types.BotLinkedData;
+import me.googas.bot.api.types.BotLinkableData;
 import org.jetbrains.annotations.NotNull;
 
 /** An event related to linked data */
 public class LinkedDataEvent implements GuidoEvent {
 
   /** The data involved in the event */
-  @NotNull private final BotLinkedData data;
+  @NotNull private final BotLinkableData data;
 
   /**
    * Create the event
    *
    * @param data the data involved in the event
    */
-  public LinkedDataEvent(@NotNull BotLinkedData data) {
+  public LinkedDataEvent(@NotNull BotLinkableData data) {
     this.data = data;
   }
 
@@ -25,7 +25,7 @@ public class LinkedDataEvent implements GuidoEvent {
    * @return the data involved in the event
    */
   @NotNull
-  public BotLinkedData getData() {
+  public BotLinkableData getData() {
     return this.data;
   }
 

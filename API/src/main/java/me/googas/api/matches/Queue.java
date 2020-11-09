@@ -1,7 +1,7 @@
 package me.googas.api.matches;
 
 import java.util.Collection;
-import me.googas.api.links.LinkedInfo;
+import me.googas.api.links.LinkableInfo;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -14,7 +14,7 @@ public interface Queue {
    * @param data the data that will join the queue
    * @return whether the data joined
    */
-  boolean join(@NotNull LinkedInfo data);
+  boolean join(@NotNull LinkableInfo data);
 
   /**
    * Leaves the queue for certain linked data
@@ -22,7 +22,7 @@ public interface Queue {
    * @param data the data leaving the queue
    * @return if the data left the queue
    */
-  boolean leave(@NotNull LinkedInfo data);
+  boolean leave(@NotNull LinkableInfo data);
 
   /**
    * Get whether someone is waiting in the queue
@@ -30,7 +30,7 @@ public interface Queue {
    * @param data the data to check if it is waiting
    * @return true if the data is waiting inside this queue
    */
-  default boolean isWaiting(@NotNull LinkedInfo data) {
+  default boolean isWaiting(@NotNull LinkableInfo data) {
     return this.getWaiting().contains(data);
   }
 
@@ -55,7 +55,7 @@ public interface Queue {
    * @return the linked data
    */
   @NotNull
-  Collection<LinkedInfo> getWaiting();
+  Collection<LinkableInfo> getWaiting();
 
   /**
    * Get the ladder that this queue is playing

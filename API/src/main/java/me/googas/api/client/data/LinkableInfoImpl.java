@@ -1,17 +1,17 @@
 package me.googas.api.client.data;
 
-import me.googas.api.links.LinkedData;
-import me.googas.api.links.LinkedDataType;
-import me.googas.api.links.LinkedInfo;
+import me.googas.api.links.LinkableData;
+import me.googas.api.links.LinkableDataType;
+import me.googas.api.links.LinkableInfo;
 import me.googas.api.utility.ValuesMap;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 /** An implementation for linked info */
-public class LinkedInfoImpl implements LinkedInfo {
+public class LinkableInfoImpl implements LinkableInfo {
 
   /** The type of the link */
-  @NotNull private final LinkedDataType type;
+  @NotNull private final LinkableDataType type;
 
   /** The way to identify the link */
   @NotNull private final ValuesMap identification;
@@ -22,13 +22,13 @@ public class LinkedInfoImpl implements LinkedInfo {
    * @param type the type of link
    * @param identification the way to identify the link
    */
-  public LinkedInfoImpl(@NotNull LinkedDataType type, @NotNull ValuesMapImpl identification) {
+  public LinkableInfoImpl(@NotNull LinkableDataType type, @NotNull ValuesMapImpl identification) {
     this.type = type;
     this.identification = identification;
   }
 
   @Override
-  public @NotNull LinkedDataType getType() {
+  public @NotNull LinkableDataType getType() {
     return this.type;
   }
 
@@ -38,7 +38,7 @@ public class LinkedInfoImpl implements LinkedInfo {
   }
 
   @Override
-  public @Nullable LinkedData getLink() {
+  public @Nullable LinkableData getLink() {
     return null;
   }
 
@@ -50,9 +50,9 @@ public class LinkedInfoImpl implements LinkedInfo {
   @Override
   public boolean equals(Object o) {
     if (this == o) return true;
-    if (!(o instanceof LinkedInfoImpl)) return false;
+    if (!(o instanceof LinkableInfoImpl)) return false;
 
-    LinkedInfoImpl that = (LinkedInfoImpl) o;
+    LinkableInfoImpl that = (LinkableInfoImpl) o;
 
     if (this.type != that.type) return false;
     return this.identification.equals(that.identification);

@@ -1,9 +1,11 @@
 package me.googas.api.links;
 
 import java.util.Map;
+import java.util.TreeMap;
 import me.googas.api.discord.GuildData;
 import me.googas.api.matches.Ladder;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /** This object represents an entity that can have stats */
 public interface Stateable {
@@ -103,5 +105,47 @@ public interface Stateable {
    */
   default float getElo(@NotNull Ladder ladder) {
     return this.getStats().getOrDefault(ladder.getName() + "-elo", (float) ladder.baseValue());
+  }
+
+  /**
+   * Get the stats organized
+   *
+   * @param guild A guild to get the global elo in there
+   * @return the organized stats
+   */
+  default SortedStats getOrganized(@Nullable GuildData guild) {
+    Map<String, Map<String, Float>> map = new TreeMap<>();
+    this.getStats()
+        .forEach(
+            (key, value) -> {
+              String context;
+              String stat;
+              if (key.contains("-")) {
+                String[] split = key.split("-");
+                context = split[0];
+                stat = split[1];
+              } else {
+                context = "Unknown";
+                stat = key;
+              }
+              Map<String, Float> contextMap =
+                  map.computeIfAbsent(context, string -> new TreeMap<>());
+              contextMap.put(stat, value);
+            });
+    Map<String, Float> global = new TreeMap<>();
+    map.forEach(
+        (context, contextMap) -> {
+          contextMap.forEach(
+              (stat, value) -> {
+                if (!stat.startsWith("elo")) {
+                  global.put(stat, global.getOrDefault(stat, 0f) + value);
+                }
+              });
+        });
+    if (guild != null) {
+      global.put("elo", this.getGlobalElo(guild));
+    }
+    map.put("global", global);
+    return new SortedStats(map);
   }
 }

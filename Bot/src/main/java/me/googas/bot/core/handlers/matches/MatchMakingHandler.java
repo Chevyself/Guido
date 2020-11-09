@@ -7,8 +7,8 @@ import java.util.HashSet;
 import java.util.Map;
 import me.googas.api.discord.GuildData;
 import me.googas.api.lang.LocaleFile;
-import me.googas.api.links.LinkedData;
-import me.googas.api.links.LinkedInfo;
+import me.googas.api.links.LinkableData;
+import me.googas.api.links.LinkableInfo;
 import me.googas.api.matches.Match;
 import me.googas.api.matches.MatchStatus;
 import me.googas.api.matches.Team;
@@ -20,7 +20,7 @@ import me.googas.bot.api.events.match.MatchStatusUpdatedEvent;
 import me.googas.bot.api.events.queue.QueueJoinEvent;
 import me.googas.bot.api.loader.BotDataLoader;
 import me.googas.bot.api.types.BotGuild;
-import me.googas.bot.api.types.BotLinkedData;
+import me.googas.bot.api.types.BotLinkableData;
 import me.googas.bot.api.types.BotMatch;
 import me.googas.bot.core.Guido;
 import me.googas.bot.core.handlers.GuidoEventHandler;
@@ -87,7 +87,7 @@ public class MatchMakingHandler implements GuidoEventHandler {
     Console.debug("Is the queue " + event.getQueue() + " ready to create a match? " + match);
     if (match != null) {
       new MatchLoadedEvent(match).call();
-      for (LinkedInfo participant : match.getParticipants()) {
+      for (LinkableInfo participant : match.getParticipants()) {
         Guido.getHandler(QueueHandler.class).leaveQueue(participant);
       }
     }
@@ -112,9 +112,9 @@ public class MatchMakingHandler implements GuidoEventHandler {
                 this.getVoices(match.getId()).put(team.getId(), channel.getIdLong());
                 Discord.removeAllPermission(channel);
                 for (TeamMember member : team.getMembers()) {
-                  LinkedData link = member.getLinkInfo().getLink();
-                  if (link instanceof BotLinkedData) {
-                    Member discordMember = ((BotLinkedData) link).getDiscordMember(data.getId());
+                  LinkableData link = member.getLinkInfo().getLink();
+                  if (link instanceof BotLinkableData) {
+                    Member discordMember = ((BotLinkableData) link).getDiscordMember(data.getId());
                     if (discordMember != null) {
                       Discord.addPermissions(channel, discordMember, Discord.VOICE);
                       GuildVoiceState state = discordMember.getVoiceState();
@@ -172,8 +172,8 @@ public class MatchMakingHandler implements GuidoEventHandler {
    * @return true if the user is playing
    */
   @Deprecated
-  public boolean isPlaying(@NotNull LinkedInfo info) {
-    LinkedData link = info.getLink();
+  public boolean isPlaying(@NotNull LinkableInfo info) {
+    LinkableData link = info.getLink();
     if (link != null) {
       UserData user = link.getLinkedUser();
       if (user != null) {
@@ -193,9 +193,9 @@ public class MatchMakingHandler implements GuidoEventHandler {
    */
   public Collection<Match> getPlaying(@NotNull UserData data) {
     BotDataLoader loader = Guido.getDataLoader();
-    Collection<LinkedData> links = loader.getLinks(data);
+    Collection<LinkableData> links = loader.getLinks(data);
     Collection<Match> participating = new HashSet<>();
-    for (LinkedData link : links) {
+    for (LinkableData link : links) {
       participating.addAll(
           loader.getParticipating(
               link.getType(),
@@ -214,7 +214,7 @@ public class MatchMakingHandler implements GuidoEventHandler {
    * @param info the link to check where it is playing
    * @return the collection of matches where the user is playing
    */
-  public Collection<Match> getPlaying(@NotNull LinkedInfo info) {
+  public Collection<Match> getPlaying(@NotNull LinkableInfo info) {
     BotDataLoader loader = Guido.getDataLoader();
     return loader.getParticipating(
         info.getType(),

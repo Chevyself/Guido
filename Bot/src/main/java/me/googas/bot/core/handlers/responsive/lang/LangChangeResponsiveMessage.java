@@ -3,7 +3,7 @@ package me.googas.bot.core.handlers.responsive.lang;
 import com.starfishst.jda.utils.responsive.ReactionResponse;
 import java.util.HashSet;
 import java.util.Set;
-import me.googas.api.links.LinkedData;
+import me.googas.api.links.LinkableData;
 import me.googas.bot.api.events.responsive.ResponsiveMessageUnloadedEvent;
 import me.googas.bot.core.Guido;
 import me.googas.bot.core.handlers.lang.GuidoLocaleFile;
@@ -39,10 +39,10 @@ public class LangChangeResponsiveMessage extends Catchable implements GuidoRespo
     super(true);
     this.id = message.getIdLong();
     this.channelId = message.getChannel().getIdLong();
-    LinkedData userData = Guido.getDataLoader().getDiscordUserData(toChange.getIdLong());
+    LinkableData userData = Guido.getDataLoader().getDiscordUserData(toChange.getIdLong());
     for (GuidoLocaleFile file : Guido.getLanguageHandler().getFiles()) {
       if (!file.getLang()
-          .equalsIgnoreCase(userData.getPreferences().getValueOr("lang", String.class, "en"))) {
+          .equalsIgnoreCase(userData.getPreferences().getOr("lang", String.class, "en"))) {
         this.addReactionResponse(
             new LangChangeReactionResponse(toChange.getIdLong(), file.getUnicode()), message);
       }

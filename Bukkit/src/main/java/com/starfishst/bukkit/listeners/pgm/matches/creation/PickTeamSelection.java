@@ -14,7 +14,7 @@ import java.util.UUID;
 import java.util.logging.Logger;
 import me.googas.api.client.data.TeamImpl;
 import me.googas.api.client.data.TeamMemberImpl;
-import me.googas.api.links.LinkedInfo;
+import me.googas.api.links.LinkableInfo;
 import me.googas.api.matches.TeamMember;
 import me.googas.api.matches.TeamRole;
 import me.googas.commons.Lots;
@@ -39,7 +39,7 @@ public class PickTeamSelection implements TeamCreation {
   private static final long timeToPick = Time.fromString("1m").getValue(Unit.SECONDS);
 
   /** The players left to select */
-  @NotNull private final Collection<LinkedInfo> playersLeft = new HashSet<>();
+  @NotNull private final Collection<LinkableInfo> playersLeft = new HashSet<>();
 
   /** The teams that were selected */
   @NotNull private final List<SelectingTeam> teams = new ArrayList<>();
@@ -89,8 +89,8 @@ public class PickTeamSelection implements TeamCreation {
    * @return the name of the team
    */
   @NotNull
-  public String getTeamName(LinkedInfo captain, @NotNull String extra) {
-    String nickname = captain.getIdentification().getValueOr("nickname", String.class, "");
+  public String getTeamName(LinkableInfo captain, @NotNull String extra) {
+    String nickname = captain.getIdentification().getOr("nickname", String.class, "");
     if (!nickname.isEmpty()) {
       return nickname + "'s team";
     } else {
@@ -125,9 +125,9 @@ public class PickTeamSelection implements TeamCreation {
   @NotNull
   public List<TeamMember> pickLeaders() {
     List<TeamMember> captains = new ArrayList<>();
-    for (LinkedInfo linkedInfo : RandomUtils.getRandom(new ArrayList<>(this.playersLeft), 2)) {
-      captains.add(new TeamMemberImpl(linkedInfo, TeamRole.LEADER));
-      this.playersLeft.remove(linkedInfo);
+    for (LinkableInfo linkableInfo : RandomUtils.getRandom(new ArrayList<>(this.playersLeft), 2)) {
+      captains.add(new TeamMemberImpl(linkableInfo, TeamRole.LEADER));
+      this.playersLeft.remove(linkableInfo);
     }
     return captains;
   }
@@ -139,7 +139,7 @@ public class PickTeamSelection implements TeamCreation {
    * @return the player but if not online it will be null
    */
   @Nullable
-  public Player getPlayer(@NotNull LinkedInfo info) {
+  public Player getPlayer(@NotNull LinkableInfo info) {
     return Bukkit.getPlayer(this.getUuid(info));
   }
 
@@ -150,8 +150,8 @@ public class PickTeamSelection implements TeamCreation {
    * @return the uuid
    */
   @NotNull
-  public UUID getUuid(@NotNull LinkedInfo info) {
-    return UUIDUtils.untrim(info.getIdentification().getValueOr("uuid", String.class, ""));
+  public UUID getUuid(@NotNull LinkableInfo info) {
+    return UUIDUtils.untrim(info.getIdentification().getOr("uuid", String.class, ""));
   }
 
   /**
@@ -178,7 +178,7 @@ public class PickTeamSelection implements TeamCreation {
    * @throws IllegalArgumentException if the captain argument is not a captain or if the captain is
    *     not currently picking
    */
-  public void pick(@NotNull TeamMember captain, @NotNull LinkedInfo info) {
+  public void pick(@NotNull TeamMember captain, @NotNull LinkableInfo info) {
     SelectingTeam selecting = this.getSelecting(captain);
     if (selecting != null && this.isPicking(captain)) {
       TeamMemberImpl teamMember = new TeamMemberImpl(info, TeamRole.NORMAL);
@@ -234,8 +234,8 @@ public class PickTeamSelection implements TeamCreation {
       TeamMember leader = this.getNext(team).getLeader();
       if (this.playersLeft.size() == 1) {
         this.currentLeader = leader;
-        for (LinkedInfo linkedInfo : this.getPlayersLeft()) {
-          this.pick(leader, linkedInfo);
+        for (LinkableInfo linkableInfo : this.getPlayersLeft()) {
+          this.pick(leader, linkableInfo);
           break;
         }
       } else {
@@ -309,7 +309,7 @@ public class PickTeamSelection implements TeamCreation {
    * @return the players left to pick
    */
   @NotNull
-  public Collection<LinkedInfo> getPlayersLeft() {
+  public Collection<LinkableInfo> getPlayersLeft() {
     return this.playersLeft;
   }
 
@@ -331,8 +331,8 @@ public class PickTeamSelection implements TeamCreation {
   @NotNull
   public List<String> getParticipantsNames() {
     List<String> names = new ArrayList<>();
-    for (LinkedInfo linkedInfo : this.playersLeft) {
-      String nickname = linkedInfo.getIdentification().getValue("nickname", String.class);
+    for (LinkableInfo linkableInfo : this.playersLeft) {
+      String nickname = linkableInfo.getIdentification().get("nickname", String.class);
       if (nickname != null) {
         names.add(nickname);
       }

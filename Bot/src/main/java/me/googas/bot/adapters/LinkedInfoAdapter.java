@@ -5,20 +5,21 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonParseException;
 import com.google.gson.JsonSerializationContext;
 import java.lang.reflect.Type;
-import me.googas.api.links.LinkedInfo;
-import me.googas.bot.core.types.GuidoLinkedInfo;
+import me.googas.api.links.LinkableInfo;
+import me.googas.bot.core.types.GuidoLinkableInfo;
 import me.googas.commons.gson.adapters.JsonAdapter;
 
 /** Deserializes linked info */
-public class LinkedInfoAdapter implements JsonAdapter<LinkedInfo> {
+public class LinkedInfoAdapter implements JsonAdapter<LinkableInfo> {
   @Override
-  public JsonElement serialize(LinkedInfo src, Type typeOfSrc, JsonSerializationContext context) {
+  public JsonElement serialize(LinkableInfo src, Type typeOfSrc, JsonSerializationContext context) {
     return context.serialize(src);
   }
 
   @Override
-  public LinkedInfo deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context)
+  public LinkableInfo deserialize(
+      JsonElement json, Type typeOfT, JsonDeserializationContext context)
       throws JsonParseException {
-    return context.deserialize(json, GuidoLinkedInfo.class);
+    return context.deserialize(json, GuidoLinkableInfo.class);
   }
 }

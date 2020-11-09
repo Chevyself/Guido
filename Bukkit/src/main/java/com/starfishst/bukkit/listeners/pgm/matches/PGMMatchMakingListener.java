@@ -18,7 +18,7 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.logging.Logger;
 import me.googas.api.client.data.MatchImpl;
-import me.googas.api.links.LinkedInfo;
+import me.googas.api.links.LinkableInfo;
 import me.googas.api.matches.Ladder;
 import me.googas.commons.RandomUtils;
 import me.googas.commons.maps.Maps;
@@ -62,7 +62,7 @@ public class PGMMatchMakingListener implements GuidoListener {
   @Nullable private String matchId;
 
   /** The participants of the match */
-  @NotNull private final Collection<LinkedInfo> participants = new HashSet<>();
+  @NotNull private final Collection<LinkableInfo> participants = new HashSet<>();
   /** The users to add in case they could not be added */
   @NotNull private final Map<UUID, Party> toAdd = new HashMap<>();
   /** The next map which will be played */
@@ -84,8 +84,8 @@ public class PGMMatchMakingListener implements GuidoListener {
   public boolean canHost(@ParamName("match") MatchImpl match) {
     this.wakeUpServer();
     Logger logger = Guido.getLogger();
-    String type = match.getDetails().getValueOr("type", String.class, "none");
-    String ladderName = match.getDetails().getValue("ladder", String.class);
+    String type = match.getDetails().getOr("type", String.class, "none");
+    String ladderName = match.getDetails().get("ladder", String.class);
     Match pgmMatch = this.getCurrentPgm();
     logger.info("Received info to host match \n " + match);
     if (type.equalsIgnoreCase("pgm")
@@ -154,8 +154,8 @@ public class PGMMatchMakingListener implements GuidoListener {
   @Receptor("host")
   public String host(@ParamName("match") MatchImpl match) {
     Logger logger = Guido.getLogger();
-    String type = match.getDetails().getValueOr("type", String.class, "none");
-    String ladderName = match.getDetails().getValue("ladder", String.class);
+    String type = match.getDetails().getOr("type", String.class, "none");
+    String ladderName = match.getDetails().get("ladder", String.class);
     if (type.equalsIgnoreCase("PGM")) {
       JsonClient connection = Guido.getClient().getConnection();
       if (connection != null) {
@@ -184,7 +184,7 @@ public class PGMMatchMakingListener implements GuidoListener {
               this.participants.addAll(match.getParticipants());
               this.matchId = match.getId();
               this.teamSelection =
-                  ladder.getOptions().getValueOr("team-selection", String.class, "random");
+                  ladder.getOptions().getOr("team-selection", String.class, "random");
               connection.sendRequest(
                   new Request<>(
                       Boolean.class,
@@ -327,7 +327,7 @@ public class PGMMatchMakingListener implements GuidoListener {
   }
 
   @NotNull
-  public Collection<LinkedInfo> getParticipants() {
+  public Collection<LinkableInfo> getParticipants() {
     return this.participants;
   }
 

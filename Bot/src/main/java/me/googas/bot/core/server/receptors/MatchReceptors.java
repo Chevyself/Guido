@@ -22,7 +22,7 @@ public class MatchReceptors {
   @Receptor("match")
   public Match match(@ParamName("id") String id) {
     BotMatch match = Guido.getDataLoader().getMatch(id);
-      return match;
+    return match;
   }
 
   /**

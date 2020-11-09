@@ -7,7 +7,7 @@ import com.starfishst.bungee.providers.type.BungeeArgumentProvider;
 import com.starfishst.core.exceptions.ArgumentProviderException;
 import java.util.ArrayList;
 import java.util.List;
-import me.googas.api.links.LinkedInfo;
+import me.googas.api.links.LinkableInfo;
 import me.googas.api.utility.ValuesMap;
 import me.googas.commons.UUIDUtils;
 import me.googas.commons.maps.Maps;
@@ -44,15 +44,15 @@ public class ProxiedOfflinePlayerProvider implements BungeeArgumentProvider<Prox
       }
     }
     try {
-      LinkedInfo playerInfo =
+      LinkableInfo playerInfo =
           Guido.getClient()
               .request(
                   new Request<>(
-                      LinkedInfo.class, "get-mc-by-name", Maps.objects("nickname", s).build()));
+                      LinkableInfo.class, "get-mc-by-name", Maps.objects("nickname", s).build()));
       if (playerInfo != null) {
         ValuesMap identification = playerInfo.getIdentification();
-        String uuid = identification.getValue("uuid", String.class);
-        String nickname = identification.getValue("nickname", String.class);
+        String uuid = identification.get("uuid", String.class);
+        String nickname = identification.get("nickname", String.class);
         if (nickname != null && uuid != null) {
           return new ProxiedOfflinePlayer(UUIDUtils.untrim(uuid), nickname);
         }

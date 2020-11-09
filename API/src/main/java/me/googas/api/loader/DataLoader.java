@@ -4,8 +4,8 @@ import java.util.Collection;
 import java.util.List;
 import me.googas.api.discord.GuildData;
 import me.googas.api.discord.RoleData;
-import me.googas.api.links.LinkedData;
-import me.googas.api.links.LinkedDataType;
+import me.googas.api.links.LinkableData;
+import me.googas.api.links.LinkableDataType;
 import me.googas.api.matches.Ladder;
 import me.googas.api.matches.Match;
 import me.googas.api.matches.MatchStatus;
@@ -73,7 +73,7 @@ public interface DataLoader {
    * @return the links
    */
   @NotNull
-  Collection<LinkedData> getLinks(@NotNull UserData user);
+  Collection<LinkableData> getLinks(@NotNull UserData user);
 
   /**
    * Get the links from an user in a certain type
@@ -83,7 +83,7 @@ public interface DataLoader {
    * @return the links
    */
   @NotNull
-  Collection<LinkedData> getLinks(@NotNull UserData user, @NotNull LinkedDataType... types);
+  Collection<LinkableData> getLinks(@NotNull UserData user, @NotNull LinkableDataType... types);
   /**
    * Get the tokens from an user
    *
@@ -102,8 +102,8 @@ public interface DataLoader {
    * @return the linked data if found else null
    */
   @Nullable
-  LinkedData getLinkedData(
-      @NotNull LinkedDataType type, @NotNull ValuesMap identification, boolean equal);
+  LinkableData getLinkedData(
+      @NotNull LinkableDataType type, @NotNull ValuesMap identification, boolean equal);
 
   /**
    * Get a match using its id
@@ -124,7 +124,7 @@ public interface DataLoader {
    */
   @NotNull
   Collection<Match> getParticipating(
-      @NotNull LinkedDataType type,
+      @NotNull LinkableDataType type,
       @NotNull ValuesMap identification,
       @NotNull MatchStatus... status);
 
@@ -186,6 +186,14 @@ public interface DataLoader {
   Group getGroup(@NotNull String id);
 
   /**
+   * Delete the group with the given id
+   *
+   * @param id the id of the group to delete
+   * @return true if the group was deleted
+   */
+  boolean deleteGroup(String id);
+
+  /**
    * Get all the created groups
    *
    * @return the created groups
@@ -202,7 +210,7 @@ public interface DataLoader {
    * @return the leaderboard
    */
   @NotNull
-  List<LinkedData> getLeaderboard(@NotNull Ladder ladder, int page, int size);
+  List<LinkableData> getLeaderboard(@NotNull Ladder ladder, int page, int size);
 
   /**
    * Get the leaderboard for certain stat
@@ -214,5 +222,16 @@ public interface DataLoader {
    * @return the leaderboard
    */
   @NotNull
-  List<LinkedData> getLeaderboard(@NotNull String stat, int page, int size, boolean inverted);
+  List<LinkableData> getLeaderboard(@NotNull String stat, int page, int size, boolean inverted);
+
+  /**
+   * Get all the matches
+   *
+   * @param page the page of matches to see
+   * @param size the size of the page
+   * @param statuses the status of the matches to get
+   * @return the collection of matches
+   */
+  @NotNull
+  Collection<Match> getMatches(int page, int size, @NotNull MatchStatus... statuses);
 }

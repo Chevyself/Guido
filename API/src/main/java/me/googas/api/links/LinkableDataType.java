@@ -1,7 +1,7 @@
 package me.googas.api.links;
 
 /** The type of link of the data */
-public enum LinkedDataType {
+public enum LinkableDataType {
   /** Has a linked minecraft user */
   MINECRAFT,
   /** Has a linked user of discord */

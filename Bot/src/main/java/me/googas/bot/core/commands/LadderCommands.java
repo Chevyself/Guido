@@ -186,9 +186,9 @@ public class LadderCommands {
       @NotNull String key,
       @Nullable Object value) {
     if (value == null && ladder.getOptions().getMap().containsKey(key)) {
-      ladder.getOptions().removeValue(key);
+      ladder.getOptions().remove(key);
     } else if (value != null) {
-      ladder.getOptions().addValue(key, value);
+      ladder.getOptions().put(key, value);
     }
     String valueString;
     if (value != null) {

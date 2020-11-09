@@ -33,18 +33,19 @@ public class GuidoLinkedValuesMap extends GuidoValuesMap {
     super(new LinkedHashMap<>());
   }
 
+  @NotNull
   @Override
-  public GuidoLinkedValuesMap addValue(@NotNull String name, @NotNull Object value) {
-    return (GuidoLinkedValuesMap) super.addValue(name, value);
+  public GuidoLinkedValuesMap put(@NotNull String name, @NotNull Object value) {
+    return (GuidoLinkedValuesMap) super.put(name, value);
   }
 
   @Override
-  public GuidoLinkedValuesMap addValues(@NotNull Map<String, Object> map) {
-    return (GuidoLinkedValuesMap) super.addValues(map);
+  public GuidoLinkedValuesMap put(@NotNull Map<String, Object> map) {
+    return (GuidoLinkedValuesMap) super.put(map);
   }
 
   @Override
-  public GuidoLinkedValuesMap addValues(@NotNull ValuesMap map) {
-    return (GuidoLinkedValuesMap) super.addValues(map);
+  public GuidoLinkedValuesMap put(@NotNull ValuesMap map) {
+    return (GuidoLinkedValuesMap) super.put(map);
   }
 }

@@ -1,22 +1,22 @@
 package me.googas.api.links;
 
 import java.util.Collection;
-import java.util.Map;
 import me.googas.api.lang.LocaleFile;
+import me.googas.api.lang.Localized;
 import me.googas.api.permissions.Permissible;
 import me.googas.api.user.UserData;
 import me.googas.api.utility.ValuesMap;
 import me.googas.commons.cache.Catchable;
-import me.googas.commons.maps.MapBuilder;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-/** This object represents data that has been linked to an user */
-public interface LinkedData extends Permissible, Stateable, Catchable {
+/** This object represents data that can been linked to an user */
+public interface LinkableData extends Permissible, Stateable, Catchable, Localized {
 
   /**
    * Get the linked data as a readable string
    *
+   * @deprecated use {@link #getSingle()}
    * @param locale the locale that needs to read it
    * @return the readable string
    */
@@ -33,12 +33,12 @@ public interface LinkedData extends Permissible, Stateable, Catchable {
   String getSingle();
 
   /**
-   * Get the type of linked data
-   *
-   * @return the type of linked data
+   * @see #getLinks() this will get only the links of certain type
+   * @param types the types of links to get
+   * @return the links
    */
   @NotNull
-  LinkedDataType getType();
+  Collection<LinkableData> getLinks(@NotNull LinkableDataType... types);
 
   /**
    * Set the linked user to this data
@@ -46,39 +46,6 @@ public interface LinkedData extends Permissible, Stateable, Catchable {
    * @param user the new linked user
    */
   void setLinkedUser(@Nullable UserData user);
-
-  /**
-   * Send a message to this linked data
-   *
-   * @param message the message to send
-   */
-  void sendMessage(@NotNull String message);
-
-  /**
-   * Send a localized message using a given key
-   *
-   * @param key the key of the localized message
-   */
-  void sendLocalized(@NotNull String key);
-
-  /**
-   * Send a localized message using the given key and placeholders
-   *
-   * @param key the key of the localized message
-   * @param placeholders the placeholders of the message
-   */
-  void sendLocalized(@NotNull String key, @NotNull Map<String, String> placeholders);
-
-  /**
-   * Send a localized message using the given key and placeholders
-   *
-   * @param key the key of the localized message
-   * @param placeholders the placeholders of the message as a map builder
-   */
-  default void sendLocalized(
-      @NotNull String key, @NotNull MapBuilder<String, String> placeholders) {
-    this.sendLocalized(key, placeholders.build());
-  }
 
   /**
    * Get the preferences of a linked data
@@ -113,12 +80,12 @@ public interface LinkedData extends Permissible, Stateable, Catchable {
   UserData getLinkedUser();
 
   /**
-   * Get this linked data but only the type and identification
+   * Get the type of linked data
    *
-   * @return the data as uncompleted
+   * @return the type of linked data
    */
   @NotNull
-  LinkedInfo getInfo();
+  LinkableDataType getType();
 
   /**
    * Get whether this data is linked to an user
@@ -128,18 +95,18 @@ public interface LinkedData extends Permissible, Stateable, Catchable {
   boolean isLinked();
 
   /**
+   * Get this linked data but only the type and identification
+   *
+   * @return the data as uncompleted
+   */
+  @NotNull
+  LinkableInfo getInfo();
+
+  /**
    * Get all the links to this data. This will look for other links of {@link #getLinkedUser()}
    *
    * @return the collection of connected links
    */
   @NotNull
-  Collection<LinkedData> getLinks();
-
-  /**
-   * @see #getLinks() this will get only the links of certain type
-   * @param types the types of links to get
-   * @return the links
-   */
-  @NotNull
-  Collection<LinkedData> getLinks(@NotNull LinkedDataType... types);
+  Collection<LinkableData> getLinks();
 }

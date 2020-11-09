@@ -91,7 +91,7 @@ public class AutoClickDetector extends PacketAdapter implements AntiCheatDetecto
       }
     } else if (type == PacketType.Play.Client.ARM_ANIMATION) {
       int ticks = this.tracker.getTicks(uniqueId, true);
-      if (ticks > this.getSettings().getValueOr("reset-delay", Integer.class, 50)) {
+      if (ticks > this.getSettings().getOr("reset-delay", Integer.class, 50)) {
         this.clicks.put(uniqueId, 0);
         this.time.put(uniqueId, 0);
         this.averageSpeed.put(uniqueId, 0f);
@@ -108,7 +108,7 @@ public class AutoClickDetector extends PacketAdapter implements AntiCheatDetecto
               uniqueId,
               Math.abs(this.averageDeviation.getOrDefault(uniqueId, 0f) + deviation / cps));
           if (secs > 1) {
-            Double maxCps = this.getSettings().getValueOr("max-cps", Double.class, 12.0);
+            Double maxCps = this.getSettings().getOr("max-cps", Double.class, 12.0);
             if (cps >= maxCps) {
               new SuspectDetectedEvent(
                       event.getPlayer(),
@@ -118,8 +118,7 @@ public class AutoClickDetector extends PacketAdapter implements AntiCheatDetecto
                   .call();
             }
             float averageDeviation = this.averageDeviation.get(uniqueId);
-            Double minDeviation =
-                this.getSettings().getValueOr("min-deviation", Double.class, 0.01);
+            Double minDeviation = this.getSettings().getOr("min-deviation", Double.class, 0.01);
             if (averageDeviation < minDeviation) {
               new SuspectDetectedEvent(
                       event.getPlayer(),

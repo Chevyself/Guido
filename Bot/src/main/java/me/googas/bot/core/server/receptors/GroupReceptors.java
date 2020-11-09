@@ -44,9 +44,18 @@ public class GroupReceptors {
    */
   @Receptor("create-group")
   public String createGroup(@ParamName("name") String name, @ParamName("weight") int weight) {
-    GuidoGroup group = new GuidoGroup(weight, new GuidoValuesMap(), new HashSet<>(), name);
-    group.addToCache();
-    return group.getId();
+    return new GuidoGroup(weight, new GuidoValuesMap(), new HashSet<>(), name).cache().getId();
+  }
+
+  /**
+   * Deletes a group with the given id
+   *
+   * @param id the id to match
+   * @return true if the group is deleted
+   */
+  @Receptor("delete-group")
+  public boolean delete(@ParamName("id") String id) {
+    return Guido.getDataLoader().deleteGroup(id);
   }
 
   /**
@@ -58,7 +67,8 @@ public class GroupReceptors {
    * @return whether the group was updated
    */
   @Receptor("group-update")
-  public boolean update(@ParamName("id") String id, @ParamName("name") String name, @ParamName("weight") int weight) {
+  public boolean update(
+      @ParamName("id") String id, @ParamName("name") String name, @ParamName("weight") int weight) {
     BotGroup group = Guido.getDataLoader().getGroup(id);
     if (group != null) {
       group.setName(name);
@@ -77,13 +87,30 @@ public class GroupReceptors {
    * @return whether the preference was set
    */
   @Receptor("group-set-preference")
-  private boolean setPreference(
+  public boolean setPreference(
       @ParamName("id") String groupId,
       @ParamName("key") String key,
       @ParamName("value") Object value) {
     BotGroup group = Guido.getDataLoader().getGroup(groupId);
     if (group != null) {
-      group.getPreferences().addValue(key, value);
+      group.getPreferences().put(key, value);
+      return true;
+    }
+    return false;
+  }
+
+  /**
+   * Remove a preference
+   *
+   * @param groupId the id of the group to remove the preference to
+   * @param key the key of the preference
+   * @return whether the preference was removed
+   */
+  @Receptor("group-remove-preference")
+  public boolean setPreference(@ParamName("id") String groupId, @ParamName("key") String key) {
+    BotGroup group = Guido.getDataLoader().getGroup(groupId);
+    if (group != null) {
+      group.getPreferences().remove(key);
       return true;
     }
     return false;

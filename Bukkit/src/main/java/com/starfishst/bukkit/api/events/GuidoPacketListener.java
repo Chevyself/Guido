@@ -18,6 +18,6 @@ public interface GuidoPacketListener extends GuidoListener, PacketListener {
   @Override
   default boolean isEnabled() {
     return Guido.isProtocolLibConnected()
-        && this.getSettings().getValueOr("enabled", Boolean.class, false);
+        && this.getSettings().getOr("enabled", Boolean.class, false);
   }
 }

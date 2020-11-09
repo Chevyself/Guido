@@ -18,7 +18,7 @@ public interface ValuesMap {
    * @return the value or null if the map does not contain it
    */
   @Nullable
-  default Object getValue(@NotNull String key) {
+  default Object get(@NotNull String key) {
     return this.getMap().get(key);
   }
 
@@ -31,7 +31,7 @@ public interface ValuesMap {
    * @return the value of the preference or null if it does not have one
    */
   @Nullable
-  default <T> T getValue(@NotNull String name, @NotNull Class<T> clazz) {
+  default <T> T get(@NotNull String name, @NotNull Class<T> clazz) {
     Object obj = this.getMap().get(name);
     if (obj != null && clazz.isAssignableFrom(obj.getClass())) {
       return clazz.cast(obj);
@@ -49,7 +49,7 @@ public interface ValuesMap {
    * @return the value of the preference or null if it does not have one
    */
   @NotNull
-  default <T> T getValidatedValue(@NotNull String name, @NotNull Class<T> clazz) {
+  default <T> T validated(@NotNull String name, @NotNull Class<T> clazz) {
     Object obj = this.getMap().get(name);
     if (obj != null && clazz.isAssignableFrom(obj.getClass())) {
       return clazz.cast(obj);
@@ -68,8 +68,8 @@ public interface ValuesMap {
    * @return the value of the preference or null if it does not have one
    */
   @NotNull
-  default <T> T getValueOr(@NotNull String name, @NotNull Class<T> clazz, @NotNull T def) {
-    return Validate.notNullOr(this.getValue(name, clazz), def);
+  default <T> T getOr(@NotNull String name, @NotNull Class<T> clazz, @NotNull T def) {
+    return Validate.notNullOr(this.get(name, clazz), def);
   }
 
   /**
@@ -79,7 +79,8 @@ public interface ValuesMap {
    * @param value the value to add
    * @return this same instance
    */
-  default ValuesMap addValue(@NotNull String name, @NotNull Object value) {
+  @NotNull
+  default ValuesMap put(@NotNull String name, @NotNull Object value) {
     this.getMap().put(name, value);
     return this;
   }
@@ -90,8 +91,8 @@ public interface ValuesMap {
    * @param map the map to add the values from
    * @return this same instance
    */
-  default ValuesMap addValues(@NotNull Map<String, Object> map) {
-    map.forEach(this::addValue);
+  default ValuesMap put(@NotNull Map<String, Object> map) {
+    map.forEach(this::put);
     return this;
   }
 
@@ -101,8 +102,8 @@ public interface ValuesMap {
    * @param map the map to add the values from
    * @return this same instance
    */
-  default ValuesMap addValues(@NotNull ValuesMap map) {
-    this.addValues(map.getMap());
+  default ValuesMap put(@NotNull ValuesMap map) {
+    this.put(map.getMap());
     return this;
   }
 
@@ -111,7 +112,7 @@ public interface ValuesMap {
    *
    * @param key the key inside the map
    */
-  default void removeValue(@NotNull String key) {
+  default void remove(@NotNull String key) {
     this.getMap().remove(key);
   }
 
@@ -127,7 +128,7 @@ public interface ValuesMap {
   default <T> List<T> getListValue(@NotNull String name) {
     List<T> list = new ArrayList<>();
     Class<List<T>> aClass = (Class<List<T>>) list.getClass();
-    list.addAll(this.getValueOr(name, aClass, new ArrayList<>()));
+    list.addAll(this.getOr(name, aClass, new ArrayList<>()));
     return list;
   }
 

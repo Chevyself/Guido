@@ -3,15 +3,15 @@ package me.googas.bot.core.handlers.decorations;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import me.googas.api.links.LinkedData;
-import me.googas.api.links.LinkedDataType;
+import me.googas.api.links.LinkableData;
+import me.googas.api.links.LinkableDataType;
 import me.googas.api.matches.Ladder;
 import me.googas.api.matches.Match;
 import me.googas.api.matches.Team;
 import me.googas.api.matches.TeamMember;
 import me.googas.bot.api.events.match.MatchStatusUpdatedEvent;
 import me.googas.bot.api.types.BotGuild;
-import me.googas.bot.api.types.BotLinkedData;
+import me.googas.bot.api.types.BotLinkableData;
 import me.googas.bot.core.Guido;
 import me.googas.bot.core.handlers.GuidoEventHandler;
 import me.googas.commons.events.ListenPriority;
@@ -32,16 +32,16 @@ public class DecorationsHandler implements GuidoEventHandler {
   public void onMatchStatusUpdatedEvent(@NotNull MatchStatusUpdatedEvent event) {
     Match match = event.getMatch();
     long guildId = match.getGuildId();
-    String ladderName = match.getDetails().getValue("ladder", String.class);
+    String ladderName = match.getDetails().get("ladder", String.class);
     if (ladderName != null) {
       BotGuild guildData = Guido.getDataLoader().getGuildDataOrCreate(guildId);
       Ladder ladder = guildData.getLadder(ladderName);
       if (ladder != null) {
         for (Team team : event.getMatch().getTeams()) {
           for (TeamMember teamMember : team.getMembers()) {
-            LinkedData data = teamMember.getLinkInfo().getLink();
-            if (data instanceof BotLinkedData) {
-              Member member = ((BotLinkedData) data).getDiscordMember(guildId);
+            LinkableData data = teamMember.getLinkInfo().getLink();
+            if (data instanceof BotLinkableData) {
+              Member member = ((BotLinkableData) data).getDiscordMember(guildId);
               if (member != null) {
                 float elo = data.getElo(ladder);
                 float global = data.getGlobalElo(guildData);
@@ -66,10 +66,10 @@ public class DecorationsHandler implements GuidoEventHandler {
                       member.getEffectiveName().contains(" - ")
                           ? member.getEffectiveName().split(" - ")[1]
                           : member.getEffectiveName();
-                  if (data.getType() == LinkedDataType.MINECRAFT) {
+                  if (data.getType() == LinkableDataType.MINECRAFT) {
                     nick = data.getSingle();
                   } else {
-                    Collection<LinkedData> links = data.getLinks(LinkedDataType.MINECRAFT);
+                    Collection<LinkableData> links = data.getLinks(LinkableDataType.MINECRAFT);
                     if (!links.isEmpty()) {
                       nick = links.iterator().next().getSingle();
                     }

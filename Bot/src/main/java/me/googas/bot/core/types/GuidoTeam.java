@@ -36,12 +36,12 @@ public class GuidoTeam implements Team {
   }
 
   @Override
-  public boolean addMember(@NotNull TeamMember member) {
+  public boolean add(@NotNull TeamMember member) {
     return false;
   }
 
   @Override
-  public boolean removeMember(@NotNull TeamMember member) {
+  public boolean remove(@NotNull TeamMember member) {
     return false;
   }
 

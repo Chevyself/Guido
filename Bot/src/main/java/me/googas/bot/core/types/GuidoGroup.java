@@ -7,13 +7,12 @@ import me.googas.bot.api.events.data.group.GroupUnloadedEvent;
 import me.googas.bot.api.types.BotGroup;
 import me.googas.bot.core.Guido;
 import me.googas.bot.core.types.maps.GuidoValuesMap;
-import me.googas.commons.cache.thread.Catchable;
 import me.googas.commons.time.Time;
 import me.googas.commons.time.Unit;
 import org.jetbrains.annotations.NotNull;
 
 /** An implementation for the bot group */
-public class GuidoGroup extends Catchable implements BotGroup {
+public class GuidoGroup implements BotGroup {
 
   /** The id of the group */
   @NotNull private final String id;
@@ -83,9 +82,6 @@ public class GuidoGroup extends Catchable implements BotGroup {
   }
 
   @Override
-  public void onSecondPassed() {}
-
-  @Override
   public void onRemove() {
     new GroupUnloadedEvent(this).call();
   }
@@ -134,8 +130,16 @@ public class GuidoGroup extends Catchable implements BotGroup {
 
   @Override
   public int hashCode() {
-    int result = this.id.hashCode();
-    result = 31 * result + this.name.hashCode();
-    return result;
+    return this.id.hashCode();
+  }
+
+  /**
+   * Adds this catchable in cache
+   *
+   * @return this same object instance
+   */
+  @Override
+  public @NotNull GuidoGroup cache() {
+    return (GuidoGroup) BotGroup.super.cache();
   }
 }

@@ -94,7 +94,7 @@ public class GuidoAuthenticator implements Authenticator {
       info.forEach(
           (key, value) -> {
             if (!key.equalsIgnoreCase("bungee") || this.getBungee() == null) {
-              map.addValue(key, value);
+              map.put(key, value);
             }
           });
       Console.debug("Received client information from " + messenger + ": \n " + info);
@@ -112,7 +112,7 @@ public class GuidoAuthenticator implements Authenticator {
   @Nullable
   public JsonClientThread getBungee() {
     for (JsonClientThread client : this.info.keySet()) {
-      if (this.info.get(client).getValueOr("bungee", Boolean.class, false)) {
+      if (this.info.get(client).getOr("bungee", Boolean.class, false)) {
         return client;
       }
     }

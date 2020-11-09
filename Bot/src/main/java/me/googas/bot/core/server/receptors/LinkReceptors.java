@@ -1,6 +1,6 @@
 package me.googas.bot.core.server.receptors;
 
-import me.googas.api.links.LinkedInfo;
+import me.googas.api.links.LinkableInfo;
 import me.googas.bot.core.Guido;
 import me.googas.bot.core.handlers.link.LinkHandler;
 import me.googas.messaging.json.ParamName;
@@ -16,7 +16,7 @@ public class LinkReceptors {
    * @return the link
    */
   @Receptor("link-code")
-  public String linkCode(@ParamName("info") LinkedInfo info) {
+  public String linkCode(@ParamName("info") LinkableInfo info) {
     return Guido.getHandler(LinkHandler.class).createCode(info);
   }
 }

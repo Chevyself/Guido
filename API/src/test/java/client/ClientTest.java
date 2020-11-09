@@ -1,15 +1,17 @@
+package client;
+
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Scanner;
 import java.util.UUID;
 import me.googas.api.client.Client;
-import me.googas.api.client.data.LinkedInfoImpl;
+import me.googas.api.client.data.LinkableInfoImpl;
 import me.googas.api.client.data.PermissionStackImpl;
 import me.googas.api.client.data.TeamImpl;
 import me.googas.api.client.data.TeamMemberImpl;
 import me.googas.api.client.data.ValuesMapImpl;
-import me.googas.api.links.LinkedDataType;
-import me.googas.api.links.LinkedInfo;
+import me.googas.api.links.LinkableDataType;
+import me.googas.api.links.LinkableInfo;
 import me.googas.api.matches.Ladder;
 import me.googas.api.matches.TeamRole;
 import me.googas.api.permissions.Group;
@@ -33,9 +35,9 @@ public class ClientTest {
     String trimmed = UUIDUtils.trim(uuid);
     JsonClient conn = client.startConnection();
     Scanner scanner = new Scanner(System.in);
-    LinkedInfoImpl info =
-        new LinkedInfoImpl(
-            LinkedDataType.MINECRAFT,
+    LinkableInfoImpl info =
+        new LinkableInfoImpl(
+            LinkableDataType.MINECRAFT,
             new ValuesMapImpl(Maps.objects("uuid", trimmed).append("nickname", nick).build()));
     while (true) {
       while (scanner.hasNextLine()) {
@@ -110,13 +112,13 @@ public class ClientTest {
               new Request<>(
                   String.class,
                   "link-code",
-                  Maps.objects("type", LinkedDataType.MINECRAFT)
+                  Maps.objects("type", LinkableDataType.MINECRAFT)
                       .append("identification", Maps.singleton("uuid", trimmed))
                       .build()),
               System.out::println);
         } else if (line.equalsIgnoreCase("by-name")) {
           conn.sendRequest(
-              new Request<>(LinkedInfo.class, "get-mc-by-name", Maps.singleton("nickname", nick)),
+              new Request<>(LinkableInfo.class, "get-mc-by-name", Maps.singleton("nickname", nick)),
               linkInfo -> {
                 System.out.println(linkInfo.getType());
                 System.out.println(linkInfo.getIdentification().getMap());
@@ -141,8 +143,8 @@ public class ClientTest {
                               "2 teanm",
                               Lots.set(
                                   new TeamMemberImpl(
-                                      new LinkedInfoImpl(
-                                          LinkedDataType.MINECRAFT,
+                                      new LinkableInfoImpl(
+                                          LinkableDataType.MINECRAFT,
                                           new ValuesMapImpl(Maps.singleton("nickname", "Chevi"))),
                                       TeamRole.LEADER))))
                       .build()),

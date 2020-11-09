@@ -44,7 +44,7 @@ public class DecorationsListener implements GuidoListener {
     for (Group group : groups) {
       if (group.getWeight() < currentWeight || group.getWeight() == currentWeight) {
         currentWeight = group.getWeight();
-        builder.append(group.getPreferences().getValueOr("prefix", String.class, ""));
+        builder.append(group.getPreferences().getOr("prefix", String.class, ""));
       }
     }
     return BukkitUtils.build(builder.toString());
@@ -63,7 +63,7 @@ public class DecorationsListener implements GuidoListener {
     for (Group group : groups) {
       if (group.getWeight() < currentWeight || group.getWeight() == currentWeight) {
         currentWeight = group.getWeight();
-        builder.append(group.getPreferences().getValueOr("suffix", String.class, ""));
+        builder.append(group.getPreferences().getOr("suffix", String.class, ""));
       }
     }
     return BukkitUtils.build(builder.toString());

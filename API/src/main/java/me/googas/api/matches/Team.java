@@ -3,7 +3,7 @@ package me.googas.api.matches;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import me.googas.api.links.LinkedData;
+import me.googas.api.links.LinkableData;
 import org.jetbrains.annotations.NotNull;
 
 /** This object represents a team. Which is basically a collection of members */
@@ -16,33 +16,18 @@ public interface Team {
    * @return the average elo of the team
    */
   default float getElo(@NotNull Ladder ladder) {
-    float sum = 0;
-    int size = 0;
-    for (TeamMember member : this.getMembers()) {
-      LinkedData data = member.getLinkInfo().getLink();
-      if (data != null) {
-        sum += data.getElo(ladder);
-        size++;
+    if (!this.getMembers().isEmpty()) {
+      float sum = 0;
+      for (TeamMember member : this.getMembers()) {
+        LinkableData data = member.getLinkInfo().getLink();
+        if (data != null) {
+          sum += data.getElo(ladder);
+        }
       }
+      return sum / this.getMembers().size();
+    } else {
+      return 0;
     }
-    return sum / size;
-  }
-
-  /**
-   * Get the single identification for all the members
-   *
-   * @return the single identification
-   */
-  @NotNull
-  default Collection<String> getMemberSingles() {
-    List<String> singles = new ArrayList<>();
-    for (TeamMember member : this.getMembers()) {
-      LinkedData data = member.getLinkInfo().getLink();
-      if (data != null) {
-        singles.add(data.getSingle());
-      }
-    }
-    return singles;
   }
 
   /**
@@ -51,7 +36,15 @@ public interface Team {
    * @param member the member to add
    * @return whether the member was added to the team
    */
-  boolean addMember(@NotNull TeamMember member);
+  boolean add(@NotNull TeamMember member);
+
+  /**
+   * Removes a member from the team
+   *
+   * @param member the member to remove
+   * @return whether the member was removed from the team
+   */
+  boolean remove(@NotNull TeamMember member);
 
   /**
    * Get the members of the team
@@ -70,12 +63,21 @@ public interface Team {
   String getName();
 
   /**
-   * Removes a member from the team
+   * Get the single identification for all the members
    *
-   * @param member the member to remove
-   * @return whether the member was removed from the team
+   * @return the single identification
    */
-  boolean removeMember(@NotNull TeamMember member);
+  @NotNull
+  default Collection<String> getMemberSingles() {
+    List<String> singles = new ArrayList<>();
+    for (TeamMember member : this.getMembers()) {
+      LinkableData data = member.getLinkInfo().getLink();
+      if (data != null) {
+        singles.add(data.getSingle());
+      }
+    }
+    return singles;
+  }
 
   /**
    * Get an unique way to identify the team

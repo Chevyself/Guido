@@ -1,6 +1,6 @@
 package me.googas.bot.core.handlers.matches;
 
-import me.googas.api.links.LinkedData;
+import me.googas.api.links.LinkableData;
 import me.googas.api.matches.Ladder;
 import me.googas.api.matches.Match;
 import me.googas.api.matches.Team;
@@ -29,7 +29,7 @@ public class MatchCalculator implements GuidoEventHandler {
   public void onMatchStatusUpdatedEvent(@NotNull MatchStatusUpdatedEvent event) {
     Match match = event.getMatch();
     Team winners = match.getWinners();
-    String ladderName = match.getDetails().getValue("ladder", String.class);
+    String ladderName = match.getDetails().get("ladder", String.class);
     long guildId = match.getGuildId();
     if (ladderName != null && guildId != -1) {
       Console.debug("Saving the elo for " + match);
@@ -44,16 +44,16 @@ public class MatchCalculator implements GuidoEventHandler {
               this.newElo(
                   winnersElo,
                   this.calculateExpected(winnersElo, losersElo),
-                  ladder.getOptions().getValueOr("win-multiplier", Integer.class, 1));
+                  ladder.getOptions().getOr("win-multiplier", Integer.class, 1));
           float newLosers =
               this.newElo(
                   losersElo,
                   this.calculateExpected(losersElo, winnersElo),
-                  ladder.getOptions().getValueOr("lose-multiplier", Integer.class, 0));
+                  ladder.getOptions().getOr("lose-multiplier", Integer.class, 0));
           float winnersDifference = newWinners - winnersElo;
           float losersDifference = losersElo - newLosers;
-          match.getDetails().addValue("winners-difference", winnersDifference);
-          match.getDetails().addValue("losers-difference", losersDifference);
+          match.getDetails().put("winners-difference", winnersDifference);
+          match.getDetails().put("losers-difference", losersDifference);
           this.setElo(match, ladder, winnersDifference, losersDifference);
         }
       }
@@ -74,7 +74,7 @@ public class MatchCalculator implements GuidoEventHandler {
     String ladderName = ladder.getName();
     for (Team team : match.getTeams()) {
       for (TeamMember member : team.getMembers()) {
-        LinkedData data = member.getLinkInfo().getLink();
+        LinkableData data = member.getLinkInfo().getLink();
         if (data != null) {
           Console.debug("Setting the stat and elo to " + data);
           if (team == winners) {
