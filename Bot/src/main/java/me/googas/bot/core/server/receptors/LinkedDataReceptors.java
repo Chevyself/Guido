@@ -57,10 +57,16 @@ public class LinkedDataReceptors {
       @ParamName("info") LinkableInfo info, @ParamName("context") String context) {
     LinkableData linkableData = info.getLink();
     if (linkableData != null) {
-      PermissionStack permissions = linkableData.getPermissions(context);
-      if (permissions != null) {
-        return permissions;
+      GuidoPermissionStack permissions = new GuidoPermissionStack(context, new HashSet<>());
+      PermissionStack stack = linkableData.getPermissions(context);
+      PermissionStack global = linkableData.getPermissions("global");
+      if (stack != null) {
+        permissions.getPermissions().addAll(stack.getPermissions());
       }
+      if (global != null) {
+        permissions.getPermissions().addAll(global.getPermissions());
+      }
+      return permissions;
     }
     return new GuidoPermissionStack(context, new HashSet<>());
   }
