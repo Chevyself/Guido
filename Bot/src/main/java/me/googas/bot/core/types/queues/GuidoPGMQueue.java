@@ -56,7 +56,6 @@ public class GuidoPGMQueue extends GuidoQueue {
                   Lots.set(new GuidoTeam(-2, participants, "participants")),
                   new GuidoLinkedValuesMap("type", "pgm").put("ladder", ladder.getName()))
               .cache();
-      guidoMatch.cache();
       return guidoMatch;
     }
     return null;

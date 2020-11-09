@@ -3,6 +3,8 @@ package me.googas.bot.core.util;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.function.Consumer;
+
 import me.googas.commons.Lots;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.GuildChannel;
@@ -10,6 +12,7 @@ import net.dv8tion.jda.api.entities.IMentionable;
 import net.dv8tion.jda.api.entities.IPermissionHolder;
 import net.dv8tion.jda.api.entities.PermissionOverride;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /** y Static utilities for mentions */
 public class Discord {
@@ -87,13 +90,14 @@ public class Discord {
    * @param channel the channel to add the permissions
    * @param holders the permission holders to add the permissions to
    * @param permissions the permissions to add to the permission holders
+   * @param success what to call when the permission is given
    */
   public static void addPermissions(
       @NotNull GuildChannel channel,
       @NotNull Collection<? extends IPermissionHolder> holders,
-      @NotNull Collection<Permission> permissions) {
+      @NotNull Collection<Permission> permissions, @Nullable Consumer<Void> success) {
     for (IPermissionHolder holder : holders) {
-      Discord.addPermissions(channel, holder, permissions);
+      Discord.addPermissions(channel, holder, permissions, success);
     }
   }
 
@@ -103,20 +107,30 @@ public class Discord {
    * @param channel the channel to add the permissions
    * @param holder the permission holder to add the permission to
    * @param permissions the permissions to add to the permission holders
+   * @param success what to call when the permission is given
    */
   public static void addPermissions(
-      @NotNull GuildChannel channel,
-      @NotNull IPermissionHolder holder,
-      @NotNull Collection<Permission> permissions) {
+          @NotNull GuildChannel channel,
+          @NotNull IPermissionHolder holder,
+          @NotNull Collection<Permission> permissions,
+          @Nullable Consumer<Void> success) {
     PermissionOverride override = channel.getPermissionOverride(holder);
     if (override != null) {
-      override.getManager().setAllow(permissions).queue();
+      override.getManager().setAllow(permissions).queue(permOverride -> {
+        if (success != null) {
+          success.accept(null);
+        }
+      });
     } else {
       channel
           .createPermissionOverride(holder)
           .queue(
               newOverride -> {
-                newOverride.getManager().setAllow(permissions).queue();
+                newOverride.getManager().setAllow(permissions).queue(permOverride -> {
+                  if (success != null) {
+                    success.accept(null);
+                  }
+                });
               });
     }
   }

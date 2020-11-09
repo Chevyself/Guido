@@ -121,6 +121,14 @@ public interface GuildData extends Catchable {
   Map<String, Long> getChannels();
 
   /**
+   * This map contains the string to identify a voice channel and its id
+   *
+   * @return the map of channels
+   */
+  @NotNull
+  Map<String, Long> getVoiceChannels();
+
+  /**
    * This map contains the string to identify a channel and its category
    *
    * @return the map of categories

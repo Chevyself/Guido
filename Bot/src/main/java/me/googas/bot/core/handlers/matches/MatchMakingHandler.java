@@ -69,10 +69,9 @@ public class MatchMakingHandler implements GuidoEventHandler {
       Map<Integer, Long> voices = this.getVoices(match.getId());
       for (Long value : voices.values()) {
         VoiceChannel channel = Guido.getConnection().validatedJda().getVoiceChannelById(value);
-        if (channel != null) {
-          channel.delete().queue();
-        }
+        this.deleteAndMove(guildData, channel);
       }
+      this.teamsVoices.remove(match.getId());
     }
   }
 
@@ -116,16 +115,17 @@ public class MatchMakingHandler implements GuidoEventHandler {
                   if (link instanceof BotLinkableData) {
                     Member discordMember = ((BotLinkableData) link).getDiscordMember(data.getId());
                     if (discordMember != null) {
-                      Discord.addPermissions(channel, discordMember, Discord.VOICE);
-                      GuildVoiceState state = discordMember.getVoiceState();
-                      if (state != null) {
-                        if (state.getChannel() != null) {
-                          ((BotGuild) data)
-                              .getDiscord()
-                              .moveVoiceMember(discordMember, channel)
-                              .queue();
+                      Discord.addPermissions(channel, discordMember, Discord.VOICE, (aVoid -> {
+                        GuildVoiceState state = discordMember.getVoiceState();
+                        if (state != null) {
+                          if (state.getChannel() != null) {
+                            ((BotGuild) data)
+                                    .getDiscord()
+                                    .moveVoiceMember(discordMember, channel)
+                                    .queue();
+                          }
                         }
-                      }
+                      }));
                     }
                   }
                 }
@@ -143,15 +143,37 @@ public class MatchMakingHandler implements GuidoEventHandler {
     Match match = event.getMatch();
     GuildData data = match.getGuildData();
     if (data instanceof BotGuild) {
+      BotGuild botGuild = (BotGuild) data;
       Map<Integer, Long> voices = this.getVoices(match.getId());
-      VoiceChannel voice =
+      VoiceChannel channel =
           Guido.getConnection()
               .validatedJda()
               .getVoiceChannelById(voices.getOrDefault(event.getTeam().getId(), -1L));
-      if (voice != null) {
-        voice.delete().queue();
-      }
+      this.deleteAndMove(botGuild, channel);
       voices.remove(event.getTeam().getId());
+    }
+  }
+
+  /**
+   * Delete and move all the members from a team voice channel
+   *
+   * @param botGuild the guild where the channel exists
+   * @param channel the channel itself
+   */
+  public void deleteAndMove(BotGuild botGuild, VoiceChannel channel) {
+    VoiceChannel waiting = botGuild.getVoiceChannel("waiting");
+    if (channel != null) {
+      for (Member member : channel.getMembers()) {
+        botGuild.getDiscord().moveVoiceMember(member, waiting).queue();
+      }
+      int time = 0;
+      while (!channel.getMembers().isEmpty()) {
+        time++;
+        if (time > 3000) {
+          break;
+        }
+      }
+      channel.delete().queue();
     }
   }
 

@@ -11,6 +11,7 @@ import net.dv8tion.jda.api.entities.Category;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.entities.TextChannel;
+import net.dv8tion.jda.api.entities.VoiceChannel;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -32,6 +33,23 @@ public interface BotGuild extends GuildData, BotCatchable {
     if (channel == null) {
       channel = guild.createTextChannel(key).complete();
       this.getChannels().put(key, channel.getIdLong());
+    }
+    return channel;
+  }
+
+  /**
+   * Get the discord text channel for the given key
+   *
+   * @param key the key to get the channel
+   * @return the channel
+   */
+  @NotNull
+  default VoiceChannel getVoiceChannel(@NotNull String key) {
+    Guild guild = this.getDiscord();
+    VoiceChannel channel = guild.getVoiceChannelById(this.getVoiceChannels().getOrDefault(key, -1L));
+    if (channel == null) {
+      channel = guild.createVoiceChannel(key).complete();
+      this.getVoiceChannels().put(key, channel.getIdLong());
     }
     return channel;
   }

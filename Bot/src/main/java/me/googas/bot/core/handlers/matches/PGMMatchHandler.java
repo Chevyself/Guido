@@ -9,6 +9,7 @@ import me.googas.api.links.LinkableInfo;
 import me.googas.api.matches.Match;
 import me.googas.api.matches.MatchStatus;
 import me.googas.bot.api.events.match.MatchLoadedEvent;
+import me.googas.bot.api.events.match.MatchStatusUpdatedEvent;
 import me.googas.bot.api.server.BotServer;
 import me.googas.bot.core.Guido;
 import me.googas.bot.core.util.console.Console;
@@ -46,6 +47,19 @@ public class PGMMatchHandler implements MatchHandler {
     }
   }
 
+  /**
+   * Wait for a match to finish for other matches to look for servers
+   *
+   * @param event the event of a match updating its status
+   */
+  @Listener(priority = ListenPriority.HIGHEST)
+  public void onMatchStatusUpdated(@NotNull MatchStatusUpdatedEvent event) {
+    if (event.getStatus() == MatchStatus.FINISHED && "pgm".equalsIgnoreCase(event.getMatch().getDetails().get("type", String.class))) {
+      for (Match match : this.waitingForServer) {
+        this.lookForServer(match);
+      }
+    }
+  }
   /**
    * Look for a server where the match can be played
    *

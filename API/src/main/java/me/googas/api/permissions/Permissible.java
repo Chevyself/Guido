@@ -18,7 +18,7 @@ public interface Permissible {
     PermissionStack stack = this.getPermissions(context);
     return (stack != null && (stack.hasPermission(node) || stack.hasPermission("*"))
         || (!context.equalsIgnoreCase("global") && this.hasPermission(node, "global"))
-        || (this.hasPermission("*", context)));
+        || (!node.equalsIgnoreCase("*") && this.hasPermission("*", context)));
   }
 
   /**
@@ -32,7 +32,7 @@ public interface Permissible {
     PermissionStack stack = this.getPermissions(context);
     return (stack != null && stack.containsPermission(node))
         || (!context.equalsIgnoreCase("global") && this.containsPermission(node, "global")
-            || (this.hasPermission("*", context)));
+            || (!node.equalsIgnoreCase("*") && this.containsPermission("*", context)));
   }
 
   /**

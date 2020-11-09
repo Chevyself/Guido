@@ -63,7 +63,6 @@ public class GuidoMatch implements BotMatch {
     this.teams = teams;
     this.details = details;
     this.winners = winners;
-    new MatchLoadedEvent(this).call();
   }
 
   /**
