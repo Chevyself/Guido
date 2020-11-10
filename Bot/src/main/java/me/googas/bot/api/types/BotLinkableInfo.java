@@ -12,10 +12,10 @@ public interface BotLinkableInfo extends LinkableInfo {
   default BotLinkableData getLink() {
     switch (this.getType()) {
       case DISCORD_GUILD:
-        return Guido.getDataLoader().getLinkedData(this.getType(), this.getIdentification(), true);
+        return Guido.getDataLoader().getLinkedData(this.getType(), this.getIdentification());
       case DISCORD:
       case MINECRAFT:
-        return Guido.getDataLoader().getLinkedData(this.getType(), this.getIdentification(), false);
+        return Guido.getDataLoader().getLinkedData(this.getType(), this.getIdentification());
       default:
         throw new IllegalStateException(this.getType() + " is not a valid type");
     }

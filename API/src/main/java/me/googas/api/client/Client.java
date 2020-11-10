@@ -124,38 +124,6 @@ public class Client {
   }
 
   /**
-   * @see JsonClient#sendRequest(Request, Consumer) this method is delegated
-   * @param request the request to send
-   * @param consumer the consumer of the request
-   * @param <T> the type of the object requested
-   * @throws MessengerListenFailException if the connection times out or there's no connection
-   */
-  public <T> void request(@NotNull Request<T> request, @NotNull Consumer<T> consumer)
-      throws MessengerListenFailException {
-    try {
-      this.validatedConnection().sendRequest(request, consumer);
-    } catch (IOException e) {
-      throw new MessengerListenFailException("There's no connection with the bot", e);
-    }
-  }
-
-  /**
-   * @see JsonClient#sendRequest(Request) this method is delegated
-   * @param request the request to send
-   * @param <T> the type of object requested
-   * @return the object requested
-   * @throws MessengerListenFailException if the connection times out or there's no connection
-   */
-  @Nullable
-  public <T> T request(@NotNull Request<T> request) throws MessengerListenFailException {
-    try {
-      return this.validatedConnection().sendRequest(request);
-    } catch (IOException e) {
-      throw new MessengerListenFailException("There's no connection with the bot", e);
-    }
-  }
-
-  /**
    * The validated connection with the server
    *
    * @return the validated connection

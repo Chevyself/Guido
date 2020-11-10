@@ -1,13 +1,16 @@
 package me.googas.bot.core.server.receptors;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import me.googas.api.links.LinkableData;
+import me.googas.api.links.LinkableDataType;
 import me.googas.api.links.LinkableInfo;
 import me.googas.api.permissions.Permission;
 import me.googas.api.permissions.PermissionStack;
 import me.googas.api.user.UserData;
+import me.googas.bot.api.loader.BotDataLoader;
 import me.googas.bot.core.Guido;
 import me.googas.bot.core.types.permissions.GuidoPermissionStack;
 import me.googas.messaging.json.ParamName;
@@ -15,6 +18,31 @@ import me.googas.messaging.json.Receptor;
 
 /** Receptors associated with linked data requests */
 public class LinkedDataReceptors {
+
+  /**
+   * Get all the links that exist with certain type
+   *
+   * @param types the types of links to get if the array is empty it will get all of them
+   * @param page the page of links to see
+   * @param limit the limit of links to see per page
+   * @return the links
+   */
+  @Receptor("links")
+  public Collection<LinkableData> links(@ParamName("types")LinkableDataType[] types, @ParamName("page") int page, @ParamName("limit") int limit) {
+    return Guido.getDataLoader().getLinks(page, limit, types);
+  }
+
+  /**
+   * Count all the links that there is for certain type
+   *
+   * @param types the types of links to cunt
+   * @return the amount of links that there is of that type
+   */
+  @Receptor("count-links")
+  public long links(@ParamName("types")LinkableDataType[] types) {
+    return Guido.getDataLoader().countLinks(types);
+  }
+
 
   /**
    * Check if data exists for the next type and identification
@@ -189,4 +217,16 @@ public class LinkedDataReceptors {
     }
     return false;
   }
+
+  /**
+   * Get certain link
+   *
+   * @param info the way to identify the link
+   * @return the link if found else null
+   */
+  @Receptor("get-link")
+  public LinkableData getLink(@ParamName("info") LinkableInfo info) {
+    return Guido.getDataLoader().getLinkedData(info.getType(), info.getIdentification());
+  }
+
 }

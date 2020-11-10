@@ -84,6 +84,17 @@ public interface DataLoader {
    */
   @NotNull
   Collection<LinkableData> getLinks(@NotNull UserData user, @NotNull LinkableDataType... types);
+
+  /**
+   * Get all the links that exist in the bot
+   *
+   * @param page the page to get of links
+   * @param limit the amount of links per page
+   * @param types the types of links to get
+   * @return the collection of links
+   */
+  Collection<LinkableData> getLinks(int page, int limit, @NotNull LinkableDataType... types);
+
   /**
    * Get the tokens from an user
    *
@@ -98,12 +109,11 @@ public interface DataLoader {
    *
    * @param type the type of data to get
    * @param identification the identification to get the linked data from
-   * @param equal whether to equal or match the identification
    * @return the linked data if found else null
    */
   @Nullable
   LinkableData getLinkedData(
-      @NotNull LinkableDataType type, @NotNull ValuesMap identification, boolean equal);
+          @NotNull LinkableDataType type, @NotNull ValuesMap identification);
 
   /**
    * Get a match using its id
@@ -192,6 +202,13 @@ public interface DataLoader {
    * @return true if the group was deleted
    */
   boolean deleteGroup(String id);
+
+  /**
+   * Count how many links there are {@link #getLinks(int, int, LinkableDataType...)}
+   * @param types the types of links to get
+   * @return the amount of links
+   */
+  long countLinks(LinkableDataType... types);
 
   /**
    * Get all the created groups

@@ -30,8 +30,8 @@ public class MinecraftDataReceptors {
         Guido.getDataLoader()
             .getLinkedData(
                 LinkableDataType.MINECRAFT,
-                new GuidoValuesMap("uuid", trimmed).put("nickname", nickname),
-                false);
+                new GuidoValuesMap("uuid", trimmed).put("nickname", nickname)
+            );
     if (data != null) {
       return false;
     } else {
@@ -61,8 +61,8 @@ public class MinecraftDataReceptors {
         Guido.getDataLoader()
             .getLinkedData(
                 LinkableDataType.MINECRAFT,
-                new GuidoValuesMap("uuid", UUIDUtils.trim(uuid)),
-                false);
+                new GuidoValuesMap("uuid", UUIDUtils.trim(uuid))
+            );
     if (data != null) {
       if (!data.getIdentification()
           .getOr("nickname", String.class, "")
@@ -84,7 +84,7 @@ public class MinecraftDataReceptors {
   public LinkableInfo getInfo(@ParamName("nickname") String nick) {
     BotLinkableData data =
         Guido.getDataLoader()
-            .getLinkedData(LinkableDataType.MINECRAFT, new GuidoValuesMap("nickname", nick), false);
+            .getLinkedData(LinkableDataType.MINECRAFT, new GuidoValuesMap("nickname", nick));
     if (data != null) {
       return data.getInfo();
     }

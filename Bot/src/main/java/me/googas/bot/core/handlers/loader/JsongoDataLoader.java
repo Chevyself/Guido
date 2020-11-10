@@ -494,7 +494,7 @@ public class JsongoDataLoader implements BotDataLoader {
   }
 
   /**
-   * @see DataLoader#getLinkedData(LinkableDataType, ValuesMap, boolean) this provides the linked
+   * @see DataLoader#getLinkedData(LinkableDataType, ValuesMap) this provides the linked
    *     data but with a custom predicate for different results
    * @param type the type of data to provide
    * @param identification the way to identify the data
@@ -530,7 +530,7 @@ public class JsongoDataLoader implements BotDataLoader {
   @Override
   public @NotNull BotLinkableData getDiscordUserData(long userId) {
     BotLinkableData data =
-        this.getLinkedData(LinkableDataType.DISCORD, new GuidoValuesMap("id", userId), false);
+        this.getLinkedData(LinkableDataType.DISCORD, new GuidoValuesMap("id", userId));
     if (data == null) {
       data =
           new GuidoLinkableData(
@@ -625,7 +625,7 @@ public class JsongoDataLoader implements BotDataLoader {
   @Override
   public @NotNull BotLinkableData getMemberData(long userId, long guildId) {
     GuidoValuesMap identification = new GuidoValuesMap("id", userId).put("guild", guildId);
-    BotLinkableData data = this.getLinkedData(LinkableDataType.DISCORD_GUILD, identification, true);
+    BotLinkableData data = this.getLinkedData(LinkableDataType.DISCORD_GUILD, identification);
     if (data == null) {
       data =
           new GuidoLinkableData(
@@ -642,20 +642,11 @@ public class JsongoDataLoader implements BotDataLoader {
 
   @Override
   public @Nullable BotLinkableData getLinkedData(
-      @NotNull LinkableDataType type, @NotNull ValuesMap identification, boolean equal) {
+          @NotNull LinkableDataType type, @NotNull ValuesMap identification) {
     return this.getLinkedData(
         type,
         identification,
-        data -> {
-          if (data.getType() == type) {
-            if (equal) {
-              return data.getType() == type && data.getIdentification().equals(identification);
-            } else {
-              return data.getType() == type && data.getIdentification().matches(identification);
-            }
-          }
-          return false;
-        });
+        data -> data.compare(type, identification));
   }
 
   @Override
@@ -723,12 +714,6 @@ public class JsongoDataLoader implements BotDataLoader {
             this.supplyObjectFromQuery(GuidoGroup.class, this.groups, new Document("id", id)));
   }
 
-  /**
-   * Delete the group with the given id
-   *
-   * @param id the id of the group to delete
-   * @return true if the group was deleted
-   */
   @Override
   public boolean deleteGroup(@NotNull String id) {
     BotGroup group = this.getGroup(id);
@@ -741,6 +726,21 @@ public class JsongoDataLoader implements BotDataLoader {
       return this.deleteObject(this.groups, new Document("id", id));
     }
     return false;
+  }
+
+  @Override
+  public long countLinks(LinkableDataType... types) {
+    Set<LinkableDataType> toMatch = new HashSet<>();
+    Set<String> names = new HashSet<>();
+    if (types.length == 0) {
+      toMatch.addAll(Arrays.asList(LinkableDataType.values()));
+    } else {
+      toMatch.addAll(Arrays.asList(types));
+    }
+    for (LinkableDataType match : toMatch) {
+      names.add(match.toString());
+    }
+    return this.count(this.links, new Document("type", new Document("$in", names)));
   }
 
   @Override
@@ -802,7 +802,7 @@ public class JsongoDataLoader implements BotDataLoader {
             new Document("type", new Document("$in", names)),
             size,
             page * size,
-            match -> true));
+            match -> toMatch.contains(match.getStatus())));
   }
 
   @Override
@@ -827,6 +827,29 @@ public class JsongoDataLoader implements BotDataLoader {
             -1,
             data ->
                 user.getId().equals(data.getLinkedUserId()) && typeSet.contains(data.getType())));
+  }
+
+  /**
+   * Get all the links that exist in the bot
+   *
+   * @param page  the page to get of links
+   * @param limit the amount of links per page
+   * @param types the types of links to get
+   * @return the collection of links
+   */
+  @Override
+  public Collection<LinkableData> getLinks(int page, int limit, @NotNull LinkableDataType... types) {
+    Set<LinkableDataType> toMatch = new HashSet<>();
+    Set<String> names = new HashSet<>();
+    if (types.length == 0) {
+      toMatch.addAll(Arrays.asList(LinkableDataType.values()));
+    } else {
+      toMatch.addAll(Arrays.asList(types));
+    }
+    for (LinkableDataType match : toMatch) {
+      names.add(match.toString());
+    }
+    return new ArrayList<>(this.supplyManyAndCache(GuidoLinkableData.class, this.links, new Document("type", new Document("$in", names)), limit, page * limit, link -> toMatch.contains(link.getType())));
   }
 
   @NotNull

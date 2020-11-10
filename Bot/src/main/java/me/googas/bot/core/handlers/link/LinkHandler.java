@@ -43,7 +43,7 @@ public class LinkHandler implements GuidoHandler {
   @Nullable
   public String createCode(@NotNull LinkableInfo info) {
     BotLinkableData data =
-        Guido.getDataLoader().getLinkedData(info.getType(), info.getIdentification(), false);
+        Guido.getDataLoader().getLinkedData(info.getType(), info.getIdentification());
     Console.debug("Attempting to generate code to " + data);
     if (data != null && !data.isLinked()) {
       String code = this.nextCode();

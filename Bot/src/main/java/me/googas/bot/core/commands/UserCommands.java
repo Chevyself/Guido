@@ -76,7 +76,7 @@ public class UserCommands {
                 "link.only-one", Maps.singleton("type", info.getType().toString().toLowerCase())));
       } else {
         BotLinkableData data =
-            Guido.getDataLoader().getLinkedData(info.getType(), info.getIdentification(), true);
+            Guido.getDataLoader().getLinkedData(info.getType(), info.getIdentification());
         if (data != null) {
           data.setLinkedUser(user);
           return new Result(

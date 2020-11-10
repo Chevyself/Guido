@@ -28,23 +28,8 @@ public interface Match extends Catchable {
     Collection<Team> teams = this.getTeams();
     for (Team team : teams) {
       for (TeamMember member : team.getMembers()) {
-        LinkableInfo info = member.getLinkInfo();
-        if (info.getType().equals(type)) {
-          switch (type) {
-            case NONE:
-            case MINECRAFT:
-            case DISCORD:
-            default:
-              if (info.getIdentification().matches(identification)) {
-                return true;
-              }
-              break;
-            case DISCORD_GUILD:
-              if (info.getIdentification().equals(identification)) {
-                return true;
-              }
-              break;
-          }
+        if (member.getLinkInfo().compare(type, identification)) {
+          return true;
         }
       }
     }

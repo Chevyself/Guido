@@ -59,7 +59,7 @@ public interface BotDataLoader extends DataLoader, GuidoEventHandler {
 
   @Nullable
   BotLinkableData getLinkedData(
-      @NotNull LinkableDataType type, @NotNull ValuesMap identifications, boolean equal);
+          @NotNull LinkableDataType type, @NotNull ValuesMap identifications);
 
   @Override
   @Nullable

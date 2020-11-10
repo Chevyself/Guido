@@ -14,6 +14,29 @@ import org.jetbrains.annotations.Nullable;
 public interface LinkableData extends Permissible, Stateable, Catchable, Localized {
 
   /**
+   * This method is used to compare this linkable data with a type and
+   * provided information
+   *
+   * @param type the type to compare
+   * @param identification the identification to compare
+   * @return true if it is the same type and the identification matches
+   */
+  default boolean compare(@NotNull LinkableDataType type, @NotNull ValuesMap identification) {
+    return this.getInfo().compare(type, identification);
+  }
+
+  /**
+   * @see #compare(LinkableDataType, ValuesMap)
+   *
+   * @param info the information of the data comparing
+   *
+   * @return true if it is the same type and the identification matches
+   */
+  default boolean compare(@NotNull LinkableInfo info) {
+    return this.getInfo().compare(info);
+  }
+
+  /**
    * Get the linked data as a readable string
    *
    * @deprecated use {@link #getSingle()}
@@ -56,14 +79,6 @@ public interface LinkableData extends Permissible, Stateable, Catchable, Localiz
   ValuesMap getPreferences();
 
   /**
-   * Get how this linked data is identified
-   *
-   * @return the identification of the data
-   */
-  @NotNull
-  ValuesMap getIdentification();
-
-  /**
    * Get the id of the user that is linked to this data
    *
    * @return the id of the user that is linked to this data
@@ -80,19 +95,19 @@ public interface LinkableData extends Permissible, Stateable, Catchable, Localiz
   UserData getLinkedUser();
 
   /**
-   * Get the type of linked data
+   * @see #compare(LinkableDataType, ValuesMap)
    *
-   * @return the type of linked data
-   */
-  @NotNull
-  LinkableDataType getType();
-
-  /**
-   * Get whether this data is linked to an user
+   * @param data the other data comparing
    *
-   * @return true if the data is linked
+   * @return true if it is the same type and the identification matches
    */
-  boolean isLinked();
+  default boolean compare(@NotNull LinkableData data) {
+    if (this == data) {
+      return true;
+    } else {
+      return this.compare(data.getInfo());
+    }
+  }
 
   /**
    * Get this linked data but only the type and identification
@@ -109,4 +124,30 @@ public interface LinkableData extends Permissible, Stateable, Catchable, Localiz
    */
   @NotNull
   Collection<LinkableData> getLinks();
+
+  /**
+   * Get the type of linked data
+   *
+   * @return the type of linked data
+   */
+  @NotNull
+  LinkableDataType getType();
+
+  /**
+   * Get how this linked data is identified
+   *
+   * @return the identification of the data
+   */
+  @NotNull
+  ValuesMap getIdentification();
+
+  /**
+   * Get whether this data is linked to an user
+   *
+   * @return true if the data is linked
+   */
+  default boolean isLinked() {
+    return this.getLinkedUser() != null;
+  }
+
 }

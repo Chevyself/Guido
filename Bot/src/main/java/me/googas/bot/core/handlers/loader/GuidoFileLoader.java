@@ -88,7 +88,7 @@ public class GuidoFileLoader implements BotDataLoader {
 
   @Override
   public @Nullable BotLinkableData getLinkedData(
-      @NotNull LinkableDataType type, @NotNull ValuesMap identifications, boolean equal) {
+          @NotNull LinkableDataType type, @NotNull ValuesMap identifications) {
     throw new UnsupportedOperationException("Linked data cannot be find using file loader");
   }
 
@@ -136,6 +136,17 @@ public class GuidoFileLoader implements BotDataLoader {
   @Override
   public boolean deleteGroup(String id) {
     return false;
+  }
+
+  /**
+   * Count how many links there are {@link #getLinks(int, int, LinkableDataType...)}
+   *
+   * @param types the types of links to get
+   * @return the amount of links
+   */
+  @Override
+  public long countLinks(LinkableDataType... types) {
+    return 0;
   }
 
   @Override
@@ -197,6 +208,19 @@ public class GuidoFileLoader implements BotDataLoader {
   public @NotNull Collection<LinkableData> getLinks(
       @NotNull UserData user, @NotNull LinkableDataType... types) {
     throw new UnsupportedOperationException("Links data cannot be find using file loader");
+  }
+
+  /**
+   * Get all the links that exist in the bot
+   *
+   * @param page  the page to get of links
+   * @param limit the amount of links per page
+   * @param types the types of links to get
+   * @return the collection of links
+   */
+  @Override
+  public Collection<LinkableData> getLinks(int page, int limit, @NotNull LinkableDataType... types) {
+    return new ArrayList<>();
   }
 
   @NotNull

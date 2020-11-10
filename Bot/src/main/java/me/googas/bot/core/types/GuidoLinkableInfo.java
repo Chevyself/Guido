@@ -44,19 +44,8 @@ public class GuidoLinkableInfo implements BotLinkableInfo {
   public boolean equals(Object object) {
     if (this == object) return true;
     if (!(object instanceof GuidoLinkableInfo)) return false;
-
     GuidoLinkableInfo that = (GuidoLinkableInfo) object;
-
-    if (this.type != that.type) return false;
-    switch (this.getType()) {
-      case MINECRAFT:
-      case DISCORD:
-      case NONE:
-      default:
-        return this.identification.matches(that.identification);
-      case DISCORD_GUILD:
-        return this.identification.equals(that.identification);
-    }
+    return this.compare(that);
   }
 
   @Override

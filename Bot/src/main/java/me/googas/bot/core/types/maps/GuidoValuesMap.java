@@ -79,8 +79,7 @@ public class GuidoValuesMap implements ValuesMap {
 
   @Override
   public int hashCode() {
-    int code = this.map.hashCode();
-    return code;
+    return this.map.hashCode();
   }
 
   @NotNull
