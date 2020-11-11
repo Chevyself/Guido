@@ -137,7 +137,7 @@ public class GuidoAuthenticator implements Authenticator {
    * @return true if the client was disconnected
    */
   @Receptor("disconnect")
-  public void disconnect(@NotNull JsonClientThread client) {
+  public void disconnect(@NotNull JsonMessenger client) {
     client.close();
   }
 }

@@ -61,7 +61,7 @@ public class GuidoQueue implements Queue {
 
   @Override
   public boolean join(@NotNull LinkableInfo data) {
-    if (!this.isWaiting(data) && !new QueuePreJoinEvent(this, data).callAndGet()) {
+    if (!this.isWaiting(data) && new QueuePreJoinEvent(this, data).callAndGet()) {
       this.getWaiting().add(data);
       new QueueJoinEvent(this, data).call();
       return true;

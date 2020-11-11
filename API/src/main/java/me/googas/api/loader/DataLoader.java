@@ -112,8 +112,7 @@ public interface DataLoader {
    * @return the linked data if found else null
    */
   @Nullable
-  LinkableData getLinkedData(
-          @NotNull LinkableDataType type, @NotNull ValuesMap identification);
+  LinkableData getLinkedData(@NotNull LinkableDataType type, @NotNull ValuesMap identification);
 
   /**
    * Get a match using its id
@@ -205,6 +204,7 @@ public interface DataLoader {
 
   /**
    * Count how many links there are {@link #getLinks(int, int, LinkableDataType...)}
+   *
    * @param types the types of links to get
    * @return the amount of links
    */

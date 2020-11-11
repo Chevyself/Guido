@@ -1,7 +1,7 @@
 package com.starfishst.bungee.core.commands.providers;
 
-import com.starfishst.bungee.api.Guido;
 import com.starfishst.bungee.context.CommandContext;
+import com.starfishst.bungee.core.client.requests.BungeeRequest;
 import com.starfishst.bungee.core.data.ProxiedOfflinePlayer;
 import com.starfishst.bungee.providers.type.BungeeArgumentProvider;
 import com.starfishst.core.exceptions.ArgumentProviderException;
@@ -11,7 +11,6 @@ import me.googas.api.links.LinkableInfo;
 import me.googas.api.utility.ValuesMap;
 import me.googas.commons.UUIDUtils;
 import me.googas.commons.maps.Maps;
-import me.googas.messaging.Request;
 import me.googas.messaging.api.MessengerListenFailException;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
@@ -45,10 +44,8 @@ public class ProxiedOfflinePlayerProvider implements BungeeArgumentProvider<Prox
     }
     try {
       LinkableInfo playerInfo =
-          Guido.getClient()
-              .request(
-                  new Request<>(
-                      LinkableInfo.class, "get-mc-by-name", Maps.objects("nickname", s).build()));
+          new BungeeRequest<>(LinkableInfo.class, "get-mc-by-name", Maps.singleton("nickname", s))
+              .send();
       if (playerInfo != null) {
         ValuesMap identification = playerInfo.getIdentification();
         String uuid = identification.get("uuid", String.class);

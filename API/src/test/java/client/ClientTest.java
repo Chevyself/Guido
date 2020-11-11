@@ -1,15 +1,20 @@
 package client;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Scanner;
+import java.util.TreeMap;
 import java.util.UUID;
+
+import com.google.gson.internal.LinkedTreeMap;
 import me.googas.api.client.Client;
 import me.googas.api.client.data.LinkableInfoImpl;
 import me.googas.api.client.data.PermissionStackImpl;
 import me.googas.api.client.data.TeamImpl;
 import me.googas.api.client.data.TeamMemberImpl;
 import me.googas.api.client.data.ValuesMapImpl;
+import me.googas.api.links.LinkableData;
 import me.googas.api.links.LinkableDataType;
 import me.googas.api.links.LinkableInfo;
 import me.googas.api.matches.Ladder;
@@ -29,7 +34,7 @@ public class ClientTest {
 
   public static void main(String[] args) throws IOException, MessengerListenFailException {
     String debug = "104.243.43.175";
-    Client client = new Client("1Uv2AZduciPKwUL8", "localhost", 3000);
+    Client client = new Client("1Uv2AZduciPKwUL8", "104.243.43.175", 3000);
     String nick = "Selfie";
     UUID uuid = UUID.fromString("5eed208d-de58-4022-9ba7-6ccb5ea7e92a");
     String trimmed = UUIDUtils.trim(uuid);
@@ -38,7 +43,7 @@ public class ClientTest {
     LinkableInfoImpl info =
         new LinkableInfoImpl(
             LinkableDataType.MINECRAFT,
-            new ValuesMapImpl(Maps.objects("uuid", trimmed).append("nickname", nick).build()));
+            new ValuesMapImpl(Maps.objects("uuid", trimmed).build()));
     while (true) {
       while (scanner.hasNextLine()) {
         String line = scanner.nextLine();
@@ -65,9 +70,9 @@ public class ClientTest {
               new Request<>(
                   PermissionStackImpl.class,
                   "permission",
-                  Maps.objects("context", "bungee").append("info", info).build()),
+                  Maps.objects("context", "asdf").append("info", info).build()),
               stack -> {
-                System.out.println("Permission for bungee: " + stack.getPermissions());
+                System.out.println("Permission for bungee: " + stack);
               });
         } else if (line.equalsIgnoreCase("add-permission")) {
           conn.sendRequest(
@@ -160,6 +165,13 @@ public class ClientTest {
               bol -> {
                 System.out.println("Team removed? " + bol);
               });
+        } else if (line.equalsIgnoreCase("links")) {
+            System.out.println("Seding links request");
+            conn.sendRequest(new Request<>(LinkedTreeMap.class, "links", Maps.objects("types", new ArrayList<>()).append("page", 0).append("limit", 1).build()), objects -> {
+                System.out.println("Received");
+            }, exception -> {
+                exception.printStackTrace();
+            });
         }
       }
     }

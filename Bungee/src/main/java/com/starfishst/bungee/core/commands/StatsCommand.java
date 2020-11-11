@@ -1,7 +1,8 @@
 package com.starfishst.bungee.core.commands;
 
 import com.starfishst.bungee.annotations.Command;
-import com.starfishst.bungee.api.Guido;
+import com.starfishst.bungee.core.client.requests.BungeeBooleanRequest;
+import com.starfishst.bungee.core.client.requests.BungeeRequest;
 import com.starfishst.bungee.core.data.ProxiedOfflinePlayer;
 import com.starfishst.bungee.result.Result;
 import com.starfishst.bungee.utils.BungeeUtils;
@@ -12,7 +13,6 @@ import com.starfishst.core.annotations.settings.Settings;
 import java.util.Map;
 import me.googas.commons.Strings;
 import me.googas.commons.maps.Maps;
-import me.googas.messaging.Request;
 import me.googas.messaging.api.MessengerListenFailException;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.chat.TextComponent;
@@ -49,9 +49,8 @@ public class StatsCommand {
     } else {
       return new Result("&cYou are not allowed to see someone else's stats");
     }
-    Guido.getClient()
-        .request(
-            new Request<>(Map.class, "stats", Maps.singleton("info", toSee.getLinkedInfo())),
+    new BungeeRequest<>(Map.class, "stats", Maps.singleton("info", toSee.getLinkedInfo()))
+        .send(
             map -> {
               StringBuilder builder = Strings.getBuilder();
               if (map != null) {
@@ -90,15 +89,12 @@ public class StatsCommand {
    */
   @Settings(settings = @Setting(key = "async", value = "true"))
   @Command(aliases = "statsReset", permission = "guido.stats.reset")
-  public Result statsReset(
+  public void statsReset(
       CommandSender sender,
       @Required(name = "player", description = "The player reset the stats to")
-          ProxiedOfflinePlayer player)
-      throws MessengerListenFailException {
-    Guido.getClient()
-        .request(
-            new Request<>(
-                Boolean.class, "reset-stats", Maps.singleton("info", player.getLinkedInfo())),
+          ProxiedOfflinePlayer player) {
+    new BungeeBooleanRequest("reset-stats", Maps.singleton("info", player.getLinkedInfo()))
+        .send(
             bol -> {
               String message;
               if (bol) {
@@ -108,6 +104,5 @@ public class StatsCommand {
               }
               sender.sendMessage(new TextComponent(BungeeUtils.build(message)));
             });
-    return new Result();
   }
 }

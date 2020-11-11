@@ -2,16 +2,20 @@ package me.googas.bot.core;
 
 import com.starfishst.jda.CommandManager;
 import com.starfishst.jda.ManagerOptions;
+
+import java.awt.*;
 import java.io.IOException;
 import java.lang.ref.SoftReference;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
+
 import me.googas.api.loader.DataLoader;
 import me.googas.bot.api.events.GuidoCancellable;
 import me.googas.bot.api.loader.BotDataLoader;
 import me.googas.bot.api.server.BotServer;
+import me.googas.bot.api.types.BotCatchable;
 import me.googas.bot.core.commands.CategoryCommands;
 import me.googas.bot.core.commands.ChannelCommands;
 import me.googas.bot.core.commands.DeveloperCommands;
@@ -26,6 +30,7 @@ import me.googas.bot.core.commands.TeamCommands;
 import me.googas.bot.core.commands.TestCommands;
 import me.googas.bot.core.commands.TokenCommands;
 import me.googas.bot.core.commands.UserCommands;
+import me.googas.bot.core.commands.VoiceChannelCommands;
 import me.googas.bot.core.commands.permissions.GuidoPermissionChecker;
 import me.googas.bot.core.commands.providers.GuidoProvidersRegistry;
 import me.googas.bot.core.handlers.GuidoHandler;
@@ -47,7 +52,6 @@ import me.googas.commons.Lots;
 import me.googas.commons.Validate;
 import me.googas.commons.cache.Catchable;
 import me.googas.commons.cache.MemoryCache;
-import me.googas.commons.cache.thread.ICatchable;
 import me.googas.commons.events.Event;
 import me.googas.commons.events.ListenerManager;
 import me.googas.commons.maps.Maps;
@@ -158,11 +162,18 @@ public class Guido {
    */
   public static void registerCommands(HashMap<String, String> argsMaps, JDA jda) {
     Console.debug("Starting to register commands");
+    ManagerOptions options = new ManagerOptions();
+    options.setDeleteCommands(false);
+    options.setDeleteErrors(false);
+    options.setDeleteSuccess(false);
+    options.setEmbedMessages(true);
+    options.setSuccess(new Color(Integer.decode("#f48d0e")));
+    options.setError(new Color(Integer.decode("#db150a")));
     Guido.commandManager =
         new CommandManager(
             jda,
             argsMaps.getOrDefault("prefix", argsMaps.getOrDefault("prefix", ".")),
-            new ManagerOptions(),
+                options,
             Guido.languageHandler,
             new GuidoProvidersRegistry(Guido.languageHandler),
             new GuidoPermissionChecker(Guido.languageHandler, Guido.dataLoader));
@@ -182,7 +193,8 @@ public class Guido {
             new TeamCommands(),
             new TestCommands(),
             new TokenCommands(),
-            new UserCommands())) {
+            new UserCommands(),
+                new VoiceChannelCommands())) {
       Console.debug("Registering commands in " + cmd.getClass().getSimpleName());
       Guido.commandManager.registerCommand(cmd);
     }
@@ -287,10 +299,10 @@ public class Guido {
     Console.info("Clearing cache...");
     for (SoftReference<Catchable> reference : Guido.cache.copy()) {
       Catchable catchable = reference.get();
-      if (catchable instanceof Catchable) {
+      if (catchable instanceof BotCatchable) {
         Console.debug(catchable + " is being cleaned");
         try {
-          ((ICatchable) catchable).unload(true);
+          ((BotCatchable) catchable).unload(true);
         } catch (Throwable throwable) {
           throwable.printStackTrace();
         }

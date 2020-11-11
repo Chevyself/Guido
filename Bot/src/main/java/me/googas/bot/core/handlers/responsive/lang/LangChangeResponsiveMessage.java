@@ -4,11 +4,10 @@ import com.starfishst.jda.utils.responsive.ReactionResponse;
 import java.util.HashSet;
 import java.util.Set;
 import me.googas.api.links.LinkableData;
-import me.googas.bot.api.events.responsive.ResponsiveMessageUnloadedEvent;
+import me.googas.bot.api.types.BotCatchable;
 import me.googas.bot.core.Guido;
 import me.googas.bot.core.handlers.lang.GuidoLocaleFile;
 import me.googas.bot.core.handlers.responsive.GuidoResponsiveMessage;
-import me.googas.commons.cache.thread.Catchable;
 import me.googas.commons.time.Time;
 import me.googas.commons.time.Unit;
 import net.dv8tion.jda.api.JDA;
@@ -18,7 +17,7 @@ import net.dv8tion.jda.api.entities.User;
 import org.jetbrains.annotations.NotNull;
 
 /** A responsive message made to allow an user to change the language */
-public class LangChangeResponsiveMessage extends Catchable implements GuidoResponsiveMessage {
+public class LangChangeResponsiveMessage implements GuidoResponsiveMessage, BotCatchable {
 
   /** The id of the message */
   private final long id;
@@ -36,7 +35,6 @@ public class LangChangeResponsiveMessage extends Catchable implements GuidoRespo
    * @param message the message that is the responsive message in discord
    */
   public LangChangeResponsiveMessage(@NotNull User toChange, @NotNull Message message) {
-    super(true);
     this.id = message.getIdLong();
     this.channelId = message.getChannel().getIdLong();
     LinkableData userData = Guido.getDataLoader().getDiscordUserData(toChange.getIdLong());
@@ -50,12 +48,7 @@ public class LangChangeResponsiveMessage extends Catchable implements GuidoRespo
   }
 
   @Override
-  public void onSecondPassed() {}
-
-  @Override
-  public void onRemove() {
-    new ResponsiveMessageUnloadedEvent(this).call();
-  }
+  public void onRemove() throws Throwable {}
 
   @Override
   public @NotNull Time getToRemove() {

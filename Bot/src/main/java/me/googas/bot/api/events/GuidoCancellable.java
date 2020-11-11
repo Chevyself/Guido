@@ -8,12 +8,13 @@ import me.googas.commons.events.Event;
 public interface GuidoCancellable extends Cancellable {
 
   /**
-   * Calls an event. As in {@link GuidoEvent#call()} but returns whether it was cancelled
+   * Calls an event. As in {@link GuidoEvent#call()} but returns whether it was cancelled. true if
+   * it was not cancelled
    *
    * @return true if the event was cancelled
    * @throws IllegalArgumentException cancellable is not an instance of {@link Event}
    */
   default boolean callAndGet() {
-    return Guido.call(this);
+    return !Guido.call(this);
   }
 }

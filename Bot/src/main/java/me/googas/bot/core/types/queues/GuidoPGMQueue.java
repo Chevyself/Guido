@@ -50,13 +50,11 @@ public class GuidoPGMQueue extends GuidoQueue {
       for (TeamMember participant : participants) {
         this.getWaiting().remove(participant.getLinkInfo());
       }
-      GuidoMatch guidoMatch =
-          new GuidoMatch(
-                  this.getGuildId(),
-                  Lots.set(new GuidoTeam(-2, participants, "participants")),
-                  new GuidoLinkedValuesMap("type", "pgm").put("ladder", ladder.getName()))
-              .cache();
-      return guidoMatch;
+      return new GuidoMatch(
+              this.getGuildId(),
+              Lots.set(new GuidoTeam(-2, participants, "participants")),
+              new GuidoLinkedValuesMap("type", "pgm").put("ladder", ladder.getName()))
+          .cache();
     }
     return null;
   }

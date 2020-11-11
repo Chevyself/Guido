@@ -14,8 +14,7 @@ import org.jetbrains.annotations.Nullable;
 public interface LinkableData extends Permissible, Stateable, Catchable, Localized {
 
   /**
-   * This method is used to compare this linkable data with a type and
-   * provided information
+   * This method is used to compare this linkable data with a type and provided information
    *
    * @param type the type to compare
    * @param identification the identification to compare
@@ -27,9 +26,7 @@ public interface LinkableData extends Permissible, Stateable, Catchable, Localiz
 
   /**
    * @see #compare(LinkableDataType, ValuesMap)
-   *
    * @param info the information of the data comparing
-   *
    * @return true if it is the same type and the identification matches
    */
   default boolean compare(@NotNull LinkableInfo info) {
@@ -96,9 +93,7 @@ public interface LinkableData extends Permissible, Stateable, Catchable, Localiz
 
   /**
    * @see #compare(LinkableDataType, ValuesMap)
-   *
    * @param data the other data comparing
-   *
    * @return true if it is the same type and the identification matches
    */
   default boolean compare(@NotNull LinkableData data) {
@@ -149,5 +144,4 @@ public interface LinkableData extends Permissible, Stateable, Catchable, Localiz
   default boolean isLinked() {
     return this.getLinkedUser() != null;
   }
-
 }

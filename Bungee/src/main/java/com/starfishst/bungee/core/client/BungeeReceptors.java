@@ -12,10 +12,10 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
 import me.googas.api.client.data.LinkableInfoImpl;
 import me.googas.api.client.data.ValuesMapImpl;
 import me.googas.api.links.LinkableDataType;
-import me.googas.commons.Atomic;
 import me.googas.commons.maps.Maps;
 import me.googas.messaging.Request;
 import me.googas.messaging.json.ParamName;
@@ -139,7 +139,7 @@ public class BungeeReceptors implements GuidoListener {
           BungeeLocaleFile locale = Guido.getLanguageHandler().getFile(player);
           if (!player.getServer().getInfo().equals(server)) {
             AtomicBoolean connected = new AtomicBoolean(false);
-            Atomic<Integer> taskId = new Atomic<>(-1);
+            AtomicInteger taskId = new AtomicInteger(-1);
             taskId.set(
                 ProxyServer.getInstance()
                     .getScheduler()

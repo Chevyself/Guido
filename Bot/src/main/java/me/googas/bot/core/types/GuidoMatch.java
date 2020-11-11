@@ -164,14 +164,14 @@ public class GuidoMatch implements BotMatch {
    */
   @Override
   public void setStatus(@NotNull MatchStatus status) {
-    if (!new MatchStatusUpdatedEvent(this, status).callAndGet()) {
+    if (new MatchStatusUpdatedEvent(this, status).callAndGet()) {
       this.status = status;
     }
   }
 
   @Override
   public boolean addTeam(@NotNull Team team) {
-    if (!this.getTeams().contains(team) && !new MatchPreAddTeamEvent(this, team).callAndGet()) {
+    if (!this.getTeams().contains(team) && new MatchPreAddTeamEvent(this, team).callAndGet()) {
       new MatchAddTeamEvent(this, team).call();
       this.getTeams().add(team);
       return true;
@@ -181,7 +181,7 @@ public class GuidoMatch implements BotMatch {
 
   @Override
   public boolean removeTeam(@NotNull Team team) {
-    if (this.getTeams().contains(team) && !new MatchPreRemoveTeamEvent(this, team).callAndGet()) {
+    if (this.getTeams().contains(team) && new MatchPreRemoveTeamEvent(this, team).callAndGet()) {
       new MatchRemoveTeamEvent(this, team).call();
       this.getTeams().remove(team);
       return true;

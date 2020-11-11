@@ -3,7 +3,8 @@ package com.starfishst.bukkit.listeners;
 import com.starfishst.bukkit.api.Guido;
 import com.starfishst.bukkit.api.events.GuidoListener;
 import com.starfishst.bukkit.utils.BukkitUtils;
-import java.util.Collection;
+import java.util.ArrayList;
+import java.util.List;
 import me.googas.api.permissions.Group;
 import me.googas.commons.Strings;
 import org.bukkit.event.EventHandler;
@@ -23,11 +24,14 @@ public class DecorationsListener implements GuidoListener {
   public void onPlayerLoginEvent(PlayerLoginEvent event) {
     PermissionListener permissions = Guido.getListener(PermissionListener.class);
     if (permissions != null) {
-      Collection<Group> groups = permissions.getGroups(event.getPlayer().getUniqueId());
-      event
-          .getPlayer()
-          .setDisplayName(
-              this.getPrefixex(groups) + event.getPlayer().getName() + this.getSuffixes(groups));
+      List<Group> groups = new ArrayList<>(permissions.getGroups(event.getPlayer().getUniqueId()));
+      Guido.getLogger().info("Groups of " + event.getPlayer().getUniqueId() + " " + groups);
+      String displayName =
+          BukkitUtils.build(
+              this.getPrefixes(groups) + event.getPlayer().getName() + this.getSuffixes(groups) + "&r");
+      Guido.getLogger()
+          .info("Display name of " + event.getPlayer().getUniqueId() + " " + displayName);
+      event.getPlayer().setDisplayName(displayName);
     }
   }
 
@@ -38,8 +42,8 @@ public class DecorationsListener implements GuidoListener {
    * @return the prefixes for the given groups
    */
   @NotNull
-  public String getPrefixex(@NotNull Collection<Group> groups) {
-    int currentWeight = 0;
+  public String getPrefixes(@NotNull List<Group> groups) {
+    int currentWeight = this.getMinWeight(groups);
     StringBuilder builder = Strings.getBuilder();
     for (Group group : groups) {
       if (group.getWeight() < currentWeight || group.getWeight() == currentWeight) {
@@ -47,7 +51,7 @@ public class DecorationsListener implements GuidoListener {
         builder.append(group.getPreferences().getOr("prefix", String.class, ""));
       }
     }
-    return BukkitUtils.build(builder.toString());
+    return builder.toString();
   }
 
   /**
@@ -57,8 +61,8 @@ public class DecorationsListener implements GuidoListener {
    * @return the suffixes for the given groups
    */
   @NotNull
-  public String getSuffixes(@NotNull Collection<Group> groups) {
-    int currentWeight = 0;
+  public String getSuffixes(@NotNull List<Group> groups) {
+    int currentWeight = this.getMinWeight(groups);
     StringBuilder builder = Strings.getBuilder();
     for (Group group : groups) {
       if (group.getWeight() < currentWeight || group.getWeight() == currentWeight) {
@@ -67,6 +71,26 @@ public class DecorationsListener implements GuidoListener {
       }
     }
     return BukkitUtils.build(builder.toString());
+  }
+
+  /**
+   * Get the minimum weight from a list of groups
+   *
+   * @param groups the groups to get the minimum weight
+   * @return the minimum weight and 0 if there is no groups
+   */
+  private int getMinWeight(@NotNull List<Group> groups) {
+    if (groups.isEmpty()) {
+      return 0;
+    } else {
+      int min = groups.get(0).getWeight();
+      for (Group group : groups) {
+        if (group.getWeight() < min) {
+          min = group.getWeight();
+        }
+      }
+      return min;
+    }
   }
 
   /** Called on {@link #unregister()} */

@@ -1,10 +1,9 @@
 package com.starfishst.bungee.core.commands;
 
 import com.starfishst.bungee.annotations.Command;
-import com.starfishst.bungee.api.Guido;
 import com.starfishst.bungee.core.client.requests.BungeeBooleanRequest;
+import com.starfishst.bungee.core.client.requests.BungeeRequest;
 import com.starfishst.bungee.core.data.ProxiedOfflinePlayer;
-import com.starfishst.bungee.result.Result;
 import com.starfishst.bungee.utils.BungeeUtils;
 import com.starfishst.core.annotations.Optional;
 import com.starfishst.core.annotations.Parent;
@@ -18,8 +17,6 @@ import me.googas.api.permissions.PermissionStack;
 import me.googas.commons.Pagination;
 import me.googas.commons.Strings;
 import me.googas.commons.maps.Maps;
-import me.googas.messaging.Request;
-import me.googas.messaging.api.MessengerListenFailException;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.chat.TextComponent;
 
@@ -40,7 +37,7 @@ public class PermissionCommands {
   @Command(
       aliases = {"permissions", "perms", "perm"},
       permission = "guido.perms")
-  public Result perms(
+  public void perms(
       CommandSender sender,
       @Required(name = "player", description = "The proxied player to add the permission to ")
           ProxiedOfflinePlayer player,
@@ -50,14 +47,12 @@ public class PermissionCommands {
               suggestions = "bungee")
           String context,
       @Optional(name = "page", description = "The page to see the permissions", suggestions = "1")
-          int page)
-      throws MessengerListenFailException {
-    Guido.getClient()
-        .request(
-            new Request<>(
-                PermissionStack.class,
-                "permission",
-                Maps.objects("info", player.getLinkedInfo()).append("context", context).build()),
+          int page) {
+    new BungeeRequest<>(
+            PermissionStack.class,
+            "permission",
+            Maps.objects("info", player.getLinkedInfo()).append("context", context).build())
+        .send(
             stack -> {
               if (stack != null && !stack.getPermissions().isEmpty()) {
                 Pagination<Permission> pagination =
@@ -96,8 +91,6 @@ public class PermissionCommands {
                                 + "&c is empty")));
               }
             });
-
-    return new Result();
   }
 
   /**
@@ -114,7 +107,7 @@ public class PermissionCommands {
   @Command(
       aliases = {"add", "give"},
       permission = "guido.perms.add")
-  public Result add(
+  public void add(
       CommandSender sender,
       @Required(name = "player", description = "The proxied player to add the permission to ")
           ProxiedOfflinePlayer player,
@@ -125,18 +118,15 @@ public class PermissionCommands {
               name = "context",
               description = "The context to add the permission on",
               suggestions = "bungee")
-          String context)
-      throws MessengerListenFailException {
+          String context) {
 
-    Guido.getClient()
-        .request(
-            new Request<>(
-                Boolean.class,
-                "add-permission",
-                Maps.objects("info", player.getLinkedInfo())
-                    .append("context", context)
-                    .append("permission", new PermissionImpl(node, enabled).getNodeAppended())
-                    .build()),
+    new BungeeBooleanRequest(
+            "add-permission",
+            Maps.objects("info", player.getLinkedInfo())
+                .append("context", context)
+                .append("permission", new PermissionImpl(node, enabled).getNodeAppended())
+                .build())
+        .send(
             bol -> {
               TextComponent message;
               if (bol) {
@@ -156,7 +146,6 @@ public class PermissionCommands {
               }
               sender.sendMessage(message);
             });
-    return new Result();
   }
 
   /**

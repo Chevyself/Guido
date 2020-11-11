@@ -92,7 +92,7 @@ public class GuidoGuild implements BotGuild {
    */
   @Override
   public @NotNull Map<String, Long> getVoiceChannels() {
-    return null;
+    return this.voiceChannels;
   }
 
   @Override

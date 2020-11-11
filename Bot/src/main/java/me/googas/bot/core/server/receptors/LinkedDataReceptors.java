@@ -10,7 +10,6 @@ import me.googas.api.links.LinkableInfo;
 import me.googas.api.permissions.Permission;
 import me.googas.api.permissions.PermissionStack;
 import me.googas.api.user.UserData;
-import me.googas.bot.api.loader.BotDataLoader;
 import me.googas.bot.core.Guido;
 import me.googas.bot.core.types.permissions.GuidoPermissionStack;
 import me.googas.messaging.json.ParamName;
@@ -28,7 +27,10 @@ public class LinkedDataReceptors {
    * @return the links
    */
   @Receptor("links")
-  public Collection<LinkableData> links(@ParamName("types")LinkableDataType[] types, @ParamName("page") int page, @ParamName("limit") int limit) {
+  public Collection<LinkableData> links(
+      @ParamName("types") LinkableDataType[] types,
+      @ParamName("page") int page,
+      @ParamName("limit") int limit) {
     return Guido.getDataLoader().getLinks(page, limit, types);
   }
 
@@ -39,10 +41,9 @@ public class LinkedDataReceptors {
    * @return the amount of links that there is of that type
    */
   @Receptor("count-links")
-  public long links(@ParamName("types")LinkableDataType[] types) {
+  public long links(@ParamName("types") LinkableDataType[] types) {
     return Guido.getDataLoader().countLinks(types);
   }
-
 
   /**
    * Check if data exists for the next type and identification
@@ -228,5 +229,4 @@ public class LinkedDataReceptors {
   public LinkableData getLink(@ParamName("info") LinkableInfo info) {
     return Guido.getDataLoader().getLinkedData(info.getType(), info.getIdentification());
   }
-
 }

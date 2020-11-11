@@ -494,8 +494,8 @@ public class JsongoDataLoader implements BotDataLoader {
   }
 
   /**
-   * @see DataLoader#getLinkedData(LinkableDataType, ValuesMap) this provides the linked
-   *     data but with a custom predicate for different results
+   * @see DataLoader#getLinkedData(LinkableDataType, ValuesMap) this provides the linked data but
+   *     with a custom predicate for different results
    * @param type the type of data to provide
    * @param identification the way to identify the data
    * @param predicate the way to get the data from cache
@@ -642,11 +642,8 @@ public class JsongoDataLoader implements BotDataLoader {
 
   @Override
   public @Nullable BotLinkableData getLinkedData(
-          @NotNull LinkableDataType type, @NotNull ValuesMap identification) {
-    return this.getLinkedData(
-        type,
-        identification,
-        data -> data.compare(type, identification));
+      @NotNull LinkableDataType type, @NotNull ValuesMap identification) {
+    return this.getLinkedData(type, identification, data -> data.compare(type, identification));
   }
 
   @Override
@@ -832,13 +829,14 @@ public class JsongoDataLoader implements BotDataLoader {
   /**
    * Get all the links that exist in the bot
    *
-   * @param page  the page to get of links
+   * @param page the page to get of links
    * @param limit the amount of links per page
    * @param types the types of links to get
    * @return the collection of links
    */
   @Override
-  public Collection<LinkableData> getLinks(int page, int limit, @NotNull LinkableDataType... types) {
+  public Collection<LinkableData> getLinks(
+      int page, int limit, @NotNull LinkableDataType... types) {
     Set<LinkableDataType> toMatch = new HashSet<>();
     Set<String> names = new HashSet<>();
     if (types.length == 0) {
@@ -849,7 +847,14 @@ public class JsongoDataLoader implements BotDataLoader {
     for (LinkableDataType match : toMatch) {
       names.add(match.toString());
     }
-    return new ArrayList<>(this.supplyManyAndCache(GuidoLinkableData.class, this.links, new Document("type", new Document("$in", names)), limit, page * limit, link -> toMatch.contains(link.getType())));
+    return new ArrayList<>(
+        this.supplyManyAndCache(
+            GuidoLinkableData.class,
+            this.links,
+            new Document("type", new Document("$in", names)),
+            limit,
+            page * limit,
+            link -> toMatch.contains(link.getType())));
   }
 
   @NotNull

@@ -10,7 +10,6 @@ import me.googas.api.lang.LocaleFile;
 import me.googas.bot.api.types.BotGuild;
 import me.googas.commons.Strings;
 import me.googas.commons.maps.Maps;
-import net.dv8tion.jda.api.entities.Category;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.TextChannel;
 
@@ -30,24 +29,24 @@ public class ChannelCommands {
       aliases = "channels",
       description = "channels.desc",
       permission = @Perm(node = "guido.channels"))
-  public Result categories(LocaleFile locale, Guild guild, BotGuild botGuild) {
+  public Result channels(LocaleFile locale, Guild guild, BotGuild botGuild) {
     Map<String, String> placeholders = Maps.singleton("name", guild.getName());
-    Map<String, Long> categories = botGuild.getChannels();
-    if (categories.isEmpty()) {
+    Map<String, Long> channels = botGuild.getChannels();
+    if (channels.isEmpty()) {
       return new Result(locale.get("channels.empty", placeholders));
     } else {
       StringBuilder builder = Strings.getBuilder();
       builder.append(locale.get("channels.title", placeholders));
-      categories.forEach(
-          (key, categoryId) -> {
-            Category category = guild.getCategoryById(categoryId);
+      channels.forEach(
+          (key, channelId) -> {
+            TextChannel channel = guild.getTextChannelById(channelId);
             builder.append(
                 locale.get(
                     "channels.category",
                     Maps.builder("key", key)
                         .append(
                             "name",
-                            category == null ? String.valueOf(categoryId) : category.getName())));
+                            channel == null ? String.valueOf(channelId) : channel.getName())));
           });
       return new Result(builder.toString());
     }
@@ -71,7 +70,7 @@ public class ChannelCommands {
       BotGuild guild,
       TextChannel channel,
       @Required(name = "channels.set.key", description = "channels.set.key.desc") String key) {
-    guild.getCategories().put(key, channel.getIdLong());
+    guild.getChannels().put(key, channel.getIdLong());
     return new Result(
         locale.get(
             "channels.set.success", Maps.builder("key", key).append("name", channel.getName())));

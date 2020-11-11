@@ -75,8 +75,15 @@ public class JoinListener implements GuidoListener {
                     Collections.reverse(toGive);
                     for (Group group : toGive) {
                       PermissionStack bungee = group.getPermissions("bungee");
+                      PermissionStack global = group.getPermissions("global");
+
                       if (bungee != null) {
                         for (Permission permission : bungee.getPermissions()) {
+                          player.setPermission(permission.getNode(), permission.isEnabled());
+                        }
+                      }
+                      if (global != null) {
+                        for (Permission permission : global.getPermissions()) {
                           player.setPermission(permission.getNode(), permission.isEnabled());
                         }
                       }

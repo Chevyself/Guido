@@ -8,7 +8,7 @@ import org.jetbrains.annotations.NotNull;
 public class GlobalLadder implements Ladder {
 
   /** A public static instance for global ladders */
-  public static Ladder INSTANCE = new GlobalLadder();
+  public static final Ladder INSTANCE = new GlobalLadder();
 
   @Override
   public int playersPerTeam() {

@@ -1,17 +1,17 @@
 package com.starfishst.bungee.core.commands;
 
 import com.starfishst.bungee.annotations.Command;
-import com.starfishst.bungee.api.Guido;
+import com.starfishst.bungee.core.client.requests.BungeeBooleanRequest;
+import com.starfishst.bungee.core.client.requests.BungeeStringRequest;
 import com.starfishst.bungee.core.data.ProxiedOfflinePlayer;
 import com.starfishst.bungee.core.lang.BungeeLocaleFile;
-import com.starfishst.bungee.result.Result;
 import com.starfishst.core.annotations.settings.Setting;
 import com.starfishst.core.annotations.settings.Settings;
-import me.googas.api.client.Client;
+import java.util.Map;
+import me.googas.api.links.LinkableInfo;
 import me.googas.commons.maps.Maps;
-import me.googas.messaging.Request;
-import me.googas.messaging.api.MessengerListenFailException;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
+import org.jetbrains.annotations.NotNull;
 
 /** Commands for linking minecraft accounts */
 public class LinkCommand {
@@ -25,33 +25,26 @@ public class LinkCommand {
    */
   @Settings(settings = @Setting(key = "async", value = "true"))
   @Command(aliases = "link")
-  public Result link(ProxiedPlayer player, BungeeLocaleFile locale)
-      throws MessengerListenFailException {
+  public void link(ProxiedPlayer player, BungeeLocaleFile locale) {
     ProxiedOfflinePlayer offline = new ProxiedOfflinePlayer(player.getUniqueId(), player.getName());
-    Client client = Guido.getClient();
-    client.request(
-        new Request<>(Boolean.class, "is-linked", Maps.singleton("info", offline.getLinkedInfo())),
-        linked -> {
-          if (!linked) {
-            try {
-              client.request(
-                  new Request<>(
-                      String.class, "link-code", Maps.singleton("info", offline.getLinkedInfo())),
-                  code -> {
-                    if (code != null) {
-                      player.sendMessage(
-                          locale.getComponent("link.code", Maps.singleton("code", code)));
-                    } else {
-                      player.sendMessage(locale.getComponent("link.internal"));
-                    }
-                  });
-            } catch (MessengerListenFailException e) {
-              e.printStackTrace();
-            }
-          } else {
-            player.sendMessage(locale.getComponent("link.linked"));
-          }
-        });
-    return new Result();
+    Map<String, @NotNull LinkableInfo> params = Maps.singleton("info", offline.getLinkedInfo());
+    new BungeeBooleanRequest("is-linked", params)
+        .send(
+            linked -> {
+              if (!linked) {
+                new BungeeStringRequest("linked-code", params)
+                    .send(
+                        code -> {
+                          if (code != null) {
+                            player.sendMessage(
+                                locale.getComponent("link.code", Maps.singleton("code", code)));
+                          } else {
+                            player.sendMessage(locale.getComponent("link.internal"));
+                          }
+                        });
+              } else {
+                player.sendMessage(locale.getComponent("link.linked"));
+              }
+            });
   }
 }
