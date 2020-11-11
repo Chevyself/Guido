@@ -2,7 +2,6 @@ package me.googas.bot.core;
 
 import com.starfishst.jda.CommandManager;
 import com.starfishst.jda.ManagerOptions;
-
 import java.awt.*;
 import java.io.IOException;
 import java.lang.ref.SoftReference;
@@ -10,7 +9,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
-
 import me.googas.api.loader.DataLoader;
 import me.googas.bot.api.events.GuidoCancellable;
 import me.googas.bot.api.loader.BotDataLoader;
@@ -173,7 +171,7 @@ public class Guido {
         new CommandManager(
             jda,
             argsMaps.getOrDefault("prefix", argsMaps.getOrDefault("prefix", ".")),
-                options,
+            options,
             Guido.languageHandler,
             new GuidoProvidersRegistry(Guido.languageHandler),
             new GuidoPermissionChecker(Guido.languageHandler, Guido.dataLoader));
@@ -194,7 +192,7 @@ public class Guido {
             new TestCommands(),
             new TokenCommands(),
             new UserCommands(),
-                new VoiceChannelCommands())) {
+            new VoiceChannelCommands())) {
       Console.debug("Registering commands in " + cmd.getClass().getSimpleName());
       Guido.commandManager.registerCommand(cmd);
     }

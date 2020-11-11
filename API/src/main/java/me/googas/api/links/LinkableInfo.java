@@ -25,8 +25,8 @@ public interface LinkableInfo {
                   .getOr("id", Long.class, -1L)
                   .equals(identification.get("id", Long.class))
               && this.getIdentification()
-                  .getOr("guildId", Long.class, -1L)
-                  .equals(identification.get("guildId", Long.class));
+                  .getOr("guild", Long.class, -1L)
+                  .equals(identification.get("guild", Long.class));
         case DISCORD:
           return this.getIdentification()
               .getOr("id", Long.class, -1L)

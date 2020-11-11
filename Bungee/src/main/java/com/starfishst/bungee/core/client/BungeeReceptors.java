@@ -56,7 +56,7 @@ public class BungeeReceptors implements GuidoListener {
    *
    * @param uuid the uuid of the player to add to the queue
    * @return true if the player was added in the queue
-   */
+e   */
   @Receptor("add-queue")
   public boolean addQueue(@ParamName("uuid") UUID uuid) {
     Guido.getLogger().info("Adding to queue " + uuid);
@@ -213,8 +213,14 @@ public class BungeeReceptors implements GuidoListener {
   @Nullable
   private ServerInfo getServer(@NotNull String ip) {
     for (GuidoServer server : Guido.getConfiguration().getServers()) {
+      Guido.getLogger().info(ip);
       if (server.getAddress().equalsIgnoreCase(ip)) {
         return ProxyServer.getInstance().getServerInfo(server.getName());
+      }
+      if (server.getAddress().startsWith("localhost")) {
+        if (server.getAddress().substring(9).equalsIgnoreCase(ip)) {
+          return ProxyServer.getInstance().getServerInfo(server.getName());
+        }
       }
     }
     return null;

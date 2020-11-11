@@ -678,9 +678,12 @@ public class JsongoDataLoader implements BotDataLoader {
       @NotNull ValuesMap identification,
       @NotNull MatchStatus... status) {
     List<String> statusNames = new ArrayList<>();
+    Set<MatchStatus> statuses = new HashSet<>();
     for (MatchStatus matchStatus : status) {
       statusNames.add(matchStatus.toString());
+      statuses.add(matchStatus);
     }
+
     Map<String, Object> toMatch = new HashMap<>();
     toMatch.put("linkInfo.type", type.toString());
     identification
@@ -699,7 +702,9 @@ public class JsongoDataLoader implements BotDataLoader {
             query,
             -1,
             -1,
-            match -> match.isParticipating(type, identification)));
+            match ->
+                statuses.contains(match.getStatus())
+                    && match.isParticipating(type, identification)));
   }
 
   @Override

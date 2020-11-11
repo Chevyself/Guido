@@ -28,7 +28,10 @@ public class DecorationsListener implements GuidoListener {
       Guido.getLogger().info("Groups of " + event.getPlayer().getUniqueId() + " " + groups);
       String displayName =
           BukkitUtils.build(
-              this.getPrefixes(groups) + event.getPlayer().getName() + this.getSuffixes(groups) + "&r");
+              this.getPrefixes(groups)
+                  + event.getPlayer().getName()
+                  + this.getSuffixes(groups)
+                  + "&r");
       Guido.getLogger()
           .info("Display name of " + event.getPlayer().getUniqueId() + " " + displayName);
       event.getPlayer().setDisplayName(displayName);

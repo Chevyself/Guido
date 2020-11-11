@@ -167,16 +167,23 @@ public class MatchMakingHandler implements GuidoEventHandler {
   public void deleteAndMove(BotGuild botGuild, VoiceChannel channel) {
     VoiceChannel waiting = botGuild.getVoiceChannel("waiting");
     if (channel != null) {
+      Console.info("Moving members " + channel.getMembers());
       for (Member member : channel.getMembers()) {
         botGuild.getDiscord().moveVoiceMember(member, waiting).queue();
       }
-      int time = 0;
+      int time = 1000;
       while (!channel.getMembers().isEmpty()) {
         time++;
+        try {
+          Thread.sleep(1);
+        } catch (InterruptedException e) {
+          Console.exception(e);
+        }
         if (time > 3000) {
           break;
         }
       }
+      Console.info("Deleting team channel " + channel);
       channel.delete().queue();
     }
   }

@@ -1,20 +1,17 @@
 package client;
 
+import com.google.gson.internal.LinkedTreeMap;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Scanner;
-import java.util.TreeMap;
 import java.util.UUID;
-
-import com.google.gson.internal.LinkedTreeMap;
 import me.googas.api.client.Client;
 import me.googas.api.client.data.LinkableInfoImpl;
 import me.googas.api.client.data.PermissionStackImpl;
 import me.googas.api.client.data.TeamImpl;
 import me.googas.api.client.data.TeamMemberImpl;
 import me.googas.api.client.data.ValuesMapImpl;
-import me.googas.api.links.LinkableData;
 import me.googas.api.links.LinkableDataType;
 import me.googas.api.links.LinkableInfo;
 import me.googas.api.matches.Ladder;
@@ -42,8 +39,7 @@ public class ClientTest {
     Scanner scanner = new Scanner(System.in);
     LinkableInfoImpl info =
         new LinkableInfoImpl(
-            LinkableDataType.MINECRAFT,
-            new ValuesMapImpl(Maps.objects("uuid", trimmed).build()));
+            LinkableDataType.MINECRAFT, new ValuesMapImpl(Maps.objects("uuid", trimmed).build()));
     while (true) {
       while (scanner.hasNextLine()) {
         String line = scanner.nextLine();
@@ -166,12 +162,21 @@ public class ClientTest {
                 System.out.println("Team removed? " + bol);
               });
         } else if (line.equalsIgnoreCase("links")) {
-            System.out.println("Seding links request");
-            conn.sendRequest(new Request<>(LinkedTreeMap.class, "links", Maps.objects("types", new ArrayList<>()).append("page", 0).append("limit", 1).build()), objects -> {
+          System.out.println("Seding links request");
+          conn.sendRequest(
+              new Request<>(
+                  LinkedTreeMap.class,
+                  "links",
+                  Maps.objects("types", new ArrayList<>())
+                      .append("page", 0)
+                      .append("limit", 1)
+                      .build()),
+              objects -> {
                 System.out.println("Received");
-            }, exception -> {
+              },
+              exception -> {
                 exception.printStackTrace();
-            });
+              });
         }
       }
     }
