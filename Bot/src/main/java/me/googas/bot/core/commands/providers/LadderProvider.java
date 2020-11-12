@@ -4,7 +4,6 @@ import com.starfishst.core.exceptions.ArgumentProviderException;
 import com.starfishst.jda.context.CommandContext;
 import com.starfishst.jda.context.GuildCommandContext;
 import com.starfishst.jda.providers.type.JdaArgumentProvider;
-import me.googas.api.matches.GlobalLadder;
 import me.googas.api.matches.Ladder;
 import me.googas.bot.api.types.BotGuild;
 import me.googas.bot.core.Guido;
@@ -28,7 +27,7 @@ public class LadderProvider implements JdaArgumentProvider<Ladder> {
           Guido.getDataLoader()
               .getGuildDataOrCreate(((GuildCommandContext) context).getGuild().getIdLong());
       Ladder ladder = guild.getLadder(s);
-      if (ladder != null && !(ladder instanceof GlobalLadder)) {
+      if (ladder != null) {
         return ladder;
       } else {
         throw new ArgumentProviderException(

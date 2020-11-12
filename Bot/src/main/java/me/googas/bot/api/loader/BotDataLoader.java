@@ -53,7 +53,13 @@ public interface BotDataLoader extends DataLoader, GuidoEventHandler {
   @Nullable
   BotGuild getGuildData(long id);
 
-  @Override
+  /**
+   * Load the data of a role. If the data cannot be loaded create a fallback but don't return null
+   *
+   * @param id the id of the role
+   * @param guildId the guild id from which the data of the role must be gotten
+   * @return the data of the role or null if not found
+   */
   @NotNull
   BotRole getRoleData(long id, long guildId);
 

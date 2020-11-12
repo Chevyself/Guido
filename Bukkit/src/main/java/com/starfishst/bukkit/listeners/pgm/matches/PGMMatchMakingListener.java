@@ -90,6 +90,7 @@ public class PGMMatchMakingListener implements GuidoListener {
     logger.info("Received info to host match \n " + match);
     if (type.equalsIgnoreCase("pgm")
         && ladderName != null
+        && PGM.get().isEnabled()
         && (pgmMatch == null || !pgmMatch.isRunning())) {
       JsonClient connection = Guido.getClient().getConnection();
       if (connection != null) {

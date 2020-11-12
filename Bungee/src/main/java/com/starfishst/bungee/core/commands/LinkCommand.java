@@ -32,7 +32,7 @@ public class LinkCommand {
         .send(
             linked -> {
               if (!linked) {
-                new BungeeStringRequest("linked-code", params)
+                new BungeeStringRequest("link-code", params)
                     .send(
                         code -> {
                           if (code != null) {

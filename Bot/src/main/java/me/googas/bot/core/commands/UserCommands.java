@@ -47,7 +47,7 @@ public class UserCommands {
       StringBuilder builder = Strings.getBuilder();
       builder.append(locale.get("links.title", Maps.singleton("id", toSee.getId())));
       for (LinkableData link : links) {
-        builder.append(link.getSingle());
+        builder.append("\n - ").append(link.getSingle());
       }
       return new Result(builder.toString());
     }

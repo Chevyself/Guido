@@ -132,6 +132,20 @@ public interface Stateable {
                   map.computeIfAbsent(context, string -> new TreeMap<>());
               contextMap.put(stat, value);
             });
+    map.put("global", this.getGlobalStats(guild, map));
+    return new SortedStats(map);
+  }
+
+  /**
+   * Get the global stats
+   *
+   * @param guild the guild to get the global stats
+   * @param map the map containing all the other stats
+   * @return the global stats
+   */
+  @NotNull
+  default Map<String, Float> getGlobalStats(
+      @Nullable GuildData guild, Map<String, Map<String, Float>> map) {
     Map<String, Float> global = new TreeMap<>();
     map.forEach(
         (context, contextMap) -> {
@@ -145,7 +159,6 @@ public interface Stateable {
     if (guild != null) {
       global.put("elo", this.getGlobalElo(guild));
     }
-    map.put("global", global);
-    return new SortedStats(map);
+    return global;
   }
 }

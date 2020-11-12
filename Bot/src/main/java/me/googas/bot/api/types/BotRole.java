@@ -1,6 +1,19 @@
 package me.googas.bot.api.types;
 
-import me.googas.api.discord.RoleData;
+/** A role data for the bot */
+public interface BotRole extends BotPermissible, BotCatchable {
 
-/** A role data for the bot TODO do what says in bot guild */
-public interface BotRole extends RoleData, BotPermissible, BotCatchable {}
+  /**
+   * Get the unique id of the role. This is an object in discord that must have its unique id
+   *
+   * @return the unique id of the role
+   */
+  long getId();
+
+  /**
+   * Get the unique id where this is a role
+   *
+   * @return the unique id of the guild
+   */
+  long getGuildId();
+}

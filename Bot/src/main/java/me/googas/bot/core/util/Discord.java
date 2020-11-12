@@ -3,6 +3,7 @@ package me.googas.bot.core.util;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 import java.util.function.Consumer;
 import me.googas.commons.Lots;
 import net.dv8tion.jda.api.Permission;
@@ -60,11 +61,14 @@ public class Discord {
    * Remove all the permissions for everyone in certain guild channel
    *
    * @param channel the channel to disallow everyone
+   * @param ignored the permissions to ignore removing
    */
-  public static void removeEveryonePermissions(@NotNull GuildChannel channel) {
+  public static void removeEveryonePermissions(@NotNull GuildChannel channel, @NotNull Permission... ignored) {
     PermissionOverride override = channel.getPermissionOverride(channel.getGuild().getPublicRole());
     if (override != null) {
-      override.getManager().setDeny(Permission.values()).queue();
+      Set<Permission> toRemove = Lots.set(Permission.values());
+      toRemove.removeAll(Lots.set(ignored));
+      override.getManager().setDeny(toRemove).queue();
     }
   }
 
@@ -72,15 +76,16 @@ public class Discord {
    * Remove all permissions from a channel
    *
    * @param channel the channel to remove all permissions
+   * @param ignored the permissions to ignore removing
    */
-  public static void removeAllPermission(@NotNull GuildChannel channel) {
+  public static void removeAllPermission(@NotNull GuildChannel channel, @NotNull Permission... ignored) {
     for (PermissionOverride override : channel.getPermissionOverrides()) {
       if (override.getPermissionHolder() != null
           && !override.getPermissionHolder().equals(channel.getGuild().getPublicRole())) {
         override.delete().queue();
       }
     }
-    Discord.removeEveryonePermissions(channel);
+    Discord.removeEveryonePermissions(channel, ignored);
   }
 
   /**

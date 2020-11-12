@@ -83,7 +83,7 @@ public class QueueCommands {
       for (LinkableInfo info : waiting) {
         LinkableData link = info.getLink();
         if (link instanceof BotLinkableData) {
-          builder.append(link.getSingle());
+          builder.append("\n - ").append(link.getSingle());
         }
       }
       return new Result(builder.toString());

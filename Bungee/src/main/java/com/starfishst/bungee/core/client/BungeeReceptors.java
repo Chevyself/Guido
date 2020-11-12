@@ -55,8 +55,8 @@ public class BungeeReceptors implements GuidoListener {
    * Adds to the queue the player with the given uuid
    *
    * @param uuid the uuid of the player to add to the queue
-   * @return true if the player was added in the queue
-e   */
+   * @return true if the player was added in the queue e
+   */
   @Receptor("add-queue")
   public boolean addQueue(@ParamName("uuid") UUID uuid) {
     Guido.getLogger().info("Adding to queue " + uuid);

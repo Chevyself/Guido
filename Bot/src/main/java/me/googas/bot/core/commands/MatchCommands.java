@@ -182,8 +182,13 @@ public class MatchCommands {
     if (member != null) {
       BotLinkableData link =
           Guido.getDataLoader().getMemberData(member.getIdLong(), member.getGuild().getIdLong());
-      playing = handler.getPlaying(link.getInfo());
-      single = link.getSingle();
+      UserData linkedUser = link.getLinkedUser();
+      if (linkedUser != null) {
+        playing = handler.getPlaying(linkedUser);
+        single = link.getSingle();
+      } else {
+        playing = handler.getPlaying(sender);
+      }
     } else {
       playing = handler.getPlaying(sender);
     }

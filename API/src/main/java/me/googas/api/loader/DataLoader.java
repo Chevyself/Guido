@@ -3,7 +3,6 @@ package me.googas.api.loader;
 import java.util.Collection;
 import java.util.Map;
 import me.googas.api.discord.GuildData;
-import me.googas.api.discord.RoleData;
 import me.googas.api.links.LinkableData;
 import me.googas.api.links.LinkableDataType;
 import me.googas.api.matches.Ladder;
@@ -37,16 +36,6 @@ public interface DataLoader {
    */
   @Nullable
   GuildData getGuildData(long id);
-
-  /**
-   * Load the data of a role. If the data cannot be loaded create a fallback but don't return null
-   *
-   * @param id the id of the role
-   * @param guildId the guild id from which the data of the role must be gotten
-   * @return the data of the role or null if not found
-   */
-  @NotNull
-  RoleData getRoleData(long id, long guildId);
 
   /**
    * Load the data of an user

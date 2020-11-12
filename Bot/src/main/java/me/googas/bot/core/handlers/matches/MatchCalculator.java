@@ -3,6 +3,7 @@ package me.googas.bot.core.handlers.matches;
 import me.googas.api.links.LinkableData;
 import me.googas.api.matches.Ladder;
 import me.googas.api.matches.Match;
+import me.googas.api.matches.MatchStatus;
 import me.googas.api.matches.Team;
 import me.googas.api.matches.TeamMember;
 import me.googas.bot.api.events.match.MatchStatusUpdatedEvent;
@@ -31,7 +32,7 @@ public class MatchCalculator implements GuidoEventHandler {
     Team winners = match.getWinners();
     String ladderName = match.getDetails().get("ladder", String.class);
     long guildId = match.getGuildId();
-    if (ladderName != null && guildId != -1) {
+    if (event.getStatus() == MatchStatus.FINISHED && ladderName != null && guildId != -1) {
       Console.debug("Saving the elo for " + match);
       BotGuild guildData = Guido.getDataLoader().getGuildDataOrCreate(guildId);
       Ladder ladder = guildData.getLadder(ladderName);

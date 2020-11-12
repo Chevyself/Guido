@@ -29,6 +29,7 @@ import me.googas.bot.core.util.console.Console;
 import me.googas.commons.events.ListenPriority;
 import me.googas.commons.events.Listener;
 import me.googas.commons.maps.Maps;
+import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.GuildVoiceState;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.TextChannel;
@@ -109,7 +110,7 @@ public class MatchMakingHandler implements GuidoEventHandler {
           .queue(
               channel -> {
                 this.getVoices(match.getId()).put(team.getId(), channel.getIdLong());
-                Discord.removeAllPermission(channel);
+                Discord.removeAllPermission(channel, Permission.VIEW_CHANNEL);
                 for (TeamMember member : team.getMembers()) {
                   LinkableData link = member.getLinkInfo().getLink();
                   if (link instanceof BotLinkableData) {
@@ -199,26 +200,6 @@ public class MatchMakingHandler implements GuidoEventHandler {
   }
 
   /**
-   * Get whether an user is playing
-   *
-   * @param info the user to check if playing
-   * @return true if the user is playing
-   */
-  @Deprecated
-  public boolean isPlaying(@NotNull LinkableInfo info) {
-    LinkableData link = info.getLink();
-    if (link != null) {
-      UserData user = link.getLinkedUser();
-      if (user != null) {
-        return this.getPlaying(user).isEmpty();
-      } else {
-        return this.getPlaying(info).isEmpty();
-      }
-    }
-    return false;
-  }
-
-  /**
    * Get where an user is playing
    *
    * @param data the user to check where it is playing
@@ -238,24 +219,8 @@ public class MatchMakingHandler implements GuidoEventHandler {
               MatchStatus.STARTING,
               MatchStatus.WAITING));
     }
+    Console.info(data + " is participating in " + participating);
     return participating;
-  }
-
-  /**
-   * Get where a link is playing
-   *
-   * @param info the link to check where it is playing
-   * @return the collection of matches where the user is playing
-   */
-  public Collection<Match> getPlaying(@NotNull LinkableInfo info) {
-    BotDataLoader loader = Guido.getDataLoader();
-    return loader.getParticipating(
-        info.getType(),
-        info.getIdentification(),
-        MatchStatus.PLAYING,
-        MatchStatus.READY,
-        MatchStatus.STARTING,
-        MatchStatus.WAITING);
   }
 
   /**

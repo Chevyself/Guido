@@ -6,7 +6,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import me.googas.api.discord.GuildData;
 import me.googas.api.links.LinkableData;
 import me.googas.api.links.LinkableInfo;
 import me.googas.api.matches.Ladder;
