@@ -1,0 +1,98 @@
+package me.googas.bot.core.handlers.responsive.queue;
+
+import com.starfishst.jda.CommandManager;
+import com.starfishst.jda.listener.CommandListener;
+import com.starfishst.jda.result.Result;
+import com.starfishst.jda.utils.embeds.EmbedFactory;
+import com.starfishst.jda.utils.embeds.EmbedQuery;
+import java.util.Collection;
+import me.googas.api.links.LinkableData;
+import me.googas.api.links.LinkableInfo;
+import me.googas.api.matches.Ladder;
+import me.googas.api.matches.Queue;
+import me.googas.bot.api.types.BotGuild;
+import me.googas.bot.core.Guido;
+import me.googas.bot.core.handlers.matches.QueueHandler;
+import me.googas.bot.core.handlers.responsive.command.SimpleCommandReactionResponse;
+import me.googas.commons.Lots;
+import me.googas.commons.Strings;
+import me.googas.commons.maps.Maps;
+import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.events.message.react.MessageReactionAddEvent;
+import org.jetbrains.annotations.NotNull;
+
+/** A message that allows users to join a queue easily */
+public class JoinQueueReactionResponse extends SimpleCommandReactionResponse {
+
+  /** The ladder which this message will add the user to */
+  @NotNull private final String ladder;
+
+  /**
+   * Create the reaction response
+   *
+   * @param unicode the unicode or the name of the emote that executes it
+   * @param ladder the ladder which the user will join
+   */
+  public JoinQueueReactionResponse(@NotNull String unicode, @NotNull String ladder) {
+    super("queue", unicode, Lots.array(ladder));
+    this.ladder = ladder;
+  }
+
+  /** @deprecated This constructor may only be used by gson */
+  public JoinQueueReactionResponse() {
+    this("", "");
+  }
+
+  /**
+   * Build the message displaying who's playing in the ladder
+   *
+   * @param guild the guild requesting the message
+   * @return the built message
+   */
+  public EmbedQuery buildMessage(@NotNull Guild guild) {
+    CommandManager manager = Guido.getCommandManager();
+    CommandListener listener = manager.getListener();
+    EmbedQuery query = EmbedFactory.fromResult(new Result(""), listener, null);
+
+    StringBuilder participants = Strings.getBuilder();
+    BotGuild guildData = Guido.getDataLoader().getGuildDataOrCreate(guild.getIdLong());
+    Ladder ladder = guildData.getLadder(this.ladder);
+    if (ladder != null) {
+      Queue queue = Guido.getHandler(QueueHandler.class).getQueue(guildData, ladder);
+      Collection<LinkableInfo> waiting = queue.getWaiting();
+      if (waiting.isEmpty()) {
+        participants.append(
+            Guido.getLanguageHandler()
+                .getDefault()
+                .get("iq.empty", Maps.singleton("ladder", ladder.getName())));
+      } else {
+        for (LinkableInfo info : waiting) {
+          LinkableData link = info.getLink();
+          if (link != null) {
+            participants
+                .append("\n -")
+                .append(link.getSingle())
+                .append(" Elo: ")
+                .append(link.getElo(ladder));
+          }
+        }
+      }
+      query.getEmbedBuilder().setTitle("Join the queue for " + ladder.getName());
+      query.getEmbedBuilder().addField("Currently", String.valueOf(waiting.size()), true);
+      query.getEmbedBuilder().addField("Needed", String.valueOf(ladder.playersPerTeam() * 2), true);
+    }
+    query.getEmbedBuilder().addField("Waiting", participants.toString(), false);
+    return query;
+  }
+
+  @Override
+  public void onReaction(@NotNull MessageReactionAddEvent event) {
+    super.onReaction(event);
+    event
+        .getChannel()
+        .editMessageById(
+            event.getMessageIdLong(),
+            this.buildMessage(event.getGuild()).getAsMessageQuery().getMessage())
+        .queue();
+  }
+}

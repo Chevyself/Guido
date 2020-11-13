@@ -27,6 +27,7 @@ import me.googas.bot.api.types.BotLinkableData;
 import me.googas.bot.api.types.BotMatch;
 import me.googas.bot.core.Guido;
 import me.googas.bot.core.handlers.matches.MatchMakingHandler;
+import me.googas.bot.core.handlers.matches.PGMMatchHandler;
 import me.googas.bot.core.types.GuidoMatch;
 import me.googas.bot.core.types.GuidoTeam;
 import me.googas.bot.core.types.GuidoTeamMember;
@@ -203,5 +204,13 @@ public class MatchCommands {
               "currently.success",
               Maps.builder("single", single).append("matches", Lots.pretty(matchesId))));
     }
+  }
+
+  /**
+   * Makes all the PGM matches look for servers
+   */
+  @Command(aliases = "look", description = "Makes the active PGM matches look for servers", permission = @Perm(node = "user:guido.look"))
+  public void look() {
+    Guido.getHandler(PGMMatchHandler.class).lookForServers();
   }
 }

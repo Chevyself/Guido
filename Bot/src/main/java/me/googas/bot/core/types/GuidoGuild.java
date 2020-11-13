@@ -1,5 +1,6 @@
 package me.googas.bot.core.types;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -8,6 +9,7 @@ import me.googas.api.matches.Ladder;
 import me.googas.api.ranks.RankRange;
 import me.googas.bot.api.events.data.guild.BotGuildUnloadedEvent;
 import me.googas.bot.api.types.BotGuild;
+import me.googas.bot.api.types.BotResponsiveMessage;
 import me.googas.commons.time.Time;
 import me.googas.commons.time.Unit;
 import org.jetbrains.annotations.NotNull;
@@ -33,6 +35,9 @@ public class GuidoGuild implements BotGuild {
   /** The map of categories and its ids for the guild */
   @NotNull private final Map<String, Long> categories;
 
+  /** The messages which be executed inside the guild */
+  @NotNull private final Set<BotResponsiveMessage> messages;
+
   /**
    * Create the guido guild
    *
@@ -42,6 +47,7 @@ public class GuidoGuild implements BotGuild {
    * @param channels the channels map of the guild
    * @param voiceChannels the voice channels map of the guild
    * @param categories the categories map of the guild
+   * @param messages the messages that can be used inside the guild
    */
   public GuidoGuild(
       long id,
@@ -49,18 +55,37 @@ public class GuidoGuild implements BotGuild {
       @NotNull Map<Long, RankRange> ranges,
       @NotNull Map<String, Long> channels,
       @NotNull Map<String, Long> voiceChannels,
-      @NotNull HashMap<String, Long> categories) {
+      @NotNull HashMap<String, Long> categories,
+      Set<BotResponsiveMessage> messages) {
     this.id = id;
     this.ladders = ladders;
     this.ranges = ranges;
     this.channels = channels;
     this.voiceChannels = voiceChannels;
     this.categories = categories;
+    this.messages = messages;
   }
 
   /** @deprecated this constructor may only be used by gson */
   public GuidoGuild() {
-    this(0, new HashSet<>(), new HashMap<>(), new HashMap<>(), new HashMap<>(), new HashMap<>());
+    this(
+        0,
+        new HashSet<>(),
+        new HashMap<>(),
+        new HashMap<>(),
+        new HashMap<>(),
+        new HashMap<>(),
+        new HashSet<>());
+  }
+
+  /**
+   * Get the responsive messages of the server
+   *
+   * @return the responsive messages
+   */
+  @Override
+  public @NotNull Collection<BotResponsiveMessage> getMessages() {
+    return this.messages;
   }
 
   @Override
@@ -118,5 +143,25 @@ public class GuidoGuild implements BotGuild {
   @Override
   public @NotNull GuidoGuild cache() {
     return (GuidoGuild) BotGuild.super.cache();
+  }
+
+  @Override
+  public String toString() {
+    return "GuidoGuild{"
+        + "id="
+        + this.id
+        + ", ladders="
+        + this.ladders
+        + ", ranges="
+        + this.ranges
+        + ", channels="
+        + this.channels
+        + ", voiceChannels="
+        + this.voiceChannels
+        + ", categories="
+        + this.categories
+        + ", messages="
+        + this.messages
+        + '}';
   }
 }

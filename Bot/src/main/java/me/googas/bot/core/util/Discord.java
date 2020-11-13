@@ -2,9 +2,12 @@ package me.googas.bot.core.util;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.function.Consumer;
+
+import me.googas.bot.core.util.console.Console;
 import me.googas.commons.Lots;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.GuildChannel;
@@ -16,6 +19,12 @@ import org.jetbrains.annotations.Nullable;
 
 /** y Static utilities for mentions */
 public class Discord {
+
+  /**
+   * A consumer which can be used to log exceptions in discord operations
+   */
+  @NotNull
+  private static final Consumer<Throwable> EXCEPTION_CONSUMER = Console::exception;
 
   /** All the permissions required to join the voice channel */
   @NotNull
@@ -61,14 +70,26 @@ public class Discord {
    * Remove all the permissions for everyone in certain guild channel
    *
    * @param channel the channel to disallow everyone
-   * @param ignored the permissions to ignore removing
+   * @param ignored the permissions to ignore removing and will be allowed if not
    */
-  public static void removeEveryonePermissions(@NotNull GuildChannel channel, @NotNull Permission... ignored) {
+  public static void removeEveryonePermissions(
+      @NotNull GuildChannel channel, @NotNull Permission... ignored) {
     PermissionOverride override = channel.getPermissionOverride(channel.getGuild().getPublicRole());
     if (override != null) {
       Set<Permission> toRemove = Lots.set(Permission.values());
-      toRemove.removeAll(Lots.set(ignored));
-      override.getManager().setDeny(toRemove).queue();
+      Set<Permission> toAllow = new HashSet<>();
+      for (Permission permission : ignored) {
+        toRemove.removeIf(perm -> {
+          if (perm.equals(permission)) {
+            toAllow.add(permission);
+            return true;
+          }
+          return false;
+        });
+      }
+      override.getManager().setDeny(toRemove).queue(permissionOverride -> {
+        permissionOverride.getManager().setAllow(toAllow).queue(ignoredOverride -> {}, Discord.exceptionConsumer());
+      }, Discord.exceptionConsumer());
     }
   }
 
@@ -78,11 +99,12 @@ public class Discord {
    * @param channel the channel to remove all permissions
    * @param ignored the permissions to ignore removing
    */
-  public static void removeAllPermission(@NotNull GuildChannel channel, @NotNull Permission... ignored) {
+  public static void removeAllPermission(
+      @NotNull GuildChannel channel, @NotNull Permission... ignored) {
     for (PermissionOverride override : channel.getPermissionOverrides()) {
       if (override.getPermissionHolder() != null
           && !override.getPermissionHolder().equals(channel.getGuild().getPublicRole())) {
-        override.delete().queue();
+        override.delete().queue(aVoid -> {}, Discord.exceptionConsumer());
       }
     }
     Discord.removeEveryonePermissions(channel, ignored);
@@ -129,22 +151,30 @@ public class Discord {
                 if (success != null) {
                   success.accept(null);
                 }
-              });
+              }, Discord.exceptionConsumer());
     } else {
       channel
           .createPermissionOverride(holder)
           .queue(
-              newOverride -> {
-                newOverride
-                    .getManager()
-                    .setAllow(permissions)
-                    .queue(
-                        permOverride -> {
-                          if (success != null) {
-                            success.accept(null);
-                          }
-                        });
-              });
+              newOverride -> newOverride
+                  .getManager()
+                  .setAllow(permissions)
+                  .queue(
+                      permOverride -> {
+                        if (success != null) {
+                          success.accept(null);
+                        }
+                      }, Discord.exceptionConsumer()));
     }
   }
+
+  /**
+   * Get the consumer to handle exceptions in discord operations
+   *
+   * @return the consumer for throwable
+   */
+  public static Consumer<Throwable> exceptionConsumer() {
+    return Discord.EXCEPTION_CONSUMER;
+  }
+
 }

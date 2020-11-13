@@ -348,15 +348,6 @@ public class Guido {
   }
 
   /**
-   * Sets the data loader that the bot uses
-   *
-   * @param loader the new data loader
-   */
-  public static void setDataLoader(@NotNull BotDataLoader loader) {
-    Guido.dataLoader = loader;
-  }
-
-  /**
    * Get the cache of the bot
    *
    * @return the cache

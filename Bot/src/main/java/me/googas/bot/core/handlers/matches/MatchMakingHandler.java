@@ -29,11 +29,13 @@ import me.googas.bot.core.util.console.Console;
 import me.googas.commons.events.ListenPriority;
 import me.googas.commons.events.Listener;
 import me.googas.commons.maps.Maps;
+import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.GuildVoiceState;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.entities.VoiceChannel;
+import net.dv8tion.jda.internal.entities.MemberImpl;
 import org.jetbrains.annotations.NotNull;
 
 /** This handles the match-making process for ranked matches */
@@ -116,7 +118,7 @@ public class MatchMakingHandler implements GuidoEventHandler {
                   if (link instanceof BotLinkableData) {
                     Member discordMember = ((BotLinkableData) link).getDiscordMember(data.getId());
                     if (discordMember != null) {
-                      Discord.addPermissions(
+                      Discord. addPermissions(
                           channel,
                           discordMember,
                           Discord.VOICE,
@@ -170,9 +172,11 @@ public class MatchMakingHandler implements GuidoEventHandler {
     if (channel != null) {
       Console.info("Moving members " + channel.getMembers());
       for (Member member : channel.getMembers()) {
-        botGuild.getDiscord().moveVoiceMember(member, waiting).queue();
+        if (member.getVoiceState() != null && member.getVoiceState().getChannel() != null) {
+          botGuild.getDiscord().moveVoiceMember(member, waiting).queue(aVoid -> {}, ignored -> {});
+        }
       }
-      int time = 1000;
+      int time = 0;
       while (!channel.getMembers().isEmpty()) {
         time++;
         try {
@@ -185,7 +189,7 @@ public class MatchMakingHandler implements GuidoEventHandler {
         }
       }
       Console.info("Deleting team channel " + channel);
-      channel.delete().queue();
+      channel.delete().queue(aVoid -> {}, ignored -> {});
     }
   }
 

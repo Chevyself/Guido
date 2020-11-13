@@ -119,6 +119,14 @@ public interface BotGuild extends GuildData, BotCatchable {
   }
 
   /**
+   * Get the responsive messages of the server
+   *
+   * @return the responsive messages
+   */
+  @NotNull
+  Collection<BotResponsiveMessage> getMessages();
+
+  /**
    * Get the data as a discord guild
    *
    * @return the discord guild

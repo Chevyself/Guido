@@ -39,6 +39,7 @@ import me.googas.api.ranks.RankRange;
 import me.googas.api.token.AuthToken;
 import me.googas.api.user.UserData;
 import me.googas.api.utility.ValuesMap;
+import me.googas.bot.adapters.BotResponsiveMessageAdapter;
 import me.googas.bot.adapters.LadderAdapter;
 import me.googas.bot.adapters.LinkedInfoAdapter;
 import me.googas.bot.adapters.LinkedValuesMapAdapter;
@@ -62,6 +63,7 @@ import me.googas.bot.api.types.BotGroup;
 import me.googas.bot.api.types.BotGuild;
 import me.googas.bot.api.types.BotLinkableData;
 import me.googas.bot.api.types.BotMatch;
+import me.googas.bot.api.types.BotResponsiveMessage;
 import me.googas.bot.api.types.BotRole;
 import me.googas.bot.core.Guido;
 import me.googas.bot.core.types.GuidoAuthToken;
@@ -93,6 +95,7 @@ public class JsongoDataLoader implements BotDataLoader {
   private final Gson gson =
       new GsonBuilder()
           .setPrettyPrinting()
+          .registerTypeAdapter(BotResponsiveMessage.class, new BotResponsiveMessageAdapter())
           .registerTypeAdapter(Ladder.class, new LadderAdapter())
           .registerTypeAdapter(LinkableInfo.class, new LinkedInfoAdapter())
           .registerTypeAdapter(GuidoLinkedValuesMap.class, new LinkedValuesMapAdapter())
@@ -411,7 +414,9 @@ public class JsongoDataLoader implements BotDataLoader {
           } else {
             T catchable = cache.get(clazz, data::equals);
             if (catchable != null) {
-              toAdd.add(catchable);
+              if (predicate.test(catchable)) {
+                toAdd.add(catchable);
+              }
               return true;
             }
           }
@@ -570,7 +575,8 @@ public class JsongoDataLoader implements BotDataLoader {
               new HashMap<>(),
               new HashMap<>(),
               new HashMap<>(),
-              new HashMap<>())
+              new HashMap<>(),
+              new HashSet<>())
           .cache();
     }
     return guild;
@@ -678,10 +684,8 @@ public class JsongoDataLoader implements BotDataLoader {
       @NotNull ValuesMap identification,
       @NotNull MatchStatus... status) {
     List<String> statusNames = new ArrayList<>();
-    Set<MatchStatus> statuses = new HashSet<>();
     for (MatchStatus matchStatus : status) {
       statusNames.add(matchStatus.toString());
-      statuses.add(matchStatus);
     }
 
     Map<String, Object> toMatch = new HashMap<>();
@@ -702,9 +706,15 @@ public class JsongoDataLoader implements BotDataLoader {
             query,
             -1,
             -1,
-            match ->
-                statuses.contains(match.getStatus())
-                    && match.isParticipating(type, identification)));
+            match -> {
+              for (MatchStatus matchStatus : status) {
+                if (match.getStatus().equals(matchStatus)
+                    && match.isParticipating(type, identification)) {
+                  return true;
+                }
+              }
+              return false;
+            }));
   }
 
   @Override

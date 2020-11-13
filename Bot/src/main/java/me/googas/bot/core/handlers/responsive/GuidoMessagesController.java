@@ -63,6 +63,11 @@ public class GuidoMessagesController implements ResponsiveMessageController, Gui
 
   @Override
   public @NotNull Collection<ResponsiveMessage> getResponsiveMessages(@Nullable Guild guild) {
-    return this.messages;
+    if (guild != null) {
+      return new HashSet<>(
+          Guido.getDataLoader().getGuildDataOrCreate(guild.getIdLong()).getMessages());
+    } else {
+      return this.messages;
+    }
   }
 }

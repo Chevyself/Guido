@@ -12,23 +12,15 @@ import me.googas.bot.core.types.GuidoMatch;
 import me.googas.bot.core.types.GuidoTeam;
 import me.googas.bot.core.types.GuidoTeamMember;
 import me.googas.bot.core.types.maps.GuidoLinkedValuesMap;
+import me.googas.bot.core.util.Discord;
 import me.googas.commons.Lots;
+import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Member;
 
 public class TestCommands {
 
   @Command(aliases = "test", permission = @Perm(node = "user:guido.test"))
-  public Result test(Member member) {
-    BotLinkableData memberData =
-        Guido.getDataLoader().getMemberData(member.getIdLong(), member.getGuild().getIdLong());
-    Set<Team> teams =
-        Lots.set(
-            new GuidoTeam(
-                1, Lots.set(new GuidoTeamMember(memberData.getInfo(), TeamRole.NORMAL)), "a team"));
-    GuidoMatch match =
-        new GuidoMatch(
-                member.getGuild().getIdLong(), teams, new GuidoLinkedValuesMap("ladder", "a"))
-            .cache();
-    return new Result(match.getId());
+  public void test(Member member) {
+    Discord.removeAllPermission(member.getVoiceState().getChannel(), Permission.VIEW_CHANNEL);
   }
 }

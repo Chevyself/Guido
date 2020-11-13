@@ -5,10 +5,13 @@ import me.googas.api.matches.MatchStatus;
 import me.googas.api.matches.Team;
 import me.googas.bot.api.types.BotMatch;
 import me.googas.bot.core.Guido;
+import me.googas.bot.core.handlers.matches.MatchMakingHandler;
 import me.googas.bot.core.types.GuidoTeam;
 import me.googas.bot.core.util.console.Console;
+import me.googas.messaging.json.JsonMessenger;
 import me.googas.messaging.json.ParamName;
 import me.googas.messaging.json.Receptor;
+import me.googas.messaging.json.server.JsonClientThread;
 
 /** Receptors for matches */
 public class MatchReceptors {
@@ -130,6 +133,22 @@ public class MatchReceptors {
         match.finish(null);
         return true;
       }
+    }
+    return false;
+  }
+
+  /**
+   * Called when a server is ready to receive a new match
+   *
+   * @param messenger the server that is ready for the new match
+   * @return true if received correctly
+   */
+  @Receptor("server-ready")
+  public boolean ready(JsonMessenger messenger) {
+    if (messenger instanceof JsonClientThread) {
+      MatchMakingHandler handler = Guido.getHandler(MatchMakingHandler.class);
+      // TODO
+      return true;
     }
     return false;
   }

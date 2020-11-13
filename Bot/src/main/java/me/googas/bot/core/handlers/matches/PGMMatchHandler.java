@@ -56,11 +56,19 @@ public class PGMMatchHandler implements MatchHandler {
   public void onMatchStatusUpdated(@NotNull MatchStatusUpdatedEvent event) {
     if (event.getStatus() == MatchStatus.FINISHED
         && "pgm".equalsIgnoreCase(event.getMatch().getDetails().get("type", String.class))) {
-      for (Match match : this.waitingForServer) {
-        this.lookForServer(match);
-      }
+      this.lookForServers();
     }
   }
+
+  /**
+   * Makes all the matches waiting for servers look for a server
+   */
+  public void lookForServers() {
+    for (Match match : this.waitingForServer) {
+      this.lookForServer(match);
+    }
+  }
+
   /**
    * Look for a server where the match can be played
    *
