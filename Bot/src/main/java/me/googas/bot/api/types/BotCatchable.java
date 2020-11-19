@@ -1,7 +1,7 @@
 package me.googas.bot.api.types;
 
+import java.util.logging.Level;
 import me.googas.bot.core.Guido;
-import me.googas.bot.core.util.console.Console;
 import me.googas.commons.cache.Catchable;
 import org.jetbrains.annotations.NotNull;
 
@@ -29,7 +29,9 @@ public interface BotCatchable extends Catchable {
       try {
         this.onRemove();
       } catch (Throwable throwable) {
-        Console.exception(throwable);
+        Guido.getLogger()
+            .log(
+                Level.SEVERE, throwable, () -> "There's been an error while unloading a catchable");
       }
     }
     Guido.getCache().remove(this);

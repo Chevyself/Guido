@@ -80,7 +80,7 @@
         <dependency>
             <groupId>me.googas.api</groupId>
             <artifactId>API</artifactId>
-            <version>1.0.0-PRE-4</version>
+            <version>1.0.0-PRE-5</version>
             <scope>compile</scope>
         </dependency>
         <!-- The bukkit command framework -->

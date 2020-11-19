@@ -30,7 +30,9 @@ public class JoinQueueResponsiveMessage extends ExecuteCommandResponsiveMessage 
   }
 
   /** @deprecated this may only be used by gson */
-  public JoinQueueResponsiveMessage() {}
+  public JoinQueueResponsiveMessage() {
+    super(-1);
+  }
 
   /**
    * The type of responsive message

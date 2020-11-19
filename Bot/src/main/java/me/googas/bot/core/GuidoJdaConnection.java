@@ -1,11 +1,10 @@
 package me.googas.bot.core;
 
 import java.util.Scanner;
+import java.util.logging.Level;
 import javax.security.auth.login.LoginException;
-import me.googas.bot.core.util.console.Console;
 import me.googas.commons.Lots;
 import me.googas.commons.Validate;
-import me.googas.commons.time.Time;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.requests.GatewayIntent;
@@ -26,12 +25,10 @@ public class GuidoJdaConnection {
    */
   @NotNull
   public static String getTokenFromInput(@NotNull Scanner scanner) {
-    Console.info("Insert the bot token");
     while (true) {
       if (scanner.hasNext()) {
         String input = scanner.nextLine();
         if (input.equalsIgnoreCase("exit")) {
-          Console.info("Received signal to stop the bot");
           System.exit(0);
         } else {
           return input;
@@ -50,13 +47,11 @@ public class GuidoJdaConnection {
    */
   @NotNull
   public JDA createConnection(@NotNull String token) {
-    Console.debug("Starting discord connection");
     this.jda = null;
     while (this.jda == null) {
       try {
         this.jda = this.connect(token);
       } catch (LoginException e) {
-        Console.exception("Discord authentication failed");
         token = GuidoJdaConnection.getTokenFromInput(new Scanner(System.in));
       }
     }
@@ -73,16 +68,16 @@ public class GuidoJdaConnection {
   public JDA connect(@NotNull String token) throws LoginException {
     JDA jda = JDABuilder.create(token, Lots.list(GatewayIntent.values())).build();
     long millis = 0;
-    Console.info("Waiting for connection");
     while (jda.getStatus() != JDA.Status.CONNECTED) {
       try {
         Thread.sleep(1);
         millis++;
       } catch (InterruptedException e) {
-        Console.exception(e, "Thread was interrupted while trying to connect to discord");
+        Guido.getLogger()
+            .log(
+                Level.SEVERE, e, () -> "Thread was interrupted while trying to connect to discord");
       }
     }
-    Console.info("Discord took " + Time.fromMillis(millis).toEffectiveString() + " to connect");
     return jda;
   }
 

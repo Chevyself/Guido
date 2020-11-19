@@ -20,7 +20,7 @@
         <dependency>
             <groupId>me.googas.commons</groupId>
             <artifactId>Commons</artifactId>
-            <version>1.0.10-SNAPSHOT</version>
+            <version>1.0.11-SNAPSHOT</version>
             <scope>compile</scope>
         </dependency>
         <!-- Dependency to Commons-Messaging -->

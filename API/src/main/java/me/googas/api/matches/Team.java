@@ -3,7 +3,7 @@ package me.googas.api.matches;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import me.googas.api.links.LinkableData;
+import me.googas.api.links.Linkable;
 import org.jetbrains.annotations.NotNull;
 
 /** This object represents a team. Which is basically a collection of members */
@@ -19,7 +19,7 @@ public interface Team {
     if (!this.getMembers().isEmpty()) {
       float sum = 0;
       for (TeamMember member : this.getMembers()) {
-        LinkableData data = member.getLinkInfo().getLink();
+        Linkable data = member.getLinkInfo().getLink();
         if (data != null) {
           sum += data.getElo(ladder);
         }
@@ -71,10 +71,8 @@ public interface Team {
   default Collection<String> getMemberSingles() {
     List<String> singles = new ArrayList<>();
     for (TeamMember member : this.getMembers()) {
-      LinkableData data = member.getLinkInfo().getLink();
-      if (data != null) {
-        singles.add(data.getSingle());
-      }
+      Linkable data = member.getLinkInfo().getLink();
+      if (data != null) singles.add(data.getSingle());
     }
     return singles;
   }

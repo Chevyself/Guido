@@ -4,10 +4,11 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
-import me.googas.api.links.LinkableData;
-import me.googas.api.links.LinkableDataType;
+import me.googas.api.links.Linkable;
 import me.googas.api.links.LinkableInfo;
+import me.googas.api.links.LinkableType;
 import me.googas.api.matches.Ladder;
+import me.googas.api.matches.Queueable;
 import me.googas.api.matches.TeamMember;
 import me.googas.api.matches.TeamRole;
 import me.googas.bot.core.Guido;
@@ -15,7 +16,6 @@ import me.googas.bot.core.types.GuidoMatch;
 import me.googas.bot.core.types.GuidoTeam;
 import me.googas.bot.core.types.GuidoTeamMember;
 import me.googas.bot.core.types.maps.GuidoLinkedValuesMap;
-import me.googas.bot.core.util.console.Console;
 import me.googas.commons.Lots;
 import me.googas.commons.UUIDUtils;
 import me.googas.commons.maps.Maps;
@@ -45,7 +45,9 @@ public class GuidoPGMQueue extends GuidoQueue {
     if (this.getWaiting().size() >= ladder.playersPerTeam() * 2) {
       Set<TeamMember> participants = new HashSet<>();
       for (int i = 0; i < ladder.playersPerTeam() * 2; i++) {
-        participants.add(new GuidoTeamMember(this.getWaiting().get(i), TeamRole.NORMAL));
+        Queueable queueable = this.getWaiting().get(i);
+        if (!(queueable instanceof LinkableInfo)) continue;
+        participants.add(new GuidoTeamMember((LinkableInfo) queueable, TeamRole.NORMAL));
       }
       for (TeamMember participant : participants) {
         this.getWaiting().remove(participant.getLinkInfo());
@@ -62,13 +64,13 @@ public class GuidoPGMQueue extends GuidoQueue {
   @Override
   public boolean join(@NotNull LinkableInfo info) {
     JsonClientThread bungee = Guido.getServer().getAuthenticator().getBungee();
-    LinkableData data = info.getLink();
+    Linkable data = info.getLink();
     if (bungee != null && data != null) {
-      Collection<LinkableData> links = data.getLinks(LinkableDataType.MINECRAFT);
+      Collection<Linkable> links = data.getLinks(LinkableType.MINECRAFT);
       if (!links.isEmpty()) {
         UUID uuid = null;
         LinkableInfo toPlay = null;
-        for (LinkableData link : links) {
+        for (Linkable link : links) {
           String trimmed = link.getIdentification().get("uuid", String.class);
           if (trimmed != null) {
             uuid = UUIDUtils.untrim(trimmed);
@@ -114,18 +116,17 @@ public class GuidoPGMQueue extends GuidoQueue {
   public boolean leave(@NotNull LinkableInfo data) {
     if (super.leave(data)) {
       JsonClientThread bungee = Guido.getServer().getAuthenticator().getBungee();
-      LinkableData linked = data.getLink();
+      Linkable linked = data.getLink();
       if (bungee != null && linked != null) {
         String trimmed = linked.getIdentification().get("uuid", String.class);
         if (trimmed != null) {
           try {
-            Console.debug("Removing from queue " + data);
             bungee.sendRequest(
                 new Request<>(
                     Boolean.class,
                     "remove-queue",
                     Maps.singleton("uuid", UUIDUtils.untrim(trimmed))),
-                bol -> Console.debug(data + " has been removed from bungee queue too? " + bol));
+                bol -> {});
           } catch (IllegalArgumentException ignored) {
           }
         }

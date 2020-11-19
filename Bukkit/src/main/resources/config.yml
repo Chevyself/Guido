@@ -78,3 +78,7 @@ listener-settings:
   decorations:
     ## Whether there should be decorations
     enabled: false
+  ## Handler for giving permissions to players
+  permission:
+    ## Whether the server is connected thru bungeecord
+    bungee: false

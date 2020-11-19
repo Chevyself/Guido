@@ -2,6 +2,8 @@ package com.starfishst.bukkit.commands.providers.pgm;
 
 import com.starfishst.bukkit.api.Guido;
 import com.starfishst.bukkit.context.CommandContext;
+import com.starfishst.bukkit.lang.BukkitLocaleFile;
+import com.starfishst.bukkit.listeners.pgm.matches.HostedMatch;
 import com.starfishst.bukkit.listeners.pgm.matches.PGMMatchMakingListener;
 import com.starfishst.bukkit.listeners.pgm.matches.creation.PickTeamSelection;
 import com.starfishst.bukkit.listeners.pgm.matches.creation.TeamCreation;
@@ -28,11 +30,14 @@ public class PlayerInfoProvider implements BukkitArgumentProvider<LinkableInfo> 
   @Override
   public LinkableInfo fromString(@NotNull String s, @NotNull CommandContext context)
       throws ArgumentProviderException {
+    BukkitLocaleFile locale = Guido.getLanguageHandler().getFile(context);
     PGMMatchMakingListener listener = Guido.getListener(PGMMatchMakingListener.class);
     if (listener != null) {
       TeamCreation creation = listener.getCreation("pick");
+      HostedMatch match = listener.getMatch(context.getSender());
+      if (match == null) throw new IllegalArgumentException(locale.get("participant-only"));
       if (creation instanceof PickTeamSelection) {
-        for (LinkableInfo info : ((PickTeamSelection) creation).getPlayersLeft()) {
+        for (LinkableInfo info : ((PickTeamSelection) creation).getPlayersLeft(match.getId())) {
           String nickname = info.getIdentification().get("nickname", String.class);
           if (s.equalsIgnoreCase(nickname)) {
             return info;
@@ -40,20 +45,18 @@ public class PlayerInfoProvider implements BukkitArgumentProvider<LinkableInfo> 
         }
       }
     }
-    throw new ArgumentProviderException(
-        Guido.getLanguageHandler()
-            .getFile(context)
-            .get("invalid.player", Maps.singleton("string", s)));
+    throw new ArgumentProviderException(locale.get("invalid.player", Maps.singleton("string", s)));
   }
 
   @Override
-  public @NotNull List<String> getSuggestions(@NotNull String s, CommandContext commandContext) {
+  public @NotNull List<String> getSuggestions(@NotNull String s, @NotNull CommandContext context) {
     List<String> names = new ArrayList<>();
     PGMMatchMakingListener listener = Guido.getListener(PGMMatchMakingListener.class);
     if (listener != null) {
       TeamCreation creation = listener.getCreation("pick");
-      if (creation instanceof PickTeamSelection) {
-        for (LinkableInfo info : ((PickTeamSelection) creation).getPlayersLeft()) {
+      HostedMatch match = listener.getMatch(context.getSender());
+      if (creation instanceof PickTeamSelection && match != null) {
+        for (LinkableInfo info : ((PickTeamSelection) creation).getPlayersLeft(match.getId())) {
           String nickname = info.getIdentification().get("nickname", String.class);
           if (nickname != null) {
             names.add(nickname);

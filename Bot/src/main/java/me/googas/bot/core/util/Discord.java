@@ -6,8 +6,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.function.Consumer;
-
-import me.googas.bot.core.util.console.Console;
+import java.util.logging.Level;
+import me.googas.bot.core.Guido;
 import me.googas.commons.Lots;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.GuildChannel;
@@ -20,11 +20,15 @@ import org.jetbrains.annotations.Nullable;
 /** y Static utilities for mentions */
 public class Discord {
 
-  /**
-   * A consumer which can be used to log exceptions in discord operations
-   */
+  /** A consumer which can be used to log exceptions in discord operations */
   @NotNull
-  private static final Consumer<Throwable> EXCEPTION_CONSUMER = Console::exception;
+  private static final Consumer<Throwable> EXCEPTION_CONSUMER =
+      throwable ->
+          Guido.getLogger()
+              .log(
+                  Level.SEVERE,
+                  throwable,
+                  () -> "There's been an error while doing a discord action");
 
   /** All the permissions required to join the voice channel */
   @NotNull
@@ -79,17 +83,25 @@ public class Discord {
       Set<Permission> toRemove = Lots.set(Permission.values());
       Set<Permission> toAllow = new HashSet<>();
       for (Permission permission : ignored) {
-        toRemove.removeIf(perm -> {
-          if (perm.equals(permission)) {
-            toAllow.add(permission);
-            return true;
-          }
-          return false;
-        });
+        toRemove.removeIf(
+            perm -> {
+              if (perm.equals(permission)) {
+                toAllow.add(permission);
+                return true;
+              }
+              return false;
+            });
       }
-      override.getManager().setDeny(toRemove).queue(permissionOverride -> {
-        permissionOverride.getManager().setAllow(toAllow).queue(ignoredOverride -> {}, Discord.exceptionConsumer());
-      }, Discord.exceptionConsumer());
+      override
+          .getManager()
+          .setDeny(toRemove)
+          .queue(
+              permissionOverride ->
+                  permissionOverride
+                      .getManager()
+                      .setAllow(toAllow)
+                      .queue(ignoredOverride -> {}, Discord.exceptionConsumer()),
+              Discord.exceptionConsumer());
     }
   }
 
@@ -151,20 +163,23 @@ public class Discord {
                 if (success != null) {
                   success.accept(null);
                 }
-              }, Discord.exceptionConsumer());
+              },
+              Discord.exceptionConsumer());
     } else {
       channel
           .createPermissionOverride(holder)
           .queue(
-              newOverride -> newOverride
-                  .getManager()
-                  .setAllow(permissions)
-                  .queue(
-                      permOverride -> {
-                        if (success != null) {
-                          success.accept(null);
-                        }
-                      }, Discord.exceptionConsumer()));
+              newOverride ->
+                  newOverride
+                      .getManager()
+                      .setAllow(permissions)
+                      .queue(
+                          permOverride -> {
+                            if (success != null) {
+                              success.accept(null);
+                            }
+                          },
+                          Discord.exceptionConsumer()));
     }
   }
 
@@ -176,5 +191,4 @@ public class Discord {
   public static Consumer<Throwable> exceptionConsumer() {
     return Discord.EXCEPTION_CONSUMER;
   }
-
 }

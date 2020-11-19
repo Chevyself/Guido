@@ -7,13 +7,13 @@ import java.util.Arrays;
 import java.util.Scanner;
 import java.util.UUID;
 import me.googas.api.client.Client;
-import me.googas.api.client.data.LinkableInfoImpl;
-import me.googas.api.client.data.PermissionStackImpl;
-import me.googas.api.client.data.TeamImpl;
-import me.googas.api.client.data.TeamMemberImpl;
-import me.googas.api.client.data.ValuesMapImpl;
-import me.googas.api.links.LinkableDataType;
+import me.googas.api.client.data.SimpleLinkableInfo;
+import me.googas.api.client.data.SimplePermissionStack;
+import me.googas.api.client.data.SimpleTeam;
+import me.googas.api.client.data.SimpleTeamMember;
+import me.googas.api.client.data.SimpleValuesMap;
 import me.googas.api.links.LinkableInfo;
+import me.googas.api.links.LinkableType;
 import me.googas.api.matches.Ladder;
 import me.googas.api.matches.TeamRole;
 import me.googas.api.permissions.Group;
@@ -30,16 +30,18 @@ public class ClientTest {
   private static String groupId = "kI9w6F";
 
   public static void main(String[] args) throws IOException, MessengerListenFailException {
-    String debug = "104.243.43.175";
-    Client client = new Client("1Uv2AZduciPKwUL8", "104.243.43.175", 3000);
+    String debug = "45.43.24.28";
+    // 5Eh8QKdS7GmrE0Gs
+    String debugToken = "1Uv2AZduciPKwUL8";
+    Client client = new Client("5Eh8QKdS7GmrE0Gs", "45.43.24.28", 3000);
     String nick = "Selfie";
     UUID uuid = UUID.fromString("5eed208d-de58-4022-9ba7-6ccb5ea7e92a");
     String trimmed = UUIDUtils.trim(uuid);
     JsonClient conn = client.startConnection();
     Scanner scanner = new Scanner(System.in);
-    LinkableInfoImpl info =
-        new LinkableInfoImpl(
-            LinkableDataType.MINECRAFT, new ValuesMapImpl(Maps.objects("uuid", trimmed).build()));
+    SimpleLinkableInfo info =
+        new SimpleLinkableInfo(
+            LinkableType.MINECRAFT, new SimpleValuesMap(Maps.singleton("uuid", trimmed)));
     while (true) {
       while (scanner.hasNextLine()) {
         String line = scanner.nextLine();
@@ -64,7 +66,7 @@ public class ClientTest {
         } else if (line.equalsIgnoreCase("permission")) {
           conn.sendRequest(
               new Request<>(
-                  PermissionStackImpl.class,
+                  SimplePermissionStack.class,
                   "permission",
                   Maps.objects("context", "asdf").append("info", info).build()),
               stack -> {
@@ -113,7 +115,7 @@ public class ClientTest {
               new Request<>(
                   String.class,
                   "link-code",
-                  Maps.objects("type", LinkableDataType.MINECRAFT)
+                  Maps.objects("type", LinkableType.MINECRAFT)
                       .append("identification", Maps.singleton("uuid", trimmed))
                       .build()),
               System.out::println);
@@ -139,14 +141,14 @@ public class ClientTest {
                   Maps.objects("id", "surHaun5TJ7CEHLo")
                       .append(
                           "team",
-                          new TeamImpl(
+                          new SimpleTeam(
                               -3,
                               "2 teanm",
                               Lots.set(
-                                  new TeamMemberImpl(
-                                      new LinkableInfoImpl(
-                                          LinkableDataType.MINECRAFT,
-                                          new ValuesMapImpl(Maps.singleton("nickname", "Chevi"))),
+                                  new SimpleTeamMember(
+                                      new SimpleLinkableInfo(
+                                          LinkableType.MINECRAFT,
+                                          new SimpleValuesMap(Maps.singleton("nickname", "Chevi"))),
                                       TeamRole.LEADER))))
                       .build()),
               bol -> {
@@ -176,6 +178,21 @@ public class ClientTest {
               },
               exception -> {
                 exception.printStackTrace();
+              });
+        } else if (line.equalsIgnoreCase("update nickname")) {
+          conn.sendRequest(
+              new Request<>(
+                  Boolean.class,
+                  "update-minecraft-nickname",
+                  Maps.objects("uuid", uuid).append("nickname", nick).build()),
+              bol -> {
+                System.out.println("Name updated? " + bol);
+              });
+        } else if (line.equalsIgnoreCase("bungee")) {
+          conn.sendRequest(
+              new Request<>(Boolean.class, "is-bungee", Maps.singleton("uuid", uuid)),
+              bol -> {
+                System.out.println("Is bungee? " + bol);
               });
         }
       }

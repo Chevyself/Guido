@@ -6,10 +6,9 @@ import com.starfishst.jda.result.Result;
 import com.starfishst.jda.utils.embeds.EmbedFactory;
 import com.starfishst.jda.utils.embeds.EmbedQuery;
 import java.util.Collection;
-import me.googas.api.links.LinkableData;
-import me.googas.api.links.LinkableInfo;
 import me.googas.api.matches.Ladder;
 import me.googas.api.matches.Queue;
+import me.googas.api.matches.Queueable;
 import me.googas.bot.api.types.BotGuild;
 import me.googas.bot.core.Guido;
 import me.googas.bot.core.handlers.matches.QueueHandler;
@@ -59,22 +58,19 @@ public class JoinQueueReactionResponse extends SimpleCommandReactionResponse {
     Ladder ladder = guildData.getLadder(this.ladder);
     if (ladder != null) {
       Queue queue = Guido.getHandler(QueueHandler.class).getQueue(guildData, ladder);
-      Collection<LinkableInfo> waiting = queue.getWaiting();
+      Collection<Queueable> waiting = queue.getWaiting();
       if (waiting.isEmpty()) {
         participants.append(
             Guido.getLanguageHandler()
                 .getDefault()
                 .get("iq.empty", Maps.singleton("ladder", ladder.getName())));
       } else {
-        for (LinkableInfo info : waiting) {
-          LinkableData link = info.getLink();
-          if (link != null) {
-            participants
-                .append("\n -")
-                .append(link.getSingle())
-                .append(" Elo: ")
-                .append(link.getElo(ladder));
-          }
+        for (Queueable queueable : waiting) {
+          participants
+              .append("\n -")
+              .append(queueable.getSingle())
+              .append(" Elo: ")
+              .append(queueable.getElo(ladder));
         }
       }
       query.getEmbedBuilder().setTitle("Join the queue for " + ladder.getName());

@@ -7,7 +7,7 @@ import com.starfishst.jda.result.Result;
 import com.starfishst.jda.result.ResultType;
 import java.util.Map;
 import me.googas.api.lang.LocaleFile;
-import me.googas.api.links.LinkableData;
+import me.googas.api.links.LinkableInfo;
 import me.googas.api.matches.GlobalLadder;
 import me.googas.api.matches.Ladder;
 import me.googas.bot.api.loader.BotDataLoader;
@@ -50,18 +50,17 @@ public class LeaderboardCommands {
               Maps.builder("page", String.valueOf(page))
                   .append("max", String.valueOf(max))
                   .append("ladder", ladder.getName())));
-      Map<Integer, LinkableData> leaderboard = loader.getLeaderboard(ladder, page, 10);
+      Map<Integer, LinkableInfo> leaderboard = loader.getLeaderboard(ladder, page, 10);
       leaderboard.forEach(
-          (index, data) -> {
-            builder.append(
-                locale.get(
-                    "lb.entry",
-                    Maps.builder("single", data.getSingle())
-                        .append("index", String.valueOf(index))
-                        .append("elo", String.valueOf((int) data.getElo(ladder)))
-                        .append("wins", String.valueOf((int) data.getWins(ladder)))
-                        .append("loses", String.valueOf((int) data.getLoses(ladder)))));
-          });
+          (index, data) ->
+              builder.append(
+                  locale.get(
+                      "lb.entry",
+                      Maps.builder("single", data.getSingle())
+                          .append("index", String.valueOf(index))
+                          .append("elo", String.valueOf((int) data.getElo(ladder)))
+                          .append("wins", String.valueOf((int) data.getWins(ladder)))
+                          .append("loses", String.valueOf((int) data.getLoses(ladder))))));
       return new Result(builder.toString());
     } else {
       return new Result(ResultType.USAGE, locale.get("lb.not-global"));
@@ -91,16 +90,15 @@ public class LeaderboardCommands {
             Maps.builder("page", String.valueOf(page))
                 .append("max", String.valueOf(max))
                 .append("stat", stat)));
-    Map<Integer, LinkableData> leaderboard = loader.getLeaderboard(stat, page, 20, false);
+    Map<Integer, LinkableInfo> leaderboard = loader.getLeaderboard(stat, page, 20, false);
     leaderboard.forEach(
-        (index, data) -> {
-          builder.append(
-              locale.get(
-                  "table.entry",
-                  Maps.builder("single", data.getSingle())
-                      .append("index", String.valueOf(index))
-                      .append("stat", String.valueOf((int) data.getStat(stat)))));
-        });
+        (index, data) ->
+            builder.append(
+                locale.get(
+                    "table.entry",
+                    Maps.builder("single", data.getSingle())
+                        .append("index", String.valueOf(index))
+                        .append("stat", String.valueOf((int) data.getStat(stat))))));
     return new Result(builder.toString());
   }
 }

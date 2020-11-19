@@ -80,15 +80,15 @@ public class BukkitRequest<T> extends Request<T> {
   /**
    * Send the request and return the object
    *
-   * @return the object requested
-   * @throws MessengerListenFailException in case something goes wrong in the request or there's not
-   *     connection with the bot
+   * @return the object requested or null
+   * @throws MessengerListenFailException in case something goes wrong in the request
    */
+  @Nullable
   public T send() throws MessengerListenFailException {
     JsonClient connection = Guido.getClient().getConnection();
     if (connection != null) {
       return connection.sendRequest(this);
     }
-    throw new MessengerListenFailException("There's not connection with the bot");
+    return null;
   }
 }

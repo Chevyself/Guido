@@ -1,7 +1,7 @@
 package stats;
 
 import java.util.Map;
-import me.googas.api.links.Stateable;
+import me.googas.api.utility.Stateable;
 import me.googas.commons.maps.Maps;
 import org.jetbrains.annotations.NotNull;
 

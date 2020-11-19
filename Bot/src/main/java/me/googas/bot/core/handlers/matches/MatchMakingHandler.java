@@ -5,9 +5,10 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.logging.Level;
 import me.googas.api.discord.GuildData;
 import me.googas.api.lang.LocaleFile;
-import me.googas.api.links.LinkableData;
+import me.googas.api.links.Linkable;
 import me.googas.api.links.LinkableInfo;
 import me.googas.api.matches.Match;
 import me.googas.api.matches.MatchStatus;
@@ -20,22 +21,19 @@ import me.googas.bot.api.events.match.MatchStatusUpdatedEvent;
 import me.googas.bot.api.events.queue.QueueJoinEvent;
 import me.googas.bot.api.loader.BotDataLoader;
 import me.googas.bot.api.types.BotGuild;
-import me.googas.bot.api.types.BotLinkableData;
+import me.googas.bot.api.types.BotLinkable;
 import me.googas.bot.api.types.BotMatch;
 import me.googas.bot.core.Guido;
 import me.googas.bot.core.handlers.GuidoEventHandler;
 import me.googas.bot.core.util.Discord;
-import me.googas.bot.core.util.console.Console;
 import me.googas.commons.events.ListenPriority;
 import me.googas.commons.events.Listener;
 import me.googas.commons.maps.Maps;
-import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.GuildVoiceState;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.entities.VoiceChannel;
-import net.dv8tion.jda.internal.entities.MemberImpl;
 import org.jetbrains.annotations.NotNull;
 
 /** This handles the match-making process for ranked matches */
@@ -55,7 +53,6 @@ public class MatchMakingHandler implements GuidoEventHandler {
   @Listener(priority = ListenPriority.HIGHEST)
   public void onMatchStatusUpdatedEvent(@NotNull MatchStatusUpdatedEvent event) {
     Match match = event.getMatch();
-    Console.debug(match + " has updated its event to " + event.getStatus());
     if (event.getStatus() == MatchStatus.FINISHED) {
       LocaleFile locale = Guido.getLanguageHandler().getDefault();
       long guildId = match.getGuildId();
@@ -67,7 +64,6 @@ public class MatchMakingHandler implements GuidoEventHandler {
             .getEmbedBuilder()
             .setTitle(locale.get("match.announce.title", Maps.singleton("id", match.getId())));
         information.send(channel);
-        Console.debug(match + " has been announced in " + channel);
       }
       Map<Integer, Long> voices = this.getVoices(match.getId());
       for (Long value : voices.values()) {
@@ -86,7 +82,6 @@ public class MatchMakingHandler implements GuidoEventHandler {
   @Listener(priority = ListenPriority.HIGHEST)
   public void onQueueJoin(QueueJoinEvent event) {
     Match match = event.getQueue().checkReady();
-    Console.debug("Is the queue " + event.getQueue() + " ready to create a match? " + match);
     if (match != null) {
       new MatchLoadedEvent(match).call();
       for (LinkableInfo participant : match.getParticipants()) {
@@ -114,11 +109,11 @@ public class MatchMakingHandler implements GuidoEventHandler {
                 this.getVoices(match.getId()).put(team.getId(), channel.getIdLong());
                 Discord.removeAllPermission(channel, Permission.VIEW_CHANNEL);
                 for (TeamMember member : team.getMembers()) {
-                  LinkableData link = member.getLinkInfo().getLink();
-                  if (link instanceof BotLinkableData) {
-                    Member discordMember = ((BotLinkableData) link).getDiscordMember(data.getId());
+                  Linkable link = member.getLinkInfo().getLink();
+                  if (link instanceof BotLinkable) {
+                    Member discordMember = ((BotLinkable) link).getDiscordMember(data.getId());
                     if (discordMember != null) {
-                      Discord. addPermissions(
+                      Discord.addPermissions(
                           channel,
                           discordMember,
                           Discord.VOICE,
@@ -170,7 +165,6 @@ public class MatchMakingHandler implements GuidoEventHandler {
   public void deleteAndMove(BotGuild botGuild, VoiceChannel channel) {
     VoiceChannel waiting = botGuild.getVoiceChannel("waiting");
     if (channel != null) {
-      Console.info("Moving members " + channel.getMembers());
       for (Member member : channel.getMembers()) {
         if (member.getVoiceState() != null && member.getVoiceState().getChannel() != null) {
           botGuild.getDiscord().moveVoiceMember(member, waiting).queue(aVoid -> {}, ignored -> {});
@@ -182,13 +176,13 @@ public class MatchMakingHandler implements GuidoEventHandler {
         try {
           Thread.sleep(1);
         } catch (InterruptedException e) {
-          Console.exception(e);
+          Guido.getLogger()
+              .log(Level.WARNING, e, () -> "The thread was interrupted while moving members");
         }
         if (time > 3000) {
           break;
         }
       }
-      Console.info("Deleting team channel " + channel);
       channel.delete().queue(aVoid -> {}, ignored -> {});
     }
   }
@@ -211,9 +205,9 @@ public class MatchMakingHandler implements GuidoEventHandler {
    */
   public Collection<Match> getPlaying(@NotNull UserData data) {
     BotDataLoader loader = Guido.getDataLoader();
-    Collection<LinkableData> links = loader.getLinks(data);
+    Collection<Linkable> links = loader.getLinks(data);
     Collection<Match> participating = new HashSet<>();
-    for (LinkableData link : links) {
+    for (Linkable link : links) {
       participating.addAll(
           loader.getParticipating(
               link.getType(),
@@ -223,7 +217,6 @@ public class MatchMakingHandler implements GuidoEventHandler {
               MatchStatus.STARTING,
               MatchStatus.WAITING));
     }
-    Console.info(data + " is participating in " + participating);
     return participating;
   }
 

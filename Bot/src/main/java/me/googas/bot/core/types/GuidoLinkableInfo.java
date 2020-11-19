@@ -1,6 +1,9 @@
 package me.googas.bot.core.types;
 
-import me.googas.api.links.LinkableDataType;
+import java.util.HashMap;
+import java.util.Map;
+import me.googas.api.links.LinkableType;
+import me.googas.bot.api.types.BotLinkable;
 import me.googas.bot.api.types.BotLinkableInfo;
 import me.googas.bot.core.types.maps.GuidoValuesMap;
 import org.jetbrains.annotations.NotNull;
@@ -9,7 +12,7 @@ import org.jetbrains.annotations.NotNull;
 public class GuidoLinkableInfo implements BotLinkableInfo {
 
   /** The type of linked data */
-  @NotNull private final LinkableDataType type;
+  @NotNull private final LinkableType type;
 
   /** The way to identify this data */
   @NotNull private final GuidoValuesMap identification;
@@ -20,18 +23,41 @@ public class GuidoLinkableInfo implements BotLinkableInfo {
    * @param type the type of data
    * @param identification the way to identify the data
    */
-  public GuidoLinkableInfo(@NotNull LinkableDataType type, @NotNull GuidoValuesMap identification) {
+  public GuidoLinkableInfo(@NotNull LinkableType type, @NotNull GuidoValuesMap identification) {
     this.type = type;
     this.identification = identification;
   }
 
   /** @deprecated this constructor may only be used by gson */
   public GuidoLinkableInfo() {
-    this(LinkableDataType.NONE, new GuidoValuesMap());
+    this(LinkableType.NONE, new GuidoValuesMap());
+  }
+
+  /**
+   * Get the stats of the entity
+   *
+   * @return the map of the stats
+   */
+  @Override
+  public @NotNull Map<String, Float> getStats() {
+    BotLinkable link = this.getLink();
+    return link == null ? new HashMap<>() : link.getStats();
+  }
+
+  /**
+   * Get as a single way to identify it. For example in the case of discord it will be the tag, for
+   * minecraft its nickname and if its a team it's name
+   *
+   * @return a simple way to identify the data
+   */
+  @Override
+  public @NotNull String getSingle() {
+    BotLinkable link = this.getLink();
+    return link == null ? "invalid" : link.getSingle();
   }
 
   @Override
-  public @NotNull LinkableDataType getType() {
+  public @NotNull LinkableType getType() {
     return this.type;
   }
 

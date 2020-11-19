@@ -1,6 +1,7 @@
 package me.googas.bot.core.handlers.matches;
 
-import me.googas.api.links.LinkableData;
+import java.util.logging.Level;
+import me.googas.api.links.Linkable;
 import me.googas.api.matches.Ladder;
 import me.googas.api.matches.Match;
 import me.googas.api.matches.MatchStatus;
@@ -10,7 +11,7 @@ import me.googas.bot.api.events.match.MatchStatusUpdatedEvent;
 import me.googas.bot.api.types.BotGuild;
 import me.googas.bot.core.Guido;
 import me.googas.bot.core.handlers.GuidoEventHandler;
-import me.googas.bot.core.util.console.Console;
+import me.googas.bot.core.util.GuidoLogBuilder;
 import me.googas.commons.events.ListenPriority;
 import me.googas.commons.events.Listener;
 import org.jetbrains.annotations.NotNull;
@@ -28,37 +29,39 @@ public class MatchCalculator implements GuidoEventHandler {
    */
   @Listener(priority = ListenPriority.MEDIUM)
   public void onMatchStatusUpdatedEvent(@NotNull MatchStatusUpdatedEvent event) {
+    GuidoLogBuilder builder = new GuidoLogBuilder(Level.INFO);
     Match match = event.getMatch();
     Team winners = match.getWinners();
     String ladderName = match.getDetails().get("ladder", String.class);
     long guildId = match.getGuildId();
+    builder.append("Checking if event is FINISHED and match");
     if (event.getStatus() == MatchStatus.FINISHED && ladderName != null && guildId != -1) {
-      Console.debug("Saving the elo for " + match);
       BotGuild guildData = Guido.getDataLoader().getGuildDataOrCreate(guildId);
       Ladder ladder = guildData.getLadder(ladderName);
-      if (ladder != null) {
-        if (winners != null) {
-          Console.debug("There's a winner so there will be set");
-          float winnersElo = winners.getElo(ladder);
-          float losersElo = this.getLosersElo(match, ladder);
-          float newWinners =
-              this.newElo(
-                  winnersElo,
-                  this.calculateExpected(winnersElo, losersElo),
-                  ladder.getOptions().getOr("win-multiplier", Integer.class, 1));
-          float newLosers =
-              this.newElo(
-                  losersElo,
-                  this.calculateExpected(losersElo, winnersElo),
-                  ladder.getOptions().getOr("lose-multiplier", Integer.class, 0));
-          float winnersDifference = newWinners - winnersElo;
-          float losersDifference = losersElo - newLosers;
-          match.getDetails().put("winners-difference", winnersDifference);
-          match.getDetails().put("losers-difference", losersDifference);
-          this.setElo(match, ladder, winnersDifference, losersDifference);
-        }
+      builder.append("\n Match is finished checking ladder, winners and guild id");
+      if (ladder != null && winners != null) {
+        builder.append("\n").append("There's a ladder and winners");
+        float winnersElo = winners.getElo(ladder);
+        float losersElo = this.getLosersElo(match, ladder);
+        float newWinners =
+            this.newElo(
+                winnersElo,
+                this.calculateExpected(winnersElo, losersElo),
+                ladder.getOptions().getOr("win-multiplier", Integer.class, 1));
+        float newLosers =
+            this.newElo(
+                losersElo,
+                this.calculateExpected(losersElo, winnersElo),
+                ladder.getOptions().getOr("lose-multiplier", Integer.class, 0));
+        float winnersDifference = newWinners - winnersElo;
+        float losersDifference = losersElo - newLosers;
+        match.getDetails().put("winners-difference", winnersDifference);
+        match.getDetails().put("losers-difference", losersDifference);
+        this.setElo(match, ladder, winnersDifference, losersDifference);
+        builder.append("\n Elo has been set");
       }
     }
+    builder.send();
   }
 
   /**
@@ -75,9 +78,8 @@ public class MatchCalculator implements GuidoEventHandler {
     String ladderName = ladder.getName();
     for (Team team : match.getTeams()) {
       for (TeamMember member : team.getMembers()) {
-        LinkableData data = member.getLinkInfo().getLink();
+        Linkable data = member.getLinkInfo().getLink();
         if (data != null) {
-          Console.debug("Setting the stat and elo to " + data);
           if (team == winners) {
             data.increaseElo(ladder, winnersDifference);
             data.increaseStat(ladderName + "-wins", 1);

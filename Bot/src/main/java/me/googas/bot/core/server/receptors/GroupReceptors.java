@@ -1,5 +1,6 @@
 package me.googas.bot.core.server.receptors;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import me.googas.api.permissions.Group;
@@ -44,7 +45,9 @@ public class GroupReceptors {
    */
   @Receptor("create-group")
   public String createGroup(@ParamName("name") String name, @ParamName("weight") int weight) {
-    return new GuidoGroup(weight, new GuidoValuesMap(), new HashSet<>(), name).cache().getId();
+    return new GuidoGroup(weight, new GuidoValuesMap(), new HashSet<>(), name, new ArrayList<>())
+        .cache()
+        .getId();
   }
 
   /**
@@ -134,6 +137,34 @@ public class GroupReceptors {
       return group.addPermission(context, permission.getNode(), permission.isEnabled());
     }
     return false;
+  }
+
+  /**
+   * Add a parent of a group
+   *
+   * @param id the id of the group to add
+   * @param parentId the id of the parent to add to the group
+   * @return true if the parent was added
+   */
+  @Receptor("group-add-parent")
+  public boolean addParent(@ParamName("id") String id, @ParamName("parent") String parentId) {
+    BotGroup group = Guido.getDataLoader().getGroup(id);
+    if (group == null) return false;
+    return group.getParents().add(parentId);
+  }
+
+  /**
+   * Remove a parent of a group
+   *
+   * @param id the id of the group to remove
+   * @param parentId the id of the parent to remove from the group
+   * @return true if the parent was removed
+   */
+  @Receptor("group-remove-parent")
+  public boolean removeParent(@ParamName("id") String id, @ParamName("parent") String parentId) {
+    BotGroup group = Guido.getDataLoader().getGroup(id);
+    if (group == null) return false;
+    return group.getParents().remove(parentId);
   }
 
   /**

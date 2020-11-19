@@ -1,7 +1,6 @@
 package com.starfishst.bukkit.lang;
 
 import com.starfishst.bukkit.utils.BukkitUtils;
-import java.io.File;
 import java.util.Map;
 import me.googas.api.lang.LocaleFile;
 import me.googas.commons.maps.MapBuilder;
@@ -75,10 +74,5 @@ public class BukkitLocaleFile implements LocaleFile {
   public @NotNull String get(
       @NotNull String path, @NotNull MapBuilder<String, String> placeholders) {
     return BukkitUtils.build(LocaleFile.super.get(path, placeholders));
-  }
-
-  @Override
-  public @NotNull File getFile() {
-    throw new UnsupportedOperationException("Bukkit locale files do not use files");
   }
 }

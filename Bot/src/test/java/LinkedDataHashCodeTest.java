@@ -1,7 +1,7 @@
 import java.util.ArrayList;
 import java.util.List;
-import me.googas.api.links.LinkableDataType;
 import me.googas.api.links.LinkableInfo;
+import me.googas.api.links.LinkableType;
 import me.googas.bot.core.types.GuidoLinkableInfo;
 import me.googas.bot.core.types.maps.GuidoValuesMap;
 
@@ -12,12 +12,12 @@ public class LinkedDataHashCodeTest {
 
     GuidoLinkableInfo selfie =
         new GuidoLinkableInfo(
-            LinkableDataType.MINECRAFT,
+            LinkableType.MINECRAFT,
             new GuidoValuesMap("uuid", "5eed208dde5840229ba76ccb5ea7e92a")
                 .put("nickname", "Selfie"));
     GuidoLinkableInfo xinoo =
         new GuidoLinkableInfo(
-            LinkableDataType.MINECRAFT,
+            LinkableType.MINECRAFT,
             new GuidoValuesMap("uuid", "554ee0077cc64ae589fb60d0e1e75871")
                 .put("nickname", "xinoooo"));
     data.add(selfie);

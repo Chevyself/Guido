@@ -20,6 +20,9 @@ public class GuidoLadder implements Ladder {
   /** The base value of the ladder */
   private final int baseValue;
 
+  /** The teams per match */
+  private final int teamsPerMatch;
+
   /** The options for the ladder to make each ladder unique */
   @NotNull private final GuidoValuesMap options;
 
@@ -29,19 +32,25 @@ public class GuidoLadder implements Ladder {
    * @param name the name of the ladder
    * @param playersPerTeam the players per team in the ladder
    * @param baseValue the base value of the ladder
+   * @param teamsPerMatch the teams per match in the ladder
    * @param options the options of the ladder
    */
   public GuidoLadder(
-      @NotNull String name, int playersPerTeam, int baseValue, @NotNull GuidoValuesMap options) {
+      @NotNull String name,
+      int playersPerTeam,
+      int baseValue,
+      int teamsPerMatch,
+      @NotNull GuidoValuesMap options) {
     this.name = name;
     this.playersPerTeam = playersPerTeam;
     this.baseValue = baseValue;
+    this.teamsPerMatch = teamsPerMatch;
     this.options = options;
   }
 
   /** @deprecated this constructor may only be used by gson */
   public GuidoLadder() {
-    this("", 5, 500, new GuidoValuesMap());
+    this("", 5, 500, -1, new GuidoValuesMap());
   }
 
   @Override
@@ -88,5 +97,15 @@ public class GuidoLadder implements Ladder {
   @Override
   public int baseValue() {
     return this.baseValue;
+  }
+
+  /**
+   * Get the number of teams per match
+   *
+   * @return the number of teams per match
+   */
+  @Override
+  public int teamsPerMatch() {
+    return 0;
   }
 }

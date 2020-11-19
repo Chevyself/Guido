@@ -4,10 +4,9 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.TimerTask;
 import me.googas.api.links.LinkableInfo;
-import me.googas.bot.api.types.BotLinkableData;
+import me.googas.bot.api.types.BotLinkable;
 import me.googas.bot.core.Guido;
 import me.googas.bot.core.handlers.GuidoHandler;
-import me.googas.bot.core.util.console.Console;
 import me.googas.commons.RandomUtils;
 import me.googas.commons.time.Time;
 import org.jetbrains.annotations.NotNull;
@@ -42,14 +41,12 @@ public class LinkHandler implements GuidoHandler {
    */
   @Nullable
   public String createCode(@NotNull LinkableInfo info) {
-    BotLinkableData data =
+    BotLinkable data =
         Guido.getDataLoader().getLinkedData(info.getType(), info.getIdentification());
-    Console.debug("Attempting to generate code to " + data);
     if (data != null && !data.isLinked()) {
       String code = this.nextCode();
       this.queries.add(
           new LinkQuery(code, info, System.currentTimeMillis(), Time.fromString("3m")));
-      Console.debug("Code for " + data + " is " + code);
       return code;
     } else {
       return null;

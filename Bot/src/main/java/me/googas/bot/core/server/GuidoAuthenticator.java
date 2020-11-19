@@ -6,7 +6,6 @@ import me.googas.api.token.AuthLevel;
 import me.googas.api.token.AuthToken;
 import me.googas.bot.core.Guido;
 import me.googas.bot.core.types.maps.GuidoValuesMap;
-import me.googas.bot.core.util.console.Console;
 import me.googas.commons.maps.Maps;
 import me.googas.messaging.IRequest;
 import me.googas.messaging.json.JsonMessenger;
@@ -70,7 +69,6 @@ public class GuidoAuthenticator implements Authenticator {
     if (messenger instanceof JsonClientThread) {
       AuthToken authToken = Guido.getDataLoader().getAuthToken(token);
       if (authToken != null) {
-        Console.debug(messenger + " has been authenticated using the token " + authToken);
         this.levels.put((JsonClientThread) messenger, authToken.getLevel());
         return true;
       }
@@ -97,7 +95,6 @@ public class GuidoAuthenticator implements Authenticator {
               map.put(key, value);
             }
           });
-      Console.debug("Received client information from " + messenger + ": \n " + info);
       this.info.put((JsonClientThread) messenger, map);
       return true;
     }

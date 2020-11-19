@@ -9,6 +9,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import java.util.logging.SimpleFormatter;
 import me.googas.api.loader.DataLoader;
 import me.googas.bot.api.events.GuidoCancellable;
 import me.googas.bot.api.loader.BotDataLoader;
@@ -45,13 +48,14 @@ import me.googas.bot.core.handlers.responsive.GuidoMessagesController;
 import me.googas.bot.core.handlers.test.TestHandler;
 import me.googas.bot.core.server.GuidoFallbackServer;
 import me.googas.bot.core.server.GuidoServer;
-import me.googas.bot.core.util.console.Console;
 import me.googas.commons.Lots;
 import me.googas.commons.Validate;
 import me.googas.commons.cache.Catchable;
 import me.googas.commons.cache.MemoryCache;
 import me.googas.commons.events.Event;
 import me.googas.commons.events.ListenerManager;
+import me.googas.commons.log.LoggerFactory;
+import me.googas.commons.log.formatters.CustomFormatter;
 import me.googas.commons.maps.Maps;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.OnlineStatus;
@@ -62,6 +66,23 @@ import org.jetbrains.annotations.Nullable;
 
 /** The match making bot */
 public class Guido {
+
+  /** The logger that the bot will be using to display messages */
+  @NotNull
+  private static Logger logger =
+      LoggerFactory.start("Guido", LoggerFactory.getConsoleHandler(new SimpleFormatter()));
+
+  static {
+    CustomFormatter formatter =
+        new CustomFormatter(
+            "[%level%] %day%/%month%/%year% [Guido] %hour%:%minute%:%second%: %message% %stack%");
+    try {
+      Guido.logger = LoggerFactory.start("Guido", formatter, "Log-" + System.currentTimeMillis());
+    } catch (IOException e) {
+      Guido.logger = LoggerFactory.start("Guido", LoggerFactory.getConsoleHandler(formatter));
+      Guido.logger.log(Level.SEVERE, e, null);
+    }
+  }
 
   /** The cache of the bot */
   @NotNull private static final MemoryCache cache = new MemoryCache();
@@ -126,9 +147,6 @@ public class Guido {
    */
   public static void main(String[] args) {
     HashMap<String, String> argsMaps = Maps.fromStringArray("=", args);
-    if (argsMaps.getOrDefault("debug", "false").equalsIgnoreCase("true")) {
-      Console.setDebug();
-    }
     Guido.timer.schedule(
         new TimerTask() {
           @Override
@@ -138,18 +156,16 @@ public class Guido {
         },
         0L,
         1000L);
-    Thread.setDefaultUncaughtExceptionHandler((thread, exception) -> Console.exception(exception));
+    Thread.setDefaultUncaughtExceptionHandler(
+        (thread, exception) -> Guido.logger.log(Level.SEVERE, exception, null));
     JDA jda = Guido.setupJda(argsMaps);
     Guido.setupDataLoader(argsMaps);
     Guido.createServer(argsMaps);
     Guido.registerCommands(argsMaps, jda);
-    Console.info("Setting up language");
     Guido.languageHandler.load("en", "es", "fr");
     for (GuidoHandler handler : Guido.handlers) {
-      Console.debug(handler.getClass().getSimpleName() + " has been registered as a handler");
       handler.register(jda);
     }
-    Console.info("Guido is ready to use");
   }
 
   /**
@@ -159,7 +175,6 @@ public class Guido {
    * @param jda the instance of jda for the command manager
    */
   public static void registerCommands(HashMap<String, String> argsMaps, JDA jda) {
-    Console.debug("Starting to register commands");
     ManagerOptions options = new ManagerOptions();
     options.setDeleteCommands(false);
     options.setDeleteErrors(false);
@@ -175,7 +190,6 @@ public class Guido {
             Guido.languageHandler,
             new GuidoProvidersRegistry(Guido.languageHandler),
             new GuidoPermissionChecker(Guido.languageHandler, Guido.dataLoader));
-    Console.info("Command manager is ready");
     for (Object cmd :
         Lots.list(
             new CategoryCommands(),
@@ -193,10 +207,8 @@ public class Guido {
             new TokenCommands(),
             new UserCommands(),
             new VoiceChannelCommands())) {
-      Console.debug("Registering commands in " + cmd.getClass().getSimpleName());
       Guido.commandManager.registerCommand(cmd);
     }
-    Console.info("All commands have been registered");
   }
 
   /**
@@ -205,18 +217,15 @@ public class Guido {
    * @param argsMaps the map to get the port and timeout of the server
    */
   public static void createServer(HashMap<String, String> argsMaps) {
-    Console.debug("Creating bot's server");
     try {
       int port = Integer.parseInt(argsMaps.getOrDefault("port", "3000"));
       long timeout = Long.parseLong(argsMaps.getOrDefault("timeout", "3000"));
       Guido.server = new GuidoServer(port, timeout);
       Guido.server.start();
-      Console.info(
-          "Server has been setup in the port " + port + " using " + timeout + "ms of timeout");
     } catch (IOException e) {
-      Console.exception(e, "Socket server could not be initialized");
+      Guido.logger.log(Level.SEVERE, e, () -> "Socket server could not be initialized");
     } catch (NumberFormatException e) {
-      Console.exception(e, "Port or timeout could not be parsed");
+      Guido.logger.log(Level.SEVERE, e, () -> "Port or timeout could not be parsed");
     }
   }
 
@@ -226,10 +235,8 @@ public class Guido {
    * @param argsMaps the map to get the desired type of loader and the parameters of it
    */
   public static void setupDataLoader(HashMap<String, String> argsMaps) {
-    Console.info("Setting up data loader");
     if (argsMaps.get("loader") != null) {
       if (argsMaps.get("loader").equalsIgnoreCase("jsongo")) {
-        Console.info("Attempting to register jsongo data loader");
         try {
           DataLoader old = Guido.dataLoader;
           Guido.dataLoader =
@@ -240,11 +247,9 @@ public class Guido {
           Guido.handlers.remove(old);
           Guido.handlers.add(Guido.dataLoader);
         } catch (Exception e) {
-          Console.exception(e, "Jsongo loader could not be initialized");
+          Guido.logger.log(Level.SEVERE, e, () -> "Jsongo loader could not be initialized");
         }
-        Console.debug("Jsongo has been setup");
       }
-      Console.info("Using data loader: " + Guido.dataLoader.getClass().getSimpleName());
     }
   }
 
@@ -256,11 +261,9 @@ public class Guido {
    */
   @NotNull
   public static JDA setupJda(HashMap<String, String> argsMaps) {
-    Console.debug("Setting up jda");
     JDA jda = Guido.connection.createConnection(argsMaps.getOrDefault("token", ""));
     jda.getPresence().setPresence(OnlineStatus.DO_NOT_DISTURB, Activity.playing(".help .ayuda .?"));
     jda.setEventManager(new AnnotatedEventManager());
-    Console.debug("JDA has been setup");
     return jda;
   }
 
@@ -270,35 +273,29 @@ public class Guido {
     Guido.closeServer();
     Guido.languageHandler.stop();
     for (GuidoHandler handler : Guido.handlers) {
-      Console.debug("Closing handler " + handler.getClass().getSimpleName());
       handler.unregister();
     }
-    Console.info("Shutting down JDA");
     JDA jda = Guido.connection.getJda();
     if (jda != null) {
       jda.shutdown();
     }
-    Console.info("Bot shutdown successful");
     System.exit(0);
   }
 
   /** CLoses the bot server */
   public static void closeServer() {
-    Console.info("Closing server");
     try {
       Guido.server.close();
     } catch (IOException e) {
-      Console.exception(e, "Server could not be closed properly");
+      Guido.logger.log(Level.SEVERE, e, null);
     }
   }
 
   /** Clears all the cached items from the bot */
   public static void clearCache() {
-    Console.info("Clearing cache...");
     for (SoftReference<Catchable> reference : Guido.cache.copy()) {
       Catchable catchable = reference.get();
       if (catchable instanceof BotCatchable) {
-        Console.debug(catchable + " is being cleaned");
         try {
           ((BotCatchable) catchable).unload(true);
         } catch (Throwable throwable) {
@@ -426,5 +423,15 @@ public class Guido {
   @NotNull
   public static Timer getTimer() {
     return Guido.timer;
+  }
+
+  /**
+   * Get the logger that the bot is using to print messages
+   *
+   * @return the logger
+   */
+  @NotNull
+  public static Logger getLogger() {
+    return Guido.logger;
   }
 }

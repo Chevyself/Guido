@@ -1,7 +1,7 @@
 package me.googas.bot.core.server.receptors;
 
 import java.util.Collection;
-import me.googas.api.links.LinkableData;
+import me.googas.api.links.Linkable;
 import me.googas.api.links.LinkableInfo;
 import me.googas.api.matches.Queue;
 import me.googas.bot.core.Guido;
@@ -20,7 +20,7 @@ public class QueueReceptors {
    */
   @Receptor("left-queue")
   public boolean leftQueue(@ParamName("info") LinkableInfo info) {
-    LinkableData data = info.getLink();
+    Linkable data = info.getLink();
     if (data != null) {
       Collection<Queue> queues = Guido.getHandler(QueueHandler.class).getQueues(info);
       for (Queue queue : queues) {

@@ -5,8 +5,8 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 import me.googas.api.discord.GuildData;
-import me.googas.api.links.LinkableDataType;
 import me.googas.api.links.LinkableInfo;
+import me.googas.api.links.LinkableType;
 import me.googas.api.utility.ValuesMap;
 import me.googas.commons.RandomUtils;
 import me.googas.commons.cache.Catchable;
@@ -17,20 +17,17 @@ import org.jetbrains.annotations.Nullable;
 public interface Match extends Catchable {
 
   /**
-   * Get whether the given information nis inside a team of this match
+   * Get whether the given information is inside a team of this match
    *
    * @param type the type of link
    * @param identification the way to identify it
    * @return true if it matches a member from a team
    */
-  default boolean isParticipating(
-      @NotNull LinkableDataType type, @NotNull ValuesMap identification) {
+  default boolean isParticipating(@NotNull LinkableType type, @NotNull ValuesMap identification) {
     Collection<Team> teams = this.getTeams();
     for (Team team : teams) {
       for (TeamMember member : team.getMembers()) {
-        if (member.getLinkInfo().compare(type, identification)) {
-          return true;
-        }
+        if (member.getLinkInfo().compare(type, identification)) return true;
       }
     }
     return false;

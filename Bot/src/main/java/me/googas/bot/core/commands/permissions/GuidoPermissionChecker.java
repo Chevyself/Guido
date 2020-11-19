@@ -9,7 +9,7 @@ import com.starfishst.jda.result.Result;
 import com.starfishst.jda.result.ResultType;
 import java.util.Set;
 import me.googas.bot.api.loader.BotDataLoader;
-import me.googas.bot.api.types.BotLinkableData;
+import me.googas.bot.api.types.BotLinkable;
 import me.googas.bot.api.types.BotRole;
 import me.googas.commons.Lots;
 import net.dv8tion.jda.api.Permission;
@@ -57,7 +57,7 @@ public class GuidoPermissionChecker implements PermissionChecker {
   public boolean checkMemberPermission(@NotNull GuildCommandContext context, @NotNull Perm perm) {
     Member discordMember = context.getMember();
     Guild guild = context.getGuild();
-    BotLinkableData member =
+    BotLinkable member =
         this.dataLoader.getMemberData(discordMember.getIdLong(), guild.getIdLong());
     if (member.hasPermission(perm.node(), "discord")
         || discordMember.hasPermission(Permission.ADMINISTRATOR)
@@ -87,8 +87,7 @@ public class GuidoPermissionChecker implements PermissionChecker {
         }
       } else {
         String node = perm.node().startsWith("user:") ? perm.node().substring(5) : perm.node();
-        BotLinkableData userData =
-            this.dataLoader.getDiscordUserData(context.getSender().getIdLong());
+        BotLinkable userData = this.dataLoader.getDiscordUserData(context.getSender().getIdLong());
         if (userData.hasPermission(node, "discord")) {
           return null;
         }

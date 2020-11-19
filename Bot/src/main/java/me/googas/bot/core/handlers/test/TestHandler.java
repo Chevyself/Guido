@@ -2,7 +2,6 @@ package me.googas.bot.core.handlers.test;
 
 import me.googas.bot.api.events.GuidoEvent;
 import me.googas.bot.core.handlers.GuidoEventHandler;
-import me.googas.bot.core.util.console.Console;
 import me.googas.commons.events.Listener;
 import org.jetbrains.annotations.NotNull;
 
@@ -15,9 +14,7 @@ public class TestHandler implements GuidoEventHandler {
    * @param event a guido event
    */
   @Listener
-  public void onGuidoEvent(@NotNull GuidoEvent event) {
-    Console.debug(event.getClass().getSimpleName() + " has been called: \n " + event.toString());
-  }
+  public void onGuidoEvent(@NotNull GuidoEvent event) {}
 
   @Override
   public void close() {}

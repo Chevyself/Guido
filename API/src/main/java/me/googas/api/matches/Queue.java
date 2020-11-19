@@ -55,7 +55,7 @@ public interface Queue {
    * @return the linked data
    */
   @NotNull
-  Collection<LinkableInfo> getWaiting();
+  Collection<Queueable> getWaiting();
 
   /**
    * Get the ladder that this queue is playing

@@ -6,7 +6,7 @@ import me.googas.commons.cache.Catchable;
 import org.jetbrains.annotations.NotNull;
 
 /** Team data is a team which can be saved to the database. */
-public interface TeamData extends Catchable, Localized {
+public interface TeamData extends Catchable, Localized, Queueable {
 
   /**
    * Add the member to the team

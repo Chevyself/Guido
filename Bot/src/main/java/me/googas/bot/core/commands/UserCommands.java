@@ -7,11 +7,11 @@ import com.starfishst.jda.result.Result;
 import com.starfishst.jda.result.ResultType;
 import java.util.Collection;
 import me.googas.api.lang.LocaleFile;
-import me.googas.api.links.LinkableData;
+import me.googas.api.links.Linkable;
 import me.googas.api.links.LinkableInfo;
 import me.googas.api.user.UserData;
 import me.googas.bot.api.loader.BotDataLoader;
-import me.googas.bot.api.types.BotLinkableData;
+import me.googas.bot.api.types.BotLinkable;
 import me.googas.bot.core.Guido;
 import me.googas.bot.core.handlers.link.LinkHandler;
 import me.googas.commons.Strings;
@@ -40,13 +40,13 @@ public class UserCommands {
       toSee = sender;
     }
     BotDataLoader loader = Guido.getDataLoader();
-    Collection<LinkableData> links = loader.getLinks(toSee);
+    Collection<Linkable> links = loader.getLinks(toSee);
     if (links.isEmpty()) {
       return new Result(locale.get("links.empty", Maps.singleton("id", toSee.getId())));
     } else {
       StringBuilder builder = Strings.getBuilder();
       builder.append(locale.get("links.title", Maps.singleton("id", toSee.getId())));
-      for (LinkableData link : links) {
+      for (Linkable link : links) {
         builder.append("\n - ").append(link.getSingle());
       }
       return new Result(builder.toString());
@@ -68,14 +68,14 @@ public class UserCommands {
       @Required(name = "link.code", description = "link.code.desc") String code) {
     LinkableInfo info = Guido.getHandler(LinkHandler.class).getInfo(code);
     if (info != null) {
-      Collection<LinkableData> links = Guido.getDataLoader().getLinks(user, info.getType());
+      Collection<Linkable> links = Guido.getDataLoader().getLinks(user, info.getType());
       if (links.size() >= 1) {
         return new Result(
             ResultType.ERROR,
             locale.get(
                 "link.only-one", Maps.singleton("type", info.getType().toString().toLowerCase())));
       } else {
-        BotLinkableData data =
+        BotLinkable data =
             Guido.getDataLoader().getLinkedData(info.getType(), info.getIdentification());
         if (data != null) {
           data.setLinkedUser(user);

@@ -81,6 +81,33 @@ public class GroupListener implements GuidoListener {
   }
 
   /**
+   * Get the list of parents of the group
+   *
+   * @param group the group to get the parents
+   * @return the list of groups
+   */
+  public List<Group> getParents(@NotNull Group group) {
+    ArrayList<Group> parents = new ArrayList<>();
+    for (String id : group.getParents()) {
+      parents.add(this.getGroup(id));
+    }
+    return parents;
+  }
+
+  /**
+   * Get a group by its id
+   *
+   * @param id the id to match
+   * @return the group if the id matches else null
+   */
+  private Group getGroup(String id) {
+    for (Group group : this.groups) {
+      if (group.getId().equals(id)) return group;
+    }
+    return null;
+  }
+
+  /**
    * Get the collection of loaded groups
    *
    * @return the collection of loaded groups

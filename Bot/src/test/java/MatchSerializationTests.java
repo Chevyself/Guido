@@ -2,16 +2,16 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import java.util.HashSet;
 import java.util.Set;
-import me.googas.api.client.data.ValuesMapImpl;
-import me.googas.api.client.data.adapters.GroupAdapter;
-import me.googas.api.client.data.adapters.LadderAdapter;
-import me.googas.api.client.data.adapters.LinkedInfoAdapter;
-import me.googas.api.client.data.adapters.MatchAdapter;
-import me.googas.api.client.data.adapters.PermissionStackAdapter;
-import me.googas.api.client.data.adapters.TeamAdapter;
-import me.googas.api.client.data.adapters.TeamMemberAdapter;
-import me.googas.api.links.LinkableDataType;
+import me.googas.api.client.adapters.GroupAdapter;
+import me.googas.api.client.adapters.LadderAdapter;
+import me.googas.api.client.adapters.LinkedInfoAdapter;
+import me.googas.api.client.adapters.MatchAdapter;
+import me.googas.api.client.adapters.PermissionStackAdapter;
+import me.googas.api.client.adapters.TeamAdapter;
+import me.googas.api.client.adapters.TeamMemberAdapter;
+import me.googas.api.client.data.SimpleValuesMap;
 import me.googas.api.links.LinkableInfo;
+import me.googas.api.links.LinkableType;
 import me.googas.api.matches.Ladder;
 import me.googas.api.matches.Match;
 import me.googas.api.matches.Team;
@@ -58,20 +58,20 @@ public class MatchSerializationTests {
             .registerTypeAdapter(LinkableInfo.class, new LinkedInfoAdapter())
             .registerTypeAdapter(Match.class, new MatchAdapter())
             .registerTypeAdapter(
-                Permission.class, new me.googas.api.client.data.adapters.PermissionAdapter())
+                Permission.class, new me.googas.api.client.adapters.PermissionAdapter())
             .registerTypeAdapter(PermissionStack.class, new PermissionStackAdapter())
             .registerTypeAdapter(Team.class, new TeamAdapter())
             .registerTypeAdapter(TeamMember.class, new TeamMemberAdapter())
             .registerTypeAdapter(
-                ValuesMap.class, new me.googas.api.client.data.adapters.ValuesMapAdapter())
+                ValuesMap.class, new me.googas.api.client.adapters.ValuesMapAdapter())
             .registerTypeAdapter(
-                ValuesMapImpl.class, new me.googas.api.client.data.adapters.ValuesMapAdapter())
+                SimpleValuesMap.class, new me.googas.api.client.adapters.ValuesMapAdapter())
             .registerTypeAdapter(Message.class, new MessageDeserializer())
             .setPrettyPrinting()
             .create();
     Set<TeamMember> members = new HashSet<>();
     GuidoLinkableInfo linkedInfo =
-        new GuidoLinkableInfo(LinkableDataType.MINECRAFT, new GuidoValuesMap("nickname", "Selfie"));
+        new GuidoLinkableInfo(LinkableType.MINECRAFT, new GuidoValuesMap("nickname", "Selfie"));
     GuidoTeamMember guidoTeamMember = new GuidoTeamMember(linkedInfo, TeamRole.NORMAL);
     members.add(guidoTeamMember);
     String linkJson = server.toJson(linkedInfo);

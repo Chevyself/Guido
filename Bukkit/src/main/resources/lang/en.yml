@@ -12,6 +12,7 @@ missing-argument: "&cYou are missing &e%name% &cin the position &e%position% &ci
 player-only: "&cThis command can only be used by players"
 not-allowed: "&cYou are not allowed to use this command"
 captain-only: "&cThis command may be used by a captain only!"
+participant-only: "&cYou must be participating in the match to execute this command"
 # Help topic of the plugin
 help-topic:
   plugin:

@@ -4,6 +4,7 @@ import com.starfishst.bukkit.annotations.Command;
 import com.starfishst.bukkit.api.Guido;
 import com.starfishst.bukkit.api.commands.GuidoCommand;
 import com.starfishst.bukkit.lang.BukkitLocaleFile;
+import com.starfishst.bukkit.listeners.pgm.matches.HostedMatch;
 import com.starfishst.bukkit.listeners.pgm.matches.PGMMatchMakingListener;
 import com.starfishst.bukkit.listeners.pgm.matches.creation.PickTeamSelection;
 import com.starfishst.bukkit.listeners.pgm.matches.creation.TeamCreation;
@@ -18,6 +19,7 @@ public class PickCommands implements GuidoCommand {
 
   @Command(aliases = "pick", description = "pick.desc")
   public Result pick(
+      HostedMatch match,
       BukkitLocaleFile locale,
       TeamMember captain,
       @Required(name = "pick.player", description = "pick.player.desc") LinkableInfo info) {
@@ -25,8 +27,8 @@ public class PickCommands implements GuidoCommand {
     if (listener != null) {
       TeamCreation creation = listener.getCreation("pick");
       if (creation instanceof PickTeamSelection) {
-        if (((PickTeamSelection) creation).isPicking(captain)) {
-          ((PickTeamSelection) creation).pick(captain, info);
+        if (((PickTeamSelection) creation).isPicking(match.getId(), captain)) {
+          ((PickTeamSelection) creation).pick(match.getId(), captain, info);
           return new Result(
               locale.get(
                   "pick.success",

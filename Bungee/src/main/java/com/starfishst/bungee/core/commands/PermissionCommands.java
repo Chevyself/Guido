@@ -11,7 +11,7 @@ import com.starfishst.core.annotations.Required;
 import com.starfishst.core.annotations.settings.Setting;
 import com.starfishst.core.annotations.settings.Settings;
 import java.util.ArrayList;
-import me.googas.api.client.data.PermissionImpl;
+import me.googas.api.client.data.SimplePermission;
 import me.googas.api.permissions.Permission;
 import me.googas.api.permissions.PermissionStack;
 import me.googas.commons.Pagination;
@@ -124,7 +124,7 @@ public class PermissionCommands {
             "add-permission",
             Maps.objects("info", player.getLinkedInfo())
                 .append("context", context)
-                .append("permission", new PermissionImpl(node, enabled).getNodeAppended())
+                .append("permission", new SimplePermission(node, enabled).getNodeAppended())
                 .build())
         .send(
             bol -> {
@@ -175,7 +175,7 @@ public class PermissionCommands {
             "remove-permission",
             Maps.objects("info", player.getLinkedInfo())
                 .append("context", context)
-                .append("permission", new PermissionImpl(node, true).getNodeAppended())
+                .append("permission", new SimplePermission(node, true).getNodeAppended())
                 .build())
         .send(
             bol -> {

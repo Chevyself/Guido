@@ -83,11 +83,6 @@ public class GuidoLocaleFile implements LocaleFile {
   }
 
   @Override
-  public @NotNull File getFile() {
-    return this.file;
-  }
-
-  @Override
   public String toString() {
     return "GuidoLocaleFile{" + "file=" + this.file + "}";
   }

@@ -2,7 +2,7 @@ package me.googas.bot.core.types;
 
 import java.util.Collection;
 import java.util.Map;
-import me.googas.api.links.LinkableData;
+import me.googas.api.links.Linkable;
 import me.googas.api.user.UserData;
 import me.googas.api.utility.ValuesMap;
 import me.googas.bot.api.events.data.user.UserUnloadedDataEvent;
@@ -40,7 +40,7 @@ public class GuidoUser implements UserData, BotCatchable {
 
   @Override
   public void sendMessage(@NotNull String message) {
-    for (LinkableData link : this.getLinks()) {
+    for (Linkable link : this.getLinks()) {
       link.sendMessage(message);
       break;
     }
@@ -48,7 +48,7 @@ public class GuidoUser implements UserData, BotCatchable {
 
   @Override
   public void sendLocalized(@NotNull String key) {
-    for (LinkableData link : this.getLinks()) {
+    for (Linkable link : this.getLinks()) {
       link.sendLocalized(key);
       break;
     }
@@ -56,7 +56,7 @@ public class GuidoUser implements UserData, BotCatchable {
 
   @Override
   public void sendLocalized(@NotNull String key, @NotNull Map<String, String> placeholders) {
-    for (LinkableData link : this.getLinks()) {
+    for (Linkable link : this.getLinks()) {
       link.sendLocalized(key, placeholders);
       break;
     }
@@ -84,7 +84,7 @@ public class GuidoUser implements UserData, BotCatchable {
   }
 
   @Override
-  public Collection<LinkableData> getLinks() {
+  public Collection<Linkable> getLinks() {
     return Guido.getDataLoader().getLinks(this);
   }
 

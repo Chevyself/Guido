@@ -22,6 +22,13 @@ public interface Ladder {
   int baseValue();
 
   /**
+   * Get the number of teams per match
+   *
+   * @return the number of teams per match
+   */
+  int teamsPerMatch();
+
+  /**
    * Create the queue for this ladder
    *
    * @param guild the guild that the queue is being created to

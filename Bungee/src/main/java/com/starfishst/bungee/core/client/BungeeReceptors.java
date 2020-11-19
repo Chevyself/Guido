@@ -13,9 +13,9 @@ import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
-import me.googas.api.client.data.LinkableInfoImpl;
-import me.googas.api.client.data.ValuesMapImpl;
-import me.googas.api.links.LinkableDataType;
+import me.googas.api.client.data.SimpleLinkableInfo;
+import me.googas.api.client.data.SimpleValuesMap;
+import me.googas.api.links.LinkableType;
 import me.googas.commons.maps.Maps;
 import me.googas.messaging.Request;
 import me.googas.messaging.json.ParamName;
@@ -243,12 +243,10 @@ public class BungeeReceptors implements GuidoListener {
                 "left-queue",
                 Maps.singleton(
                     "info",
-                    new LinkableInfoImpl(
-                        LinkableDataType.MINECRAFT,
-                        new ValuesMapImpl(Maps.singleton("uuid", uniqueId))))),
-            bol -> {
-              Guido.getLogger().info(uniqueId + " left the queue");
-            });
+                    new SimpleLinkableInfo(
+                        LinkableType.MINECRAFT,
+                        new SimpleValuesMap(Maps.singleton("uuid", uniqueId))))),
+            bol -> Guido.getLogger().info(uniqueId + " left the queue"));
       }
     }
   }

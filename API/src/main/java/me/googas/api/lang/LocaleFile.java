@@ -1,6 +1,5 @@
 package me.googas.api.lang;
 
-import java.io.File;
 import java.util.Map;
 import me.googas.commons.Strings;
 import me.googas.commons.maps.MapBuilder;
@@ -59,15 +58,6 @@ public interface LocaleFile {
   default String get(@NotNull String path, @NotNull MapBuilder<String, String> placeholders) {
     return Strings.buildMessage(this.get(path), placeholders);
   }
-
-  /**
-   * Get the actual file that this is using.
-   *
-   * @deprecated since 1.0.0-SNAPSHOT-10
-   * @return the file that this is using
-   */
-  @NotNull
-  File getFile();
 
   /**
    * Get the language that this file provides

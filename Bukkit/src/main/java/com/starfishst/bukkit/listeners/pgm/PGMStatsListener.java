@@ -5,9 +5,9 @@ import com.starfishst.bukkit.api.events.GuidoListener;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
-import me.googas.api.client.data.LinkableInfoImpl;
-import me.googas.api.client.data.ValuesMapImpl;
-import me.googas.api.links.LinkableDataType;
+import me.googas.api.client.data.SimpleLinkableInfo;
+import me.googas.api.client.data.SimpleValuesMap;
+import me.googas.api.links.LinkableType;
 import me.googas.commons.UUIDUtils;
 import me.googas.commons.maps.Maps;
 import me.googas.messaging.Request;
@@ -121,21 +121,21 @@ public class PGMStatsListener implements GuidoListener {
     JsonClient connection = Guido.getClient().getConnection();
     if (connection != null) {
       this.stats.forEach(
-          (uuid, statsMap) ->
-              connection.sendRequest(
-                  new Request<>(
-                      Boolean.class,
-                      "save-stats",
-                      Maps.objects(
-                              "info",
-                              new LinkableInfoImpl(
-                                  LinkableDataType.MINECRAFT,
-                                  new ValuesMapImpl(Maps.singleton("uuid", UUIDUtils.trim(uuid)))))
-                          .append("stats", statsMap)
-                          .build()),
-                  bol -> {
-                    Guido.getLogger().info("Were stats saved for " + uuid + " " + bol);
-                  }));
+          (uuid, statsMap) -> {
+            Guido.getLogger().info("Saving stats for " + UUIDUtils.trim(uuid));
+            connection.sendRequest(
+                new Request<>(
+                    Boolean.class,
+                    "save-stats",
+                    Maps.objects(
+                            "info",
+                            new SimpleLinkableInfo(
+                                LinkableType.MINECRAFT,
+                                new SimpleValuesMap(Maps.singleton("uuid", UUIDUtils.trim(uuid)))))
+                        .append("stats", statsMap)
+                        .build()),
+                bol -> Guido.getLogger().info("Were stats saved for " + uuid + " " + bol));
+          });
     }
     this.stats.clear();
   }

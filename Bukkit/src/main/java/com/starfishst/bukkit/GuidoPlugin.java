@@ -6,6 +6,7 @@ import com.starfishst.bukkit.api.config.Configuration;
 import com.starfishst.bukkit.api.dependencies.Dependency;
 import com.starfishst.bukkit.api.dependencies.DependencyManager;
 import com.starfishst.bukkit.api.events.GuidoListener;
+import com.starfishst.bukkit.client.BukkitClient;
 import com.starfishst.bukkit.commands.ConfigurationCommands;
 import com.starfishst.bukkit.commands.FlyCommand;
 import com.starfishst.bukkit.commands.GameModeCommand;
@@ -23,7 +24,6 @@ import com.starfishst.bukkit.listeners.PermissionListener;
 import com.starfishst.bukkit.listeners.SpawnListener;
 import com.starfishst.bukkit.listeners.TestListener;
 import com.starfishst.bukkit.listeners.pgm.matches.PGMMatchMakingListener;
-import com.starfishst.bukkit.utils.BukkitUtils;
 import com.starfishst.bukkit.utils.FilesUtils;
 import com.starfishst.core.providers.type.IContextualProvider;
 import java.io.File;
@@ -77,7 +77,7 @@ public class GuidoPlugin extends JavaPlugin {
   @NotNull private final DependencyManager dependencies = new GuidoDependencies(this);
 
   /** The client that the plugin is using */
-  @NotNull private final Client client = new Client("none", "104.243.43.175", 3000);
+  @NotNull private final BukkitClient client = new BukkitClient("none", "45.43.24.28", 3000);
 
   /** Unregisters the commands registered by the implementation */
   private void unregisterCommands() {
@@ -184,14 +184,14 @@ public class GuidoPlugin extends JavaPlugin {
    * @return the listener if found or
    * @throws IllegalStateException if the listener is not loaded
    */
-  @Nullable
+  @NotNull
   public <T extends GuidoListener> T requireListener(@NotNull Class<T> clazz) {
     for (GuidoListener listener : this.listeners) {
       if (listener.getClass() == clazz) {
         return clazz.cast(listener);
       }
     }
-    return null;
+    throw new IllegalStateException("The listener " + clazz + " was not registered");
   }
 
   /** Check the dependencies and add the listeners to them */
@@ -271,9 +271,6 @@ public class GuidoPlugin extends JavaPlugin {
     this.registerCommands();
     this.registerListeners();
     this.startConnection();
-    this.requireListener(GroupListener.class).loadGroups(null);
-
-    BukkitUtils.startCache(this);
     super.onEnable();
   }
 

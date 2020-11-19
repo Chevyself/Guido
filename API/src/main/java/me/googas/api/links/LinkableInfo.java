@@ -1,5 +1,6 @@
 package me.googas.api.links;
 
+import me.googas.api.matches.Queueable;
 import me.googas.api.utility.ValuesMap;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -8,7 +9,7 @@ import org.jetbrains.annotations.Nullable;
  * LinkedInf represents the linked data as an object to get it. This means that this contains the
  * way to identify it and the type
  */
-public interface LinkableInfo {
+public interface LinkableInfo extends Queueable {
 
   /**
    * This method is used to compare this linkable data with a type and provided information
@@ -17,36 +18,34 @@ public interface LinkableInfo {
    * @param identification the identification to compare
    * @return true if it is the same type and the identification matches
    */
-  default boolean compare(@NotNull LinkableDataType type, @NotNull ValuesMap identification) {
-    if (this.getType() == type) {
-      switch (type) {
-        case DISCORD_GUILD:
-          return this.getIdentification()
-                  .getOr("id", Long.class, -1L)
-                  .equals(identification.get("id", Long.class))
-              && this.getIdentification()
-                  .getOr("guild", Long.class, -1L)
-                  .equals(identification.get("guild", Long.class));
-        case DISCORD:
-          return this.getIdentification()
-              .getOr("id", Long.class, -1L)
-              .equals(identification.get("id", Long.class));
-        case MINECRAFT:
-          String thatUuid = identification.get("uuid", String.class);
-          String thatNickname = identification.get("uuid", String.class);
-          return this.getIdentification().getOr("uuid", String.class, "").equals(thatUuid)
-              || this.getIdentification()
-                  .getOr("nickname", String.class, "")
-                  .equalsIgnoreCase(thatNickname);
-        default:
-          throw new IllegalArgumentException(type + " is not valid to be compared");
-      }
+  default boolean compare(@NotNull LinkableType type, @NotNull ValuesMap identification) {
+    if (this.getType() != type) return false;
+    switch (type) {
+      case DISCORD_GUILD:
+        return this.getIdentification()
+                .getOr("id", Long.class, -1L)
+                .equals(identification.get("id", Long.class))
+            && this.getIdentification()
+                .getOr("guild", Long.class, -1L)
+                .equals(identification.get("guild", Long.class));
+      case DISCORD:
+        return this.getIdentification()
+            .getOr("id", Long.class, -1L)
+            .equals(identification.get("id", Long.class));
+      case MINECRAFT:
+        return this.getIdentification()
+                .getOr("uuid", String.class, "")
+                .equals(identification.get("uuid", String.class))
+            || this.getIdentification()
+                .getOr("nickname", String.class, "")
+                .equalsIgnoreCase(identification.get("nickname", String.class));
+      default:
+        throw new IllegalArgumentException(type + " is not valid to be compared");
     }
-    return false;
   }
 
   /**
-   * @see #compare(LinkableDataType, ValuesMap)
+   * @see #compare(LinkableType, ValuesMap)
    * @param info the information of the data comparing
    * @return true if it is the same type and the identification matches
    */
@@ -59,21 +58,21 @@ public interface LinkableInfo {
   }
 
   /**
+   * @see #compare(LinkableType, ValuesMap)
+   * @param data the other data comparing
+   * @return true if it is the same type and the identification matches
+   */
+  default boolean compare(@NotNull Linkable data) {
+    return this.compare(data.getInfo());
+  }
+
+  /**
    * Get the data with the given values
    *
    * @return the data
    */
   @Nullable
-  LinkableData getLink();
-
-  /**
-   * @see #compare(LinkableDataType, ValuesMap)
-   * @param data the other data comparing
-   * @return true if it is the same type and the identification matches
-   */
-  default boolean compare(@NotNull LinkableData data) {
-    return this.compare(data.getInfo());
-  }
+  Linkable getLink();
 
   /**
    * Get the type of linked data
@@ -81,7 +80,7 @@ public interface LinkableInfo {
    * @return the type of linked data
    */
   @NotNull
-  LinkableDataType getType();
+  LinkableType getType();
 
   /**
    * Get how this linked data is identified

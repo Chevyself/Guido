@@ -1,7 +1,6 @@
 package com.starfishst.bungee.core.lang;
 
 import com.starfishst.bungee.utils.BungeeUtils;
-import java.io.File;
 import java.util.Map;
 import me.googas.api.lang.LocaleFile;
 import me.googas.commons.maps.MapBuilder;
@@ -84,10 +83,5 @@ public class BungeeLocaleFile implements LocaleFile {
   public @NotNull String get(@NotNull String path) {
     String raw = this.getRaw(path);
     return raw == null ? path : raw;
-  }
-
-  @Override
-  public @NotNull File getFile() {
-    throw new UnsupportedOperationException("Bungee locale does not support files");
   }
 }

@@ -2,7 +2,7 @@ package me.googas.api.user;
 
 import java.util.Collection;
 import me.googas.api.lang.Localized;
-import me.googas.api.links.LinkableData;
+import me.googas.api.links.Linkable;
 import me.googas.api.utility.ValuesMap;
 import me.googas.commons.cache.Catchable;
 import org.jetbrains.annotations.NotNull;
@@ -31,5 +31,5 @@ public interface UserData extends Catchable, Localized {
    *
    * @return the linkable data as a collection
    */
-  Collection<LinkableData> getLinks();
+  Collection<Linkable> getLinks();
 }

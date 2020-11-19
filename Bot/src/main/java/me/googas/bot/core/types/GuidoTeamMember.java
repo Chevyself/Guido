@@ -1,7 +1,7 @@
 package me.googas.bot.core.types;
 
-import me.googas.api.links.LinkableDataType;
 import me.googas.api.links.LinkableInfo;
+import me.googas.api.links.LinkableType;
 import me.googas.api.matches.TeamMember;
 import me.googas.api.matches.TeamRole;
 import me.googas.bot.core.types.maps.GuidoValuesMap;
@@ -29,7 +29,7 @@ public class GuidoTeamMember implements TeamMember {
 
   /** @deprecated constructor may only be used in gson */
   public GuidoTeamMember() {
-    this(new GuidoLinkableInfo(LinkableDataType.NONE, new GuidoValuesMap()), TeamRole.NORMAL);
+    this(new GuidoLinkableInfo(LinkableType.NONE, new GuidoValuesMap()), TeamRole.NORMAL);
   }
 
   @Override

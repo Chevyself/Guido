@@ -1,5 +1,6 @@
 package me.googas.api.permissions;
 
+import java.util.Collection;
 import me.googas.api.utility.ValuesMap;
 import me.googas.commons.cache.Catchable;
 import org.jetbrains.annotations.NotNull;
@@ -51,4 +52,13 @@ public interface Group extends Permissible, Catchable {
    */
   @NotNull
   ValuesMap getPreferences();
+
+  /**
+   * Get the id of the groups that are parent of this one. It can be given sorted with the weight of
+   * each group
+   *
+   * @return the collection of ids
+   */
+  @NotNull
+  Collection<String> getParents();
 }

@@ -72,12 +72,11 @@ public interface GuildData extends Catchable {
     this.getRanges()
         .forEach(
             (id, range) -> {
-              if (range.getLadder().equalsIgnoreCase(ladder)) {
-                if (range.isBound(numb) && bounds) {
-                  rolesId.add(id);
-                } else if (!range.isBound(numb) && !bounds) {
-                  rolesId.add(id);
-                }
+              if (!range.getLadder().equalsIgnoreCase(ladder)) return;
+              if (range.isBound(numb) && bounds) {
+                rolesId.add(id);
+              } else if (!range.isBound(numb) && !bounds) {
+                rolesId.add(id);
               }
             });
     return rolesId;

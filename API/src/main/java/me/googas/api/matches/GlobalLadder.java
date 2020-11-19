@@ -21,6 +21,11 @@ public class GlobalLadder implements Ladder {
   }
 
   @Override
+  public int teamsPerMatch() {
+    return 0;
+  }
+
+  @Override
   public @NotNull Queue createQueue(@NotNull GuildData data) {
     throw new UnsupportedOperationException("Global ladder cannot create queues");
   }

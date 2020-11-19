@@ -3,11 +3,11 @@ package me.googas.bot.core.server.receptors;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.UUID;
-import me.googas.api.links.LinkableDataType;
 import me.googas.api.links.LinkableInfo;
-import me.googas.bot.api.types.BotLinkableData;
+import me.googas.api.links.LinkableType;
+import me.googas.bot.api.types.BotLinkable;
 import me.googas.bot.core.Guido;
-import me.googas.bot.core.types.GuidoLinkableData;
+import me.googas.bot.core.types.GuidoLinkable;
 import me.googas.bot.core.types.maps.GuidoValuesMap;
 import me.googas.commons.UUIDUtils;
 import me.googas.messaging.json.ParamName;
@@ -26,16 +26,16 @@ public class MinecraftDataReceptors {
   @Receptor("create-minecraft")
   public boolean create(@ParamName("uuid") UUID uuid, @ParamName("nickname") String nickname) {
     String trimmed = UUIDUtils.trim(uuid);
-    BotLinkableData data =
+    BotLinkable data =
         Guido.getDataLoader()
             .getLinkedData(
-                LinkableDataType.MINECRAFT,
+                LinkableType.MINECRAFT,
                 new GuidoValuesMap("uuid", trimmed).put("nickname", nickname));
     if (data != null) {
       return false;
     } else {
-      new GuidoLinkableData(
-              LinkableDataType.MINECRAFT,
+      new GuidoLinkable(
+              LinkableType.MINECRAFT,
               null,
               new GuidoValuesMap("uuid", trimmed).put("nickname", nickname),
               new GuidoValuesMap(),
@@ -56,10 +56,10 @@ public class MinecraftDataReceptors {
   @Receptor("update-minecraft-nickname")
   public boolean updateNickname(
       @ParamName("uuid") UUID uuid, @ParamName("nickname") String nickname) {
-    BotLinkableData data =
+    BotLinkable data =
         Guido.getDataLoader()
             .getLinkedData(
-                LinkableDataType.MINECRAFT, new GuidoValuesMap("uuid", UUIDUtils.trim(uuid)));
+                LinkableType.MINECRAFT, new GuidoValuesMap("uuid", UUIDUtils.trim(uuid)));
     if (data != null) {
       if (!data.getIdentification()
           .getOr("nickname", String.class, "")
@@ -79,9 +79,9 @@ public class MinecraftDataReceptors {
    */
   @Receptor("get-mc-by-name")
   public LinkableInfo getInfo(@ParamName("nickname") String nick) {
-    BotLinkableData data =
+    BotLinkable data =
         Guido.getDataLoader()
-            .getLinkedData(LinkableDataType.MINECRAFT, new GuidoValuesMap("nickname", nick));
+            .getLinkedData(LinkableType.MINECRAFT, new GuidoValuesMap("nickname", nick));
     if (data != null) {
       return data.getInfo();
     }

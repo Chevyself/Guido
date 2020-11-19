@@ -3,12 +3,12 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import me.googas.api.client.data.LinkableInfoImpl;
-import me.googas.api.client.data.TeamImpl;
-import me.googas.api.client.data.TeamMemberImpl;
-import me.googas.api.client.data.ValuesMapImpl;
-import me.googas.api.links.LinkableDataType;
+import me.googas.api.client.data.SimpleLinkableInfo;
+import me.googas.api.client.data.SimpleTeam;
+import me.googas.api.client.data.SimpleTeamMember;
+import me.googas.api.client.data.SimpleValuesMap;
 import me.googas.api.links.LinkableInfo;
+import me.googas.api.links.LinkableType;
 import me.googas.api.matches.Team;
 import me.googas.api.matches.TeamMember;
 import me.googas.api.matches.TeamRole;
@@ -23,24 +23,24 @@ public class PicksTest {
   @Nullable public static TeamMember currentlyPicking;
 
   public static void main(String[] args) {
-    LinkableInfoImpl player1 =
-        new LinkableInfoImpl(
-            LinkableDataType.MINECRAFT, new ValuesMapImpl(Maps.singleton("nickname", "Player 1")));
-    LinkableInfoImpl player2 =
-        new LinkableInfoImpl(
-            LinkableDataType.MINECRAFT, new ValuesMapImpl(Maps.singleton("nickname", "Player 2")));
-    LinkableInfoImpl player3 =
-        new LinkableInfoImpl(
-            LinkableDataType.MINECRAFT, new ValuesMapImpl(Maps.singleton("nickname", "Player 3")));
-    LinkableInfoImpl player4 =
-        new LinkableInfoImpl(
-            LinkableDataType.MINECRAFT, new ValuesMapImpl(Maps.singleton("nickname", "Player 4")));
-    LinkableInfoImpl player5 =
-        new LinkableInfoImpl(
-            LinkableDataType.MINECRAFT, new ValuesMapImpl(Maps.singleton("nickname", "Player 5")));
-    LinkableInfoImpl player6 =
-        new LinkableInfoImpl(
-            LinkableDataType.MINECRAFT, new ValuesMapImpl(Maps.singleton("nickname", "Player 6")));
+    SimpleLinkableInfo player1 =
+        new SimpleLinkableInfo(
+            LinkableType.MINECRAFT, new SimpleValuesMap(Maps.singleton("nickname", "Player 1")));
+    SimpleLinkableInfo player2 =
+        new SimpleLinkableInfo(
+            LinkableType.MINECRAFT, new SimpleValuesMap(Maps.singleton("nickname", "Player 2")));
+    SimpleLinkableInfo player3 =
+        new SimpleLinkableInfo(
+            LinkableType.MINECRAFT, new SimpleValuesMap(Maps.singleton("nickname", "Player 3")));
+    SimpleLinkableInfo player4 =
+        new SimpleLinkableInfo(
+            LinkableType.MINECRAFT, new SimpleValuesMap(Maps.singleton("nickname", "Player 4")));
+    SimpleLinkableInfo player5 =
+        new SimpleLinkableInfo(
+            LinkableType.MINECRAFT, new SimpleValuesMap(Maps.singleton("nickname", "Player 5")));
+    SimpleLinkableInfo player6 =
+        new SimpleLinkableInfo(
+            LinkableType.MINECRAFT, new SimpleValuesMap(Maps.singleton("nickname", "Player 6")));
     Set<LinkableInfo> playersLeft =
         new HashSet<>(Lots.list(player1, player2, player3, player4, player5, player6));
     List<LinkableInfo> captains = RandomUtils.getRandom(new ArrayList<>(playersLeft), 2);
@@ -50,10 +50,10 @@ public class PicksTest {
       String name = captain.getIdentification().getOr("nickname", String.class, "");
       name = name.isEmpty() ? "Team " + (captains.indexOf(captain) + 1) : name + "'s team";
       teams.add(
-          new TeamImpl(
+          new SimpleTeam(
               captains.indexOf(captain),
               name,
-              Lots.set(new TeamMemberImpl(captain, TeamRole.LEADER))));
+              Lots.set(new SimpleTeamMember(captain, TeamRole.LEADER))));
     }
     PicksTest.currentlyPicking = PicksTest.getLeader(RandomUtils.getRandom(teams));
     while (!playersLeft.isEmpty()) {
@@ -64,7 +64,7 @@ public class PicksTest {
 
   public static void pick(
       Set<LinkableInfo> playersLeft, List<Team> teams, Team team, @NotNull LinkableInfo selected) {
-    team.getMembers().add(new TeamMemberImpl(selected, TeamRole.NORMAL));
+    team.getMembers().add(new SimpleTeamMember(selected, TeamRole.NORMAL));
     playersLeft.remove(selected);
     PicksTest.nextPick(playersLeft, teams, team);
   }

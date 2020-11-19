@@ -3,8 +3,14 @@ package com.starfishst.bungee.core.commands;
 import com.starfishst.bungee.annotations.Command;
 import com.starfishst.bungee.api.Guido;
 import com.starfishst.bungee.context.CommandContext;
+import com.starfishst.bungee.core.lang.BungeeLocaleFile;
+import com.starfishst.bungee.core.listeners.GroupListener;
 import com.starfishst.bungee.result.Result;
 import com.starfishst.core.annotations.Parent;
+import com.starfishst.core.annotations.settings.Setting;
+import com.starfishst.core.annotations.settings.Settings;
+import me.googas.commons.maps.Maps;
+import net.md_5.bungee.api.CommandSender;
 
 /** Commands for reloading guido */
 public class GuidoCommands {
@@ -48,5 +54,27 @@ public class GuidoCommands {
     }
     Guido.validated().loadServers();
     return new Result("&aServers have been reloaded");
+  }
+
+  /**
+   * Reload the loaded groups
+   *
+   * @param locale the locale of the sender
+   * @param sender the sender of the command
+   */
+  @Settings(settings = @Setting(key = "async", value = "true"))
+  @Command(
+      aliases = {"groups"},
+      permission = "guido.reload.groups")
+  public void reload(BungeeLocaleFile locale, CommandSender sender) {
+    Guido.getListener(GroupListener.class)
+        .reload(
+            loaded -> {
+              if (loaded != null) {
+                sender.sendMessage(
+                    locale.getComponent(
+                        "groups.reload", Maps.singleton("amount", String.valueOf(loaded.size()))));
+              }
+            });
   }
 }

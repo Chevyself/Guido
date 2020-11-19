@@ -2,10 +2,10 @@ package com.starfishst.bungee.core.data;
 
 import java.util.Map;
 import java.util.UUID;
-import me.googas.api.client.data.LinkableInfoImpl;
-import me.googas.api.client.data.ValuesMapImpl;
-import me.googas.api.links.LinkableDataType;
+import me.googas.api.client.data.SimpleLinkableInfo;
+import me.googas.api.client.data.SimpleValuesMap;
 import me.googas.api.links.LinkableInfo;
+import me.googas.api.links.LinkableType;
 import me.googas.commons.UUIDUtils;
 import me.googas.commons.maps.MapBuilder;
 import me.googas.commons.maps.Maps;
@@ -72,7 +72,7 @@ public class ProxiedOfflinePlayer {
   public MapBuilder<String, Object> getBuilder() {
     return Maps.objects(
             "identification", Maps.singleton("uuid", UUIDUtils.trim(this.getUniqueId())))
-        .append("type", LinkableDataType.MINECRAFT);
+        .append("type", LinkableType.MINECRAFT);
   }
 
   /**
@@ -82,9 +82,9 @@ public class ProxiedOfflinePlayer {
    */
   @NotNull
   public LinkableInfo getLinkedInfo() {
-    return new LinkableInfoImpl(
-        LinkableDataType.MINECRAFT,
-        new ValuesMapImpl(
+    return new SimpleLinkableInfo(
+        LinkableType.MINECRAFT,
+        new SimpleValuesMap(
             Maps.objects("uuid", UUIDUtils.trim(this.getUniqueId()))
                 .append("nickname", this.getNickname())
                 .build()));

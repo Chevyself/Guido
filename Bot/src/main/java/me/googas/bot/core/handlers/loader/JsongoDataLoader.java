@@ -22,17 +22,19 @@ import java.util.concurrent.TimeUnit;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.regex.Pattern;
-import me.googas.api.links.LinkableData;
-import me.googas.api.links.LinkableDataType;
+import me.googas.api.links.Linkable;
 import me.googas.api.links.LinkableInfo;
+import me.googas.api.links.LinkableType;
 import me.googas.api.loader.DataLoader;
 import me.googas.api.matches.GlobalLadder;
 import me.googas.api.matches.Ladder;
 import me.googas.api.matches.Match;
+import me.googas.api.matches.MatchInfo;
 import me.googas.api.matches.MatchStatus;
 import me.googas.api.matches.Team;
 import me.googas.api.matches.TeamMember;
 import me.googas.api.permissions.Group;
+import me.googas.api.permissions.GroupInfo;
 import me.googas.api.permissions.Permission;
 import me.googas.api.permissions.PermissionStack;
 import me.googas.api.ranks.RankRange;
@@ -61,7 +63,7 @@ import me.googas.bot.api.loader.BotDataLoader;
 import me.googas.bot.api.types.BotCatchable;
 import me.googas.bot.api.types.BotGroup;
 import me.googas.bot.api.types.BotGuild;
-import me.googas.bot.api.types.BotLinkableData;
+import me.googas.bot.api.types.BotLinkable;
 import me.googas.bot.api.types.BotMatch;
 import me.googas.bot.api.types.BotResponsiveMessage;
 import me.googas.bot.api.types.BotRole;
@@ -69,8 +71,10 @@ import me.googas.bot.core.Guido;
 import me.googas.bot.core.types.GuidoAuthToken;
 import me.googas.bot.core.types.GuidoGroup;
 import me.googas.bot.core.types.GuidoGuild;
-import me.googas.bot.core.types.GuidoLinkableData;
+import me.googas.bot.core.types.GuidoLinkable;
+import me.googas.bot.core.types.GuidoLinkableInfo;
 import me.googas.bot.core.types.GuidoMatch;
+import me.googas.bot.core.types.GuidoMatchInfo;
 import me.googas.bot.core.types.GuidoRole;
 import me.googas.bot.core.types.GuidoUser;
 import me.googas.bot.core.types.maps.GuidoLinkedValuesMap;
@@ -219,7 +223,7 @@ public class JsongoDataLoader implements BotDataLoader {
    */
   @Listener(priority = ListenPriority.HIGHEST)
   public void onLinkedDataUnloaded(@NotNull LinkedDataUnloadedEvent event) {
-    BotLinkableData data = event.getData();
+    BotLinkable data = event.getData();
     Document query =
         new Document("type", data.getType().toString())
             .append("identification", data.getIdentification().getMap());
@@ -254,8 +258,8 @@ public class JsongoDataLoader implements BotDataLoader {
    */
   @NotNull
   private UserData getAllDiscordUserData(long discordId) {
-    Collection<BotLinkableData> discordData = this.getDiscordData(discordId);
-    for (BotLinkableData link : discordData) {
+    Collection<BotLinkable> discordData = this.getDiscordData(discordId);
+    for (BotLinkable link : discordData) {
       if (link.getLinkedUser() != null) {
         return link.getLinkedUser();
       }
@@ -274,12 +278,44 @@ public class JsongoDataLoader implements BotDataLoader {
    */
   @Nullable
   private <T> T getObjectFromQuery(
-      @NotNull Type typeOfT,
+      @NotNull Class<T> typeOfT,
       @NotNull MongoCollection<Document> collection,
       @NotNull Document query) {
     Document first = collection.find(query).maxAwaitTime(400, TimeUnit.MILLISECONDS).first();
     if (first != null) {
-      return this.getObjectFromDocument(typeOfT, first);
+      T t = this.getObjectFromDocument(typeOfT, first);
+      if (t instanceof BotCatchable) {
+        ((BotCatchable) t).cache();
+      }
+      return t;
+    } else {
+      return null;
+    }
+  }
+
+  /**
+   * Get an object from a query. This works for getting one object only
+   *
+   * @param typeOfT the type of object to supply
+   * @param collection the collection to get the object from
+   * @param query the query to match the object
+   * @param <T> the type of the object
+   * @return the supplier of the object
+   */
+  @Nullable
+  private <T extends Catchable> T getCatchableObjectFromQuery(
+      @NotNull Class<T> typeOfT,
+      @NotNull MongoCollection<Document> collection,
+      @NotNull Document query) {
+    Document first = collection.find(query).maxAwaitTime(400, TimeUnit.MILLISECONDS).first();
+    if (first != null) {
+      T t = this.getObjectFromDocument(typeOfT, first);
+      T catchable = Guido.getCache().get(typeOfT, tCatchable -> tCatchable.equals(t));
+      if (catchable != null) return catchable;
+      if (t instanceof BotCatchable) {
+        ((BotCatchable) t).cache();
+      }
+      return t;
     } else {
       return null;
     }
@@ -296,21 +332,10 @@ public class JsongoDataLoader implements BotDataLoader {
    */
   @NotNull
   private <T> Supplier<T> supplyObjectFromQuery(
-      @NotNull Type typeOfT,
+      @NotNull Class<T> typeOfT,
       @NotNull MongoCollection<Document> collection,
       @NotNull Document query) {
-    return () -> {
-      Document first = collection.find(query).maxAwaitTime(400, TimeUnit.MILLISECONDS).first();
-      if (first != null) {
-        T object = this.getObjectFromDocument(typeOfT, first);
-        if (object instanceof BotCatchable) {
-          ((BotCatchable) object).cache();
-        }
-        return object;
-      } else {
-        return null;
-      }
-    };
+    return () -> this.getObjectFromQuery(typeOfT, collection, query);
   }
 
   /**
@@ -434,7 +459,15 @@ public class JsongoDataLoader implements BotDataLoader {
     return list;
   }
 
-  private <T extends Catchable> boolean contains(List<T> list, T catchable) {
+  /**
+   * Check whether a catchable is contained inside a list
+   *
+   * @param list the list to see if contains the catchable
+   * @param catchable the catchable to see if it is contained
+   * @param <T> the type of the catchable
+   * @return true if it is inside the list
+   */
+  private <T extends Catchable> boolean contains(@NotNull List<T> list, T catchable) {
     for (T added : list) {
       if (catchable.equals(added)) {
         return true;
@@ -476,7 +509,7 @@ public class JsongoDataLoader implements BotDataLoader {
    */
   @NotNull
   private Document getIdentifiableQuery(
-      @NotNull LinkableDataType type, @NotNull ValuesMap identification) {
+      @NotNull LinkableType type, @NotNull ValuesMap identification) {
     Document query = new Document("type", type.toString());
     identification
         .getMap()
@@ -499,25 +532,22 @@ public class JsongoDataLoader implements BotDataLoader {
   }
 
   /**
-   * @see DataLoader#getLinkedData(LinkableDataType, ValuesMap) this provides the linked data but
-   *     with a custom predicate for different results
+   * @see DataLoader#getLinkedData(LinkableType, ValuesMap) this provides the linked data but with a
+   *     custom predicate for different results
    * @param type the type of data to provide
    * @param identification the way to identify the data
-   * @param predicate the way to get the data from cache
    * @return the data if inside of the cache else find it from query
    */
-  public @Nullable BotLinkableData getLinkedData(
-      @NotNull LinkableDataType type,
-      @NotNull ValuesMap identification,
-      @NotNull Predicate<GuidoLinkableData> predicate) {
-    return Guido.getCache()
-        .getOrSupply(
-            GuidoLinkableData.class,
-            predicate,
-            this.supplyObjectFromQuery(
-                GuidoLinkableData.class,
-                this.links,
-                this.getIdentifiableQuery(type, identification)));
+  public @Nullable BotLinkable getLinkedData(
+      @NotNull LinkableType type, @NotNull ValuesMap identification) {
+    GuidoLinkable data =
+        Guido.getCache().get(GuidoLinkable.class, link -> link.compare(type, identification));
+    if (data != null) {
+      return data;
+    } else {
+      return this.getCatchableObjectFromQuery(
+          GuidoLinkable.class, this.links, this.getIdentifiableQuery(type, identification));
+    }
   }
 
   /**
@@ -533,13 +563,12 @@ public class JsongoDataLoader implements BotDataLoader {
   }
 
   @Override
-  public @NotNull BotLinkableData getDiscordUserData(long userId) {
-    BotLinkableData data =
-        this.getLinkedData(LinkableDataType.DISCORD, new GuidoValuesMap("id", userId));
+  public @NotNull BotLinkable getDiscordUserData(long userId) {
+    BotLinkable data = this.getLinkedData(LinkableType.DISCORD, new GuidoValuesMap("id", userId));
     if (data == null) {
       data =
-          new GuidoLinkableData(
-                  LinkableDataType.DISCORD,
+          new GuidoLinkable(
+                  LinkableType.DISCORD,
                   this.getAllDiscordUserData(userId).getId(),
                   new GuidoValuesMap("id", userId),
                   new GuidoValuesMap(),
@@ -551,17 +580,17 @@ public class JsongoDataLoader implements BotDataLoader {
   }
 
   @Override
-  public @NotNull Collection<BotLinkableData> getDiscordData(long userId) {
+  public @NotNull Collection<BotLinkable> getDiscordData(long userId) {
     return new ArrayList<>(
         this.supplyManyAndCache(
-            GuidoLinkableData.class,
+            GuidoLinkable.class,
             this.links,
             new Document("identification.id", userId),
             -1,
             -1,
             data ->
-                (data.getType() == LinkableDataType.DISCORD
-                        || data.getType() == LinkableDataType.DISCORD_GUILD)
+                (data.getType() == LinkableType.DISCORD
+                        || data.getType() == LinkableType.DISCORD_GUILD)
                     && data.getIdentification().getOr("id", Long.class, -1L) == userId));
   }
 
@@ -629,13 +658,13 @@ public class JsongoDataLoader implements BotDataLoader {
   }
 
   @Override
-  public @NotNull BotLinkableData getMemberData(long userId, long guildId) {
+  public @NotNull BotLinkable getMemberData(long userId, long guildId) {
     GuidoValuesMap identification = new GuidoValuesMap("id", userId).put("guild", guildId);
-    BotLinkableData data = this.getLinkedData(LinkableDataType.DISCORD_GUILD, identification);
+    BotLinkable data = this.getLinkedData(LinkableType.DISCORD_GUILD, identification);
     if (data == null) {
       data =
-          new GuidoLinkableData(
-                  LinkableDataType.DISCORD_GUILD,
+          new GuidoLinkable(
+                  LinkableType.DISCORD_GUILD,
                   this.getAllDiscordUserData(userId).getId(),
                   identification,
                   new GuidoValuesMap(),
@@ -644,12 +673,6 @@ public class JsongoDataLoader implements BotDataLoader {
               .cache();
     }
     return data;
-  }
-
-  @Override
-  public @Nullable BotLinkableData getLinkedData(
-      @NotNull LinkableDataType type, @NotNull ValuesMap identification) {
-    return this.getLinkedData(type, identification, data -> data.compare(type, identification));
   }
 
   @Override
@@ -680,7 +703,7 @@ public class JsongoDataLoader implements BotDataLoader {
 
   @Override
   public @NotNull Collection<Match> getParticipating(
-      @NotNull LinkableDataType type,
+      @NotNull LinkableType type,
       @NotNull ValuesMap identification,
       @NotNull MatchStatus... status) {
     List<String> statusNames = new ArrayList<>();
@@ -741,15 +764,15 @@ public class JsongoDataLoader implements BotDataLoader {
   }
 
   @Override
-  public long countLinks(LinkableDataType... types) {
-    Set<LinkableDataType> toMatch = new HashSet<>();
+  public long countLinks(LinkableType... types) {
+    Set<LinkableType> toMatch = new HashSet<>();
     Set<String> names = new HashSet<>();
     if (types.length == 0) {
-      toMatch.addAll(Arrays.asList(LinkableDataType.values()));
+      toMatch.addAll(Arrays.asList(LinkableType.values()));
     } else {
       toMatch.addAll(Arrays.asList(types));
     }
-    for (LinkableDataType match : toMatch) {
+    for (LinkableType match : toMatch) {
       names.add(match.toString());
     }
     return this.count(this.links, new Document("type", new Document("$in", names)));
@@ -765,8 +788,31 @@ public class JsongoDataLoader implements BotDataLoader {
     return groups;
   }
 
+  /**
+   * Get all the created groups but only the information of them
+   *
+   * @param page the page of groups to see
+   * @param size the size of the groups per page
+   * @return the created groups
+   */
   @Override
-  public @NotNull Map<Integer, LinkableData> getLeaderboard(
+  public @NotNull Collection<GroupInfo> getGroupsInfo(int page, int size) {
+    // TODO
+    return new HashSet<>();
+  }
+
+  /**
+   * Get how many groups there are
+   *
+   * @return the amount of groups that there is
+   */
+  @Override
+  public long countGroups() {
+    return 0;
+  }
+
+  @Override
+  public @NotNull Map<Integer, LinkableInfo> getLeaderboard(
       @NotNull Ladder ladder, int page, int size) {
     if (!(ladder instanceof GlobalLadder)) {
       return this.getLeaderboard(ladder.getName() + "-elo", page, size, false);
@@ -775,10 +821,10 @@ public class JsongoDataLoader implements BotDataLoader {
   }
 
   @Override
-  public @NotNull Map<Integer, LinkableData> getLeaderboard(
+  public @NotNull Map<Integer, LinkableInfo> getLeaderboard(
       @NotNull String stat, int page, int size, boolean inverted) {
     return this.supplyManyFromQuerySorted(
-        GuidoLinkableData.class,
+        GuidoLinkable.class,
         this.links,
         new Document("stats." + stat, new Document("$type", 1)),
         new Document("stats." + stat, inverted ? 1 : -1),
@@ -795,7 +841,7 @@ public class JsongoDataLoader implements BotDataLoader {
    * @return the collection of matches
    */
   @Override
-  public @NotNull Collection<Match> getMatches(
+  public @NotNull Collection<MatchInfo> getMatches(
       int page, int size, @NotNull MatchStatus... statuses) {
     Set<MatchStatus> toMatch = new HashSet<>();
     Set<String> names = new HashSet<>();
@@ -807,32 +853,30 @@ public class JsongoDataLoader implements BotDataLoader {
     for (MatchStatus match : toMatch) {
       names.add(match.toString());
     }
-    return new ArrayList<>(
-        this.supplyManyAndCache(
-            GuidoMatch.class,
-            this.matches,
-            new Document("type", new Document("$in", names)),
-            size,
-            page * size,
-            match -> toMatch.contains(match.getStatus())));
+    return this.supplyManyFromQuery(
+        GuidoMatchInfo.class,
+        this.matches,
+        new Document("type", new Document("$in", names)),
+        size,
+        page * size);
   }
 
   @Override
-  public @NotNull Collection<LinkableData> getLinks(@NotNull UserData user) {
-    return this.getLinks(user, LinkableDataType.values());
+  public @NotNull Collection<Linkable> getLinks(@NotNull UserData user) {
+    return this.getLinks(user, LinkableType.values());
   }
 
   @Override
-  public @NotNull Collection<LinkableData> getLinks(
-      @NotNull UserData user, @NotNull LinkableDataType... types) {
+  public @NotNull Collection<Linkable> getLinks(
+      @NotNull UserData user, @NotNull LinkableType... types) {
     List<String> typesName = new ArrayList<>();
-    for (LinkableDataType type : types) {
+    for (LinkableType type : types) {
       typesName.add(type.toString());
     }
-    Set<LinkableDataType> typeSet = new HashSet<>(Arrays.asList(types));
+    Set<LinkableType> typeSet = new HashSet<>(Arrays.asList(types));
     return new ArrayList<>(
         this.supplyManyAndCache(
-            GuidoLinkableData.class,
+            GuidoLinkable.class,
             this.links,
             new Document("linked-id", user.getId()).append("type", new Document("$in", typesName)),
             -1,
@@ -850,26 +894,23 @@ public class JsongoDataLoader implements BotDataLoader {
    * @return the collection of links
    */
   @Override
-  public Collection<LinkableData> getLinks(
-      int page, int limit, @NotNull LinkableDataType... types) {
-    Set<LinkableDataType> toMatch = new HashSet<>();
+  public Collection<LinkableInfo> getLinks(int page, int limit, @NotNull LinkableType... types) {
+    Set<LinkableType> toMatch = new HashSet<>();
     Set<String> names = new HashSet<>();
     if (types.length == 0) {
-      toMatch.addAll(Arrays.asList(LinkableDataType.values()));
+      toMatch.addAll(Arrays.asList(LinkableType.values()));
     } else {
       toMatch.addAll(Arrays.asList(types));
     }
-    for (LinkableDataType match : toMatch) {
+    for (LinkableType match : toMatch) {
       names.add(match.toString());
     }
-    return new ArrayList<>(
-        this.supplyManyAndCache(
-            GuidoLinkableData.class,
-            this.links,
-            new Document("type", new Document("$in", names)),
-            limit,
-            page * limit,
-            link -> toMatch.contains(link.getType())));
+    return this.supplyManyFromQuery(
+        GuidoLinkableInfo.class,
+        this.links,
+        new Document("type", new Document("$in", names)),
+        limit,
+        page * limit);
   }
 
   @NotNull

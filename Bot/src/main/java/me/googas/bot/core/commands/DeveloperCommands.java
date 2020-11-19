@@ -14,7 +14,6 @@ import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;
 import me.googas.bot.core.Guido;
-import me.googas.bot.core.util.console.Console;
 import me.googas.commons.cache.Catchable;
 import org.jetbrains.annotations.NotNull;
 
@@ -66,7 +65,7 @@ public class DeveloperCommands {
   @Command(aliases = "cache", permission = @Perm(node = "guido.cache"))
   public Result cache() {
     for (SoftReference<Catchable> catchable : Guido.getCache().copy()) {
-      Console.info("Cache element: " + catchable.get());
+      System.out.println("Cache element: " + catchable.get());
     }
     return new Result("Check console for the output");
   }

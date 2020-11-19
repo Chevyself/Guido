@@ -1,6 +1,9 @@
 package me.googas.bot.core.types;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import me.googas.api.permissions.PermissionStack;
 import me.googas.bot.api.events.data.group.GroupUnloadedEvent;
@@ -29,6 +32,9 @@ public class GuidoGroup implements BotGroup {
   /** The permissions of the group */
   @NotNull private final Set<PermissionStack> permissions;
 
+  /** The ids of parents of the group */
+  @NotNull private final List<String> parents;
+
   /**
    * Create the group
    *
@@ -37,39 +43,44 @@ public class GuidoGroup implements BotGroup {
    * @param name the name of the group
    * @param preferences the preferences of the group
    * @param permissions the permissions of the group
+   * @param parents the ids of the parents of the group
    */
   public GuidoGroup(
       @NotNull String id,
       int weight,
       @NotNull String name,
       @NotNull GuidoValuesMap preferences,
-      @NotNull Set<PermissionStack> permissions) {
+      @NotNull Set<PermissionStack> permissions,
+      @NotNull List<String> parents) {
     this.id = id;
     this.preferences = preferences;
     this.permissions = permissions;
     this.name = name;
     this.weight = weight;
+    this.parents = parents;
   }
 
   /**
    * Create the group
    *
-   * @param name the name of the group
    * @param weight the weight of the group
    * @param preferences the preferences of the group
    * @param permissions the permissions of the group
+   * @param name the name of the group
+   * @param parents the ids of the parents of the group
    */
   public GuidoGroup(
       int weight,
       @NotNull GuidoValuesMap preferences,
       @NotNull Set<PermissionStack> permissions,
-      String name) {
-    this(Guido.getDataLoader().nextGroupId(), weight, name, preferences, permissions);
+      String name,
+      List<String> parents) {
+    this(Guido.getDataLoader().nextGroupId(), weight, name, preferences, permissions, parents);
   }
 
   /** @deprecated this may only be used be used by json */
   public GuidoGroup() {
-    this("", 1000, "", new GuidoValuesMap(), new HashSet<>());
+    this("", 1000, "", new GuidoValuesMap(), new HashSet<>(), new ArrayList<>());
   }
 
   public void setWeight(int weight) {
@@ -115,6 +126,11 @@ public class GuidoGroup implements BotGroup {
   @Override
   public GuidoValuesMap getPreferences() {
     return this.preferences;
+  }
+
+  @Override
+  public @NotNull Collection<String> getParents() {
+    return this.parents;
   }
 
   @Override

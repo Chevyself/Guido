@@ -3,6 +3,7 @@ package com.starfishst.bukkit.listeners;
 import com.starfishst.bukkit.GuidoPlugin;
 import com.starfishst.bukkit.api.Guido;
 import com.starfishst.bukkit.api.events.GuidoListener;
+import com.starfishst.bukkit.client.BukkitBooleanRequest;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -14,10 +15,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
-import me.googas.api.client.data.LinkableInfoImpl;
-import me.googas.api.client.data.PermissionStackImpl;
-import me.googas.api.client.data.ValuesMapImpl;
-import me.googas.api.links.LinkableDataType;
+import me.googas.api.client.data.SimpleLinkableInfo;
+import me.googas.api.client.data.SimplePermissionStack;
+import me.googas.api.client.data.SimpleValuesMap;
+import me.googas.api.links.LinkableType;
 import me.googas.api.permissions.Group;
 import me.googas.api.permissions.Permission;
 import me.googas.api.permissions.PermissionStack;
@@ -109,15 +110,18 @@ public class PermissionListener implements GuidoListener {
 
     try {
       JsonClient connection = Guido.getClient().validatedConnection();
-      LinkableInfoImpl info =
-          new LinkableInfoImpl(
-              LinkableDataType.MINECRAFT,
-              new ValuesMapImpl(Maps.singleton("uuid", UUIDUtils.trim(uniqueId))));
+
+      if (!this.checkBungee(event)) return;
+      Guido.getLogger().info("Bungee checked the player as true");
+      SimpleLinkableInfo info =
+          new SimpleLinkableInfo(
+              LinkableType.MINECRAFT,
+              new SimpleValuesMap(Maps.singleton("uuid", UUIDUtils.trim(uniqueId))));
       String context = Guido.getConfiguration().getContext();
-      PermissionStackImpl stack =
+      SimplePermissionStack stack =
           connection.sendRequest(
               new Request<>(
-                  PermissionStackImpl.class,
+                  SimplePermissionStack.class,
                   "permission",
                   Maps.objects("context", context).append("info", info).build()));
       GroupListener groupListener = Guido.getListener(GroupListener.class);
@@ -138,6 +142,12 @@ public class PermissionListener implements GuidoListener {
           }
         }
       }
+      ArrayList<Group> groupsCopy = new ArrayList<>(groups);
+      for (Group group : groupsCopy) {
+        if (groupListener == null) break;
+        groups.addAll(groupListener.getParents(group));
+      }
+      groups.sort(Comparator.comparingInt(Group::getWeight));
       Guido.getLogger().info("Permissions with no groups " + permissionsToGive);
 
       groups.sort(Comparator.comparingInt(Group::getWeight));
@@ -160,6 +170,35 @@ public class PermissionListener implements GuidoListener {
       this.groups.put(uniqueId, groups);
     } catch (IOException | MessengerListenFailException e) {
       e.printStackTrace();
+    }
+  }
+
+  /**
+   * Check if the connecting player is connected thru bungee
+   *
+   * @param event the event of a player joining the game
+   * @return true if the player can join the server
+   * @throws MessengerListenFailException in case that the request goes wrong
+   */
+  public boolean checkBungee(@NotNull AsyncPlayerPreLoginEvent event)
+      throws MessengerListenFailException {
+    if (this.getSettings().getOr("bungee", Boolean.class, false)) {
+      Boolean bol =
+          new BukkitBooleanRequest("is-bungee", Maps.singleton("uuid", event.getUniqueId())).send();
+      if (bol != null) {
+        if (!bol) {
+          event.disallow(
+              AsyncPlayerPreLoginEvent.Result.KICK_OTHER,
+              "You must connect thru the bungee server");
+          return false;
+        } else {
+          return true;
+        }
+      } else {
+        return false;
+      }
+    } else {
+      return true;
     }
   }
 

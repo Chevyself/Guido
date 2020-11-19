@@ -4,9 +4,9 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
-import me.googas.api.links.LinkableData;
-import me.googas.api.links.LinkableDataType;
+import me.googas.api.links.Linkable;
 import me.googas.api.links.LinkableInfo;
+import me.googas.api.links.LinkableType;
 import me.googas.api.permissions.Permission;
 import me.googas.api.permissions.PermissionStack;
 import me.googas.api.user.UserData;
@@ -27,8 +27,8 @@ public class LinkedDataReceptors {
    * @return the links
    */
   @Receptor("links")
-  public Collection<LinkableData> links(
-      @ParamName("types") LinkableDataType[] types,
+  public Collection<LinkableInfo> links(
+      @ParamName("types") LinkableType[] types,
       @ParamName("page") int page,
       @ParamName("limit") int limit) {
     return Guido.getDataLoader().getLinks(page, limit, types);
@@ -41,7 +41,7 @@ public class LinkedDataReceptors {
    * @return the amount of links that there is of that type
    */
   @Receptor("count-links")
-  public long links(@ParamName("types") LinkableDataType[] types) {
+  public long links(@ParamName("types") LinkableType[] types) {
     return Guido.getDataLoader().countLinks(types);
   }
 
@@ -65,7 +65,7 @@ public class LinkedDataReceptors {
    */
   @Receptor("set-user")
   public boolean setUser(@ParamName("info") LinkableInfo info, @ParamName("user") String userId) {
-    LinkableData data = info.getLink();
+    Linkable data = info.getLink();
     if (data != null) {
       UserData user = Guido.getDataLoader().getUserData(userId);
       data.setLinkedUser(user);
@@ -84,11 +84,11 @@ public class LinkedDataReceptors {
   @Receptor("permission")
   public PermissionStack permissions(
       @ParamName("info") LinkableInfo info, @ParamName("context") String context) {
-    LinkableData linkableData = info.getLink();
-    if (linkableData != null) {
+    Linkable linkable = info.getLink();
+    if (linkable != null) {
       GuidoPermissionStack permissions = new GuidoPermissionStack(context, new HashSet<>());
-      PermissionStack stack = linkableData.getPermissions(context);
-      PermissionStack global = linkableData.getPermissions("global");
+      PermissionStack stack = linkable.getPermissions(context);
+      PermissionStack global = linkable.getPermissions("global");
       if (stack != null) {
         permissions.getPermissions().addAll(stack.getPermissions());
       }
@@ -108,7 +108,7 @@ public class LinkedDataReceptors {
    */
   @Receptor("preferences")
   public Map<String, Object> preferences(@ParamName("info") LinkableInfo info) {
-    LinkableData data = info.getLink();
+    Linkable data = info.getLink();
     if (data != null) {
       return data.getPreferences().getMap();
     }
@@ -123,7 +123,7 @@ public class LinkedDataReceptors {
    */
   @Receptor("stats")
   public Map<String, Float> stats(@ParamName("info") LinkableInfo info) {
-    LinkableData data = info.getLink();
+    Linkable data = info.getLink();
     if (data != null) {
       return data.getStats();
     }
@@ -138,7 +138,7 @@ public class LinkedDataReceptors {
    */
   @Receptor("reset-stats")
   public boolean resetStats(@ParamName("info") LinkableInfo info) {
-    LinkableData data = info.getLink();
+    Linkable data = info.getLink();
     if (data != null) {
       data.getStats().clear();
       return true;
@@ -154,7 +154,7 @@ public class LinkedDataReceptors {
    */
   @Receptor("is-linked")
   public boolean isLinked(@ParamName("info") LinkableInfo info) {
-    LinkableData data = info.getLink();
+    Linkable data = info.getLink();
     if (data != null) {
       return data.isLinked();
     }
@@ -171,7 +171,7 @@ public class LinkedDataReceptors {
   @Receptor("save-stats")
   public boolean saveStats(
       @ParamName("info") LinkableInfo info, @ParamName("stats") Map<String, Double> stats) {
-    LinkableData data = info.getLink();
+    Linkable data = info.getLink();
     if (data != null) {
       stats.forEach((key, value) -> data.increaseStat(key, (float) value.doubleValue()));
       return true;
@@ -192,7 +192,8 @@ public class LinkedDataReceptors {
       @ParamName("info") LinkableInfo info,
       @ParamName("context") String context,
       @ParamName("permission") Permission permission) {
-    LinkableData data = info.getLink();
+    System.out.println("Received permission request");
+    Linkable data = info.getLink();
     if (data != null) {
       return data.addPermission(context, permission.getNode(), permission.isEnabled());
     }
@@ -212,7 +213,7 @@ public class LinkedDataReceptors {
       @ParamName("info") LinkableInfo info,
       @ParamName("context") String context,
       @ParamName("permission") Permission permission) {
-    LinkableData data = info.getLink();
+    Linkable data = info.getLink();
     if (data != null) {
       return data.removePermission(context, permission.getNode());
     }
@@ -226,7 +227,7 @@ public class LinkedDataReceptors {
    * @return the link if found else null
    */
   @Receptor("get-link")
-  public LinkableData getLink(@ParamName("info") LinkableInfo info) {
+  public Linkable getLink(@ParamName("info") LinkableInfo info) {
     return Guido.getDataLoader().getLinkedData(info.getType(), info.getIdentification());
   }
 }

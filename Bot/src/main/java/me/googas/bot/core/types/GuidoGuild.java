@@ -56,7 +56,7 @@ public class GuidoGuild implements BotGuild {
       @NotNull Map<String, Long> channels,
       @NotNull Map<String, Long> voiceChannels,
       @NotNull HashMap<String, Long> categories,
-      Set<BotResponsiveMessage> messages) {
+      @NotNull Set<BotResponsiveMessage> messages) {
     this.id = id;
     this.ladders = ladders;
     this.ranges = ranges;

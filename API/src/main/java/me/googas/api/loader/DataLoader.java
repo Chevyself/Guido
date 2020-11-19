@@ -3,12 +3,15 @@ package me.googas.api.loader;
 import java.util.Collection;
 import java.util.Map;
 import me.googas.api.discord.GuildData;
-import me.googas.api.links.LinkableData;
-import me.googas.api.links.LinkableDataType;
+import me.googas.api.links.Linkable;
+import me.googas.api.links.LinkableInfo;
+import me.googas.api.links.LinkableType;
 import me.googas.api.matches.Ladder;
 import me.googas.api.matches.Match;
+import me.googas.api.matches.MatchInfo;
 import me.googas.api.matches.MatchStatus;
 import me.googas.api.permissions.Group;
+import me.googas.api.permissions.GroupInfo;
 import me.googas.api.token.AuthToken;
 import me.googas.api.user.UserData;
 import me.googas.api.utility.ValuesMap;
@@ -62,7 +65,7 @@ public interface DataLoader {
    * @return the links
    */
   @NotNull
-  Collection<LinkableData> getLinks(@NotNull UserData user);
+  Collection<Linkable> getLinks(@NotNull UserData user);
 
   /**
    * Get the links from an user in a certain type
@@ -72,7 +75,7 @@ public interface DataLoader {
    * @return the links
    */
   @NotNull
-  Collection<LinkableData> getLinks(@NotNull UserData user, @NotNull LinkableDataType... types);
+  Collection<Linkable> getLinks(@NotNull UserData user, @NotNull LinkableType... types);
 
   /**
    * Get all the links that exist in the bot
@@ -82,7 +85,7 @@ public interface DataLoader {
    * @param types the types of links to get
    * @return the collection of links
    */
-  Collection<LinkableData> getLinks(int page, int limit, @NotNull LinkableDataType... types);
+  Collection<LinkableInfo> getLinks(int page, int limit, @NotNull LinkableType... types);
 
   /**
    * Get the tokens from an user
@@ -101,7 +104,7 @@ public interface DataLoader {
    * @return the linked data if found else null
    */
   @Nullable
-  LinkableData getLinkedData(@NotNull LinkableDataType type, @NotNull ValuesMap identification);
+  Linkable getLinkedData(@NotNull LinkableType type, @NotNull ValuesMap identification);
 
   /**
    * Get a match using its id
@@ -122,7 +125,7 @@ public interface DataLoader {
    */
   @NotNull
   Collection<Match> getParticipating(
-      @NotNull LinkableDataType type,
+      @NotNull LinkableType type,
       @NotNull ValuesMap identification,
       @NotNull MatchStatus... status);
 
@@ -192,12 +195,12 @@ public interface DataLoader {
   boolean deleteGroup(String id);
 
   /**
-   * Count how many links there are {@link #getLinks(int, int, LinkableDataType...)}
+   * Count how many links there are {@link #getLinks(int, int, LinkableType...)}
    *
    * @param types the types of links to get
    * @return the amount of links
    */
-  long countLinks(LinkableDataType... types);
+  long countLinks(LinkableType... types);
 
   /**
    * Get all the created groups
@@ -208,6 +211,23 @@ public interface DataLoader {
   Collection<Group> getGroups();
 
   /**
+   * Get all the created groups but only the information of them
+   *
+   * @param page the page of groups to see
+   * @param size the size of the groups per page
+   * @return the created groups
+   */
+  @NotNull
+  Collection<GroupInfo> getGroupsInfo(int page, int size);
+
+  /**
+   * Get how many groups there are
+   *
+   * @return the amount of groups that there is
+   */
+  long countGroups();
+
+  /**
    * Get the leaderboard in certain ladder
    *
    * @param ladder the ladder to look the leaderboard from
@@ -216,7 +236,7 @@ public interface DataLoader {
    * @return the leaderboard
    */
   @NotNull
-  Map<Integer, LinkableData> getLeaderboard(@NotNull Ladder ladder, int page, int size);
+  Map<Integer, LinkableInfo> getLeaderboard(@NotNull Ladder ladder, int page, int size);
 
   /**
    * Get the leaderboard for certain stat
@@ -228,7 +248,7 @@ public interface DataLoader {
    * @return the leaderboard
    */
   @NotNull
-  Map<Integer, LinkableData> getLeaderboard(
+  Map<Integer, LinkableInfo> getLeaderboard(
       @NotNull String stat, int page, int size, boolean inverted);
 
   /**
@@ -240,5 +260,5 @@ public interface DataLoader {
    * @return the collection of matches
    */
   @NotNull
-  Collection<Match> getMatches(int page, int size, @NotNull MatchStatus... statuses);
+  Collection<MatchInfo> getMatches(int page, int size, @NotNull MatchStatus... statuses);
 }

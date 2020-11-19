@@ -8,7 +8,6 @@ import java.util.Set;
 import me.googas.bot.api.events.responsive.ResponsiveMessageUnloadedEvent;
 import me.googas.bot.core.Guido;
 import me.googas.bot.core.handlers.GuidoEventHandler;
-import me.googas.bot.core.util.console.Console;
 import me.googas.commons.events.ListenPriority;
 import me.googas.commons.events.Listener;
 import net.dv8tion.jda.api.JDA;
@@ -42,7 +41,6 @@ public class GuidoMessagesController implements ResponsiveMessageController, Gui
   public void onResponsiveMessageUnload(@NotNull ResponsiveMessageUnloadedEvent event) {
     JDA jda = Guido.getConnection().getJda();
     if (jda != null && event.getMessage() instanceof GuidoResponsiveMessage) {
-      Console.debug("Saving the message " + event.getMessage());
       ((GuidoResponsiveMessage) event.getMessage()).save(jda);
     }
   }

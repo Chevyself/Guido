@@ -2,10 +2,11 @@ package me.googas.bot.core.types.queues;
 
 import java.util.ArrayList;
 import java.util.List;
-import me.googas.api.links.LinkableData;
+import me.googas.api.links.Linkable;
 import me.googas.api.links.LinkableInfo;
 import me.googas.api.matches.Ladder;
 import me.googas.api.matches.Queue;
+import me.googas.api.matches.Queueable;
 import me.googas.bot.api.events.queue.QueueJoinEvent;
 import me.googas.bot.api.events.queue.QueuePreJoinEvent;
 import me.googas.bot.core.Guido;
@@ -24,7 +25,7 @@ public class GuidoQueue implements Queue {
   private final String ladder;
 
   /** The waiting users in the queue */
-  private final List<LinkableInfo> waiting = new ArrayList<>();
+  private final List<Queueable> waiting = new ArrayList<>();
 
   /**
    * Create the queue
@@ -66,7 +67,7 @@ public class GuidoQueue implements Queue {
       new QueueJoinEvent(this, data).call();
       return true;
     }
-    LinkableData link = data.getLink();
+    Linkable link = data.getLink();
     if (link != null) {
       link.sendMessage("You're already waiting in this queue");
     }
@@ -88,7 +89,7 @@ public class GuidoQueue implements Queue {
   }
 
   @NotNull
-  public List<LinkableInfo> getWaiting() {
+  public List<Queueable> getWaiting() {
     return this.waiting;
   }
 

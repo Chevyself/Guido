@@ -5,17 +5,17 @@ import java.io.IOException;
 import java.net.Socket;
 import java.util.Arrays;
 import java.util.Set;
-import me.googas.api.client.data.ValuesMapImpl;
-import me.googas.api.client.data.adapters.GroupAdapter;
-import me.googas.api.client.data.adapters.LadderAdapter;
-import me.googas.api.client.data.adapters.LinkedInfoAdapter;
-import me.googas.api.client.data.adapters.MatchAdapter;
-import me.googas.api.client.data.adapters.PermissionAdapter;
-import me.googas.api.client.data.adapters.PermissionStackAdapter;
-import me.googas.api.client.data.adapters.TeamAdapter;
-import me.googas.api.client.data.adapters.TeamMemberAdapter;
-import me.googas.api.client.data.adapters.ValuesMapAdapter;
-import me.googas.api.client.receptors.ReceptorsImpl;
+import me.googas.api.client.adapters.GroupAdapter;
+import me.googas.api.client.adapters.LadderAdapter;
+import me.googas.api.client.adapters.LinkedInfoAdapter;
+import me.googas.api.client.adapters.MatchAdapter;
+import me.googas.api.client.adapters.PermissionAdapter;
+import me.googas.api.client.adapters.PermissionStackAdapter;
+import me.googas.api.client.adapters.TeamAdapter;
+import me.googas.api.client.adapters.TeamMemberAdapter;
+import me.googas.api.client.adapters.ValuesMapAdapter;
+import me.googas.api.client.data.SimpleValuesMap;
+import me.googas.api.client.receptors.SimpleReceptors;
 import me.googas.api.links.LinkableInfo;
 import me.googas.api.matches.Ladder;
 import me.googas.api.matches.Match;
@@ -49,9 +49,9 @@ public class Client {
   /** The client to connect with the bot */
   @Nullable private JsonClient connection;
   /** The receptors that the client is using */
-  @NotNull private final Set<Object> receptors = Lots.set(new ReceptorsImpl(this));
+  @NotNull private final Set<Object> receptors = Lots.set(new SimpleReceptors(this));
   /** The handler for throwable */
-  @NotNull private final ThrowableHandlerImpl handler = new ThrowableHandlerImpl(this);
+  @NotNull private final SimpleThrowableHandler handler = new SimpleThrowableHandler(this);
 
   /**
    * Create the client
@@ -91,7 +91,7 @@ public class Client {
                 .registerTypeAdapter(Team.class, new TeamAdapter())
                 .registerTypeAdapter(TeamMember.class, new TeamMemberAdapter())
                 .registerTypeAdapter(ValuesMap.class, new ValuesMapAdapter())
-                .registerTypeAdapter(ValuesMapImpl.class, new ValuesMapAdapter())
+                .registerTypeAdapter(SimpleValuesMap.class, new ValuesMapAdapter())
                 .setPrettyPrinting()
                 .create(),
             5000);
@@ -114,9 +114,7 @@ public class Client {
 
   /** Called when the client is disconnected */
   public void onDisconnection() {
-    if (this.connection != null) {
-      this.connection.close();
-    }
+    if (this.connection != null) this.connection.close();
     this.connection = null;
     System.out.println("Client has been disconnected");
   }
@@ -148,12 +146,11 @@ public class Client {
   /** Disconnects the client */
   public void disconnect() {
     JsonClient connection = this.getConnection();
-    if (connection != null) {
-      connection.sendRequest(
-          new Request<>(Boolean.class, "disconnect"),
-          disconnected -> this.onDisconnection(),
-          this.handler::handle);
-    }
+    if (connection == null) return;
+    connection.sendRequest(
+        new Request<>(Boolean.class, "disconnect"),
+        disconnected -> this.onDisconnection(),
+        this.handler::handle);
   }
 
   /**
@@ -193,13 +190,11 @@ public class Client {
   public void addReceptors(@NotNull Object... receptors) {
     this.receptors.addAll(Arrays.asList(receptors));
     JsonClient connection = this.getConnection();
-    if (connection != null) {
-      connection.addReceptors(receptors);
-    }
+    if (connection != null) connection.addReceptors(receptors);
   }
 
   /**
-   * Get the receptors wich the client is using
+   * Get the receptors which the client is using
    *
    * @return the receptors
    */

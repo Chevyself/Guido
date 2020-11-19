@@ -8,10 +8,10 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.UUID;
-import me.googas.api.client.data.LinkableInfoImpl;
-import me.googas.api.client.data.PermissionStackImpl;
-import me.googas.api.client.data.ValuesMapImpl;
-import me.googas.api.links.LinkableDataType;
+import me.googas.api.client.data.SimpleLinkableInfo;
+import me.googas.api.client.data.SimplePermissionStack;
+import me.googas.api.client.data.SimpleValuesMap;
+import me.googas.api.links.LinkableType;
 import me.googas.api.permissions.Group;
 import me.googas.api.permissions.Permission;
 import me.googas.api.permissions.PermissionStack;
@@ -42,10 +42,10 @@ public class JoinListener implements GuidoListener {
     UUID uuid = player.getUniqueId();
     try {
       JsonClient connection = Guido.getClient().validatedConnection();
-      LinkableInfoImpl info =
-          new LinkableInfoImpl(
-              LinkableDataType.MINECRAFT,
-              new ValuesMapImpl(Maps.singleton("uuid", UUIDUtils.trim(uuid))));
+      SimpleLinkableInfo info =
+          new SimpleLinkableInfo(
+              LinkableType.MINECRAFT,
+              new SimpleValuesMap(Maps.singleton("uuid", UUIDUtils.trim(uuid))));
       connection.sendRequest(
           new Request<>(Boolean.class, "data-exists", Maps.singleton("info", info)),
           exists -> {
@@ -53,7 +53,7 @@ public class JoinListener implements GuidoListener {
             if (exists) {
               connection.sendRequest(
                   new Request<>(
-                      PermissionStackImpl.class,
+                      SimplePermissionStack.class,
                       "permission",
                       Maps.objects("info", info).append("context", "bungee").build()),
                   stack -> {
@@ -70,6 +70,10 @@ public class JoinListener implements GuidoListener {
                       } else {
                         player.setPermission(permission.getNode(), permission.isEnabled());
                       }
+                    }
+                    ArrayList<Group> toGiveCopy = new ArrayList<>(toGive);
+                    for (Group group : toGiveCopy) {
+                      toGive.addAll(groupsListener.getParents(group));
                     }
                     toGive.sort(Comparator.comparingInt(Group::getWeight));
                     Collections.reverse(toGive);
@@ -94,10 +98,9 @@ public class JoinListener implements GuidoListener {
                       Boolean.class,
                       "update-minecraft-nickname",
                       Maps.objects("uuid", uuid).append("nickname", player.getName()).build()),
-                  updated -> {
-                    Guido.getLogger()
-                        .info("Updated mineraft nickname for? " + player + " " + updated);
-                  });
+                  updated ->
+                      Guido.getLogger()
+                          .info("Updated mineraft nickname for? " + player + " " + updated));
             } else {
               connection.sendRequest(
                   new Request<>(

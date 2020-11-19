@@ -6,7 +6,6 @@ import com.starfishst.bungee.api.configuration.BungeeConfiguration;
 import com.starfishst.bungee.api.configuration.GuidoServer;
 import com.starfishst.bungee.api.events.GuidoListener;
 import com.starfishst.bungee.core.client.BungeeClient;
-import com.starfishst.bungee.core.commands.GroupCommands;
 import com.starfishst.bungee.core.commands.GuidoCommands;
 import com.starfishst.bungee.core.commands.LinkCommand;
 import com.starfishst.bungee.core.commands.LobbyCommands;
@@ -168,9 +167,6 @@ public class GuidoPlugin extends Plugin {
       this.getLogger().info(listener.getName() + " has been registered");
     }
 
-    this.getListener(GroupListener.class).loadGroups(null);
-
-    this.manager.registerCommand(new GroupCommands());
     this.manager.registerCommand(new GuidoCommands());
     this.manager.registerCommand(new LinkCommand());
     this.manager.registerCommand(new LobbyCommands());

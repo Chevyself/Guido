@@ -5,12 +5,15 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
-import me.googas.api.links.LinkableData;
-import me.googas.api.links.LinkableDataType;
+import me.googas.api.links.Linkable;
+import me.googas.api.links.LinkableInfo;
+import me.googas.api.links.LinkableType;
 import me.googas.api.matches.Ladder;
 import me.googas.api.matches.Match;
+import me.googas.api.matches.MatchInfo;
 import me.googas.api.matches.MatchStatus;
 import me.googas.api.permissions.Group;
+import me.googas.api.permissions.GroupInfo;
 import me.googas.api.token.AuthToken;
 import me.googas.api.user.UserData;
 import me.googas.api.utility.ValuesMap;
@@ -20,7 +23,7 @@ import me.googas.bot.api.events.data.user.UserUnloadedDataEvent;
 import me.googas.bot.api.loader.BotDataLoader;
 import me.googas.bot.api.types.BotGroup;
 import me.googas.bot.api.types.BotGuild;
-import me.googas.bot.api.types.BotLinkableData;
+import me.googas.bot.api.types.BotLinkable;
 import me.googas.bot.api.types.BotMatch;
 import me.googas.bot.api.types.BotRole;
 import me.googas.commons.events.ListenPriority;
@@ -87,8 +90,8 @@ public class GuidoFileLoader implements BotDataLoader {
   }
 
   @Override
-  public @Nullable BotLinkableData getLinkedData(
-      @NotNull LinkableDataType type, @NotNull ValuesMap identifications) {
+  public @Nullable BotLinkable getLinkedData(
+      @NotNull LinkableType type, @NotNull ValuesMap identifications) {
     throw new UnsupportedOperationException("Linked data cannot be find using file loader");
   }
 
@@ -116,7 +119,7 @@ public class GuidoFileLoader implements BotDataLoader {
 
   @Override
   public @NotNull Collection<Match> getParticipating(
-      @NotNull LinkableDataType type,
+      @NotNull LinkableType type,
       @NotNull ValuesMap identification,
       @NotNull MatchStatus... status) {
     return new ArrayList<>();
@@ -139,13 +142,13 @@ public class GuidoFileLoader implements BotDataLoader {
   }
 
   /**
-   * Count how many links there are {@link #getLinks(int, int, LinkableDataType...)}
+   * Count how many links there are {@link #getLinks(int, int, LinkableType...)}
    *
    * @param types the types of links to get
    * @return the amount of links
    */
   @Override
-  public long countLinks(LinkableDataType... types) {
+  public long countLinks(LinkableType... types) {
     return 0;
   }
 
@@ -154,8 +157,30 @@ public class GuidoFileLoader implements BotDataLoader {
     throw new UnsupportedOperationException("There's no groups");
   }
 
+  /**
+   * Get all the created groups but only the information of them
+   *
+   * @param page the page of groups to see
+   * @param size the size of the groups per page
+   * @return the created groups
+   */
   @Override
-  public @NotNull Map<Integer, LinkableData> getLeaderboard(
+  public @NotNull Collection<GroupInfo> getGroupsInfo(int page, int size) {
+    return new HashSet<>();
+  }
+
+  /**
+   * Get how many groups there are
+   *
+   * @return the amount of groups that there is
+   */
+  @Override
+  public long countGroups() {
+    return 0;
+  }
+
+  @Override
+  public @NotNull Map<Integer, LinkableInfo> getLeaderboard(
       @NotNull Ladder ladder, int page, int size) {
     return new HashMap<>();
   }
@@ -170,9 +195,9 @@ public class GuidoFileLoader implements BotDataLoader {
    * @return the leaderboard
    */
   @Override
-  public @NotNull Map<Integer, LinkableData> getLeaderboard(
+  public @NotNull Map<Integer, LinkableInfo> getLeaderboard(
       @NotNull String stat, int page, int size, boolean inverted) {
-    return null;
+    return new HashMap<>();
   }
 
   /**
@@ -184,29 +209,29 @@ public class GuidoFileLoader implements BotDataLoader {
    * @return the collection of matches
    */
   @Override
-  public @NotNull Collection<Match> getMatches(
+  public @NotNull Collection<MatchInfo> getMatches(
       int page, int size, @NotNull MatchStatus... statuses) {
     return new HashSet<>();
   }
 
   @Override
-  public @NotNull BotLinkableData getDiscordUserData(long userId) {
+  public @NotNull BotLinkable getDiscordUserData(long userId) {
     throw new UnsupportedOperationException("Linked data cannot be find using file loader");
   }
 
   @Override
-  public @NotNull BotLinkableData getMemberData(long userId, long guildId) {
+  public @NotNull BotLinkable getMemberData(long userId, long guildId) {
     throw new UnsupportedOperationException("Link data cannot be find using file loader");
   }
 
   @Override
-  public @NotNull Collection<LinkableData> getLinks(@NotNull UserData user) {
+  public @NotNull Collection<Linkable> getLinks(@NotNull UserData user) {
     throw new UnsupportedOperationException("Links data cannot be find using file loader");
   }
 
   @Override
-  public @NotNull Collection<LinkableData> getLinks(
-      @NotNull UserData user, @NotNull LinkableDataType... types) {
+  public @NotNull Collection<Linkable> getLinks(
+      @NotNull UserData user, @NotNull LinkableType... types) {
     throw new UnsupportedOperationException("Links data cannot be find using file loader");
   }
 
@@ -219,8 +244,7 @@ public class GuidoFileLoader implements BotDataLoader {
    * @return the collection of links
    */
   @Override
-  public Collection<LinkableData> getLinks(
-      int page, int limit, @NotNull LinkableDataType... types) {
+  public Collection<LinkableInfo> getLinks(int page, int limit, @NotNull LinkableType... types) {
     return new ArrayList<>();
   }
 
@@ -231,7 +255,7 @@ public class GuidoFileLoader implements BotDataLoader {
   }
 
   @Override
-  public @NotNull Collection<BotLinkableData> getDiscordData(long userId) {
+  public @NotNull Collection<BotLinkable> getDiscordData(long userId) {
     throw new UnsupportedOperationException("Links data cannot be find using file loader");
   }
 

@@ -3,15 +3,15 @@ package me.googas.bot.core.handlers.decorations;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import me.googas.api.links.LinkableData;
-import me.googas.api.links.LinkableDataType;
+import me.googas.api.links.Linkable;
+import me.googas.api.links.LinkableType;
 import me.googas.api.matches.Ladder;
 import me.googas.api.matches.Match;
 import me.googas.api.matches.Team;
 import me.googas.api.matches.TeamMember;
 import me.googas.bot.api.events.match.MatchStatusUpdatedEvent;
 import me.googas.bot.api.types.BotGuild;
-import me.googas.bot.api.types.BotLinkableData;
+import me.googas.bot.api.types.BotLinkable;
 import me.googas.bot.core.Guido;
 import me.googas.bot.core.handlers.GuidoEventHandler;
 import me.googas.commons.events.ListenPriority;
@@ -39,9 +39,9 @@ public class DecorationsHandler implements GuidoEventHandler {
       if (ladder != null) {
         for (Team team : event.getMatch().getTeams()) {
           for (TeamMember teamMember : team.getMembers()) {
-            LinkableData data = teamMember.getLinkInfo().getLink();
-            if (data instanceof BotLinkableData) {
-              Member member = ((BotLinkableData) data).getDiscordMember(guildId);
+            Linkable data = teamMember.getLinkInfo().getLink();
+            if (data instanceof BotLinkable) {
+              Member member = ((BotLinkable) data).getDiscordMember(guildId);
               if (member != null) {
                 float elo = data.getElo(ladder);
                 float global = data.getGlobalElo(guildData);
@@ -66,10 +66,10 @@ public class DecorationsHandler implements GuidoEventHandler {
                       member.getEffectiveName().contains(" - ")
                           ? member.getEffectiveName().split(" - ")[1]
                           : member.getEffectiveName();
-                  if (data.getType() == LinkableDataType.MINECRAFT) {
+                  if (data.getType() == LinkableType.MINECRAFT) {
                     nick = data.getSingle();
                   } else {
-                    Collection<LinkableData> links = data.getLinks(LinkableDataType.MINECRAFT);
+                    Collection<Linkable> links = data.getLinks(LinkableType.MINECRAFT);
                     if (!links.isEmpty()) {
                       nick = links.iterator().next().getSingle();
                     }

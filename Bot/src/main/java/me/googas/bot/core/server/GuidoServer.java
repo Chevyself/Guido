@@ -2,6 +2,7 @@ package me.googas.bot.core.server;
 
 import com.google.gson.GsonBuilder;
 import java.io.IOException;
+import java.util.logging.Level;
 import me.googas.api.links.LinkableInfo;
 import me.googas.api.matches.Team;
 import me.googas.api.matches.TeamMember;
@@ -16,6 +17,7 @@ import me.googas.bot.adapters.ValuesMapAdapter;
 import me.googas.bot.api.events.server.GuidoServerConnectionEvent;
 import me.googas.bot.api.events.server.GuidoServerDisconnectionEvent;
 import me.googas.bot.api.server.BotServer;
+import me.googas.bot.core.Guido;
 import me.googas.bot.core.server.receptors.GroupReceptors;
 import me.googas.bot.core.server.receptors.LadderReceptors;
 import me.googas.bot.core.server.receptors.LinkReceptors;
@@ -23,9 +25,9 @@ import me.googas.bot.core.server.receptors.LinkedDataReceptors;
 import me.googas.bot.core.server.receptors.MatchReceptors;
 import me.googas.bot.core.server.receptors.MinecraftDataReceptors;
 import me.googas.bot.core.server.receptors.QueueReceptors;
+import me.googas.bot.core.server.receptors.SecurityReceptors;
 import me.googas.bot.core.types.maps.GuidoLinkedValuesMap;
 import me.googas.bot.core.types.maps.GuidoValuesMap;
-import me.googas.bot.core.util.console.Console;
 import me.googas.messaging.Request;
 import me.googas.messaging.api.Message;
 import me.googas.messaging.json.adapters.MessageDeserializer;
@@ -49,7 +51,9 @@ public class GuidoServer extends JsonSocketServer implements BotServer {
   public GuidoServer(int port, long timeout) throws IOException {
     super(
         port,
-        throwable -> Console.exception(throwable, "An exception was cached in the socket server"),
+        throwable ->
+            Guido.getLogger()
+                .log(Level.SEVERE, throwable, () -> "An exception was cached in the socket server"),
         null,
         new GsonBuilder()
             // Required by Commons-Communication
@@ -74,6 +78,7 @@ public class GuidoServer extends JsonSocketServer implements BotServer {
         new MatchReceptors(),
         new MinecraftDataReceptors(),
         new QueueReceptors(),
+        new SecurityReceptors(),
         this.authenticator);
   }
 
@@ -81,25 +86,17 @@ public class GuidoServer extends JsonSocketServer implements BotServer {
   protected void onRemove(@NotNull JsonClientThread client) {
     this.authenticator.remove(client);
     new GuidoServerDisconnectionEvent(this, client).call();
-    Console.debug(client + " has disconnected");
-    Console.debug("Threads currently running " + Thread.getAllStackTraces().keySet());
   }
 
   @Override
   protected void onConnection(@NotNull JsonClientThread client) {
     this.authenticator.add(client);
     new GuidoServerConnectionEvent(this, client).call();
-    Console.debug(client + " has connected");
-    Console.debug("Threads currently running " + Thread.getAllStackTraces().keySet());
   }
 
   @Override
   public void close() throws IOException {
-    this.sendRequest(
-        new Request<>(Boolean.class, "disconnected"),
-        (client, disconnected) -> {
-          Console.debug(client + " has been disconnected " + disconnected);
-        });
+    this.sendRequest(new Request<>(Boolean.class, "disconnected"), (client, disconnected) -> {});
     super.close();
   }
 

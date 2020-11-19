@@ -1,6 +1,7 @@
 package com.starfishst.bungee.core.client;
 
 import com.starfishst.bungee.api.Guido;
+import com.starfishst.bungee.core.listeners.GroupListener;
 import java.io.IOException;
 import me.googas.api.client.Client;
 import me.googas.commons.maps.Maps;
@@ -17,7 +18,7 @@ public class BungeeClient extends Client {
    * @param token the token
    */
   public BungeeClient(@NotNull String token) {
-    super(token, "104.243.43.175", 3000);
+    super(token, "45.43.24.28", 3000);
     this.addReceptors(new BungeeReceptors());
   }
 
@@ -42,6 +43,7 @@ public class BungeeClient extends Client {
           new Request<>(
               Boolean.class, "client-info", Maps.singleton("info", Maps.singleton("bungee", true))),
           saved -> {});
+      Guido.getListener(GroupListener.class).loadGroups(null);
     }
   }
 }

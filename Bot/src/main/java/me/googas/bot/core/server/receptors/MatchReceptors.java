@@ -7,7 +7,6 @@ import me.googas.bot.api.types.BotMatch;
 import me.googas.bot.core.Guido;
 import me.googas.bot.core.handlers.matches.MatchMakingHandler;
 import me.googas.bot.core.types.GuidoTeam;
-import me.googas.bot.core.util.console.Console;
 import me.googas.messaging.json.JsonMessenger;
 import me.googas.messaging.json.ParamName;
 import me.googas.messaging.json.Receptor;
@@ -24,8 +23,7 @@ public class MatchReceptors {
    */
   @Receptor("match")
   public Match match(@ParamName("id") String id) {
-    BotMatch match = Guido.getDataLoader().getMatch(id);
-    return match;
+    return Guido.getDataLoader().getMatch(id);
   }
 
   /**
@@ -57,13 +55,11 @@ public class MatchReceptors {
     BotMatch match = Guido.getDataLoader().getMatch(id);
     if (match != null) {
       if (team.getId() == -3) {
-        Console.info("Adding team " + team + " with a random id");
         GuidoTeam guidoTeam = new GuidoTeam(match.nextTeamId(), team.getMembers(), team.getName());
         if (match.addTeam(guidoTeam)) {
           return guidoTeam.getId();
         }
       } else {
-        Console.info("Adding team " + team + " with the id " + id);
         if (match.addTeam(team)) {
           return team.getId();
         }
@@ -122,6 +118,33 @@ public class MatchReceptors {
     BotMatch match = Guido.getDataLoader().getMatch(id);
     if (match != null) {
       if (winners != null) {
+        Team team = match.getTeam(winners);
+        if (team != null) {
+          match.finish(team);
+          return true;
+        } else {
+          return false;
+        }
+      } else {
+        match.finish(null);
+        return true;
+      }
+    }
+    return false;
+  }
+
+  /**
+   * Finishes a match
+   *
+   * @param id the id of the match to finish
+   * @param winners the id of the winners of the match
+   * @return whether the match was finished
+   */
+  @Receptor("match-finish-id")
+  public boolean finish(@ParamName("id") String id, @ParamName("winners") int winners) {
+    BotMatch match = Guido.getDataLoader().getMatch(id);
+    if (match != null) {
+      if (winners != -1) {
         Team team = match.getTeam(winners);
         if (team != null) {
           match.finish(team);

@@ -101,7 +101,7 @@ public class LadderCommands {
     if (guild.getLadder(name) != null) {
       return new Result(ResultType.USAGE, locale.get("ladders.make.exists", placeholders));
     } else {
-      guild.getLadders().add(new GuidoLadder(name, players, base, new GuidoValuesMap()));
+      guild.getLadders().add(new GuidoLadder(name, players, base, 2, new GuidoValuesMap()));
       return new Result(locale.get("ladders.make.success", placeholders));
     }
   }

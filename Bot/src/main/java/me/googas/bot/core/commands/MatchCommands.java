@@ -23,7 +23,7 @@ import me.googas.api.matches.TeamMember;
 import me.googas.api.matches.TeamRole;
 import me.googas.api.user.UserData;
 import me.googas.bot.api.types.BotGuild;
-import me.googas.bot.api.types.BotLinkableData;
+import me.googas.bot.api.types.BotLinkable;
 import me.googas.bot.api.types.BotMatch;
 import me.googas.bot.core.Guido;
 import me.googas.bot.core.handlers.matches.MatchMakingHandler;
@@ -72,7 +72,7 @@ public class MatchCommands {
     Set<TeamMember> members2 = new HashSet<>();
     for (int i = 0; i < message.getMentionedMembers().size(); i++) {
       Member mentioned = message.getMentionedMembers().get(i);
-      BotLinkableData member =
+      BotLinkable member =
           Guido.getDataLoader()
               .getMemberData(mentioned.getIdLong(), mentioned.getGuild().getIdLong());
       if (i > ladder.playersPerTeam() - 1) {
@@ -181,7 +181,7 @@ public class MatchCommands {
     Collection<Match> playing;
     List<String> matchesId = new ArrayList<>();
     if (member != null) {
-      BotLinkableData link =
+      BotLinkable link =
           Guido.getDataLoader().getMemberData(member.getIdLong(), member.getGuild().getIdLong());
       UserData linkedUser = link.getLinkedUser();
       if (linkedUser != null) {
@@ -206,10 +206,11 @@ public class MatchCommands {
     }
   }
 
-  /**
-   * Makes all the PGM matches look for servers
-   */
-  @Command(aliases = "look", description = "Makes the active PGM matches look for servers", permission = @Perm(node = "user:guido.look"))
+  /** Makes all the PGM matches look for servers */
+  @Command(
+      aliases = "look",
+      description = "Makes the active PGM matches look for servers",
+      permission = @Perm(node = "user:guido.look"))
   public void look() {
     Guido.getHandler(PGMMatchHandler.class).lookForServers();
   }

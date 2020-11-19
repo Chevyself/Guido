@@ -3,6 +3,8 @@ package com.starfishst.bukkit.listeners.pgm.matches;
 import com.starfishst.bukkit.AnnotatedCommand;
 import com.starfishst.bukkit.api.Guido;
 import com.starfishst.bukkit.api.events.GuidoListener;
+import com.starfishst.bukkit.client.BukkitBooleanRequest;
+import com.starfishst.bukkit.client.BukkitRequest;
 import com.starfishst.bukkit.commands.ReadyCommand;
 import com.starfishst.bukkit.listeners.pgm.matches.creation.PickTeamSelection;
 import com.starfishst.bukkit.listeners.pgm.matches.creation.RandomTeamCreation;
@@ -11,24 +13,24 @@ import com.starfishst.bukkit.utils.BukkitUtils;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.ExecutionException;
 import java.util.logging.Logger;
-import me.googas.api.client.data.MatchImpl;
-import me.googas.api.links.LinkableInfo;
+import me.googas.api.client.data.SimpleMatch;
+import me.googas.api.client.data.SimpleValuesMap;
 import me.googas.api.matches.Ladder;
 import me.googas.commons.RandomUtils;
 import me.googas.commons.maps.Maps;
-import me.googas.messaging.Request;
 import me.googas.messaging.api.MessengerListenFailException;
 import me.googas.messaging.json.ParamName;
 import me.googas.messaging.json.Receptor;
 import me.googas.messaging.json.client.JsonClient;
 import org.bukkit.Bukkit;
 import org.bukkit.Server;
+import org.bukkit.command.CommandSender;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.jetbrains.annotations.NotNull;
@@ -38,12 +40,10 @@ import tc.oc.pgm.api.map.MapInfo;
 import tc.oc.pgm.api.match.Match;
 import tc.oc.pgm.api.match.MatchManager;
 import tc.oc.pgm.api.match.event.MatchFinishEvent;
-import tc.oc.pgm.api.match.event.MatchLoadEvent;
 import tc.oc.pgm.api.party.Competitor;
 import tc.oc.pgm.api.party.Party;
 import tc.oc.pgm.api.player.MatchPlayer;
 import tc.oc.pgm.api.player.event.MatchPlayerAddEvent;
-import tc.oc.pgm.cycle.CycleMatchModule;
 
 /** Creates matches for the bot */
 public class PGMMatchMakingListener implements GuidoListener {
@@ -58,21 +58,11 @@ public class PGMMatchMakingListener implements GuidoListener {
           .append("pick", new PickTeamSelection())
           .build();
 
-  /** The id of the match that is being hosted */
-  @Nullable private String matchId;
+  /** The list of matches hosted by the server */
+  @NotNull private final List<HostedMatch> matches = new ArrayList<>();
 
-  /** The participants of the match */
-  @NotNull private final Collection<LinkableInfo> participants = new HashSet<>();
   /** The users to add in case they could not be added */
   @NotNull private final Map<UUID, Party> toAdd = new HashMap<>();
-  /** The next map which will be played */
-  @Nullable private MapInfo nextMap;
-  /** The match id of the pgm match */
-  @Nullable private String pgmMatchId;
-  /** The way to select teams */
-  @NotNull private String teamSelection = "random";
-  /** The amount of players per team */
-  private int perTeam = 0;
 
   /**
    * Checks whether this match maker can host a match
@@ -81,7 +71,7 @@ public class PGMMatchMakingListener implements GuidoListener {
    * @return true if the match can be hosted
    */
   @Receptor("can-host")
-  public boolean canHost(@ParamName("match") MatchImpl match) {
+  public boolean canHost(@ParamName("match") SimpleMatch match) {
     this.wakeUpServer();
     Logger logger = Guido.getLogger();
     String type = match.getDetails().getOr("type", String.class, "none");
@@ -96,13 +86,11 @@ public class PGMMatchMakingListener implements GuidoListener {
       if (connection != null) {
         try {
           Ladder ladder =
-              connection.sendRequest(
-                  new Request<>(
+              new BukkitRequest<>(
                       Ladder.class,
                       "ladder",
-                      Maps.objects("name", ladderName)
-                          .append("guild", match.getGuildId())
-                          .build()));
+                      Maps.objects("name", ladderName).append("guild", match.getGuildId()).build())
+                  .send();
           if (ladder != null) {
             logger.info("Ladder exists if there's maps then the match will be hosted");
             return !this.getSuitableMaps(ladder).isEmpty();
@@ -153,57 +141,69 @@ public class PGMMatchMakingListener implements GuidoListener {
    * @return the ip of the server if it can be hosted
    */
   @Receptor("host")
-  public String host(@ParamName("match") MatchImpl match) {
-    Logger logger = Guido.getLogger();
+  public String host(@ParamName("match") SimpleMatch match) {
     String type = match.getDetails().getOr("type", String.class, "none");
     String ladderName = match.getDetails().get("ladder", String.class);
-    if (type.equalsIgnoreCase("PGM")) {
+    PGM pgm = PGM.get();
+    if (type.equalsIgnoreCase("PGM") && ladderName != null) {
       JsonClient connection = Guido.getClient().getConnection();
       if (connection != null) {
         try {
           Ladder ladder =
-              connection.sendRequest(
-                  new Request<>(
+              new BukkitRequest<>(
                       Ladder.class,
                       "ladder",
-                      Maps.objects("name", ladderName)
-                          .append("guild", match.getGuildId())
-                          .build()));
+                      Maps.objects("name", ladderName).append("guild", match.getGuildId()).build())
+                  .send();
           if (ladder != null) {
             List<MapInfo> maps = this.getSuitableMaps(ladder);
             if (!maps.isEmpty()) {
               MapInfo random = RandomUtils.getRandom(maps);
-              PGM.get().getMapOrder().setNextMap(random);
-              Match next = this.getCurrentPgm();
-              if (next != null) {
-                next.needModule(CycleMatchModule.class).cycleNow();
-              } else {
-                PGM.get().getMatchManager().createMatch("");
-              }
-              this.nextMap = random;
-              this.perTeam = ladder.playersPerTeam();
-              this.participants.addAll(match.getParticipants());
-              this.matchId = match.getId();
-              this.teamSelection =
-                  ladder.getOptions().getOr("team-selection", String.class, "random");
-              connection.sendRequest(
-                  new Request<>(
-                      Boolean.class,
+              Match loaded = pgm.getMatchManager().createMatch(random.getId()).get();
+              HostedMatch hostedMatch =
+                  new HostedMatch(
+                      match.getId(),
+                      ladderName,
+                      match.getParticipants(),
+                      random,
+                      loaded.getId(),
+                      new SimpleValuesMap(
+                              "team-selection",
+                              ladder.getOptions().getOr("team-selection", String.class, "random"))
+                          .put("players-per-team", ladder.playersPerTeam()));
+              this.matches.add(hostedMatch);
+              new BukkitBooleanRequest(
                       "match-remove-team-by-id",
-                      Maps.objects("id", this.matchId).append("team", -2).build()),
-                  bol -> {
-                    logger.info("Was the team participants removed? " + bol);
-                  });
+                      Maps.objects("id", match.getId()).append("team", -2).build())
+                  .send(bol -> {});
+              TeamCreation teamCreation =
+                  this.creator.get(
+                      hostedMatch.getDetails().getOr("team-selection", String.class, "random"));
+              teamCreation.createTeams(this, hostedMatch, loaded);
               Server server = Bukkit.getServer();
               return server.getIp() + ":" + server.getPort();
             }
           }
-        } catch (MessengerListenFailException e) {
+        } catch (MessengerListenFailException | InterruptedException | ExecutionException e) {
           return null;
         }
       }
     }
     return null;
+  }
+
+  /**
+   * Get the map that is going to be played in the match
+   *
+   * @param pgm the pgm instance to set the next map
+   * @param maps the maps available for the match
+   * @return the random selected map
+   */
+  @NotNull
+  public MapInfo getMatchMap(@NotNull PGM pgm, @NotNull List<MapInfo> maps) {
+    MapInfo random = RandomUtils.getRandom(maps);
+    pgm.getMapOrder().setNextMap(random);
+    return random;
   }
 
   public void add(@NotNull UUID uuid, @NotNull Party party) {
@@ -213,6 +213,33 @@ public class PGMMatchMakingListener implements GuidoListener {
       party.getMatch().setParty(player, party);
     }
     this.toAdd.put(uuid, party);
+  }
+
+  /**
+   * Get a hosted match by its id
+   *
+   * @param matchId the id of the match to get
+   * @return the match if found null otherwise
+   */
+  @Nullable
+  public HostedMatch getMatch(@NotNull String matchId) {
+    for (HostedMatch match : this.matches) {
+      if (match.getId().equals(matchId)) return match;
+    }
+    return null;
+  }
+
+  /**
+   * Get the match where a command sender is participating
+   *
+   * @param sender the sendedr to get the match
+   */
+  @Nullable
+  public HostedMatch getMatch(@NotNull CommandSender sender) {
+    for (HostedMatch match : this.matches) {
+      if (match.isParticipating(sender)) return match;
+    }
+    return null;
   }
 
   /**
@@ -227,23 +254,6 @@ public class PGMMatchMakingListener implements GuidoListener {
       return matches.next();
     }
     return null;
-  }
-
-  @EventHandler
-  public void onMatchLoadedEvent(MatchLoadEvent event) {
-    Logger logger = Guido.getLogger();
-    Match match = event.getMatch();
-    JsonClient connection = Guido.getClient().getConnection();
-
-    logger.info(
-        "Match loaded is it a guido match? "
-            + (connection != null && match.getMap().equals(this.nextMap) && this.matchId != null));
-    if (connection != null && match.getMap().equals(this.nextMap) && this.matchId != null) {
-      this.pgmMatchId = match.getId();
-      logger.info("PGM Match id: " + this.pgmMatchId + " and " + this.matchId);
-      TeamCreation teamCreation = this.creator.get(this.teamSelection);
-      teamCreation.createTeams(this, event.getMatch());
-    }
   }
 
   /**
@@ -268,34 +278,33 @@ public class PGMMatchMakingListener implements GuidoListener {
   @EventHandler
   public void onMatchFinish(MatchFinishEvent event) {
     JsonClient connection = Guido.getClient().getConnection();
-    Guido.getLogger()
-        .info("Saving match " + event.getMatch() + " current match " + this.pgmMatchId);
-    if (event.getMatch().getId().equals(this.pgmMatchId)) {
-      String winnerName = null;
-      for (Competitor winner : event.getWinners()) {
-        winnerName = winner.getNameLegacy();
-        break;
-      }
-      if (connection != null) {
-        HashMap<String, Object> map = new HashMap<>();
-        map.put("id", this.matchId);
-        // TODO this method should not use the winners name but the id of the team!
-        map.put("winners", winnerName);
-        connection.sendRequest(
-            new Request<>(Boolean.class, "match-finish", map),
-            bol -> {
-              Guido.getLogger().info("Tried to save " + this.matchId + " saved? " + bol);
-            });
-      }
+    HostedMatch hostedMatch = this.getMatchByPgm(event.getMatch().getId());
+    if (hostedMatch == null) return;
+    int winnersId = hostedMatch.getTeamId(this.getWinnersId(event));
+    if (connection != null) {
+      new BukkitBooleanRequest(
+              "match-finish-id",
+              Maps.objects("id", hostedMatch.getId()).append("winners", winnersId))
+          .send(bol -> {});
+      this.matches.remove(hostedMatch);
     }
-
-    this.matchId = null;
-    this.nextMap = null;
-    this.pgmMatchId = null;
-    this.participants.clear();
     this.toAdd.clear();
     this.clearTeamsReady();
     this.cleanCreators();
+  }
+
+  /**
+   * Get the id of the team that won the match
+   *
+   * @param event the event of a match finishing
+   * @return the id of the winners of the match
+   */
+  @Nullable
+  public String getWinnersId(@NotNull MatchFinishEvent event) {
+    for (Competitor winner : event.getWinners()) {
+      return winner.getId();
+    }
+    return null;
   }
 
   /** Clean the team creators */
@@ -305,6 +314,7 @@ public class PGMMatchMakingListener implements GuidoListener {
     }
   }
 
+  /** Clear all the teams that are ready. This is used so the command /ready can be used */
   public void clearTeamsReady() {
     for (AnnotatedCommand command : Guido.getCommandManager().getCommands()) {
       if (command.getClazz() instanceof ReadyCommand) {
@@ -322,28 +332,28 @@ public class PGMMatchMakingListener implements GuidoListener {
     return "match-making";
   }
 
-  @Nullable
-  public String getMatchId() {
-    return this.matchId;
-  }
-
-  @NotNull
-  public Collection<LinkableInfo> getParticipants() {
-    return this.participants;
-  }
-
   @NotNull
   public Map<UUID, Party> getToAdd() {
     return this.toAdd;
   }
 
-  public int getPerTeam() {
-    return this.perTeam;
-  }
-
   @Nullable
   public TeamCreation getCreation(@NotNull String key) {
     return this.creator.get(key);
+  }
+
+  /**
+   * Get a match by the id of the pgm match id that is hosting it
+   *
+   * @param pgmId the id of the pgm match
+   * @return the match if found else null
+   */
+  @Nullable
+  public HostedMatch getMatchByPgm(@NotNull String pgmId) {
+    for (HostedMatch match : this.matches) {
+      if (match.getPgmId().equals(pgmId)) return match;
+    }
+    return null;
   }
 
   /**

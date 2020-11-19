@@ -5,6 +5,7 @@ import com.starfishst.bukkit.api.dependencies.Dependency;
 import com.starfishst.bukkit.api.events.GuidoListener;
 import com.starfishst.bukkit.commands.PickCommands;
 import com.starfishst.bukkit.commands.ReadyCommand;
+import com.starfishst.bukkit.commands.providers.pgm.HostedMatchProvider;
 import com.starfishst.bukkit.commands.providers.pgm.PartyProvider;
 import com.starfishst.bukkit.commands.providers.pgm.PlayerInfoProvider;
 import com.starfishst.bukkit.commands.providers.pgm.TeamMemberProvider;
@@ -60,6 +61,10 @@ public class PGMDependency implements Dependency {
    */
   @Override
   public Collection<IContextualProvider<?, CommandContext>> getProviders() {
-    return Lots.list(new PartyProvider(), new PlayerInfoProvider(), new TeamMemberProvider());
+    return Lots.list(
+        new HostedMatchProvider(),
+        new PartyProvider(),
+        new PlayerInfoProvider(),
+        new TeamMemberProvider());
   }
 }
