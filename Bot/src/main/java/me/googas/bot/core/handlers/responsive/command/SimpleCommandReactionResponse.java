@@ -1,17 +1,17 @@
 package me.googas.bot.core.handlers.responsive.command;
 
-import org.jetbrains.annotations.NotNull;
+import lombok.NonNull;
 
 public class SimpleCommandReactionResponse implements ExecuteCommandReactionResponse {
 
   /** The unicode or the name of the mote */
-  @NotNull private final String unicode;
+  @NonNull private final String unicode;
 
   /** The command that is being executed */
-  @NotNull private final String command;
+  @NonNull private final String command;
 
   /** The arguments to execute in the command execution */
-  @NotNull private final String[] arguments;
+  @NonNull private final String[] arguments;
 
   /**
    * Create the reaction response
@@ -21,7 +21,7 @@ public class SimpleCommandReactionResponse implements ExecuteCommandReactionResp
    * @param arguments the arguments to include upon execution
    */
   public SimpleCommandReactionResponse(
-      @NotNull String command, @NotNull String unicode, @NotNull String[] arguments) {
+      @NonNull String command, @NonNull String unicode, @NonNull String[] arguments) {
     this.command = command;
     this.unicode = unicode;
     this.arguments = arguments;
@@ -33,7 +33,7 @@ public class SimpleCommandReactionResponse implements ExecuteCommandReactionResp
   }
 
   @Override
-  public @NotNull String getUnicode() {
+  public @NonNull String getUnicode() {
     return this.unicode;
   }
 
@@ -43,7 +43,7 @@ public class SimpleCommandReactionResponse implements ExecuteCommandReactionResp
    * @return the name of the command to execute
    */
   @Override
-  public @NotNull String getCommandName() {
+  public @NonNull String getCommandName() {
     return this.command;
   }
 
@@ -52,7 +52,7 @@ public class SimpleCommandReactionResponse implements ExecuteCommandReactionResp
    *
    * @return the arguments
    */
-  @NotNull
+  @NonNull
   @Override
   public String[] getArguments() {
     return this.arguments;

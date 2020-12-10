@@ -1,7 +1,7 @@
 package me.googas.bot.api.events.data.guild;
 
+import lombok.NonNull;
 import me.googas.bot.api.types.BotGuild;
-import org.jetbrains.annotations.NotNull;
 
 /** Called when the guild data is unloaded */
 public class BotGuildUnloadedEvent extends BotGuildEvent {
@@ -11,7 +11,7 @@ public class BotGuildUnloadedEvent extends BotGuildEvent {
    *
    * @param data the guild data that has been loaded
    */
-  public BotGuildUnloadedEvent(@NotNull BotGuild data) {
+  public BotGuildUnloadedEvent(@NonNull BotGuild data) {
     super(data);
   }
 }

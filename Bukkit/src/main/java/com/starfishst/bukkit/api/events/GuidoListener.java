@@ -2,10 +2,10 @@ package com.starfishst.bukkit.api.events;
 
 import com.starfishst.bukkit.api.Guido;
 import com.starfishst.bukkit.api.config.GuidoListenerSettings;
+import lombok.NonNull;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.Plugin;
-import org.jetbrains.annotations.NotNull;
 
 /** A listener for the guido plugin */
 public interface GuidoListener extends Listener {
@@ -15,7 +15,7 @@ public interface GuidoListener extends Listener {
    *
    * @param plugin the plugin to register the listener to
    */
-  default void register(@NotNull Plugin plugin) {
+  default void register(@NonNull Plugin plugin) {
     plugin.getServer().getPluginManager().registerEvents(this, plugin);
   }
 
@@ -33,7 +33,7 @@ public interface GuidoListener extends Listener {
    *
    * @return the name of the listener
    */
-  @NotNull
+  @NonNull
   String getName();
 
   /**
@@ -50,7 +50,7 @@ public interface GuidoListener extends Listener {
    *
    * @return the settings of this listener
    */
-  @NotNull
+  @NonNull
   default GuidoListenerSettings getSettings() {
     return Guido.getConfiguration().getListenerSettings(this);
   }

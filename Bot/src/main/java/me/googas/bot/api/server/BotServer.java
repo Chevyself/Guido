@@ -1,8 +1,8 @@
 package me.googas.bot.api.server;
 
+import lombok.NonNull;
 import me.googas.bot.core.server.GuidoAuthenticator;
 import me.googas.messaging.api.Server;
-import org.jetbrains.annotations.NotNull;
 
 /** An extension of server */
 public interface BotServer extends Server {
@@ -12,6 +12,6 @@ public interface BotServer extends Server {
    *
    * @return the guido authenticator
    */
-  @NotNull
+  @NonNull
   GuidoAuthenticator getAuthenticator();
 }

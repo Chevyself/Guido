@@ -5,7 +5,9 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
+import lombok.NonNull;
 import me.googas.api.discord.GuildData;
+import me.googas.api.matches.Ladder;
 import me.googas.api.matches.Match;
 import me.googas.api.matches.MatchStatus;
 import me.googas.api.matches.Team;
@@ -13,29 +15,27 @@ import me.googas.api.utility.ValuesMap;
 import me.googas.commons.builder.ToStringBuilder;
 import me.googas.commons.time.Time;
 import me.googas.commons.time.Unit;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 /** Implementation for match */
 public class SimpleMatch implements Match {
 
   /** The id of the match */
-  @NotNull private final String id;
+  @NonNull private final String id;
 
   /** The id of the match where it is happening */
   private final long guildId;
 
   /** The teams that are playing the match */
-  @NotNull private final Set<Team> teams;
+  @NonNull private final Set<Team> teams;
 
   /** The id of the team winners of the match */
   private final int winners;
 
   /** The details of the match */
-  @NotNull private final ValuesMap details;
+  @NonNull private final ValuesMap details;
 
   /** The status of the match */
-  @NotNull private final MatchStatus status;
+  @NonNull private final MatchStatus status;
 
   /**
    * Create the match
@@ -48,12 +48,12 @@ public class SimpleMatch implements Match {
    * @param status the status of the match
    */
   public SimpleMatch(
-      @NotNull String id,
+      @NonNull String id,
       long guildId,
-      @NotNull Set<Team> teams,
+      @NonNull Set<Team> teams,
       int winners,
-      @NotNull ValuesMap details,
-      @NotNull MatchStatus status) {
+      @NonNull ValuesMap details,
+      @NonNull MatchStatus status) {
     this.id = id;
     this.guildId = guildId;
     this.teams = teams;
@@ -67,8 +67,18 @@ public class SimpleMatch implements Match {
     this("", -1, new HashSet<>(), -1, new SimpleValuesMap(), MatchStatus.FINISHED);
   }
 
+  /**
+   * Get the ladder in which the match was played
+   *
+   * @return the ladder where the match was played
+   */
   @Override
-  public @NotNull String getId() {
+  public Ladder getLadder() {
+    return null;
+  }
+
+  @Override
+  public @NonNull String getId() {
     return this.id;
   }
 
@@ -78,44 +88,44 @@ public class SimpleMatch implements Match {
   }
 
   @Override
-  public @NotNull Collection<Team> getTeams() {
+  public @NonNull Collection<Team> getTeams() {
     return Collections.unmodifiableSet(this.teams);
   }
 
   @Override
-  public @Nullable Team getWinners() {
+  public Team getWinners() {
     return this.getTeam(this.id);
   }
 
   @Override
-  public @NotNull ValuesMap getDetails() {
+  public @NonNull ValuesMap getDetails() {
     return this.details;
   }
 
   @Override
-  public void setWinners(@Nullable Team winners) {}
+  public void setWinners(Team winners) {}
 
   @Override
-  public void setStatus(@NotNull MatchStatus status) {}
+  public void setStatus(@NonNull MatchStatus status) {}
 
-  @NotNull
+  @NonNull
   @Override
   public MatchStatus getStatus() {
     return this.status;
   }
 
   @Override
-  public @Nullable GuildData getGuildData() {
+  public GuildData getGuild() {
     return null;
   }
 
   @Override
-  public boolean addTeam(@NotNull Team team) {
+  public boolean addTeam(@NonNull Team team) {
     return false;
   }
 
   @Override
-  public boolean removeTeam(@NotNull Team team) {
+  public boolean removeTeam(@NonNull Team team) {
     return false;
   }
 
@@ -123,7 +133,7 @@ public class SimpleMatch implements Match {
   public void onRemove() {}
 
   @Override
-  public @NotNull Time getToRemove() {
+  public @NonNull Time getToRemove() {
     return new Time(0, Unit.SECONDS);
   }
 

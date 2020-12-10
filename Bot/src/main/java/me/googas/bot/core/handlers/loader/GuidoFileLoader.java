@@ -5,6 +5,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
+import lombok.NonNull;
 import me.googas.api.links.Linkable;
 import me.googas.api.links.LinkableInfo;
 import me.googas.api.links.LinkableType;
@@ -28,8 +29,6 @@ import me.googas.bot.api.types.BotMatch;
 import me.googas.bot.api.types.BotRole;
 import me.googas.commons.events.ListenPriority;
 import me.googas.commons.events.Listener;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 /**
  * This loader will attempt to get the data from files if it fails it will create a new instance of
@@ -42,7 +41,7 @@ public class GuidoFileLoader implements BotDataLoader {
    * @param event the event of the data being unloaded
    */
   @Listener(priority = ListenPriority.HIGHEST)
-  public void onGuildDataUnloaded(@NotNull BotGuildUnloadedEvent event) {
+  public void onGuildDataUnloaded(@NonNull BotGuildUnloadedEvent event) {
     throw new UnsupportedOperationException("Guild data cannot be find using file loader");
   }
 
@@ -52,7 +51,7 @@ public class GuidoFileLoader implements BotDataLoader {
    * @param event the event of the data being unloaded
    */
   @Listener(priority = ListenPriority.HIGHEST)
-  public void onRoleDataUnloaded(@NotNull BotRoleUnloadedEvent event) {
+  public void onRoleDataUnloaded(@NonNull BotRoleUnloadedEvent event) {
     throw new UnsupportedOperationException("Role data cannot be find using file loader");
   }
 
@@ -62,7 +61,7 @@ public class GuidoFileLoader implements BotDataLoader {
    * @param event the event of the data being unloaded
    */
   @Listener(priority = ListenPriority.HIGHEST)
-  public void onUserDataUnloaded(@NotNull UserUnloadedDataEvent event) {
+  public void onUserDataUnloaded(@NonNull UserUnloadedDataEvent event) {
     throw new UnsupportedOperationException("User data cannot be find using file loader");
   }
 
@@ -70,38 +69,37 @@ public class GuidoFileLoader implements BotDataLoader {
   public void close() {}
 
   @Override
-  public @NotNull BotGuild getGuildDataOrCreate(long id) {
+  public @NonNull BotGuild getGuildDataOrCreate(long id) {
     throw new UnsupportedOperationException("Guild data cannot be find using file loader");
   }
 
   @Override
-  public @Nullable BotGuild getGuildData(long id) {
+  public BotGuild getGuildData(long id) {
     throw new UnsupportedOperationException("Guild data cannot be find using file loader");
   }
 
   @Override
-  public @NotNull BotRole getRoleData(long id, long guildId) {
+  public @NonNull BotRole getRoleData(long id, long guildId) {
     throw new UnsupportedOperationException("Role data cannot be find using file loader");
   }
 
   @Override
-  public @Nullable UserData getUserData(@Nullable String id) {
+  public UserData getUserData(String id) {
     return null;
   }
 
   @Override
-  public @Nullable BotLinkable getLinkedData(
-      @NotNull LinkableType type, @NotNull ValuesMap identifications) {
+  public BotLinkable getLinkedData(@NonNull LinkableType type, @NonNull ValuesMap identifications) {
     throw new UnsupportedOperationException("Linked data cannot be find using file loader");
   }
 
   @Override
-  public @Nullable BotMatch getMatch(@NotNull String id) {
+  public BotMatch getMatch(@NonNull String id) {
     return null;
   }
 
   @Override
-  public long maxPageLeaderboard(@NotNull Ladder ladder, int size) {
+  public long maxPageLeaderboard(@NonNull Ladder ladder, int size) {
     return 0;
   }
 
@@ -113,20 +111,20 @@ public class GuidoFileLoader implements BotDataLoader {
    * @return the maximum page of the leaderboard
    */
   @Override
-  public long maxPageLeaderboard(@NotNull String stat, int size) {
+  public long maxPageLeaderboard(@NonNull String stat, int size) {
     return 0;
   }
 
   @Override
-  public @NotNull Collection<Match> getParticipating(
-      @NotNull LinkableType type,
-      @NotNull ValuesMap identification,
-      @NotNull MatchStatus... status) {
+  public @NonNull Collection<Match> getParticipating(
+      @NonNull LinkableType type,
+      @NonNull ValuesMap identification,
+      @NonNull MatchStatus... status) {
     return new ArrayList<>();
   }
 
   @Override
-  public @Nullable BotGroup getGroup(@NotNull String id) {
+  public BotGroup getGroup(@NonNull String id) {
     throw new UnsupportedOperationException("Groups have not been implemented yet");
   }
 
@@ -153,7 +151,7 @@ public class GuidoFileLoader implements BotDataLoader {
   }
 
   @Override
-  public @NotNull Collection<Group> getGroups() {
+  public @NonNull Collection<Group> getGroups() {
     throw new UnsupportedOperationException("There's no groups");
   }
 
@@ -165,7 +163,7 @@ public class GuidoFileLoader implements BotDataLoader {
    * @return the created groups
    */
   @Override
-  public @NotNull Collection<GroupInfo> getGroupsInfo(int page, int size) {
+  public @NonNull Collection<GroupInfo> getGroupsInfo(int page, int size) {
     return new HashSet<>();
   }
 
@@ -180,8 +178,8 @@ public class GuidoFileLoader implements BotDataLoader {
   }
 
   @Override
-  public @NotNull Map<Integer, LinkableInfo> getLeaderboard(
-      @NotNull Ladder ladder, int page, int size) {
+  public @NonNull Map<Integer, LinkableInfo> getLeaderboard(
+      @NonNull Ladder ladder, int page, int size) {
     return new HashMap<>();
   }
 
@@ -195,8 +193,8 @@ public class GuidoFileLoader implements BotDataLoader {
    * @return the leaderboard
    */
   @Override
-  public @NotNull Map<Integer, LinkableInfo> getLeaderboard(
-      @NotNull String stat, int page, int size, boolean inverted) {
+  public @NonNull Map<Integer, LinkableInfo> getLeaderboard(
+      @NonNull String stat, int page, int size, boolean inverted) {
     return new HashMap<>();
   }
 
@@ -209,29 +207,29 @@ public class GuidoFileLoader implements BotDataLoader {
    * @return the collection of matches
    */
   @Override
-  public @NotNull Collection<MatchInfo> getMatches(
-      int page, int size, @NotNull MatchStatus... statuses) {
+  public @NonNull Collection<MatchInfo> getMatches(
+      int page, int size, @NonNull MatchStatus... statuses) {
     return new HashSet<>();
   }
 
   @Override
-  public @NotNull BotLinkable getDiscordUserData(long userId) {
+  public @NonNull BotLinkable getDiscordUserData(long userId) {
     throw new UnsupportedOperationException("Linked data cannot be find using file loader");
   }
 
   @Override
-  public @NotNull BotLinkable getMemberData(long userId, long guildId) {
+  public @NonNull BotLinkable getMemberData(long userId, long guildId) {
     throw new UnsupportedOperationException("Link data cannot be find using file loader");
   }
 
   @Override
-  public @NotNull Collection<Linkable> getLinks(@NotNull UserData user) {
+  public @NonNull Collection<Linkable> getLinks(@NonNull UserData user) {
     throw new UnsupportedOperationException("Links data cannot be find using file loader");
   }
 
   @Override
-  public @NotNull Collection<Linkable> getLinks(
-      @NotNull UserData user, @NotNull LinkableType... types) {
+  public @NonNull Collection<Linkable> getLinks(
+      @NonNull UserData user, @NonNull LinkableType... types) {
     throw new UnsupportedOperationException("Links data cannot be find using file loader");
   }
 
@@ -244,23 +242,23 @@ public class GuidoFileLoader implements BotDataLoader {
    * @return the collection of links
    */
   @Override
-  public Collection<LinkableInfo> getLinks(int page, int limit, @NotNull LinkableType... types) {
+  public Collection<LinkableInfo> getLinks(int page, int limit, @NonNull LinkableType... types) {
     return new ArrayList<>();
   }
 
-  @NotNull
+  @NonNull
   @Override
-  public Collection<AuthToken> getTokens(@NotNull UserData user) {
+  public Collection<AuthToken> getTokens(@NonNull UserData user) {
     throw new UnsupportedOperationException("File loader cannot get tokens");
   }
 
   @Override
-  public @NotNull Collection<BotLinkable> getDiscordData(long userId) {
+  public @NonNull Collection<BotLinkable> getDiscordData(long userId) {
     throw new UnsupportedOperationException("Links data cannot be find using file loader");
   }
 
   @Override
-  public @Nullable AuthToken getAuthToken(@NotNull String token) {
+  public AuthToken getAuthToken(@NonNull String token) {
     throw new UnsupportedOperationException("Auth tokens cannot be find using file loader");
   }
 }

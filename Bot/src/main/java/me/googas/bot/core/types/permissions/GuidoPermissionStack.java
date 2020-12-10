@@ -3,18 +3,18 @@ package me.googas.bot.core.types.permissions;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
+import lombok.NonNull;
 import me.googas.api.permissions.Permission;
 import me.googas.api.permissions.PermissionStack;
-import org.jetbrains.annotations.NotNull;
 
 /** An implementation for permission stacks */
 public class GuidoPermissionStack implements PermissionStack {
 
   /** The context of the permission stack */
-  @NotNull private final String context;
+  @NonNull private final String context;
 
   /** The permissions inside the stack */
-  @NotNull private final Set<Permission> permissions;
+  @NonNull private final Set<Permission> permissions;
 
   /**
    * Create the permission stack
@@ -22,7 +22,7 @@ public class GuidoPermissionStack implements PermissionStack {
    * @param context the context of the stack
    * @param permissions the permissions inside the stack
    */
-  public GuidoPermissionStack(@NotNull String context, @NotNull Set<Permission> permissions) {
+  public GuidoPermissionStack(@NonNull String context, @NonNull Set<Permission> permissions) {
     this.context = context;
     this.permissions = permissions;
   }
@@ -38,7 +38,7 @@ public class GuidoPermissionStack implements PermissionStack {
    * @return the context of the permission stack
    */
   @Override
-  public @NotNull String getContext() {
+  public @NonNull String getContext() {
     return this.context;
   }
 
@@ -48,7 +48,7 @@ public class GuidoPermissionStack implements PermissionStack {
    * @return the permission that the stack has
    */
   @Override
-  public @NotNull Collection<Permission> getPermissions() {
+  public @NonNull Collection<Permission> getPermissions() {
     return this.permissions;
   }
 

@@ -1,9 +1,8 @@
 package me.googas.api.matches;
 
 import java.util.Collection;
+import lombok.NonNull;
 import me.googas.api.links.LinkableInfo;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 /** A queue is joined by players to start playing */
 public interface Queue {
@@ -14,7 +13,7 @@ public interface Queue {
    * @param data the data that will join the queue
    * @return whether the data joined
    */
-  boolean join(@NotNull LinkableInfo data);
+  boolean join(@NonNull LinkableInfo data);
 
   /**
    * Leaves the queue for certain linked data
@@ -22,7 +21,7 @@ public interface Queue {
    * @param data the data leaving the queue
    * @return if the data left the queue
    */
-  boolean leave(@NotNull LinkableInfo data);
+  boolean leave(@NonNull LinkableInfo data);
 
   /**
    * Get whether someone is waiting in the queue
@@ -30,7 +29,7 @@ public interface Queue {
    * @param data the data to check if it is waiting
    * @return true if the data is waiting inside this queue
    */
-  default boolean isWaiting(@NotNull LinkableInfo data) {
+  default boolean isWaiting(@NonNull LinkableInfo data) {
     return this.getWaiting().contains(data);
   }
 
@@ -39,7 +38,6 @@ public interface Queue {
    *
    * @return the match if the queue is ready
    */
-  @Nullable
   Match checkReady();
 
   /**
@@ -54,7 +52,7 @@ public interface Queue {
    *
    * @return the linked data
    */
-  @NotNull
+  @NonNull
   Collection<Queueable> getWaiting();
 
   /**
@@ -62,6 +60,6 @@ public interface Queue {
    *
    * @return the ladder
    */
-  @NotNull
+  @NonNull
   String getLadderName();
 }

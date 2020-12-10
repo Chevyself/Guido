@@ -1,18 +1,18 @@
 package me.googas.bot.core.types;
 
+import lombok.NonNull;
 import me.googas.api.discord.GuildData;
 import me.googas.api.matches.Ladder;
 import me.googas.api.matches.Queue;
 import me.googas.bot.core.types.maps.GuidoValuesMap;
 import me.googas.bot.core.types.queues.GuidoPGMQueue;
 import me.googas.bot.core.types.queues.GuidoQueue;
-import org.jetbrains.annotations.NotNull;
 
 /** An implementation for ladder */
 public class GuidoLadder implements Ladder {
 
   /** The name of the ladder */
-  @NotNull private final String name;
+  @NonNull private final String name;
 
   /** The players per team in the ladder */
   private final int playersPerTeam;
@@ -24,7 +24,7 @@ public class GuidoLadder implements Ladder {
   private final int teamsPerMatch;
 
   /** The options for the ladder to make each ladder unique */
-  @NotNull private final GuidoValuesMap options;
+  @NonNull private final GuidoValuesMap options;
 
   /**
    * Create the ladder
@@ -36,11 +36,11 @@ public class GuidoLadder implements Ladder {
    * @param options the options of the ladder
    */
   public GuidoLadder(
-      @NotNull String name,
+      @NonNull String name,
       int playersPerTeam,
       int baseValue,
       int teamsPerMatch,
-      @NotNull GuidoValuesMap options) {
+      @NonNull GuidoValuesMap options) {
     this.name = name;
     this.playersPerTeam = playersPerTeam;
     this.baseValue = baseValue;
@@ -54,7 +54,7 @@ public class GuidoLadder implements Ladder {
   }
 
   @Override
-  public @NotNull Queue createQueue(@NotNull GuildData data) {
+  public @NonNull Queue createQueue(@NonNull GuildData data) {
     String type = this.getOptions().getOr("type", String.class, "none");
     switch (type) {
       case "pgm":
@@ -70,12 +70,12 @@ public class GuidoLadder implements Ladder {
    * @return the name of the ladder
    */
   @Override
-  public @NotNull String getName() {
+  public @NonNull String getName() {
     return this.name;
   }
 
   @Override
-  public @NotNull GuidoValuesMap getOptions() {
+  public @NonNull GuidoValuesMap getOptions() {
     return this.options;
   }
 

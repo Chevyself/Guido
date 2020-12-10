@@ -1,6 +1,6 @@
 package me.googas.api.permissions;
 
-import org.jetbrains.annotations.NotNull;
+import lombok.NonNull;
 
 /** This object represents a permission. A permission contains a node and whether it is enabled */
 public interface Permission {
@@ -10,7 +10,7 @@ public interface Permission {
    *
    * @return the node if the permission
    */
-  @NotNull
+  @NonNull
   String getNode();
 
   /**
@@ -27,7 +27,7 @@ public interface Permission {
    *
    * @return the node with the string appended
    */
-  @NotNull
+  @NonNull
   default String getNodeAppended() {
     return this.isEnabled() ? this.getNode() : "-" + this.getNode();
   }

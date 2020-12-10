@@ -3,8 +3,10 @@ package me.googas.bot.api.types;
 import com.starfishst.jda.utils.embeds.EmbedQuery;
 import java.util.Collection;
 import java.util.Set;
+import lombok.NonNull;
 import me.googas.api.discord.GuildData;
 import me.googas.api.lang.LocaleFile;
+import me.googas.api.matches.Ladder;
 import me.googas.api.matches.Match;
 import me.googas.api.matches.Team;
 import me.googas.bot.core.Guido;
@@ -12,8 +14,6 @@ import me.googas.commons.Lots;
 import me.googas.commons.Strings;
 import me.googas.commons.maps.Maps;
 import net.dv8tion.jda.api.EmbedBuilder;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 /** An extension of match */
 public interface BotMatch extends Match, BotCatchable {
@@ -27,8 +27,8 @@ public interface BotMatch extends Match, BotCatchable {
    * @param locale the locale that will read the information
    * @return the information of the match as a embed query
    */
-  @NotNull
-  default EmbedQuery getInformation(@NotNull LocaleFile locale) {
+  @NonNull
+  default EmbedQuery getInformation(@NonNull LocaleFile locale) {
     EmbedBuilder builder = new EmbedBuilder();
     String thumbnail = this.getDetails().get("thumbnail", String.class);
     StringBuilder stringBuilder = Strings.getBuilder();
@@ -75,8 +75,15 @@ public interface BotMatch extends Match, BotCatchable {
   }
 
   @Override
-  @Nullable
-  default GuildData getGuildData() {
+  default GuildData getGuild() {
     return Guido.getDataLoader().getGuildData(this.getGuildId());
+  }
+
+  @Override
+  default Ladder getLadder() {
+    String ladderName = this.getDetails().get("ladder", String.class);
+    BotGuild guild = Guido.getDataLoader().getGuildData(this.getGuildId());
+    if (ladderName == null || guild == null) return null;
+    return guild.getLadder(ladderName);
   }
 }

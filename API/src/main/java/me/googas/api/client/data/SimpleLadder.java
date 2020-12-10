@@ -1,21 +1,21 @@
 package me.googas.api.client.data;
 
 import java.util.Objects;
+import lombok.NonNull;
 import me.googas.api.discord.GuildData;
 import me.googas.api.matches.Ladder;
 import me.googas.api.matches.Queue;
 import me.googas.api.utility.ValuesMap;
 import me.googas.commons.builder.ToStringBuilder;
-import org.jetbrains.annotations.NotNull;
 
 /** Create a ladder */
 public class SimpleLadder implements Ladder {
 
   /** The name of the ladder */
-  @NotNull private final String name;
+  @NonNull private final String name;
 
   /** The options of the ladder */
-  @NotNull private final ValuesMap options;
+  @NonNull private final ValuesMap options;
 
   /** Players per team */
   private final int playersPerTeam;
@@ -36,8 +36,8 @@ public class SimpleLadder implements Ladder {
    * @param teamsPerMatch the teams per match
    */
   public SimpleLadder(
-      @NotNull String name,
-      @NotNull ValuesMap options,
+      @NonNull String name,
+      @NonNull ValuesMap options,
       int playersPerTeam,
       int baseValue,
       int teamsPerMatch) {
@@ -74,17 +74,17 @@ public class SimpleLadder implements Ladder {
   }
 
   @Override
-  public @NotNull Queue createQueue(@NotNull GuildData guild) {
+  public @NonNull Queue createQueue(@NonNull GuildData guild) {
     throw new UnsupportedOperationException("Implementation cannot create queues");
   }
 
   @Override
-  public @NotNull String getName() {
+  public @NonNull String getName() {
     return this.name;
   }
 
   @Override
-  public @NotNull ValuesMap getOptions() {
+  public @NonNull ValuesMap getOptions() {
     return this.options;
   }
 

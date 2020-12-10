@@ -1,18 +1,18 @@
 package me.googas.bot.api.events.data.permissible;
 
+import lombok.NonNull;
 import me.googas.api.permissions.Permission;
 import me.googas.api.permissions.PermissionStack;
 import me.googas.bot.api.types.BotPermissible;
-import org.jetbrains.annotations.NotNull;
 
 /** Called when a permissible gets a new permission */
 public class PermissiblePermissionAddedEvent extends PermissibleEvent {
 
   /** The stack to which the permission was added */
-  @NotNull private final PermissionStack stack;
+  @NonNull private final PermissionStack stack;
 
   /** The permission that was added to the permissible */
-  @NotNull private final Permission permission;
+  @NonNull private final Permission permission;
 
   /**
    * Create the event
@@ -22,9 +22,9 @@ public class PermissiblePermissionAddedEvent extends PermissibleEvent {
    * @param permission the permission that was added to the permissible
    */
   public PermissiblePermissionAddedEvent(
-      @NotNull BotPermissible permissible,
-      @NotNull PermissionStack stack,
-      @NotNull Permission permission) {
+      @NonNull BotPermissible permissible,
+      @NonNull PermissionStack stack,
+      @NonNull Permission permission) {
     super(permissible);
     this.stack = stack;
     this.permission = permission;

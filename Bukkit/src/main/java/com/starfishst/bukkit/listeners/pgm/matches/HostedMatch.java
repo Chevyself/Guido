@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import lombok.NonNull;
 import me.googas.api.client.data.SimpleLinkableInfo;
 import me.googas.api.client.data.SimpleValuesMap;
 import me.googas.api.links.LinkableInfo;
@@ -14,8 +15,6 @@ import me.googas.api.utility.ValuesMap;
 import me.googas.commons.UUIDUtils;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import tc.oc.pgm.api.PGM;
 import tc.oc.pgm.api.map.MapInfo;
 import tc.oc.pgm.api.match.Match;
@@ -24,24 +23,24 @@ import tc.oc.pgm.api.match.Match;
 public class HostedMatch {
 
   /** The id of the match that is being hosted */
-  @NotNull private final String id;
+  @NonNull private final String id;
 
   /** The ladder which is being played */
-  @NotNull private final String ladder;
+  @NonNull private final String ladder;
 
   /** The participants that are gonna play the match */
-  @NotNull private final Collection<LinkableInfo> participants;
+  @NonNull private final Collection<LinkableInfo> participants;
 
   /**
    * The id of the pgm team and the id of the team of the match. The key is the id of the pgm team
    */
-  @NotNull private final Map<String, Integer> teams = new HashMap<>();
+  @NonNull private final Map<String, Integer> teams = new HashMap<>();
   /** The details of the match */
-  @NotNull private final ValuesMap details;
+  @NonNull private final ValuesMap details;
   /** The map which will be played in the match */
-  @NotNull private MapInfo map;
+  @NonNull private final MapInfo map;
   /** The id of the pgm match */
-  @NotNull private String pgmId;
+  @NonNull private final String pgmId;
 
   /**
    * Create the match to host
@@ -54,12 +53,12 @@ public class HostedMatch {
    * @param details the details of the match
    */
   public HostedMatch(
-      @NotNull String id,
-      @NotNull String ladder,
-      @NotNull Collection<LinkableInfo> participants,
-      @NotNull MapInfo map,
-      @NotNull String pgmId,
-      @NotNull ValuesMap details) {
+      @NonNull String id,
+      @NonNull String ladder,
+      @NonNull Collection<LinkableInfo> participants,
+      @NonNull MapInfo map,
+      @NonNull String pgmId,
+      @NonNull ValuesMap details) {
     this.id = id;
     this.ladder = ladder;
     this.participants = participants;
@@ -74,7 +73,7 @@ public class HostedMatch {
    * @param pgmTeam the id of the pgm team
    * @return the id of the team that matches the pgm team
    */
-  public int getTeamId(@Nullable String pgmTeam) {
+  public int getTeamId(String pgmTeam) {
     return pgmTeam == null ? -1 : this.teams.getOrDefault(pgmTeam, -1);
   }
 
@@ -84,7 +83,7 @@ public class HostedMatch {
    * @param sender the sender to check
    * @return true if the sender is participating
    */
-  public boolean isParticipating(@NotNull CommandSender sender) {
+  public boolean isParticipating(@NonNull CommandSender sender) {
     if (!(sender instanceof Player)) return true;
     SimpleLinkableInfo senderInfo =
         new SimpleLinkableInfo(
@@ -101,7 +100,6 @@ public class HostedMatch {
    *
    * @return the match if the id matches null otherwise
    */
-  @Nullable
   public Match getPgm() {
     Iterator<Match> matches = PGM.get().getMatchManager().getMatches();
     while (matches.hasNext()) {
@@ -116,7 +114,7 @@ public class HostedMatch {
    *
    * @return the id of the pgm match
    */
-  @NotNull
+  @NonNull
   public String getPgmId() {
     return this.pgmId;
   }
@@ -126,7 +124,7 @@ public class HostedMatch {
    *
    * @return the map that contains the details of the match
    */
-  @NotNull
+  @NonNull
   public ValuesMap getDetails() {
     return this.details;
   }
@@ -136,7 +134,7 @@ public class HostedMatch {
    *
    * @return the id of the hosted match
    */
-  @NotNull
+  @NonNull
   public String getId() {
     return this.id;
   }
@@ -146,7 +144,7 @@ public class HostedMatch {
    *
    * @return a copy of the participants of the match
    */
-  @NotNull
+  @NonNull
   public List<LinkableInfo> getParticipants() {
     return new ArrayList<>(this.participants);
   }
@@ -156,7 +154,7 @@ public class HostedMatch {
    *
    * @return the map of teams
    */
-  @NotNull
+  @NonNull
   public Map<String, Integer> getTeams() {
     return this.teams;
   }

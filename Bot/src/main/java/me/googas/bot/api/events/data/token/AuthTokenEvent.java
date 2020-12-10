@@ -1,21 +1,21 @@
 package me.googas.bot.api.events.data.token;
 
+import lombok.NonNull;
 import me.googas.api.token.AuthToken;
 import me.googas.bot.api.events.GuidoEvent;
-import org.jetbrains.annotations.NotNull;
 
 /** An event that involves an auth token */
 public class AuthTokenEvent implements GuidoEvent {
 
   /** The auth token involved in the event */
-  @NotNull private final AuthToken token;
+  @NonNull private final AuthToken token;
 
   /**
    * Create the event
    *
    * @param token the auth token involved in the event
    */
-  public AuthTokenEvent(@NotNull AuthToken token) {
+  public AuthTokenEvent(@NonNull AuthToken token) {
     this.token = token;
   }
 
@@ -24,7 +24,7 @@ public class AuthTokenEvent implements GuidoEvent {
    *
    * @return the auth token
    */
-  @NotNull
+  @NonNull
   public AuthToken getToken() {
     return this.token;
   }

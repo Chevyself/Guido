@@ -1,7 +1,7 @@
 package me.googas.bot.core.handlers;
 
+import lombok.NonNull;
 import net.dv8tion.jda.api.JDA;
-import org.jetbrains.annotations.NotNull;
 
 /** A guido handler listens to JDA events */
 public interface GuidoHandler {
@@ -11,7 +11,7 @@ public interface GuidoHandler {
    *
    * @param jda the instance of jda to register
    */
-  default void register(@NotNull JDA jda) {
+  default void register(@NonNull JDA jda) {
     jda.addEventListener(this);
   }
 

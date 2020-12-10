@@ -1,12 +1,13 @@
 package com.starfishst.bukkit.api.dependencies;
 
+import com.starfishst.bukkit.GuidoPlugin;
 import com.starfishst.bukkit.api.commands.GuidoCommand;
 import com.starfishst.bukkit.api.events.GuidoListener;
 import com.starfishst.bukkit.context.CommandContext;
 import com.starfishst.core.providers.type.IContextualProvider;
 import java.util.Collection;
+import lombok.NonNull;
 import org.bukkit.plugin.Plugin;
-import org.jetbrains.annotations.NotNull;
 
 /** This object represents a dependency to which the plugin soft depends to */
 public interface Dependency {
@@ -17,16 +18,11 @@ public interface Dependency {
    * @param plugin the plugin which is available to register them
    * @return the listeners
    */
-  @NotNull
-  Collection<GuidoListener> getListeners(@NotNull Plugin plugin);
+  @NonNull
+  Collection<GuidoListener> getListeners(@NonNull Plugin plugin);
 
-  /**
-   * Get the commands to register with this dependency
-   *
-   * @return the collection of commands to register
-   */
-  @NotNull
-  Collection<GuidoCommand> getCommands();
+  /** If the dependency is enabled this method will be called in {@link GuidoPlugin#onEnable()} */
+  default void onEnable() {}
 
   /**
    * The argument providers required for the commands in this dependency
@@ -43,12 +39,12 @@ public interface Dependency {
   void setEnabled(boolean bol);
 
   /**
-   * Get the name of the dependency
+   * Get the commands to register with this dependency
    *
-   * @return the name of the dependency
+   * @return the collection of commands to register
    */
-  @NotNull
-  String getName();
+  @NonNull
+  Collection<GuidoCommand> getCommands();
 
   /**
    * Whether the dependency is loaded in the class path
@@ -56,4 +52,12 @@ public interface Dependency {
    * @return true if the dependency is in the class path
    */
   boolean isEnabled();
+
+  /**
+   * Get the name of the dependency
+   *
+   * @return the name of the dependency
+   */
+  @NonNull
+  String getName();
 }

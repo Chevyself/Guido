@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
+import lombok.NonNull;
 import me.googas.api.client.data.SimpleLinkableInfo;
 import me.googas.api.client.data.SimplePermissionStack;
 import me.googas.api.client.data.SimpleValuesMap;
@@ -34,29 +35,28 @@ import org.bukkit.event.player.AsyncPlayerPreLoginEvent;
 import org.bukkit.event.player.PlayerLoginEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.permissions.PermissionAttachment;
-import org.jetbrains.annotations.NotNull;
 
 /** Listens to changes to the player and player data to add or remove permissions */
 public class PermissionListener implements GuidoListener {
 
   /** A map of the users and the groups that they have. Groups must be sorted when added here */
-  @NotNull private final Map<UUID, Collection<Group>> groups = new HashMap<>();
+  @NonNull private final Map<UUID, Collection<Group>> groups = new HashMap<>();
 
   /** Permissions are given to the server in async then are added to the player */
-  @NotNull private final Map<UUID, Collection<Permission>> toGive = new HashMap<>();
+  @NonNull private final Map<UUID, Collection<Permission>> toGive = new HashMap<>();
 
   /** The permissions attachment for each player */
-  @NotNull private final HashMap<UUID, PermissionAttachment> attachments = new HashMap<>();
+  @NonNull private final HashMap<UUID, PermissionAttachment> attachments = new HashMap<>();
 
   /** The plugin is required to register the permissions and get the data for the user */
-  @NotNull private final GuidoPlugin plugin;
+  @NonNull private final GuidoPlugin plugin;
 
   /**
    * Create the permissions listener
    *
    * @param plugin the plugin required for certain tasks
    */
-  public PermissionListener(@NotNull GuidoPlugin plugin) {
+  public PermissionListener(@NonNull GuidoPlugin plugin) {
     this.plugin = plugin;
   }
 
@@ -80,7 +80,7 @@ public class PermissionListener implements GuidoListener {
    * @param node the node of the permission
    * @param player the player to enable the permission
    */
-  public void enablePermission(@NotNull String node, @NotNull Player player) {
+  public void enablePermission(@NonNull String node, @NonNull Player player) {
     this.getAttachment(player).setPermission(node, true);
   }
 
@@ -92,7 +92,7 @@ public class PermissionListener implements GuidoListener {
    * @param force set this to true when a permission is not being removed when it is set in false.
    *     Some permissions cannot be removed, just disabled.
    */
-  public void disablePermission(@NotNull String node, @NotNull Player player, boolean force) {
+  public void disablePermission(@NonNull String node, @NonNull Player player, boolean force) {
     this.getAttachment(player).unsetPermission(node);
     if (player.hasPermission(node) && force) {
       this.getAttachment(player).setPermission(node, false);
@@ -132,11 +132,8 @@ public class PermissionListener implements GuidoListener {
         for (Permission permission : stack.getPermissions()) {
           if (groupListener != null && permission.getNode().startsWith("guido.group.")) {
             Group group = groupListener.getGroupByPermission(permission.getNode());
-            if (group != null) {
-              groups.add(group);
-            } else {
-              permissionsToGive.add(permission);
-            }
+            groups.add(group);
+            permissionsToGive.add(permission);
           } else {
             permissionsToGive.add(permission);
           }
@@ -180,7 +177,7 @@ public class PermissionListener implements GuidoListener {
    * @return true if the player can join the server
    * @throws MessengerListenFailException in case that the request goes wrong
    */
-  public boolean checkBungee(@NotNull AsyncPlayerPreLoginEvent event)
+  public boolean checkBungee(@NonNull AsyncPlayerPreLoginEvent event)
       throws MessengerListenFailException {
     if (this.getSettings().getOr("bungee", Boolean.class, false)) {
       Boolean bol =
@@ -209,7 +206,7 @@ public class PermissionListener implements GuidoListener {
    * @param permission the permission to add
    */
   public void replaceOrAdd(
-      @NotNull Collection<Permission> permissions, @NotNull Permission permission) {
+      @NonNull Collection<Permission> permissions, @NonNull Permission permission) {
     permissions.removeIf(perm -> perm.getNode().equalsIgnoreCase(permission.getNode()));
     permissions.add(permission);
   }
@@ -241,8 +238,8 @@ public class PermissionListener implements GuidoListener {
    * @param player the player that needs the attachment
    * @return the permission attachment for the player
    */
-  @NotNull
-  public PermissionAttachment getAttachment(@NotNull Player player) {
+  @NonNull
+  public PermissionAttachment getAttachment(@NonNull Player player) {
     PermissionAttachment attachment = this.attachments.get(player.getUniqueId());
     if (attachment == null) {
       attachment = player.addAttachment(this.plugin);
@@ -251,9 +248,15 @@ public class PermissionListener implements GuidoListener {
     return attachment;
   }
 
-  @Override
-  public @NotNull String getName() {
-    return "permission";
+  /**
+   * Get the groups for the specified uuid
+   *
+   * @param uuid the uuid to get the groups
+   * @return the groups
+   */
+  @NonNull
+  public Collection<Group> getGroups(@NonNull UUID uuid) {
+    return this.groups.getOrDefault(uuid, new ArrayList<>());
   }
 
   @Override
@@ -266,14 +269,8 @@ public class PermissionListener implements GuidoListener {
     this.attachments.clear();
   }
 
-  /**
-   * Get the groups for the specified uuid
-   *
-   * @param uuid the uuid to get the groups
-   * @return the groups
-   */
-  @NotNull
-  public Collection<Group> getGroups(@NotNull UUID uuid) {
-    return this.groups.getOrDefault(uuid, new ArrayList<>());
+  @Override
+  public @NonNull String getName() {
+    return "permission";
   }
 }

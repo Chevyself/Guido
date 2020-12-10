@@ -1,15 +1,15 @@
 package com.starfishst.bukkit.api.events;
 
 import com.starfishst.bukkit.api.Guido;
+import lombok.NonNull;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
-import org.jetbrains.annotations.NotNull;
 
 /** An event called by {@link Guido} */
 public class GuidoEvent extends Event {
 
   /** The list of handlers for the event */
-  @NotNull private static final HandlerList handlers = new HandlerList();
+  @NonNull private static final HandlerList handlers = new HandlerList();
 
   /** Calls the event */
   public void call() {
@@ -21,7 +21,7 @@ public class GuidoEvent extends Event {
    *
    * @return the list of handlers for this event
    */
-  @NotNull
+  @NonNull
   public static HandlerList getHandlerList() {
     return GuidoEvent.handlers;
   }

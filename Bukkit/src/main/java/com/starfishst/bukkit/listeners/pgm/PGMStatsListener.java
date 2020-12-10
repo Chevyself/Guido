@@ -5,6 +5,7 @@ import com.starfishst.bukkit.api.events.GuidoListener;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
+import lombok.NonNull;
 import me.googas.api.client.data.SimpleLinkableInfo;
 import me.googas.api.client.data.SimpleValuesMap;
 import me.googas.api.links.LinkableType;
@@ -14,7 +15,6 @@ import me.googas.messaging.Request;
 import me.googas.messaging.json.client.JsonClient;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
-import org.jetbrains.annotations.NotNull;
 import tc.oc.pgm.api.match.event.MatchFinishEvent;
 import tc.oc.pgm.api.party.Competitor;
 import tc.oc.pgm.api.player.MatchPlayer;
@@ -30,7 +30,7 @@ import tc.oc.pgm.wool.PlayerWoolPlaceEvent;
 public class PGMStatsListener implements GuidoListener {
 
   /** The map containing the stats of a player */
-  @NotNull private final Map<UUID, Map<String, Double>> stats = new HashMap<>();
+  @NonNull private final Map<UUID, Map<String, Double>> stats = new HashMap<>();
 
   /**
    * Listen to the death of a player to add the stat to the killer and the death
@@ -147,7 +147,7 @@ public class PGMStatsListener implements GuidoListener {
    * @param player the player to get if won or not
    * @return the result
    */
-  private boolean didWin(@NotNull MatchFinishEvent event, @NotNull MatchPlayer player) {
+  private boolean didWin(@NonNull MatchFinishEvent event, @NonNull MatchPlayer player) {
     for (Competitor winner : event.getWinners()) {
       if (winner.getPlayers().contains(player)) {
         return true;
@@ -162,8 +162,8 @@ public class PGMStatsListener implements GuidoListener {
    * @param uuid the unique id to get the stats from
    * @return the stats of the player
    */
-  @NotNull
-  private Map<String, Double> getStats(@NotNull UUID uuid) {
+  @NonNull
+  private Map<String, Double> getStats(@NonNull UUID uuid) {
     return this.stats.computeIfAbsent(uuid, k -> new HashMap<>());
   }
 
@@ -173,7 +173,7 @@ public class PGMStatsListener implements GuidoListener {
    * @param uuid the unique id of the player to increase the stat to
    * @param key the key of the stat to increase
    */
-  private void increase(@NotNull UUID uuid, @NotNull String key) {
+  private void increase(@NonNull UUID uuid, @NonNull String key) {
     Map<String, Double> stats = this.getStats(uuid);
     stats.put(key, stats.getOrDefault(key, 0D) + 1);
   }
@@ -190,7 +190,7 @@ public class PGMStatsListener implements GuidoListener {
    * @return the name of the listener
    */
   @Override
-  public @NotNull String getName() {
+  public @NonNull String getName() {
     return "pgm-stats";
   }
 }

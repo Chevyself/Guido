@@ -1,8 +1,8 @@
 package me.googas.bot.api.events.server;
 
+import lombok.NonNull;
 import me.googas.bot.core.server.GuidoServer;
 import me.googas.messaging.json.server.JsonClientThread;
-import org.jetbrains.annotations.NotNull;
 
 /**
  * Called when a client is disconnected and the server removes it from the server this means that
@@ -11,7 +11,7 @@ import org.jetbrains.annotations.NotNull;
 public class GuidoServerDisconnectionEvent extends GuidoServerEvent {
 
   /** The client that disconnected from the server */
-  @NotNull private final JsonClientThread client;
+  @NonNull private final JsonClientThread client;
 
   /**
    * Create the event
@@ -20,7 +20,7 @@ public class GuidoServerDisconnectionEvent extends GuidoServerEvent {
    * @param client the client that disconnected
    */
   public GuidoServerDisconnectionEvent(
-      @NotNull GuidoServer server, @NotNull JsonClientThread client) {
+      @NonNull GuidoServer server, @NonNull JsonClientThread client) {
     super(server);
     this.client = client;
   }
@@ -30,7 +30,7 @@ public class GuidoServerDisconnectionEvent extends GuidoServerEvent {
    *
    * @return the client
    */
-  @NotNull
+  @NonNull
   public JsonClientThread getClient() {
     return this.client;
   }

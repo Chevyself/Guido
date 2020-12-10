@@ -10,10 +10,10 @@ import com.starfishst.bukkit.listeners.pgm.matches.creation.PickTeamSelection;
 import com.starfishst.bukkit.listeners.pgm.matches.creation.TeamCreation;
 import com.starfishst.bukkit.result.Result;
 import com.starfishst.core.annotations.Required;
+import lombok.NonNull;
 import me.googas.api.links.LinkableInfo;
 import me.googas.api.matches.TeamMember;
 import me.googas.commons.maps.Maps;
-import org.jetbrains.annotations.NotNull;
 
 public class PickCommands implements GuidoCommand {
 
@@ -56,7 +56,7 @@ public class PickCommands implements GuidoCommand {
    * @return the name of the command
    */
   @Override
-  public @NotNull String getName() {
+  public @NonNull String getName() {
     return "pick";
   }
 

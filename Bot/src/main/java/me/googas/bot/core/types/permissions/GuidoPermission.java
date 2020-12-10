@@ -1,13 +1,13 @@
 package me.googas.bot.core.types.permissions;
 
+import lombok.NonNull;
 import me.googas.api.permissions.Permission;
-import org.jetbrains.annotations.NotNull;
 
 /** An implementation for guido permissions */
 public class GuidoPermission implements Permission {
 
   /** The node of the permission */
-  @NotNull private final String node;
+  @NonNull private final String node;
 
   /** Whether the permission is enabled */
   private final boolean enabled;
@@ -18,7 +18,7 @@ public class GuidoPermission implements Permission {
    * @param node the node of the permission
    * @param enabled whether the permission is enabled
    */
-  public GuidoPermission(@NotNull String node, boolean enabled) {
+  public GuidoPermission(@NonNull String node, boolean enabled) {
     this.node = node;
     this.enabled = enabled;
   }
@@ -29,7 +29,7 @@ public class GuidoPermission implements Permission {
    * @return the node if the permission
    */
   @Override
-  public @NotNull String getNode() {
+  public @NonNull String getNode() {
     return this.node;
   }
 

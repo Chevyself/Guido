@@ -4,18 +4,18 @@ import com.starfishst.bukkit.api.Guido;
 import com.starfishst.bukkit.context.CommandContext;
 import com.starfishst.bukkit.lang.BukkitLocaleFile;
 import com.starfishst.bukkit.providers.type.BukkitExtraArgumentProvider;
-import org.jetbrains.annotations.NotNull;
+import lombok.NonNull;
 
 /** Provides the locale file in commands */
 public class BukkitLocaleFileProvider implements BukkitExtraArgumentProvider<BukkitLocaleFile> {
-  @NotNull
+  @NonNull
   @Override
-  public BukkitLocaleFile getObject(@NotNull CommandContext context) {
+  public BukkitLocaleFile getObject(@NonNull CommandContext context) {
     return Guido.getLanguageHandler().getFile(context);
   }
 
   @Override
-  public @NotNull Class<BukkitLocaleFile> getClazz() {
+  public @NonNull Class<BukkitLocaleFile> getClazz() {
     return BukkitLocaleFile.class;
   }
 }

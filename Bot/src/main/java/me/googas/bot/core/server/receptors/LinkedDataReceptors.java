@@ -10,6 +10,7 @@ import me.googas.api.links.LinkableType;
 import me.googas.api.permissions.Permission;
 import me.googas.api.permissions.PermissionStack;
 import me.googas.api.user.UserData;
+import me.googas.api.utility.SortedStats;
 import me.googas.bot.core.Guido;
 import me.googas.bot.core.types.permissions.GuidoPermissionStack;
 import me.googas.messaging.json.ParamName;
@@ -122,12 +123,12 @@ public class LinkedDataReceptors {
    * @return the stats
    */
   @Receptor("stats")
-  public Map<String, Float> stats(@ParamName("info") LinkableInfo info) {
+  public SortedStats stats(@ParamName("info") LinkableInfo info) {
     Linkable data = info.getLink();
     if (data != null) {
-      return data.getStats();
+      return data.getOrganized(null);
     }
-    return new HashMap<>();
+    return new SortedStats(new HashMap<>());
   }
 
   /**
@@ -192,7 +193,6 @@ public class LinkedDataReceptors {
       @ParamName("info") LinkableInfo info,
       @ParamName("context") String context,
       @ParamName("permission") Permission permission) {
-    System.out.println("Received permission request");
     Linkable data = info.getLink();
     if (data != null) {
       return data.addPermission(context, permission.getNode(), permission.isEnabled());

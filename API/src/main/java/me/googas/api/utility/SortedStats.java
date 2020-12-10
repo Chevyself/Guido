@@ -2,21 +2,21 @@ package me.googas.api.utility;
 
 import java.util.Map;
 import java.util.Objects;
+import lombok.NonNull;
 import me.googas.commons.builder.ToStringBuilder;
-import org.jetbrains.annotations.NotNull;
 
 /** This object is used to get the stats from a {@link Stateable} is a way more organized way */
 public class SortedStats {
 
   /** A map for each context and the stats of the context */
-  @NotNull private final Map<String, Map<String, Float>> map;
+  @NonNull private final Map<String, Map<String, Float>> map;
 
   /**
    * Create the sorted stats
    *
    * @param map the map of stats-context
    */
-  public SortedStats(@NotNull Map<String, Map<String, Float>> map) {
+  public SortedStats(@NonNull Map<String, Map<String, Float>> map) {
     this.map = map;
   }
 
@@ -33,8 +33,12 @@ public class SortedStats {
     return Objects.hash(this.map);
   }
 
+  public Map<String, Map<String, Float>> getMap() {
+    return this.map;
+  }
+
   @Override
   public String toString() {
-    return new ToStringBuilder(this).append("statsContext", this.map).build();
+    return new ToStringBuilder(this).append("map", this.map).build();
   }
 }

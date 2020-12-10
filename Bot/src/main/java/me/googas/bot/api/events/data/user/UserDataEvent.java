@@ -1,21 +1,21 @@
 package me.googas.bot.api.events.data.user;
 
+import lombok.NonNull;
 import me.googas.api.user.UserData;
 import me.googas.bot.api.events.GuidoEvent;
-import org.jetbrains.annotations.NotNull;
 
 /** An event that involves user data */
 public class UserDataEvent implements GuidoEvent {
 
   /** The data involved in the event */
-  @NotNull private final UserData data;
+  @NonNull private final UserData data;
 
   /**
    * Create the event
    *
    * @param data the user data involved in the event
    */
-  public UserDataEvent(@NotNull UserData data) {
+  public UserDataEvent(@NonNull UserData data) {
     this.data = data;
   }
 
@@ -24,7 +24,7 @@ public class UserDataEvent implements GuidoEvent {
    *
    * @return the user data involved in the event
    */
-  @NotNull
+  @NonNull
   public UserData getData() {
     return this.data;
   }

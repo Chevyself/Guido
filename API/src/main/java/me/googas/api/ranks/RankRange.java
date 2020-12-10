@@ -1,7 +1,7 @@
 package me.googas.api.ranks;
 
+import lombok.NonNull;
 import me.googas.api.utility.Range;
-import org.jetbrains.annotations.NotNull;
 
 /** A rank range is a range for certain elo rank */
 public interface RankRange extends Range {
@@ -11,6 +11,6 @@ public interface RankRange extends Range {
    *
    * @return the ladder where this range applies
    */
-  @NotNull
+  @NonNull
   String getLadder();
 }

@@ -4,6 +4,7 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
+import lombok.NonNull;
 import me.googas.api.links.Linkable;
 import me.googas.api.links.LinkableInfo;
 import me.googas.api.links.LinkableType;
@@ -22,8 +23,6 @@ import me.googas.commons.maps.Maps;
 import me.googas.messaging.Request;
 import me.googas.messaging.api.MessengerListenFailException;
 import me.googas.messaging.json.server.JsonClientThread;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 /** A queue that uses pgm */
 public class GuidoPGMQueue extends GuidoQueue {
@@ -34,12 +33,11 @@ public class GuidoPGMQueue extends GuidoQueue {
    * @param guildId the id of the guild where the queue is happening
    * @param ladder the names of the ladders waiting for queue
    */
-  public GuidoPGMQueue(long guildId, @NotNull String ladder) {
+  public GuidoPGMQueue(long guildId, @NonNull String ladder) {
     super(guildId, ladder);
   }
 
   @Override
-  @Nullable
   public GuidoMatch checkReady() {
     Ladder ladder = this.getLadder();
     if (this.getWaiting().size() >= ladder.playersPerTeam() * 2) {
@@ -62,7 +60,7 @@ public class GuidoPGMQueue extends GuidoQueue {
   }
 
   @Override
-  public boolean join(@NotNull LinkableInfo info) {
+  public boolean join(@NonNull LinkableInfo info) {
     JsonClientThread bungee = Guido.getServer().getAuthenticator().getBungee();
     Linkable data = info.getLink();
     if (bungee != null && data != null) {
@@ -113,7 +111,7 @@ public class GuidoPGMQueue extends GuidoQueue {
   }
 
   @Override
-  public boolean leave(@NotNull LinkableInfo data) {
+  public boolean leave(@NonNull LinkableInfo data) {
     if (super.leave(data)) {
       JsonClientThread bungee = Guido.getServer().getAuthenticator().getBungee();
       Linkable linked = data.getLink();

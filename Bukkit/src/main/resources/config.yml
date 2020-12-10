@@ -82,3 +82,11 @@ listener-settings:
   permission:
     ## Whether the server is connected thru bungeecord
     bungee: false
+  ## A listener that aims to improve minecraft velocity
+  better-velocity:
+    enabled: false
+    multiplier-horizontal: 0.9
+    multiplier-vertical: 0.35
+    multiplier-vertical-air: 0.4
+    multiplier-sprint: 0.8
+    multiplier-walk: 0.4

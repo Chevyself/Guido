@@ -3,14 +3,14 @@ package com.starfishst.bukkit.api.events;
 import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.events.PacketListener;
 import com.starfishst.bukkit.api.Guido;
+import lombok.NonNull;
 import org.bukkit.plugin.Plugin;
-import org.jetbrains.annotations.NotNull;
 
 /** A listener that also supports listening to packets */
 public interface GuidoPacketListener extends GuidoListener, PacketListener {
 
   @Override
-  default void register(@NotNull Plugin plugin) {
+  default void register(@NonNull Plugin plugin) {
     GuidoListener.super.register(plugin);
     ProtocolLibrary.getProtocolManager().addPacketListener(this);
   }

@@ -1,15 +1,15 @@
 package me.googas.bot.api.events.match;
 
+import lombok.NonNull;
 import me.googas.api.matches.Match;
 import me.googas.api.matches.Team;
 import me.googas.bot.api.events.GuidoCancellable;
-import org.jetbrains.annotations.NotNull;
 
 /** Called when a team is going to be added to a match */
 public class MatchPreAddTeamEvent extends MatchEvent implements GuidoCancellable {
 
   /** The team that is being added to the match */
-  @NotNull private final Team team;
+  @NonNull private final Team team;
 
   /** Whether the event has been cancelled */
   private boolean cancelled;
@@ -20,7 +20,7 @@ public class MatchPreAddTeamEvent extends MatchEvent implements GuidoCancellable
    * @param match the match involved
    * @param team the team that is being added to the match
    */
-  public MatchPreAddTeamEvent(@NotNull Match match, @NotNull Team team) {
+  public MatchPreAddTeamEvent(@NonNull Match match, @NonNull Team team) {
     super(match);
     this.team = team;
   }
@@ -30,7 +30,7 @@ public class MatchPreAddTeamEvent extends MatchEvent implements GuidoCancellable
    *
    * @return the team that is being added to the match
    */
-  @NotNull
+  @NonNull
   public Team getTeam() {
     return this.team;
   }

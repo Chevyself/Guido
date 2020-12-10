@@ -3,6 +3,7 @@ package me.googas.bot.api.types;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.UUID;
+import lombok.NonNull;
 import me.googas.api.lang.LocaleFile;
 import me.googas.api.links.Linkable;
 import me.googas.api.links.LinkableType;
@@ -13,8 +14,6 @@ import me.googas.commons.maps.Maps;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.User;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 /** An extension for linked data for bot use */
 public interface BotLinkable extends BotPermissible, Linkable, BotCatchable {
@@ -26,7 +25,6 @@ public interface BotLinkable extends BotPermissible, Linkable, BotCatchable {
    * @return the discord member
    * @param guildId the id of the guild which needs the member
    */
-  @Nullable
   default Member getDiscordMember(long guildId) {
     for (Linkable link : this.getLinks(LinkableType.DISCORD_GUILD)) {
       if (link instanceof BotLinkable) {
@@ -50,7 +48,6 @@ public interface BotLinkable extends BotPermissible, Linkable, BotCatchable {
    *
    * @return the discord user
    */
-  @Nullable
   default User getDiscordUser() {
     if (this.getType() == LinkableType.DISCORD || this.getType() == LinkableType.DISCORD_GUILD) {
       return Guido.getConnection()
@@ -61,7 +58,6 @@ public interface BotLinkable extends BotPermissible, Linkable, BotCatchable {
   }
 
   @Override
-  @Nullable
   default UserData getLinkedUser() {
     return Guido.getDataLoader().getUserData(this.getLinkedUserId());
   }
@@ -73,7 +69,6 @@ public interface BotLinkable extends BotPermissible, Linkable, BotCatchable {
    *
    * @return the unique id of the
    */
-  @Nullable
   default UUID getUniqueId() {
     if (this.getType() == LinkableType.MINECRAFT) {
       String trimmed = this.getIdentification().get("uuid", String.class);
@@ -88,9 +83,9 @@ public interface BotLinkable extends BotPermissible, Linkable, BotCatchable {
     return null;
   }
 
-  @NotNull
+  @NonNull
   @Override
-  default String getReadable(@NotNull LocaleFile locale) {
+  default String getReadable(@NonNull LocaleFile locale) {
     switch (this.getType()) {
       case DISCORD_GUILD:
       case DISCORD:
@@ -112,7 +107,7 @@ public interface BotLinkable extends BotPermissible, Linkable, BotCatchable {
     }
   }
 
-  @NotNull
+  @NonNull
   @Override
   default String getSingle() {
     switch (this.getType()) {
@@ -128,10 +123,10 @@ public interface BotLinkable extends BotPermissible, Linkable, BotCatchable {
   }
 
   @Override
-  @NotNull
+  @NonNull
   BotLinkableInfo getInfo();
 
-  @NotNull
+  @NonNull
   @Override
   default Collection<Linkable> getLinks() {
     UserData user = this.getLinkedUser();
@@ -141,9 +136,9 @@ public interface BotLinkable extends BotPermissible, Linkable, BotCatchable {
     return new HashSet<>();
   }
 
-  @NotNull
+  @NonNull
   @Override
-  default Collection<Linkable> getLinks(@NotNull LinkableType... types) {
+  default Collection<Linkable> getLinks(@NonNull LinkableType... types) {
     UserData user = this.getLinkedUser();
     if (user != null) {
       return Guido.getDataLoader().getLinks(user, types);

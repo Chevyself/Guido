@@ -1,5 +1,6 @@
 package me.googas.bot.core.types;
 
+import lombok.NonNull;
 import me.googas.api.token.AuthLevel;
 import me.googas.api.token.AuthToken;
 import me.googas.api.user.UserData;
@@ -9,20 +10,18 @@ import me.googas.bot.core.Guido;
 import me.googas.commons.RandomUtils;
 import me.googas.commons.time.Time;
 import me.googas.commons.time.Unit;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 /** An implementation for {@link AuthToken} */
 public class GuidoAuthToken implements AuthToken, BotCatchable {
 
   /** The unique string token */
-  @NotNull private final String token;
+  @NonNull private final String token;
 
   /** The level of authentication */
-  @NotNull private final AuthLevel level;
+  @NonNull private final AuthLevel level;
 
   /** The user owner of the token */
-  @NotNull private final String user;
+  @NonNull private final String user;
 
   /**
    * Create the token
@@ -33,7 +32,7 @@ public class GuidoAuthToken implements AuthToken, BotCatchable {
    * @param addToCache whether to add the token to cache
    */
   public GuidoAuthToken(
-      @NotNull String token, @NotNull AuthLevel level, @NotNull String user, boolean addToCache) {
+      @NonNull String token, @NonNull AuthLevel level, @NonNull String user, boolean addToCache) {
     this.token = token;
     this.level = level;
     this.user = user;
@@ -45,7 +44,7 @@ public class GuidoAuthToken implements AuthToken, BotCatchable {
    * @param level the level of authentication of the token
    * @param user the user owner of the token
    */
-  public GuidoAuthToken(@NotNull AuthLevel level, @NotNull String user) {
+  public GuidoAuthToken(@NonNull AuthLevel level, @NonNull String user) {
     this(RandomUtils.nextString(16), level, user, true);
   }
 
@@ -60,28 +59,28 @@ public class GuidoAuthToken implements AuthToken, BotCatchable {
   }
 
   @Override
-  public @NotNull Time getToRemove() {
+  public @NonNull Time getToRemove() {
     return new Time(1, Unit.MINUTES);
   }
 
-  @NotNull
+  @NonNull
   @Override
   public String getToken() {
     return this.token;
   }
 
   @Override
-  public @NotNull String getUserId() {
+  public @NonNull String getUserId() {
     return this.user;
   }
 
   @Override
-  public @Nullable UserData getUser() {
+  public UserData getUser() {
     return Guido.getDataLoader().getUserData(this.user);
   }
 
   @Override
-  public @NotNull AuthLevel getLevel() {
+  public @NonNull AuthLevel getLevel() {
     return this.level;
   }
 
@@ -106,7 +105,7 @@ public class GuidoAuthToken implements AuthToken, BotCatchable {
   }
 
   @Override
-  public @NotNull GuidoAuthToken cache() {
+  public @NonNull GuidoAuthToken cache() {
     return (GuidoAuthToken) BotCatchable.super.cache();
   }
 }

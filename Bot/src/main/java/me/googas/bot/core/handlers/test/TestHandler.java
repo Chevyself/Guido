@@ -1,9 +1,9 @@
 package me.googas.bot.core.handlers.test;
 
+import lombok.NonNull;
 import me.googas.bot.api.events.GuidoEvent;
 import me.googas.bot.core.handlers.GuidoEventHandler;
 import me.googas.commons.events.Listener;
-import org.jetbrains.annotations.NotNull;
 
 /** A handler for testing purposes */
 public class TestHandler implements GuidoEventHandler {
@@ -14,7 +14,7 @@ public class TestHandler implements GuidoEventHandler {
    * @param event a guido event
    */
   @Listener
-  public void onGuidoEvent(@NotNull GuidoEvent event) {}
+  public void onGuidoEvent(@NonNull GuidoEvent event) {}
 
   @Override
   public void close() {}

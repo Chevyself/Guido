@@ -1,7 +1,7 @@
 package com.starfishst.bukkit.api.config;
 
+import lombok.NonNull;
 import me.googas.api.utility.ValuesMap;
-import org.jetbrains.annotations.NotNull;
 
 /** The settings for a listener */
 public interface GuidoListenerSettings extends ValuesMap {
@@ -11,6 +11,6 @@ public interface GuidoListenerSettings extends ValuesMap {
    *
    * @return the name of the listener
    */
-  @NotNull
+  @NonNull
   String getName();
 }

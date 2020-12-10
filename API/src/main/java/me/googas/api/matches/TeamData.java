@@ -1,9 +1,9 @@
 package me.googas.api.matches;
 
 import java.util.Collection;
+import lombok.NonNull;
 import me.googas.api.lang.Localized;
 import me.googas.commons.cache.Catchable;
-import org.jetbrains.annotations.NotNull;
 
 /** Team data is a team which can be saved to the database. */
 public interface TeamData extends Catchable, Localized, Queueable {
@@ -14,7 +14,7 @@ public interface TeamData extends Catchable, Localized, Queueable {
    * @param member the member to add
    * @return whether the member was added
    */
-  default boolean add(@NotNull TeamMember member) {
+  default boolean add(@NonNull TeamMember member) {
     return this.getMembers().add(member);
   }
 
@@ -24,7 +24,7 @@ public interface TeamData extends Catchable, Localized, Queueable {
    * @param member the member to remove
    * @return whether the user was removed
    */
-  default boolean remove(@NotNull TeamMember member) {
+  default boolean remove(@NonNull TeamMember member) {
     return this.getMembers().remove(member);
   }
 
@@ -33,7 +33,7 @@ public interface TeamData extends Catchable, Localized, Queueable {
    *
    * @return the name of the team
    */
-  @NotNull
+  @NonNull
   String getName();
 
   /**
@@ -41,6 +41,6 @@ public interface TeamData extends Catchable, Localized, Queueable {
    *
    * @return the members of the team
    */
-  @NotNull
+  @NonNull
   Collection<TeamMember> getMembers();
 }

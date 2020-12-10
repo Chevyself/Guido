@@ -2,6 +2,7 @@ package me.googas.bot.core.types;
 
 import java.util.Collection;
 import java.util.Map;
+import lombok.NonNull;
 import me.googas.api.links.Linkable;
 import me.googas.api.user.UserData;
 import me.googas.api.utility.ValuesMap;
@@ -11,16 +12,15 @@ import me.googas.bot.core.Guido;
 import me.googas.bot.core.types.maps.GuidoValuesMap;
 import me.googas.commons.time.Time;
 import me.googas.commons.time.Unit;
-import org.jetbrains.annotations.NotNull;
 
 /** An user that operates this bot */
 public class GuidoUser implements UserData, BotCatchable {
 
   /** The unique id of the user */
-  @NotNull private final String id;
+  @NonNull private final String id;
 
   /** The preferences of the user */
-  @NotNull private final GuidoValuesMap preferences;
+  @NonNull private final GuidoValuesMap preferences;
 
   /**
    * Create the guido user
@@ -28,7 +28,7 @@ public class GuidoUser implements UserData, BotCatchable {
    * @param id the user id
    * @param preferences the preferences of the user
    */
-  public GuidoUser(@NotNull String id, @NotNull GuidoValuesMap preferences) {
+  public GuidoUser(@NonNull String id, @NonNull GuidoValuesMap preferences) {
     this.id = id;
     this.preferences = preferences;
   }
@@ -39,7 +39,7 @@ public class GuidoUser implements UserData, BotCatchable {
   }
 
   @Override
-  public void sendMessage(@NotNull String message) {
+  public void sendMessage(@NonNull String message) {
     for (Linkable link : this.getLinks()) {
       link.sendMessage(message);
       break;
@@ -47,7 +47,7 @@ public class GuidoUser implements UserData, BotCatchable {
   }
 
   @Override
-  public void sendLocalized(@NotNull String key) {
+  public void sendLocalized(@NonNull String key) {
     for (Linkable link : this.getLinks()) {
       link.sendLocalized(key);
       break;
@@ -55,7 +55,7 @@ public class GuidoUser implements UserData, BotCatchable {
   }
 
   @Override
-  public void sendLocalized(@NotNull String key, @NotNull Map<String, String> placeholders) {
+  public void sendLocalized(@NonNull String key, @NonNull Map<String, String> placeholders) {
     for (Linkable link : this.getLinks()) {
       link.sendLocalized(key, placeholders);
       break;
@@ -68,18 +68,18 @@ public class GuidoUser implements UserData, BotCatchable {
   }
 
   @Override
-  public @NotNull Time getToRemove() {
+  public @NonNull Time getToRemove() {
     return new Time(5, Unit.MINUTES);
   }
 
   @Override
-  @NotNull
+  @NonNull
   public String getId() {
     return this.id;
   }
 
   @Override
-  public @NotNull ValuesMap getPreferences() {
+  public @NonNull ValuesMap getPreferences() {
     return this.preferences;
   }
 
@@ -109,7 +109,7 @@ public class GuidoUser implements UserData, BotCatchable {
    * @return this same object instance
    */
   @Override
-  public @NotNull GuidoUser cache() {
+  public @NonNull GuidoUser cache() {
     return (GuidoUser) BotCatchable.super.cache();
   }
 }

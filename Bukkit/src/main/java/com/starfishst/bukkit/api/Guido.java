@@ -7,17 +7,16 @@ import com.starfishst.bukkit.api.events.GuidoEvent;
 import com.starfishst.bukkit.api.events.GuidoListener;
 import com.starfishst.bukkit.lang.BukkitLanguageHandler;
 import java.util.logging.Logger;
+import lombok.NonNull;
 import me.googas.api.client.Client;
 import me.googas.commons.Validate;
 import org.bukkit.Bukkit;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 /** Static utilities for guido */
 public class Guido {
 
   /** The instance of the guido plugin */
-  @Nullable private static GuidoPlugin plugin;
+  private static GuidoPlugin plugin;
 
   /**
    * Get a listener using its class
@@ -26,7 +25,7 @@ public class Guido {
    * @param <T> the type of the listener class
    * @return the listener if found null if it might not have been registered
    */
-  public static <T extends GuidoListener> @Nullable T getListener(@NotNull Class<T> clazz) {
+  public static <T extends GuidoListener> T getListener(@NonNull Class<T> clazz) {
     return Guido.validated().getListener(clazz);
   }
 
@@ -35,7 +34,7 @@ public class Guido {
    *
    * @return the not null instance
    */
-  @NotNull
+  @NonNull
   public static GuidoPlugin validated() {
     return Validate.notNull(Guido.plugin, "Guido might not have been initialized");
   }
@@ -45,7 +44,7 @@ public class Guido {
    *
    * @param event the event to call
    */
-  public static void call(@NotNull GuidoEvent event) {
+  public static void call(@NonNull GuidoEvent event) {
     Bukkit.getPluginManager().callEvent(event);
   }
 
@@ -63,7 +62,7 @@ public class Guido {
    *
    * @param plugin the plugin to set
    */
-  public static void setPlugin(@Nullable GuidoPlugin plugin) {
+  public static void setPlugin(GuidoPlugin plugin) {
     if (plugin != null && Guido.plugin != null) {
       throw new IllegalStateException("Plugin is already initialized");
     }
@@ -75,7 +74,7 @@ public class Guido {
    *
    * @return the plugin configuration
    */
-  @NotNull
+  @NonNull
   public static Configuration getConfiguration() {
     return Guido.validated().getConfiguration();
   }
@@ -94,7 +93,7 @@ public class Guido {
    *
    * @return the client
    */
-  @NotNull
+  @NonNull
   public static Client getClient() {
     return Guido.validated().getClient();
   }
@@ -104,7 +103,7 @@ public class Guido {
    *
    * @return the language handler
    */
-  @NotNull
+  @NonNull
   public static BukkitLanguageHandler getLanguageHandler() {
     return Guido.validated().getLanguageHandler();
   }
@@ -114,7 +113,7 @@ public class Guido {
    *
    * @return the logger of the plugin
    */
-  @NotNull
+  @NonNull
   public static Logger getLogger() {
     return Guido.validated().getLogger();
   }
@@ -124,7 +123,7 @@ public class Guido {
    *
    * @return the command manager
    */
-  @NotNull
+  @NonNull
   public static CommandManager getCommandManager() {
     return Guido.validated().getCommandManager();
   }

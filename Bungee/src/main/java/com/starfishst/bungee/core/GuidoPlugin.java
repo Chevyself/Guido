@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.util.List;
 import java.util.Set;
+import lombok.NonNull;
 import me.googas.api.client.Client;
 import me.googas.commons.CoreFiles;
 import me.googas.commons.Lots;
@@ -31,32 +32,28 @@ import net.md_5.bungee.api.config.ServerInfo;
 import net.md_5.bungee.api.plugin.Plugin;
 import net.md_5.bungee.config.ConfigurationProvider;
 import net.md_5.bungee.config.YamlConfiguration;
-import org.jetbrains.annotations.NotNull;
 
 /** The guido plugin for Bungee */
 public class GuidoPlugin extends Plugin {
 
   /** The bungee language handler */
-  @NotNull
+  @NonNull
   private final BungeeLanguageHandler languageHandler =
       new BungeeLanguageHandler().loadResources(this, "en");
 
   /** The command manager */
-  @NotNull
+  @NonNull
   private final CommandManager manager =
       new CommandManager(
           this, this.languageHandler, new GuidoProvidersRegistry(this.languageHandler));
-
-  /** The bungeeConfiguration that the plugin will use */
-  @NotNull private BungeeConfiguration bungeeConfiguration = new GuidoBungeeConfiguration();
-
   /** The listeners being used by the plugin */
-  @NotNull
+  @NonNull
   private final List<GuidoListener> listeners =
       Lots.list(this.languageHandler, new GroupListener(), new JoinListener(), new MotdListener());
-
   /** The client connected with the bot */
-  @NotNull private final BungeeClient client = new BungeeClient("0");
+  @NonNull private final BungeeClient client = new BungeeClient("0");
+  /** The bungeeConfiguration that the plugin will use */
+  @NonNull private BungeeConfiguration bungeeConfiguration = new GuidoBungeeConfiguration();
 
   /** Loads the configuration */
   public void loadConfiguration() {
@@ -94,38 +91,13 @@ public class GuidoPlugin extends Plugin {
   }
 
   /**
-   * Get the bungeeConfiguration for the guido plugin
-   *
-   * @return the bungeeConfiguration for the guido plugin
-   */
-  @NotNull
-  public BungeeConfiguration getBungeeConfiguration() {
-    return this.bungeeConfiguration;
-  }
-
-  /**
-   * Get the client that is connected to the bot
-   *
-   * @return the client
-   */
-  public @NotNull Client getClient() {
-    return this.client;
-  }
-
-  @Override
-  public void onDisable() {
-    this.client.disconnect();
-    super.onDisable();
-  }
-
-  /**
    * Get a loaded listener by its class
    *
    * @param clazz the class to match
    * @param <T> the type of listener to get
    * @return the listener
    */
-  public <T extends GuidoListener> T getListener(@NotNull Class<T> clazz) {
+  public <T extends GuidoListener> T getListener(@NonNull Class<T> clazz) {
     for (GuidoListener listener : this.listeners) {
       if (clazz.isAssignableFrom(listener.getClass())) {
         return clazz.cast(listener);
@@ -136,11 +108,36 @@ public class GuidoPlugin extends Plugin {
   }
 
   /**
+   * Get the bungeeConfiguration for the guido plugin
+   *
+   * @return the bungeeConfiguration for the guido plugin
+   */
+  @NonNull
+  public BungeeConfiguration getBungeeConfiguration() {
+    return this.bungeeConfiguration;
+  }
+
+  @Override
+  public void onDisable() {
+    this.client.disconnect();
+    super.onDisable();
+  }
+
+  /**
+   * Get the client that is connected to the bot
+   *
+   * @return the client
+   */
+  public @NonNull Client getClient() {
+    return this.client;
+  }
+
+  /**
    * Get the language handler that the plugin is using
    *
    * @return the language handler
    */
-  @NotNull
+  @NonNull
   public BungeeLanguageHandler getLanguageHandler() {
     return this.languageHandler;
   }

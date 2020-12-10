@@ -3,23 +3,23 @@ package me.googas.api.client.data;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
+import lombok.NonNull;
 import me.googas.api.utility.ValuesMap;
 import me.googas.commons.builder.ToStringBuilder;
 import me.googas.commons.maps.Maps;
-import org.jetbrains.annotations.NotNull;
 
 /** An implementation for values map */
 public class SimpleValuesMap implements ValuesMap {
 
   /** The map to get values */
-  @NotNull private final Map<String, Object> map;
+  @NonNull private final Map<String, Object> map;
 
   /**
    * Create the values map
    *
    * @param map the initial map
    */
-  public SimpleValuesMap(@NotNull Map<String, Object> map) {
+  public SimpleValuesMap(@NonNull Map<String, Object> map) {
     this.map = map;
   }
 
@@ -29,7 +29,7 @@ public class SimpleValuesMap implements ValuesMap {
    * @param key the first key of the map
    * @param value the value of the key to put in the map first
    */
-  public SimpleValuesMap(@NotNull String key, @NotNull Object value) {
+  public SimpleValuesMap(@NonNull String key, @NonNull Object value) {
     this(Maps.singleton(key, value));
   }
 
@@ -39,7 +39,7 @@ public class SimpleValuesMap implements ValuesMap {
   }
 
   @Override
-  public @NotNull Map<String, Object> getMap() {
+  public @NonNull Map<String, Object> getMap() {
     return this.map;
   }
 

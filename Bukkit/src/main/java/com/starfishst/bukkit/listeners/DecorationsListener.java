@@ -5,12 +5,12 @@ import com.starfishst.bukkit.api.events.GuidoListener;
 import com.starfishst.bukkit.utils.BukkitUtils;
 import java.util.ArrayList;
 import java.util.List;
+import lombok.NonNull;
 import me.googas.api.permissions.Group;
 import me.googas.commons.Strings;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.player.PlayerLoginEvent;
-import org.jetbrains.annotations.NotNull;
 
 /** Listener for the decorations in a players name */
 public class DecorationsListener implements GuidoListener {
@@ -44,8 +44,8 @@ public class DecorationsListener implements GuidoListener {
    * @param groups the groups of the player
    * @return the prefixes for the given groups
    */
-  @NotNull
-  public String getPrefixes(@NotNull List<Group> groups) {
+  @NonNull
+  public String getPrefixes(@NonNull List<Group> groups) {
     int currentWeight = this.getMinWeight(groups);
     StringBuilder builder = Strings.getBuilder();
     for (Group group : groups) {
@@ -63,8 +63,8 @@ public class DecorationsListener implements GuidoListener {
    * @param groups the groups of the player
    * @return the suffixes for the given groups
    */
-  @NotNull
-  public String getSuffixes(@NotNull List<Group> groups) {
+  @NonNull
+  public String getSuffixes(@NonNull List<Group> groups) {
     int currentWeight = this.getMinWeight(groups);
     StringBuilder builder = Strings.getBuilder();
     for (Group group : groups) {
@@ -82,7 +82,7 @@ public class DecorationsListener implements GuidoListener {
    * @param groups the groups to get the minimum weight
    * @return the minimum weight and 0 if there is no groups
    */
-  private int getMinWeight(@NotNull List<Group> groups) {
+  private int getMinWeight(@NonNull List<Group> groups) {
     if (groups.isEmpty()) {
       return 0;
     } else {
@@ -106,7 +106,7 @@ public class DecorationsListener implements GuidoListener {
    * @return the name of the listener
    */
   @Override
-  public @NotNull String getName() {
+  public @NonNull String getName() {
     return "decorations";
   }
 }

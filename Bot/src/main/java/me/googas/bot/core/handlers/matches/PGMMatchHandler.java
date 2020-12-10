@@ -5,6 +5,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
+import lombok.NonNull;
 import me.googas.api.links.LinkableInfo;
 import me.googas.api.matches.Match;
 import me.googas.api.matches.MatchStatus;
@@ -20,13 +21,12 @@ import me.googas.commons.maps.Maps;
 import me.googas.messaging.Request;
 import me.googas.messaging.json.JsonMessenger;
 import me.googas.messaging.json.server.JsonClientThread;
-import org.jetbrains.annotations.NotNull;
 
 /** Handles matches for PGM */
 public class PGMMatchHandler implements MatchHandler {
 
   /** All the matches that are looking for a server */
-  @NotNull private final Set<Match> waitingForServer = new HashSet<>();
+  @NonNull private final Set<Match> waitingForServer = new HashSet<>();
 
   /**
    * Listen to a match being loaded to look for a server and start playing
@@ -34,7 +34,7 @@ public class PGMMatchHandler implements MatchHandler {
    * @param event the event of a match being loaded
    */
   @Listener(priority = ListenPriority.HIGHEST)
-  public void onMatchLoaded(@NotNull MatchLoadedEvent event) {
+  public void onMatchLoaded(@NonNull MatchLoadedEvent event) {
     Match match = event.getMatch();
     String type = match.getDetails().get("type", String.class);
     if (type != null && type.equalsIgnoreCase("pgm")) {
@@ -51,7 +51,7 @@ public class PGMMatchHandler implements MatchHandler {
    * @param event the event of a match updating its status
    */
   @Listener(priority = ListenPriority.HIGHEST)
-  public void onMatchStatusUpdated(@NotNull MatchStatusUpdatedEvent event) {
+  public void onMatchStatusUpdated(@NonNull MatchStatusUpdatedEvent event) {
     if (event.getStatus() == MatchStatus.FINISHED
         && "pgm".equalsIgnoreCase(event.getMatch().getDetails().get("type", String.class))) {
       this.lookForServers();
@@ -60,6 +60,7 @@ public class PGMMatchHandler implements MatchHandler {
 
   /** Makes all the matches waiting for servers look for a server */
   public void lookForServers() {
+    if (this.waitingForServer.isEmpty()) return;
     for (Match match : this.waitingForServer) {
       this.lookForServer(match);
     }
@@ -70,7 +71,7 @@ public class PGMMatchHandler implements MatchHandler {
    *
    * @param match the match looking for the server
    */
-  public void lookForServer(@NotNull Match match) {
+  public void lookForServer(@NonNull Match match) {
     BotServer server = Guido.getServer();
     JsonClientThread bungee = server.getAuthenticator().getBungee();
     if (bungee != null) {
@@ -82,7 +83,6 @@ public class PGMMatchHandler implements MatchHandler {
               this.pleaseHost(match, bungee, messenger);
             }
           }));
-    } else {
     }
   }
 
@@ -93,7 +93,7 @@ public class PGMMatchHandler implements MatchHandler {
    * @param bungee the instance of the bungee
    * @param messenger the server that is supposed to be able to host the match
    */
-  public void pleaseHost(@NotNull Match match, JsonClientThread bungee, JsonMessenger messenger) {
+  public void pleaseHost(@NonNull Match match, JsonClientThread bungee, JsonMessenger messenger) {
     List<UUID> participants = new ArrayList<>();
     for (LinkableInfo info : match.getParticipants()) {
       String trimmed = info.getIdentification().get("uuid", String.class);
@@ -124,6 +124,12 @@ public class PGMMatchHandler implements MatchHandler {
             "send-to-server-by-ip",
             Maps.objects("uuids", participants).append("server", serverIp).build()),
         joined -> {});
+  }
+
+  /** Called when a server is ready to host a match */
+  @Override
+  public void serverReady() {
+    this.lookForServers();
   }
 
   @Override

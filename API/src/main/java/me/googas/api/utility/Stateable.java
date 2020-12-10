@@ -4,10 +4,9 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
+import lombok.NonNull;
 import me.googas.api.discord.GuildData;
 import me.googas.api.matches.Ladder;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 /** This object represents an entity that can have stats */
 public interface Stateable {
@@ -18,7 +17,7 @@ public interface Stateable {
    * @param ladder the ladder to increase the elo
    * @param amount the amount of elo to increase
    */
-  default void increaseElo(@NotNull Ladder ladder, float amount) {
+  default void increaseElo(@NonNull Ladder ladder, float amount) {
     String key = ladder.getName() + "-elo";
     this.getStats()
         .put(key, this.getStats().getOrDefault(key, (float) ladder.baseValue()) + amount);
@@ -30,7 +29,7 @@ public interface Stateable {
    * @param ladder the ladder to decrease elo
    * @param amount the amount to decrease
    */
-  default void decreaseElo(@NotNull Ladder ladder, float amount) {
+  default void decreaseElo(@NonNull Ladder ladder, float amount) {
     String key = ladder.getName() + "-elo";
     float value = this.getStats().getOrDefault(key, (float) ladder.baseValue()) - amount;
     this.getStats().put(key, value < 0 ? 0 : value);
@@ -42,7 +41,7 @@ public interface Stateable {
    * @param key the key of the stat
    * @param amount the amount to increase the stat
    */
-  default void increaseStat(@NotNull String key, float amount) {
+  default void increaseStat(@NonNull String key, float amount) {
     this.getStats().put(key, this.getStats().getOrDefault(key, 0f) + amount);
   }
 
@@ -52,7 +51,7 @@ public interface Stateable {
    * @param ladder the ladder to get the wins
    * @return the amount of time won in the ladder
    */
-  default float getWins(@NotNull Ladder ladder) {
+  default float getWins(@NonNull Ladder ladder) {
     return this.getStats().getOrDefault(ladder.getName() + "-wins", 0f);
   }
 
@@ -62,7 +61,7 @@ public interface Stateable {
    * @param ladder the ladder
    * @return the amount of times lost
    */
-  default float getLoses(@NotNull Ladder ladder) {
+  default float getLoses(@NonNull Ladder ladder) {
     return this.getStats().getOrDefault(ladder.getName() + "-loses", 0f);
   }
 
@@ -72,17 +71,9 @@ public interface Stateable {
    * @param stat the key of the stat
    * @return the stat or 0 if none
    */
-  default float getStat(@NotNull String stat) {
+  default float getStat(@NonNull String stat) {
     return this.getStats().getOrDefault(stat, 0f);
   }
-
-  /**
-   * Get the stats of the entity
-   *
-   * @return the map of the stats
-   */
-  @NotNull
-  Map<String, Float> getStats();
 
   /**
    * Get the global elo in certain guild for this data
@@ -90,7 +81,7 @@ public interface Stateable {
    * @param data the data to get the elo from
    * @return the global elo inside the guild
    */
-  default float getGlobalElo(@NotNull GuildData data) {
+  default float getGlobalElo(@NonNull GuildData data) {
     float sum = 0;
     float total = data.getLadders().size();
     for (Ladder ladder : data.getLadders()) {
@@ -105,7 +96,7 @@ public interface Stateable {
    * @param ladder the ladder to get the elo from
    * @return the elo for certain ranked ladder
    */
-  default float getElo(@NotNull Ladder ladder) {
+  default float getElo(@NonNull Ladder ladder) {
     return this.getStats().getOrDefault(ladder.getName() + "-elo", (float) ladder.baseValue());
   }
 
@@ -115,7 +106,7 @@ public interface Stateable {
    * @param guild A guild to get the global elo in there
    * @return the organized stats
    */
-  default SortedStats getOrganized(@Nullable GuildData guild) {
+  default SortedStats getOrganized(GuildData guild) {
     Map<String, Map<String, Float>> map = new TreeMap<>();
     this.getStats()
         .forEach(
@@ -145,9 +136,8 @@ public interface Stateable {
    * @param map the map containing all the other stats
    * @return the global stats
    */
-  @NotNull
-  default Map<String, Float> getGlobalStats(
-      @Nullable GuildData guild, Map<String, Map<String, Float>> map) {
+  @NonNull
+  default Map<String, Float> getGlobalStats(GuildData guild, Map<String, Map<String, Float>> map) {
     Map<String, Float> global = new TreeMap<>();
     map.forEach(
         (context, contextMap) ->
@@ -162,6 +152,14 @@ public interface Stateable {
     }
     return global;
   }
+
+  /**
+   * Get the stats of the entity
+   *
+   * @return the map of the stats
+   */
+  @NonNull
+  Map<String, Float> getStats();
 
   /**
    * Reset the stats of this entity

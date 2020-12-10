@@ -3,20 +3,19 @@ package me.googas.bot.core.handlers.link;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.TimerTask;
+import lombok.NonNull;
 import me.googas.api.links.LinkableInfo;
 import me.googas.bot.api.types.BotLinkable;
 import me.googas.bot.core.Guido;
 import me.googas.bot.core.handlers.GuidoHandler;
 import me.googas.commons.RandomUtils;
 import me.googas.commons.time.Time;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 /** Handles linking for accounts */
 public class LinkHandler implements GuidoHandler {
 
   /** The set of queries created */
-  @NotNull private final Set<LinkQuery> queries = new HashSet<>();
+  @NonNull private final Set<LinkQuery> queries = new HashSet<>();
 
   /** Create the link handler */
   public LinkHandler() {
@@ -39,8 +38,7 @@ public class LinkHandler implements GuidoHandler {
    * @param info the info to create the code and link to an user
    * @return the created code if the data is found and it is linked
    */
-  @Nullable
-  public String createCode(@NotNull LinkableInfo info) {
+  public String createCode(@NonNull LinkableInfo info) {
     BotLinkable data =
         Guido.getDataLoader().getLinkedData(info.getType(), info.getIdentification());
     if (data != null && !data.isLinked()) {
@@ -58,7 +56,7 @@ public class LinkHandler implements GuidoHandler {
    *
    * @return the next code
    */
-  @NotNull
+  @NonNull
   private String nextCode() {
     String code = RandomUtils.nextString(4);
     while (this.contains(code)) {
@@ -73,7 +71,7 @@ public class LinkHandler implements GuidoHandler {
    * @param code the code to check if it is contained
    * @return true if there's already a code like it
    */
-  private boolean contains(@NotNull String code) {
+  private boolean contains(@NonNull String code) {
     for (LinkQuery query : this.queries) {
       if (query.getCode().equalsIgnoreCase(code)) {
         return true;
@@ -88,7 +86,6 @@ public class LinkHandler implements GuidoHandler {
    * @param code the code to get the info
    * @return the linked info if there is one for the given code else null
    */
-  @Nullable
   public LinkableInfo getInfo(String code) {
     for (LinkQuery query : this.queries) {
       if (query.getCode().equals(code)) {
@@ -108,10 +105,10 @@ public class LinkHandler implements GuidoHandler {
   static class LinkQuery {
 
     /** The code that is used to identify the data */
-    @NotNull private final String code;
+    @NonNull private final String code;
 
     /** The information that will get the link data from the database */
-    @NotNull private final LinkableInfo info;
+    @NonNull private final LinkableInfo info;
 
     /** When this link will expire */
     private final long toRemove;
@@ -125,10 +122,10 @@ public class LinkHandler implements GuidoHandler {
      * @param toRemove how long until it gets unloaded
      */
     LinkQuery(
-        @NotNull String code,
-        @NotNull LinkableInfo info,
+        @NonNull String code,
+        @NonNull LinkableInfo info,
         long timeCreated,
-        @NotNull Time toRemove) {
+        @NonNull Time toRemove) {
       this.code = code;
       this.info = info;
       this.toRemove = timeCreated + toRemove.millis();
@@ -139,7 +136,7 @@ public class LinkHandler implements GuidoHandler {
      *
      * @return the code as a string
      */
-    @NotNull
+    @NonNull
     public String getCode() {
       return this.code;
     }
@@ -149,7 +146,7 @@ public class LinkHandler implements GuidoHandler {
      *
      * @return the info
      */
-    @NotNull
+    @NonNull
     public LinkableInfo getInfo() {
       return this.info;
     }

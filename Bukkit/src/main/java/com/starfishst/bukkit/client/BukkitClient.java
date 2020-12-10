@@ -2,8 +2,12 @@ package com.starfishst.bukkit.client;
 
 import com.starfishst.bukkit.api.Guido;
 import com.starfishst.bukkit.listeners.GroupListener;
+import java.io.IOException;
+import lombok.NonNull;
 import me.googas.api.client.Client;
-import org.jetbrains.annotations.NotNull;
+import me.googas.commons.time.Time;
+import me.googas.commons.time.Unit;
+import me.googas.messaging.json.client.JsonClient;
 
 /** Extension for client */
 public class BukkitClient extends Client {
@@ -15,8 +19,22 @@ public class BukkitClient extends Client {
    * @param ip the ip of the server of the bot
    * @param port the port of the server of the bot
    */
-  public BukkitClient(@NotNull String token, @NotNull String ip, int port) {
+  public BukkitClient(@NonNull String token, @NonNull String ip, int port) {
     super(token, ip, port);
+  }
+
+  /**
+   * Connects the client with the bot
+   *
+   * @return the stabilised connection
+   * @throws IOException if the bot cannot be reached
+   */
+  @Override
+  public @NonNull JsonClient startConnection() throws IOException {
+    new BukkitHeartBeatTimerTask(this)
+        .runTaskTimer(
+            Guido.validated(), 20, new Time(30, Unit.SECONDS).getValue(Unit.MINECRAFT_TICKS));
+    return super.startConnection();
   }
 
   /**

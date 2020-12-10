@@ -1,9 +1,9 @@
 package stats;
 
 import java.util.Map;
+import lombok.NonNull;
 import me.googas.api.utility.Stateable;
 import me.googas.commons.maps.Maps;
-import org.jetbrains.annotations.NotNull;
 
 public class StatsTest {
 
@@ -25,19 +25,19 @@ public class StatsTest {
   static class StateableImpl implements Stateable {
 
     /** The stats map */
-    @NotNull private final Map<String, Float> stats;
+    @NonNull private final Map<String, Float> stats;
 
     /**
      * Create instance
      *
      * @param stats the stats map
      */
-    public StateableImpl(@NotNull Map<String, Float> stats) {
+    public StateableImpl(@NonNull Map<String, Float> stats) {
       this.stats = stats;
     }
 
     @Override
-    public @NotNull Map<String, Float> getStats() {
+    public @NonNull Map<String, Float> getStats() {
       return this.stats;
     }
   }

@@ -3,19 +3,19 @@ package me.googas.bot.core.commands.providers;
 import com.starfishst.core.exceptions.ArgumentProviderException;
 import com.starfishst.jda.context.CommandContext;
 import com.starfishst.jda.providers.type.JdaArgumentProvider;
+import lombok.NonNull;
 import me.googas.api.token.AuthLevel;
-import org.jetbrains.annotations.NotNull;
 
 /** Provides {@link AuthLevel} in commands */
 public class AuthLevelProvider implements JdaArgumentProvider<AuthLevel> {
   @Override
-  public @NotNull Class<AuthLevel> getClazz() {
+  public @NonNull Class<AuthLevel> getClazz() {
     return AuthLevel.class;
   }
 
-  @NotNull
+  @NonNull
   @Override
-  public AuthLevel fromString(@NotNull String s, @NotNull CommandContext context)
+  public AuthLevel fromString(@NonNull String s, @NonNull CommandContext context)
       throws ArgumentProviderException {
     try {
       return AuthLevel.valueOf(s.toUpperCase());

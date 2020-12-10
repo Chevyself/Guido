@@ -5,6 +5,7 @@ import com.starfishst.jda.ManagerOptions;
 import java.awt.*;
 import java.io.IOException;
 import java.lang.ref.SoftReference;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Timer;
@@ -12,11 +13,13 @@ import java.util.TimerTask;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.logging.SimpleFormatter;
+import lombok.NonNull;
 import me.googas.api.loader.DataLoader;
 import me.googas.bot.api.events.GuidoCancellable;
 import me.googas.bot.api.loader.BotDataLoader;
 import me.googas.bot.api.server.BotServer;
 import me.googas.bot.api.types.BotCatchable;
+import me.googas.bot.core.commands.AdministrationCommands;
 import me.googas.bot.core.commands.CategoryCommands;
 import me.googas.bot.core.commands.ChannelCommands;
 import me.googas.bot.core.commands.DeveloperCommands;
@@ -61,16 +64,12 @@ import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.OnlineStatus;
 import net.dv8tion.jda.api.entities.Activity;
 import net.dv8tion.jda.api.hooks.AnnotatedEventManager;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 /** The match making bot */
 public class Guido {
 
-  /** The logger that the bot will be using to display messages */
-  @NotNull
-  private static Logger logger =
-      LoggerFactory.start("Guido", LoggerFactory.getConsoleHandler(new SimpleFormatter()));
+  /** The cache of the bot */
+  @NonNull private static final MemoryCache cache = new MemoryCache();
 
   static {
     CustomFormatter formatter =
@@ -83,26 +82,26 @@ public class Guido {
       Guido.logger.log(Level.SEVERE, e, null);
     }
   }
-
-  /** The cache of the bot */
-  @NotNull private static final MemoryCache cache = new MemoryCache();
   /** The timer which can be used in other instances of the bot */
-  @NotNull private static final Timer timer = new Timer(Guido.class.getName());
+  @NonNull private static final Timer timer = new Timer(Guido.class.getName());
   /** The connection of guido with discord */
-  @NotNull private static final GuidoJdaConnection connection = new GuidoJdaConnection();
+  @NonNull private static final GuidoJdaConnection connection = new GuidoJdaConnection();
   /** The listener manager for calling events */
-  @NotNull private static final ListenerManager listenerManager = new ListenerManager();
-
+  @NonNull private static final ListenerManager listenerManager = new ListenerManager();
+  /** The logger that the bot will be using to display messages */
+  @NonNull
+  private static Logger logger =
+      LoggerFactory.start("Guido", LoggerFactory.getConsoleHandler(new SimpleFormatter()));
   /** The data loader for the bot */
-  @NotNull private static BotDataLoader dataLoader = new GuidoFileLoader();
+  @NonNull private static BotDataLoader dataLoader = new GuidoFileLoader();
 
   /** The language handler for the bot */
-  @NotNull
+  @NonNull
   private static final GuidoLanguageHandler languageHandler =
       new GuidoLanguageHandler(Guido.dataLoader);
 
   /** The list of handlers that the bot is using */
-  @NotNull
+  @NonNull
   private static final List<GuidoHandler> handlers =
       Lots.list(
           new DecorationsHandler(),
@@ -117,10 +116,10 @@ public class Guido {
           Guido.dataLoader);
 
   /** The command manager of the bot */
-  @Nullable private static CommandManager commandManager;
+  private static CommandManager commandManager;
 
   /** The server to receive implementations */
-  @NotNull private static BotServer server = new GuidoFallbackServer();
+  @NonNull private static BotServer server = new GuidoFallbackServer();
 
   /**
    * The main method of the bot.
@@ -192,6 +191,7 @@ public class Guido {
             new GuidoPermissionChecker(Guido.languageHandler, Guido.dataLoader));
     for (Object cmd :
         Lots.list(
+            new AdministrationCommands(),
             new CategoryCommands(),
             new ChannelCommands(),
             new DeveloperCommands(),
@@ -259,7 +259,7 @@ public class Guido {
    * @param argsMaps the arguments to get the token
    * @return the instance of the jda setup
    */
-  @NotNull
+  @NonNull
   public static JDA setupJda(HashMap<String, String> argsMaps) {
     JDA jda = Guido.connection.createConnection(argsMaps.getOrDefault("token", ""));
     jda.getPresence().setPresence(OnlineStatus.DO_NOT_DISTURB, Activity.playing(".help .ayuda .?"));
@@ -311,7 +311,7 @@ public class Guido {
    *
    * @param event the event to be called
    */
-  public static void call(@NotNull Event event) {
+  public static void call(@NonNull Event event) {
     Guido.listenerManager.call(event);
   }
 
@@ -322,7 +322,7 @@ public class Guido {
    * @return true if the event was cancelled
    * @throws IllegalArgumentException cancellable is not an instance of {@link Event}
    */
-  public static boolean call(@NotNull GuidoCancellable cancellable) {
+  public static boolean call(@NonNull GuidoCancellable cancellable) {
     return Guido.listenerManager.call(cancellable);
   }
 
@@ -335,7 +335,7 @@ public class Guido {
    * @return the guido handler
    * @throws IllegalStateException if the handler was not found
    */
-  public static <T extends GuidoHandler> T getHandler(@NotNull Class<T> clazz) {
+  public static <T extends GuidoHandler> T getHandler(@NonNull Class<T> clazz) {
     for (GuidoHandler handler : Guido.handlers) {
       if (handler.getClass() == clazz) {
         return clazz.cast(handler);
@@ -345,11 +345,29 @@ public class Guido {
   }
 
   /**
+   * Get the list of handlers that implement a class of guido handler
+   *
+   * @param tClass the class of guido handler that they must implement
+   * @param <T> the type of the guido handler
+   * @return the list of handlers
+   */
+  @NonNull
+  public static <T extends GuidoHandler> List<T> getHandlers(@NonNull Class<T> tClass) {
+    List<T> handlers = new ArrayList<>();
+    for (GuidoHandler handler : Guido.handlers) {
+      if (tClass.isAssignableFrom(handler.getClass())) {
+        handlers.add(tClass.cast(handler));
+      }
+    }
+    return handlers;
+  }
+
+  /**
    * Get the cache of the bot
    *
    * @return the cache
    */
-  @NotNull
+  @NonNull
   public static MemoryCache getCache() {
     return Guido.cache;
   }
@@ -359,7 +377,7 @@ public class Guido {
    *
    * @return the bot's listener manager
    */
-  @NotNull
+  @NonNull
   public static ListenerManager getListenerManager() {
     return Guido.listenerManager;
   }
@@ -369,7 +387,7 @@ public class Guido {
    *
    * @return the data loader that guido is using
    */
-  @NotNull
+  @NonNull
   public static BotDataLoader getDataLoader() {
     return Guido.dataLoader;
   }
@@ -379,7 +397,7 @@ public class Guido {
    *
    * @return the jda bot connection
    */
-  @NotNull
+  @NonNull
   public static GuidoJdaConnection getConnection() {
     return Guido.connection;
   }
@@ -389,7 +407,7 @@ public class Guido {
    *
    * @return the guido language handler
    */
-  @NotNull
+  @NonNull
   public static GuidoLanguageHandler getLanguageHandler() {
     return Guido.languageHandler;
   }
@@ -399,7 +417,7 @@ public class Guido {
    *
    * @return the server
    */
-  @NotNull
+  @NonNull
   public static BotServer getServer() {
     return Guido.server;
   }
@@ -410,7 +428,7 @@ public class Guido {
    * @return the command manager
    * @throws NullPointerException if the command manager was not initialized
    */
-  @NotNull
+  @NonNull
   public static CommandManager getCommandManager() {
     return Validate.notNull(Guido.commandManager, "Command manager has not been initialized");
   }
@@ -420,7 +438,7 @@ public class Guido {
    *
    * @return the timer
    */
-  @NotNull
+  @NonNull
   public static Timer getTimer() {
     return Guido.timer;
   }
@@ -430,7 +448,7 @@ public class Guido {
    *
    * @return the logger
    */
-  @NotNull
+  @NonNull
   public static Logger getLogger() {
     return Guido.logger;
   }

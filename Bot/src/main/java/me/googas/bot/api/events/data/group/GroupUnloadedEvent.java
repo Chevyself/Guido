@@ -1,7 +1,7 @@
 package me.googas.bot.api.events.data.group;
 
+import lombok.NonNull;
 import me.googas.api.permissions.Group;
-import org.jetbrains.annotations.NotNull;
 
 /** Called when a group gets unloaded from cache */
 public class GroupUnloadedEvent extends GroupEvent {
@@ -10,7 +10,7 @@ public class GroupUnloadedEvent extends GroupEvent {
    *
    * @param group the group involved
    */
-  public GroupUnloadedEvent(@NotNull Group group) {
+  public GroupUnloadedEvent(@NonNull Group group) {
     super(group);
   }
 }

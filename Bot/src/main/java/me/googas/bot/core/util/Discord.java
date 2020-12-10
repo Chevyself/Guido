@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.function.Consumer;
 import java.util.logging.Level;
+import lombok.NonNull;
 import me.googas.bot.core.Guido;
 import me.googas.commons.Lots;
 import net.dv8tion.jda.api.Permission;
@@ -14,14 +15,21 @@ import net.dv8tion.jda.api.entities.GuildChannel;
 import net.dv8tion.jda.api.entities.IMentionable;
 import net.dv8tion.jda.api.entities.IPermissionHolder;
 import net.dv8tion.jda.api.entities.PermissionOverride;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 /** y Static utilities for mentions */
 public class Discord {
 
+  /** All the permissions required to join the voice channel */
+  @NonNull
+  public static final List<Permission> VOICE =
+      Lots.list(
+          Permission.VIEW_CHANNEL,
+          Permission.VOICE_CONNECT,
+          Permission.VOICE_SPEAK,
+          Permission.VOICE_STREAM,
+          Permission.VOICE_USE_VAD);
   /** A consumer which can be used to log exceptions in discord operations */
-  @NotNull
+  @NonNull
   private static final Consumer<Throwable> EXCEPTION_CONSUMER =
       throwable ->
           Guido.getLogger()
@@ -30,16 +38,6 @@ public class Discord {
                   throwable,
                   () -> "There's been an error while doing a discord action");
 
-  /** All the permissions required to join the voice channel */
-  @NotNull
-  public static final List<Permission> VOICE =
-      Lots.list(
-          Permission.VIEW_CHANNEL,
-          Permission.VOICE_CONNECT,
-          Permission.VOICE_SPEAK,
-          Permission.VOICE_STREAM,
-          Permission.VOICE_USE_VAD);
-
   /**
    * Get the mentions from a collection of mentionables.
    *
@@ -47,9 +45,9 @@ public class Discord {
    * @param <T> the type of mentionables
    * @return the mentions of the mentionables
    */
-  @NotNull
+  @NonNull
   public static <T extends IMentionable> List<String> getMentions(
-      @NotNull Collection<T> mentionables) {
+      @NonNull Collection<T> mentionables) {
     List<String> mentions = new ArrayList<>();
     for (T mentionable : mentionables) {
       mentions.add(mentionable.getAsMention());
@@ -65,8 +63,8 @@ public class Discord {
    * @param <T> the type of mentionables
    * @return the mentions of the mentionables
    */
-  @NotNull
-  public static <T extends IMentionable> String pretty(@NotNull Collection<T> mentionables) {
+  @NonNull
+  public static <T extends IMentionable> String pretty(@NonNull Collection<T> mentionables) {
     return Lots.pretty(Discord.getMentions(mentionables));
   }
 
@@ -77,7 +75,7 @@ public class Discord {
    * @param ignored the permissions to ignore removing and will be allowed if not
    */
   public static void removeEveryonePermissions(
-      @NotNull GuildChannel channel, @NotNull Permission... ignored) {
+      @NonNull GuildChannel channel, @NonNull Permission... ignored) {
     PermissionOverride override = channel.getPermissionOverride(channel.getGuild().getPublicRole());
     if (override != null) {
       Set<Permission> toRemove = Lots.set(Permission.values());
@@ -112,7 +110,7 @@ public class Discord {
    * @param ignored the permissions to ignore removing
    */
   public static void removeAllPermission(
-      @NotNull GuildChannel channel, @NotNull Permission... ignored) {
+      @NonNull GuildChannel channel, @NonNull Permission... ignored) {
     for (PermissionOverride override : channel.getPermissionOverrides()) {
       if (override.getPermissionHolder() != null
           && !override.getPermissionHolder().equals(channel.getGuild().getPublicRole())) {
@@ -131,10 +129,10 @@ public class Discord {
    * @param success what to call when the permission is given
    */
   public static void addPermissions(
-      @NotNull GuildChannel channel,
-      @NotNull Collection<? extends IPermissionHolder> holders,
-      @NotNull Collection<Permission> permissions,
-      @Nullable Consumer<Void> success) {
+      @NonNull GuildChannel channel,
+      @NonNull Collection<? extends IPermissionHolder> holders,
+      @NonNull Collection<Permission> permissions,
+      Consumer<Void> success) {
     for (IPermissionHolder holder : holders) {
       Discord.addPermissions(channel, holder, permissions, success);
     }
@@ -149,10 +147,10 @@ public class Discord {
    * @param success what to call when the permission is given
    */
   public static void addPermissions(
-      @NotNull GuildChannel channel,
-      @NotNull IPermissionHolder holder,
-      @NotNull Collection<Permission> permissions,
-      @Nullable Consumer<Void> success) {
+      @NonNull GuildChannel channel,
+      @NonNull IPermissionHolder holder,
+      @NonNull Collection<Permission> permissions,
+      Consumer<Void> success) {
     PermissionOverride override = channel.getPermissionOverride(holder);
     if (override != null) {
       override

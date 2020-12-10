@@ -6,23 +6,23 @@ import com.starfishst.bungee.api.configuration.GuidoServer;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import lombok.NonNull;
 import net.md_5.bungee.config.Configuration;
-import org.jetbrains.annotations.NotNull;
 
 /** The default yaml configuration for the bot */
 public class GuidoBungeeConfiguration implements BungeeConfiguration {
 
   /** The token used for the bot */
-  @NotNull private final String token;
+  @NonNull private final String token;
 
   /** The id of the guild */
   private final long guildId;
 
   /** The servers that can be connected using bungee */
-  @NotNull private final List<GuidoServer> servers;
+  @NonNull private final List<GuidoServer> servers;
 
   /** The settings that are contained in the configuration */
-  @NotNull private final List<GuidoListenerSettings> settings;
+  @NonNull private final List<GuidoListenerSettings> settings;
 
   /** Create the bungee configuration */
   public GuidoBungeeConfiguration() {
@@ -37,7 +37,7 @@ public class GuidoBungeeConfiguration implements BungeeConfiguration {
    *
    * @param section the section
    */
-  public GuidoBungeeConfiguration(@NotNull Configuration section) {
+  public GuidoBungeeConfiguration(@NonNull Configuration section) {
     this.settings = new ArrayList<>();
     this.token = section.getString("token", "0");
     this.guildId = section.getLong("guild", 0L);
@@ -65,12 +65,12 @@ public class GuidoBungeeConfiguration implements BungeeConfiguration {
         this.settings.add(
             new GuidoListenerSettings() {
               @Override
-              public @NotNull String getName() {
+              public @NonNull String getName() {
                 return name;
               }
 
               @Override
-              public @NotNull HashMap<String, Object> getSettings() {
+              public @NonNull HashMap<String, Object> getSettings() {
                 return settings;
               }
             });
@@ -78,19 +78,19 @@ public class GuidoBungeeConfiguration implements BungeeConfiguration {
     }
   }
 
-  @NotNull
+  @NonNull
   @Override
   public String getToken() {
     return this.token;
   }
 
   @Override
-  public @NotNull List<GuidoServer> getServers() {
+  public @NonNull List<GuidoServer> getServers() {
     return this.servers;
   }
 
   @Override
-  public @NotNull List<GuidoListenerSettings> getListenersSettings() {
+  public @NonNull List<GuidoListenerSettings> getListenersSettings() {
     return this.settings;
   }
 

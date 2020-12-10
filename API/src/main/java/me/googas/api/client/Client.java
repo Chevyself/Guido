@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.net.Socket;
 import java.util.Arrays;
 import java.util.Set;
+import lombok.NonNull;
 import me.googas.api.client.adapters.GroupAdapter;
 import me.googas.api.client.adapters.LadderAdapter;
 import me.googas.api.client.adapters.LinkedInfoAdapter;
@@ -31,27 +32,23 @@ import me.googas.messaging.Request;
 import me.googas.messaging.api.Message;
 import me.googas.messaging.json.adapters.MessageDeserializer;
 import me.googas.messaging.json.client.JsonClient;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 /** The client used by implementation to connect with Guido */
 public class Client {
 
-  /** The token that will give access to read or writing */
-  @NotNull private String token;
-
   /** The ip of the server of the bot */
-  @NotNull private final String ip;
+  @NonNull private final String ip;
+  /** The receptors that the client is using */
+  @NonNull private final Set<Object> receptors = Lots.set(new SimpleReceptors(this));
 
   /** The port of the server ofo the bot */
   private final int port;
-
-  /** The client to connect with the bot */
-  @Nullable private JsonClient connection;
-  /** The receptors that the client is using */
-  @NotNull private final Set<Object> receptors = Lots.set(new SimpleReceptors(this));
   /** The handler for throwable */
-  @NotNull private final SimpleThrowableHandler handler = new SimpleThrowableHandler(this);
+  @NonNull private final SimpleThrowableHandler handler = new SimpleThrowableHandler(this);
+  /** The token that will give access to read or writing */
+  @NonNull private String token;
+  /** The client to connect with the bot */
+  private JsonClient connection;
 
   /**
    * Create the client
@@ -60,7 +57,7 @@ public class Client {
    * @param ip the ip of the server of the bot
    * @param port the port of the server of the bot
    */
-  public Client(@NotNull String token, @NotNull String ip, int port) {
+  public Client(@NonNull String token, @NonNull String ip, int port) {
     this.token = token;
     this.ip = ip;
     this.port = port;
@@ -72,7 +69,7 @@ public class Client {
    * @return the stabilised connection
    * @throws IOException if the bot cannot be reached
    */
-  @NotNull
+  @NonNull
   public JsonClient startConnection() throws IOException {
     this.connection =
         new JsonClient(
@@ -125,7 +122,7 @@ public class Client {
    * @return the validated connection
    * @throws IOException if the connection could not be stabilised
    */
-  @NotNull
+  @NonNull
   public JsonClient validatedConnection() throws IOException {
     if (this.connection != null) {
       return this.connection;
@@ -135,12 +132,14 @@ public class Client {
   }
 
   /**
-   * Set the token that the client should use
+   * Add all the given receptors to the client
    *
-   * @param token the new token
+   * @param receptors the receptors to add
    */
-  public void setToken(@NotNull String token) {
-    this.token = token;
+  public void addReceptors(@NonNull Object... receptors) {
+    this.receptors.addAll(Arrays.asList(receptors));
+    JsonClient connection = this.getConnection();
+    if (connection != null) connection.addReceptors(receptors);
   }
 
   /** Disconnects the client */
@@ -154,22 +153,21 @@ public class Client {
   }
 
   /**
+   * Set the token that the client should use
+   *
+   * @param token the new token
+   */
+  public void setToken(@NonNull String token) {
+    this.token = token;
+  }
+
+  /**
    * Set the json client
    *
    * @param client the new value of json client
    */
-  public void setConnection(@Nullable JsonClient client) {
+  public void setConnection(JsonClient client) {
     this.connection = client;
-  }
-
-  /**
-   * Get the token that the client is using
-   *
-   * @return the token
-   */
-  @NotNull
-  public String getToken() {
-    return this.token;
   }
 
   /**
@@ -177,20 +175,18 @@ public class Client {
    *
    * @return the json client
    */
-  @Nullable
   public JsonClient getConnection() {
     return this.connection;
   }
 
   /**
-   * Add all the given receptors to the client
+   * Get the token that the client is using
    *
-   * @param receptors the receptors to add
+   * @return the token
    */
-  public void addReceptors(@NotNull Object... receptors) {
-    this.receptors.addAll(Arrays.asList(receptors));
-    JsonClient connection = this.getConnection();
-    if (connection != null) connection.addReceptors(receptors);
+  @NonNull
+  public String getToken() {
+    return this.token;
   }
 
   /**
@@ -198,7 +194,7 @@ public class Client {
    *
    * @return the receptors
    */
-  @NotNull
+  @NonNull
   public Set<Object> getReceptors() {
     return this.receptors;
   }

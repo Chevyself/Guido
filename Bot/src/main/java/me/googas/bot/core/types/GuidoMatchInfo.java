@@ -1,16 +1,15 @@
 package me.googas.bot.core.types;
 
+import lombok.NonNull;
 import me.googas.api.matches.Match;
 import me.googas.api.matches.MatchInfo;
 import me.googas.bot.core.Guido;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 /** Implementation for match info */
 public class GuidoMatchInfo implements MatchInfo {
 
   /** The id of the match */
-  @NotNull private final String id;
+  @NonNull private final String id;
 
   /** The id of the guild where the match is happening */
   private final long guildId;
@@ -21,7 +20,7 @@ public class GuidoMatchInfo implements MatchInfo {
    * @param id the id of the match
    * @param guildId the id of the guild where the match was played
    */
-  public GuidoMatchInfo(@NotNull String id, long guildId) {
+  public GuidoMatchInfo(@NonNull String id, long guildId) {
     this.id = id;
     this.guildId = guildId;
   }
@@ -32,7 +31,7 @@ public class GuidoMatchInfo implements MatchInfo {
    * @return the unique id of the match
    */
   @Override
-  public @NotNull String getId() {
+  public @NonNull String getId() {
     return this.id;
   }
 
@@ -52,7 +51,7 @@ public class GuidoMatchInfo implements MatchInfo {
    * @return the match if found null otherwise
    */
   @Override
-  public @Nullable Match getMatch() {
+  public Match getMatch() {
     return Guido.getDataLoader().getMatch(this.id);
   }
 }

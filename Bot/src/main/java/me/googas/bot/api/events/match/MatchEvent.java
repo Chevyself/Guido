@@ -1,21 +1,21 @@
 package me.googas.bot.api.events.match;
 
+import lombok.NonNull;
 import me.googas.api.matches.Match;
 import me.googas.bot.api.events.GuidoEvent;
-import org.jetbrains.annotations.NotNull;
 
 /** An event related to a match */
 public class MatchEvent implements GuidoEvent {
 
   /** The match involved */
-  @NotNull private final Match match;
+  @NonNull private final Match match;
 
   /**
    * Create the match event
    *
    * @param match the match involved
    */
-  public MatchEvent(@NotNull Match match) {
+  public MatchEvent(@NonNull Match match) {
     this.match = match;
   }
 
@@ -24,7 +24,7 @@ public class MatchEvent implements GuidoEvent {
    *
    * @return the match involved
    */
-  @NotNull
+  @NonNull
   public Match getMatch() {
     return this.match;
   }

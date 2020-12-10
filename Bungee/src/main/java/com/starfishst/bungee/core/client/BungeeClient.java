@@ -3,11 +3,13 @@ package com.starfishst.bungee.core.client;
 import com.starfishst.bungee.api.Guido;
 import com.starfishst.bungee.core.listeners.GroupListener;
 import java.io.IOException;
+import java.util.concurrent.TimeUnit;
+import lombok.NonNull;
 import me.googas.api.client.Client;
 import me.googas.commons.maps.Maps;
 import me.googas.messaging.Request;
 import me.googas.messaging.json.client.JsonClient;
-import org.jetbrains.annotations.NotNull;
+import net.md_5.bungee.api.ProxyServer;
 
 /** An extension for client */
 public class BungeeClient extends Client {
@@ -17,14 +19,17 @@ public class BungeeClient extends Client {
    *
    * @param token the token
    */
-  public BungeeClient(@NotNull String token) {
-    super(token, "45.43.24.28", 3000);
+  public BungeeClient(@NonNull String token) {
+    super(token, "167.114.49.251", 3000);
     this.addReceptors(new BungeeReceptors());
   }
 
   @Override
-  public @NotNull JsonClient startConnection() throws IOException {
+  public @NonNull JsonClient startConnection() throws IOException {
     Guido.getLogger().info("Starting connection");
+    ProxyServer.getInstance()
+        .getScheduler()
+        .schedule(Guido.validated(), new BungeeHeartBeatTimerTask(this), 10, 10, TimeUnit.SECONDS);
     JsonClient client = super.startConnection();
     Guido.getLogger().info("Connection with the bot as been stabilised in " + client);
     return client;

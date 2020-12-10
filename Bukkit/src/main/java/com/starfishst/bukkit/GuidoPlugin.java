@@ -10,7 +10,9 @@ import com.starfishst.bukkit.client.BukkitClient;
 import com.starfishst.bukkit.commands.ConfigurationCommands;
 import com.starfishst.bukkit.commands.FlyCommand;
 import com.starfishst.bukkit.commands.GameModeCommand;
+import com.starfishst.bukkit.commands.KnockbackCommand;
 import com.starfishst.bukkit.commands.PingCommand;
+import com.starfishst.bukkit.commands.TeleportCommand;
 import com.starfishst.bukkit.commands.TestCommands;
 import com.starfishst.bukkit.commands.providers.GameModeProvider;
 import com.starfishst.bukkit.configuration.GuidoConfiguration;
@@ -31,6 +33,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.List;
 import java.util.Set;
+import lombok.NonNull;
 import me.googas.api.client.Client;
 import me.googas.commons.Lots;
 import me.googas.commons.fallback.Fallback;
@@ -38,19 +41,17 @@ import org.bukkit.Bukkit;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 /** Guido implementation for Bukkit */
 public class GuidoPlugin extends JavaPlugin {
 
   /** The language handler for localized messages */
-  @NotNull
+  @NonNull
   private final BukkitLanguageHandler bukkitLanguageHandler =
       new BukkitLanguageHandler().loadResources(this, "en");
 
   /** The command manager that the implementation is using to register commands */
-  @NotNull
+  @NonNull
   private final CommandManager manager =
       new CommandManager(
           this,
@@ -58,26 +59,27 @@ public class GuidoPlugin extends JavaPlugin {
           this.bukkitLanguageHandler,
           new GuidoProvidersRegistry(this.bukkitLanguageHandler));
   /** The set of commands that the implementation is using */
-  @NotNull
+  @NonNull
   private final Set<GuidoCommand> commands =
       Lots.set(
           new ConfigurationCommands(),
           new FlyCommand(),
           new GameModeCommand(),
+          new KnockbackCommand(),
           new PingCommand(),
+          new TeleportCommand(),
           new TestCommands());
   /** The listeners that this requires */
-  @NotNull private final List<GuidoListener> listeners = Lots.list(this.bukkitLanguageHandler);
-  /** The guidoConfiguration that the implementation is using */
-  @NotNull private Configuration configuration = new GuidoConfiguration();
+  @NonNull private final List<GuidoListener> listeners = Lots.list(this.bukkitLanguageHandler);
   /**
    * The dependencies that the plugin can use. Those are soft dependencies meaning that it can run
    * without them. The boolean is whether they are active
    */
-  @NotNull private final DependencyManager dependencies = new GuidoDependencies(this);
-
+  @NonNull private final DependencyManager dependencies = new GuidoDependencies(this);
   /** The client that the plugin is using */
-  @NotNull private final BukkitClient client = new BukkitClient("none", "45.43.24.28", 3000);
+  @NonNull private final BukkitClient client = new BukkitClient("none", "167.114.49.251", 3000);
+  /** The guidoConfiguration that the implementation is using */
+  @NonNull private Configuration configuration = new GuidoConfiguration();
 
   /** Unregisters the commands registered by the implementation */
   private void unregisterCommands() {
@@ -167,16 +169,6 @@ public class GuidoPlugin extends JavaPlugin {
   }
 
   /**
-   * Get the configuration that the plugin is using
-   *
-   * @return the plugin configuration
-   */
-  @NotNull
-  public Configuration getConfiguration() {
-    return this.configuration;
-  }
-
-  /**
    * Get a listener using its class
    *
    * @param clazz the class of the listener
@@ -184,14 +176,30 @@ public class GuidoPlugin extends JavaPlugin {
    * @return the listener if found or
    * @throws IllegalStateException if the listener is not loaded
    */
-  @NotNull
-  public <T extends GuidoListener> T requireListener(@NotNull Class<T> clazz) {
+  @NonNull
+  public <T extends GuidoListener> T requireListener(@NonNull Class<T> clazz) {
     for (GuidoListener listener : this.listeners) {
       if (listener.getClass() == clazz) {
         return clazz.cast(listener);
       }
     }
     throw new IllegalStateException("The listener " + clazz + " was not registered");
+  }
+
+  /**
+   * Get a listener using its class
+   *
+   * @param clazz the class of the listener
+   * @param <T> the type of the listener class
+   * @return the listener if found null if it might not have been registered
+   */
+  public <T extends GuidoListener> T getListener(@NonNull Class<T> clazz) {
+    for (GuidoListener listener : this.listeners) {
+      if (listener.getClass() == clazz) {
+        return clazz.cast(listener);
+      }
+    }
+    return null;
   }
 
   /** Check the dependencies and add the listeners to them */
@@ -209,20 +217,13 @@ public class GuidoPlugin extends JavaPlugin {
   }
 
   /**
-   * Get a listener using its class
+   * Get the configuration that the plugin is using
    *
-   * @param clazz the class of the listener
-   * @param <T> the type of the listener class
-   * @return the listener if found null if it might not have been registered
+   * @return the plugin configuration
    */
-  @Nullable
-  public <T extends GuidoListener> T getListener(@NotNull Class<T> clazz) {
-    for (GuidoListener listener : this.listeners) {
-      if (listener.getClass() == clazz) {
-        return clazz.cast(listener);
-      }
-    }
-    return null;
+  @NonNull
+  public Configuration getConfiguration() {
+    return this.configuration;
   }
 
   /**
@@ -230,7 +231,7 @@ public class GuidoPlugin extends JavaPlugin {
    *
    * @return the default listeners
    */
-  private @NotNull List<GuidoListener> getDefaultListeners() {
+  private @NonNull List<GuidoListener> getDefaultListeners() {
     return Lots.list(
         new CommandExecutionListener(),
         new GroupListener(),
@@ -245,12 +246,12 @@ public class GuidoPlugin extends JavaPlugin {
    *
    * @return the dependencies that the bot has
    */
-  @NotNull
+  @NonNull
   public DependencyManager getDependencies() {
     return this.dependencies;
   }
 
-  public @NotNull Client getClient() {
+  public @NonNull Client getClient() {
     return this.client;
   }
 
@@ -279,7 +280,7 @@ public class GuidoPlugin extends JavaPlugin {
    *
    * @return the language handler
    */
-  @NotNull
+  @NonNull
   public BukkitLanguageHandler getLanguageHandler() {
     return this.bukkitLanguageHandler;
   }
@@ -289,7 +290,7 @@ public class GuidoPlugin extends JavaPlugin {
    *
    * @return the command manager
    */
-  @NotNull
+  @NonNull
   public CommandManager getCommandManager() {
     return this.manager;
   }

@@ -53,7 +53,7 @@ match-making:
     next: "&aIt's your turn to pick. Please use &e/pick <name> &ato pick a player. You can pick between: &e%picks%"
     leader: "&aYou are a captain for this match please pick your players using &e/pick <name>"
     turn-to-pick: "&aIts your turn to pick! Please pick a player using &e/pick <name>"
-    time-left: "&aYou got &e%time%&a left to pick a player"
+    time-left: "&aYou got &e%time%&a left to pick a player. You can pick using &e/pick <name> &athe players left to pick are %e%picks%"
 ready:
   observing: "&cYour team is not allowed to be ready"
   success: "&aYour team is now ready"

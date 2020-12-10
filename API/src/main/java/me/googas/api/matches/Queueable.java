@@ -1,7 +1,7 @@
 package me.googas.api.matches;
 
+import lombok.NonNull;
 import me.googas.api.utility.Stateable;
-import org.jetbrains.annotations.NotNull;
 
 /** This object represents entity that can be inside a queue */
 public interface Queueable extends Stateable {
@@ -12,6 +12,6 @@ public interface Queueable extends Stateable {
    *
    * @return a simple way to identify the data
    */
-  @NotNull
+  @NonNull
   String getSingle();
 }

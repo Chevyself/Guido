@@ -1,10 +1,10 @@
 package me.googas.api.messaging;
 
+import lombok.NonNull;
 import me.googas.api.links.Linkable;
 import me.googas.api.links.LinkableInfo;
 import me.googas.api.utility.ValuesMap;
 import me.googas.commons.cache.Catchable;
-import org.jetbrains.annotations.NotNull;
 
 /**
  * A message is a notification a chat message and more. It can be, for example, an invitation for a
@@ -17,7 +17,7 @@ public interface Message extends Catchable {
    *
    * @return the id of the message
    */
-  @NotNull
+  @NonNull
   String getId();
 
   /**
@@ -25,7 +25,7 @@ public interface Message extends Catchable {
    *
    * @return the sender of the message
    */
-  @NotNull
+  @NonNull
   LinkableInfo getSender();
 
   /**
@@ -33,7 +33,7 @@ public interface Message extends Catchable {
    *
    * @return the receiver
    */
-  @NotNull
+  @NonNull
   LinkableInfo getReceiver();
 
   /**
@@ -41,6 +41,6 @@ public interface Message extends Catchable {
    *
    * @return the details of the message
    */
-  @NotNull
+  @NonNull
   ValuesMap getDetails();
 }

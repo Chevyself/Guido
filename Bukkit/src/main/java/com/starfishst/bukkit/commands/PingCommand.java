@@ -4,8 +4,8 @@ import com.starfishst.bukkit.annotations.Command;
 import com.starfishst.bukkit.api.commands.GuidoCommand;
 import com.starfishst.bukkit.result.Result;
 import com.starfishst.core.annotations.Optional;
+import lombok.NonNull;
 import org.bukkit.entity.Player;
-import org.jetbrains.annotations.NotNull;
 
 /** The command to get the ping of a player */
 public class PingCommand implements GuidoCommand {
@@ -33,7 +33,7 @@ public class PingCommand implements GuidoCommand {
   }
 
   @Override
-  public @NotNull String getName() {
+  public @NonNull String getName() {
     return "ping";
   }
 

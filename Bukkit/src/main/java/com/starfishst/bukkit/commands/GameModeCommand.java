@@ -5,9 +5,9 @@ import com.starfishst.bukkit.api.commands.GuidoCommand;
 import com.starfishst.bukkit.result.Result;
 import com.starfishst.core.annotations.Optional;
 import com.starfishst.core.annotations.Required;
+import lombok.NonNull;
 import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
-import org.jetbrains.annotations.NotNull;
 
 /** Change the gamemode using t his command */
 public class GameModeCommand implements GuidoCommand {
@@ -52,7 +52,7 @@ public class GameModeCommand implements GuidoCommand {
   }
 
   @Override
-  public @NotNull String getName() {
+  public @NonNull String getName() {
     return "gamemode";
   }
 

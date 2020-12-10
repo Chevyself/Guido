@@ -2,20 +2,20 @@ package me.googas.bot.core.types;
 
 import java.util.HashMap;
 import java.util.Map;
+import lombok.NonNull;
 import me.googas.api.links.LinkableType;
 import me.googas.bot.api.types.BotLinkable;
 import me.googas.bot.api.types.BotLinkableInfo;
 import me.googas.bot.core.types.maps.GuidoValuesMap;
-import org.jetbrains.annotations.NotNull;
 
 /** The uncompleted data from a linked data */
 public class GuidoLinkableInfo implements BotLinkableInfo {
 
   /** The type of linked data */
-  @NotNull private final LinkableType type;
+  @NonNull private final LinkableType type;
 
   /** The way to identify this data */
-  @NotNull private final GuidoValuesMap identification;
+  @NonNull private final GuidoValuesMap identification;
 
   /**
    * Create the uncompleted data
@@ -23,7 +23,7 @@ public class GuidoLinkableInfo implements BotLinkableInfo {
    * @param type the type of data
    * @param identification the way to identify the data
    */
-  public GuidoLinkableInfo(@NotNull LinkableType type, @NotNull GuidoValuesMap identification) {
+  public GuidoLinkableInfo(@NonNull LinkableType type, @NonNull GuidoValuesMap identification) {
     this.type = type;
     this.identification = identification;
   }
@@ -39,7 +39,7 @@ public class GuidoLinkableInfo implements BotLinkableInfo {
    * @return the map of the stats
    */
   @Override
-  public @NotNull Map<String, Float> getStats() {
+  public @NonNull Map<String, Float> getStats() {
     BotLinkable link = this.getLink();
     return link == null ? new HashMap<>() : link.getStats();
   }
@@ -51,18 +51,18 @@ public class GuidoLinkableInfo implements BotLinkableInfo {
    * @return a simple way to identify the data
    */
   @Override
-  public @NotNull String getSingle() {
+  public @NonNull String getSingle() {
     BotLinkable link = this.getLink();
     return link == null ? "invalid" : link.getSingle();
   }
 
   @Override
-  public @NotNull LinkableType getType() {
+  public @NonNull LinkableType getType() {
     return this.type;
   }
 
   @Override
-  public @NotNull GuidoValuesMap getIdentification() {
+  public @NonNull GuidoValuesMap getIdentification() {
     return this.identification;
   }
 

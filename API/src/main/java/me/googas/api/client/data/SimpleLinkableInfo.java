@@ -3,22 +3,21 @@ package me.googas.api.client.data;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
+import lombok.NonNull;
 import me.googas.api.links.Linkable;
 import me.googas.api.links.LinkableInfo;
 import me.googas.api.links.LinkableType;
 import me.googas.api.utility.ValuesMap;
 import me.googas.commons.builder.ToStringBuilder;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 /** An implementation for linked info */
 public class SimpleLinkableInfo implements LinkableInfo {
 
   /** The type of the link */
-  @NotNull private final LinkableType type;
+  @NonNull private final LinkableType type;
 
   /** The way to identify the link */
-  @NotNull private final ValuesMap identification;
+  @NonNull private final ValuesMap identification;
 
   /**
    * Create the link information
@@ -26,13 +25,13 @@ public class SimpleLinkableInfo implements LinkableInfo {
    * @param type the type of link
    * @param identification the way to identify the link
    */
-  public SimpleLinkableInfo(@NotNull LinkableType type, @NotNull SimpleValuesMap identification) {
+  public SimpleLinkableInfo(@NonNull LinkableType type, @NonNull SimpleValuesMap identification) {
     this.type = type;
     this.identification = identification;
   }
 
   @Override
-  public @NotNull Map<String, Float> getStats() {
+  public @NonNull Map<String, Float> getStats() {
     return new HashMap<>();
   }
 
@@ -43,23 +42,23 @@ public class SimpleLinkableInfo implements LinkableInfo {
    * @return a simple way to identify the data
    */
   @Override
-  public @NotNull String getSingle() {
+  public @NonNull String getSingle() {
     Linkable link = this.getLink();
     return link == null ? "invalid" : link.getSingle();
   }
 
   @Override
-  public @NotNull LinkableType getType() {
+  public @NonNull LinkableType getType() {
     return this.type;
   }
 
   @Override
-  public @NotNull ValuesMap getIdentification() {
+  public @NonNull ValuesMap getIdentification() {
     return this.identification;
   }
 
   @Override
-  public @Nullable Linkable getLink() {
+  public Linkable getLink() {
     return null;
   }
 

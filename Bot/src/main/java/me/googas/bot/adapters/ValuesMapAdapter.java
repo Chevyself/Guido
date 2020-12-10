@@ -8,11 +8,11 @@ import com.google.gson.JsonSerializationContext;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Map;
+import lombok.NonNull;
 import me.googas.api.utility.ValuesMap;
 import me.googas.bot.core.types.maps.GuidoValuesMap;
 import me.googas.commons.gson.adapters.JsonAdapter;
 import me.googas.commons.maps.Maps;
-import org.jetbrains.annotations.NotNull;
 
 /** Adapts values map */
 public class ValuesMapAdapter implements JsonAdapter<ValuesMap> {
@@ -21,7 +21,7 @@ public class ValuesMapAdapter implements JsonAdapter<ValuesMap> {
    * Objects in mongo have a prefix when its not a json primitive that's why this contains the given
    * mongo name and the type to deserialize
    */
-  @NotNull
+  @NonNull
   static final Map<String, Type> objectId = Maps.builder("numberLong", (Type) Long.class).build();
 
   @Override
@@ -37,9 +37,9 @@ public class ValuesMapAdapter implements JsonAdapter<ValuesMap> {
    * @param object the object to get the values from
    */
   static void appendValues(
-      @NotNull JsonDeserializationContext context,
-      @NotNull GuidoValuesMap map,
-      @NotNull JsonObject object) {
+      @NonNull JsonDeserializationContext context,
+      @NonNull GuidoValuesMap map,
+      @NonNull JsonObject object) {
     for (String key : object.keySet()) {
       JsonElement value = object.get(key);
       if (value.isJsonObject()) {

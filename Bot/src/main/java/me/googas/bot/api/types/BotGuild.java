@@ -3,6 +3,8 @@ package me.googas.bot.api.types;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicReference;
+import lombok.NonNull;
 import me.googas.api.discord.GuildData;
 import me.googas.api.matches.Ladder;
 import me.googas.bot.core.Guido;
@@ -12,7 +14,6 @@ import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.entities.VoiceChannel;
-import org.jetbrains.annotations.NotNull;
 
 /**
  * The data of a guild in jda TODO the api does not need guild or roles they should be moved to just
@@ -26,8 +27,8 @@ public interface BotGuild extends GuildData, BotCatchable {
    * @param key the key to get the channel
    * @return the channel
    */
-  @NotNull
-  default TextChannel getChannel(@NotNull String key) {
+  @NonNull
+  default TextChannel getTextChannel(@NonNull String key) {
     Guild guild = this.getDiscord();
     TextChannel channel = guild.getTextChannelById(this.getChannels().getOrDefault(key, -1L));
     if (channel == null) {
@@ -43,8 +44,8 @@ public interface BotGuild extends GuildData, BotCatchable {
    * @param key the key to get the channel
    * @return the channel
    */
-  @NotNull
-  default VoiceChannel getVoiceChannel(@NotNull String key) {
+  @NonNull
+  default VoiceChannel getVoiceChannel(@NonNull String key) {
     Guild guild = this.getDiscord();
     VoiceChannel channel =
         guild.getVoiceChannelById(this.getVoiceChannels().getOrDefault(key, -1L));
@@ -61,8 +62,8 @@ public interface BotGuild extends GuildData, BotCatchable {
    * @param key the key to get the category
    * @return the category
    */
-  @NotNull
-  default Category getCategory(@NotNull String key) {
+  @NonNull
+  default Category getCategory(@NonNull String key) {
     Guild guild = this.getDiscord();
     Category category = guild.getCategoryById(this.getCategories().getOrDefault(key, -1L));
     if (category == null) {
@@ -82,7 +83,7 @@ public interface BotGuild extends GuildData, BotCatchable {
    * @return the roles that are representative for the ladder and the number inside or outside
    *     bounds
    */
-  default Collection<Role> getRolesDiscord(@NotNull Ladder ladder, int numb, boolean bounds) {
+  default Collection<Role> getRolesDiscord(@NonNull Ladder ladder, int numb, boolean bounds) {
     return this.getRolesById(this.getRoles(ladder, numb, bounds));
   }
 
@@ -104,8 +105,8 @@ public interface BotGuild extends GuildData, BotCatchable {
    * @param rolesId the ids of the roles
    * @return the roles given from the id
    */
-  @NotNull
-  default Collection<Role> getRolesById(@NotNull Collection<Long> rolesId) {
+  @NonNull
+  default Collection<Role> getRolesById(@NonNull Collection<Long> rolesId) {
     Guild guild = this.getDiscord();
     Set<Role> roles = new HashSet<>();
     for (long id : rolesId) {
@@ -119,11 +120,35 @@ public interface BotGuild extends GuildData, BotCatchable {
   }
 
   /**
+   * Get the key of a voice channel matching the id
+   *
+   * @param id the id of the channel to match
+   * @return the key that contains that channel if found else null
+   */
+  default String getVoiceChannel(long id) {
+    AtomicReference<String> atomic = new AtomicReference<>();
+    this.getVoiceChannels()
+        .forEach(
+            (key, channel) -> {
+              if (channel == id) atomic.set(key);
+            });
+    return atomic.get();
+  }
+
+  /**
+   * Get a message by its id
+   *
+   * @param id the id of the message to get
+   * @return the message if found else null
+   */
+  BotResponsiveMessage getMessage(long id);
+
+  /**
    * Get the responsive messages of the server
    *
    * @return the responsive messages
    */
-  @NotNull
+  @NonNull
   Collection<BotResponsiveMessage> getMessages();
 
   /**
@@ -131,7 +156,7 @@ public interface BotGuild extends GuildData, BotCatchable {
    *
    * @return the discord guild
    */
-  @NotNull
+  @NonNull
   default Guild getDiscord() {
     return Validate.notNull(
         Guido.getConnection().validatedJda().getGuildById(this.getId()),

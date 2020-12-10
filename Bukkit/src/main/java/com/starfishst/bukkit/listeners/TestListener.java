@@ -2,8 +2,8 @@ package com.starfishst.bukkit.listeners;
 
 import com.starfishst.bukkit.api.events.GuidoEvent;
 import com.starfishst.bukkit.api.events.GuidoListener;
+import lombok.NonNull;
 import org.bukkit.event.EventHandler;
-import org.jetbrains.annotations.NotNull;
 
 /** Listens to guido events */
 public class TestListener implements GuidoListener {
@@ -17,7 +17,7 @@ public class TestListener implements GuidoListener {
   public void onGuidoEvent(GuidoEvent event) {}
 
   @Override
-  public @NotNull String getName() {
+  public @NonNull String getName() {
     return "test";
   }
 

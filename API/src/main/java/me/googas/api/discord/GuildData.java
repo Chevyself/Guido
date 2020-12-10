@@ -4,12 +4,11 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import lombok.NonNull;
 import me.googas.api.matches.GlobalLadder;
 import me.googas.api.matches.Ladder;
 import me.googas.api.ranks.RankRange;
 import me.googas.commons.cache.Catchable;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 /** This object represents the data for a guild */
 public interface GuildData extends Catchable {
@@ -27,8 +26,7 @@ public interface GuildData extends Catchable {
    * @param name the name of the ladder
    * @return the ladder if found else null
    */
-  @Nullable
-  default Ladder getLadder(@NotNull String name) {
+  default Ladder getLadder(@NonNull String name) {
     if (name.equalsIgnoreCase("global")) {
       return GlobalLadder.INSTANCE;
     } else {
@@ -52,7 +50,7 @@ public interface GuildData extends Catchable {
    * @return the roles that are representative for the ladder and the number inside or outside
    *     bounds
    */
-  default Collection<Long> getRoles(@NotNull Ladder ladder, int numb, boolean bounds) {
+  default Collection<Long> getRoles(@NonNull Ladder ladder, int numb, boolean bounds) {
     return this.getRoles(ladder.getName(), numb, bounds);
   }
 
@@ -67,7 +65,7 @@ public interface GuildData extends Catchable {
    * @return the roles that are representative for the ladder and the number inside or outside
    *     bounds
    */
-  default Collection<Long> getRoles(@NotNull String ladder, int numb, boolean bounds) {
+  default Collection<Long> getRoles(@NonNull String ladder, int numb, boolean bounds) {
     Set<Long> rolesId = new HashSet<>();
     this.getRanges()
         .forEach(
@@ -100,7 +98,7 @@ public interface GuildData extends Catchable {
    *
    * @return the ranges
    */
-  @NotNull
+  @NonNull
   Map<Long, RankRange> getRanges();
 
   /**
@@ -108,7 +106,7 @@ public interface GuildData extends Catchable {
    *
    * @return the map of the ladders and its initial base value
    */
-  @NotNull
+  @NonNull
   Collection<Ladder> getLadders();
 
   /**
@@ -116,7 +114,7 @@ public interface GuildData extends Catchable {
    *
    * @return the map of channels
    */
-  @NotNull
+  @NonNull
   Map<String, Long> getChannels();
 
   /**
@@ -124,7 +122,7 @@ public interface GuildData extends Catchable {
    *
    * @return the map of channels
    */
-  @NotNull
+  @NonNull
   Map<String, Long> getVoiceChannels();
 
   /**
@@ -132,6 +130,6 @@ public interface GuildData extends Catchable {
    *
    * @return the map of categories
    */
-  @NotNull
+  @NonNull
   Map<String, Long> getCategories();
 }

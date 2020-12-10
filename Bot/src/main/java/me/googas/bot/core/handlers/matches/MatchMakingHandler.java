@@ -5,7 +5,8 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
-import java.util.logging.Level;
+import java.util.concurrent.TimeUnit;
+import lombok.NonNull;
 import me.googas.api.discord.GuildData;
 import me.googas.api.lang.LocaleFile;
 import me.googas.api.links.Linkable;
@@ -34,7 +35,9 @@ import net.dv8tion.jda.api.entities.GuildVoiceState;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.entities.VoiceChannel;
-import org.jetbrains.annotations.NotNull;
+import net.dv8tion.jda.api.events.guild.voice.GuildVoiceLeaveEvent;
+import net.dv8tion.jda.api.events.guild.voice.GuildVoiceMoveEvent;
+import net.dv8tion.jda.api.hooks.SubscribeEvent;
 
 /** This handles the match-making process for ranked matches */
 public class MatchMakingHandler implements GuidoEventHandler {
@@ -43,7 +46,10 @@ public class MatchMakingHandler implements GuidoEventHandler {
    * A map that contains the team voice channels in a match First element in the map is the id of
    * the match and then another map with the id of the team and the id of the voice channel
    */
-  @NotNull private final Map<String, Map<Integer, Long>> teamsVoices = new HashMap<>();
+  @NonNull private final Map<String, Map<Integer, Long>> teamsVoices = new HashMap<>();
+
+  /** The pre match channels created */
+  @NonNull private final Map<Long, String> preMatch = new HashMap<>();
 
   /**
    * Listen to when a match ends to announce it
@@ -51,14 +57,14 @@ public class MatchMakingHandler implements GuidoEventHandler {
    * @param event the event of a match updating its status
    */
   @Listener(priority = ListenPriority.HIGHEST)
-  public void onMatchStatusUpdatedEvent(@NotNull MatchStatusUpdatedEvent event) {
+  public void onMatchStatusUpdatedEvent(@NonNull MatchStatusUpdatedEvent event) {
     Match match = event.getMatch();
     if (event.getStatus() == MatchStatus.FINISHED) {
       LocaleFile locale = Guido.getLanguageHandler().getDefault();
       long guildId = match.getGuildId();
       BotGuild guildData = Guido.getDataLoader().getGuildDataOrCreate(guildId);
       if (match instanceof BotMatch) {
-        TextChannel channel = guildData.getChannel("matches");
+        TextChannel channel = guildData.getTextChannel("matches");
         EmbedQuery information = ((BotMatch) match).getInformation(locale);
         information
             .getEmbedBuilder()
@@ -91,15 +97,63 @@ public class MatchMakingHandler implements GuidoEventHandler {
   }
 
   /**
+   * When a match is loaded create a pre game channel
+   *
+   * @param event the event of a match being loaded
+   */
+  @Listener(priority = ListenPriority.HIGHEST)
+  public void onMatchLoaded(MatchLoadedEvent event) {
+    Match match = event.getMatch();
+    GuildData guild = match.getGuild();
+    if (!(guild instanceof BotGuild)) return;
+    ((BotGuild) guild)
+        .getCategory("matches")
+        .createVoiceChannel("Pre-Game " + match.getId())
+        .queue(
+            channel -> {
+              this.preMatch.put(channel.getIdLong(), match.getId());
+              Discord.removeAllPermission(
+                  channel,
+                  Permission.VIEW_CHANNEL,
+                  Permission.VOICE_SPEAK,
+                  Permission.VOICE_STREAM,
+                  Permission.VOICE_USE_VAD);
+              for (LinkableInfo participant : match.getParticipants()) {
+                Linkable link = participant.getLink();
+                if (!(link instanceof BotLinkable)) return;
+                Member member = ((BotLinkable) link).getDiscordMember(guild.getId());
+                if (member != null) {
+                  Discord.addPermissions(
+                      channel,
+                      member,
+                      Discord.VOICE,
+                      aVoid -> {
+                        GuildVoiceState state = member.getVoiceState();
+                        if (state != null) {
+                          if (state.getChannel() != null) {
+                            ((BotGuild) guild)
+                                .getDiscord()
+                                .moveVoiceMember(member, channel)
+                                .queueAfter(500, TimeUnit.MILLISECONDS);
+                          }
+                        }
+                      });
+                }
+              }
+            },
+            Discord.exceptionConsumer());
+  }
+
+  /**
    * Listen to when a team is added to a match to create a voice channel for it
    *
    * @param event the event of a team being added to a match
    */
   @Listener(priority = ListenPriority.HIGHEST)
-  public void onTeamAddTeamEvent(@NotNull MatchAddTeamEvent event) {
+  public void onTeamAddTeamEvent(@NonNull MatchAddTeamEvent event) {
     Match match = event.getMatch();
     Team team = event.getTeam();
-    GuildData data = match.getGuildData();
+    GuildData data = match.getGuild();
     if (data instanceof BotGuild) {
       ((BotGuild) data)
           .getCategory("matches")
@@ -124,7 +178,7 @@ public class MatchMakingHandler implements GuidoEventHandler {
                                 ((BotGuild) data)
                                     .getDiscord()
                                     .moveVoiceMember(discordMember, channel)
-                                    .queue();
+                                    .queueAfter(500, TimeUnit.MILLISECONDS);
                               }
                             }
                           }));
@@ -141,9 +195,9 @@ public class MatchMakingHandler implements GuidoEventHandler {
    * @param event the event of a team being added to a match
    */
   @Listener(priority = ListenPriority.HIGHEST)
-  public void onTeamRemoveEvent(@NotNull MatchAddTeamEvent event) {
+  public void onTeamRemoveEvent(@NonNull MatchAddTeamEvent event) {
     Match match = event.getMatch();
-    GuildData data = match.getGuildData();
+    GuildData data = match.getGuild();
     if (data instanceof BotGuild) {
       BotGuild botGuild = (BotGuild) data;
       Map<Integer, Long> voices = this.getVoices(match.getId());
@@ -153,6 +207,40 @@ public class MatchMakingHandler implements GuidoEventHandler {
               .getVoiceChannelById(voices.getOrDefault(event.getTeam().getId(), -1L));
       this.deleteAndMove(botGuild, channel);
       voices.remove(event.getTeam().getId());
+    }
+  }
+
+  /**
+   * Listen to when a member leaves a voice channel to check if it is a pregame channel to delete it
+   *
+   * @param event the event of a member leaving a voice channel
+   */
+  @SubscribeEvent
+  public void onGuildVoiceLeave(@NonNull GuildVoiceLeaveEvent event) {
+    this.checkDeletePreGame(event.getChannelLeft());
+  }
+
+  /**
+   * Listen to when a member moves from voice channel to check if it is a pregame channel to delete
+   * it
+   *
+   * @param event the event of a member moving from voice channel
+   */
+  @SubscribeEvent
+  public void onGuildVoiceMove(@NonNull GuildVoiceMoveEvent event) {
+    this.checkDeletePreGame(event.getChannelLeft());
+  }
+
+  /**
+   * Check if the channel is a pregame if so delete it
+   *
+   * @param channel the channel to check
+   */
+  public void checkDeletePreGame(@NonNull VoiceChannel channel) {
+    String id = this.preMatch.get(channel.getIdLong());
+    if (id == null) return;
+    if (channel.getMembers().isEmpty()) {
+      channel.delete().queue();
     }
   }
 
@@ -167,23 +255,20 @@ public class MatchMakingHandler implements GuidoEventHandler {
     if (channel != null) {
       for (Member member : channel.getMembers()) {
         if (member.getVoiceState() != null && member.getVoiceState().getChannel() != null) {
-          botGuild.getDiscord().moveVoiceMember(member, waiting).queue(aVoid -> {}, ignored -> {});
+          botGuild
+              .getDiscord()
+              .moveVoiceMember(member, waiting)
+              .queueAfter(
+                  500,
+                  TimeUnit.MILLISECONDS,
+                  aVoid -> {
+                    if (channel.getMembers().isEmpty()) {
+                      channel.delete().queue(ignored -> {}, Discord.exceptionConsumer());
+                    }
+                  },
+                  Discord.exceptionConsumer());
         }
       }
-      int time = 0;
-      while (!channel.getMembers().isEmpty()) {
-        time++;
-        try {
-          Thread.sleep(1);
-        } catch (InterruptedException e) {
-          Guido.getLogger()
-              .log(Level.WARNING, e, () -> "The thread was interrupted while moving members");
-        }
-        if (time > 3000) {
-          break;
-        }
-      }
-      channel.delete().queue(aVoid -> {}, ignored -> {});
     }
   }
 
@@ -193,7 +278,7 @@ public class MatchMakingHandler implements GuidoEventHandler {
    * @param data the user to check if playing
    * @return true if the user is playing
    */
-  public boolean isPlaying(@NotNull UserData data) {
+  public boolean isPlaying(@NonNull UserData data) {
     return !this.getPlaying(data).isEmpty();
   }
 
@@ -203,7 +288,7 @@ public class MatchMakingHandler implements GuidoEventHandler {
    * @param data the user to check where it is playing
    * @return the collection of matches where the user is playing
    */
-  public Collection<Match> getPlaying(@NotNull UserData data) {
+  public Collection<Match> getPlaying(@NonNull UserData data) {
     BotDataLoader loader = Guido.getDataLoader();
     Collection<Linkable> links = loader.getLinks(data);
     Collection<Match> participating = new HashSet<>();
@@ -226,8 +311,15 @@ public class MatchMakingHandler implements GuidoEventHandler {
    * @param matchId the id of the match
    * @return the voices channels for the teams in a match
    */
-  private Map<Integer, Long> getVoices(@NotNull String matchId) {
+  private Map<Integer, Long> getVoices(@NonNull String matchId) {
     return this.teamsVoices.computeIfAbsent(matchId, k -> new HashMap<>());
+  }
+
+  /** Wake up queues waiting for server */
+  public void serverReady() {
+    for (MatchHandler handler : Guido.getHandlers(MatchHandler.class)) {
+      handler.serverReady();
+    }
   }
 
   /**
@@ -236,7 +328,7 @@ public class MatchMakingHandler implements GuidoEventHandler {
    * @param match the match to id and the channels
    * @return the voices channels for the teams in a match
    */
-  public Map<Integer, Long> getVoices(@NotNull Match match) {
+  public Map<Integer, Long> getVoices(@NonNull Match match) {
     return this.getVoices(match.getId());
   }
 

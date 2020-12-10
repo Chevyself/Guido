@@ -5,6 +5,7 @@ import com.starfishst.jda.utils.responsive.controller.ResponsiveMessageControlle
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
+import lombok.NonNull;
 import me.googas.bot.api.events.responsive.ResponsiveMessageUnloadedEvent;
 import me.googas.bot.core.Guido;
 import me.googas.bot.core.handlers.GuidoEventHandler;
@@ -14,21 +15,19 @@ import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.events.message.react.MessageReactionAddEvent;
 import net.dv8tion.jda.api.hooks.SubscribeEvent;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 /** The controller for responsive messages */
 public class GuidoMessagesController implements ResponsiveMessageController, GuidoEventHandler {
 
   /** The messages that this is currently controlling */
-  @NotNull private final Set<ResponsiveMessage> messages = new HashSet<>();
+  @NonNull private final Set<ResponsiveMessage> messages = new HashSet<>();
 
   /**
    * Adds a message to listen to in the set
    *
    * @param message the message added in the set
    */
-  public void addMessage(@NotNull ResponsiveMessage message) {
+  public void addMessage(@NonNull ResponsiveMessage message) {
     this.messages.add(message);
   }
 
@@ -38,7 +37,7 @@ public class GuidoMessagesController implements ResponsiveMessageController, Gui
    * @param event the event of a message being unloaded
    */
   @Listener(priority = ListenPriority.HIGHEST)
-  public void onResponsiveMessageUnload(@NotNull ResponsiveMessageUnloadedEvent event) {
+  public void onResponsiveMessageUnload(@NonNull ResponsiveMessageUnloadedEvent event) {
     JDA jda = Guido.getConnection().getJda();
     if (jda != null && event.getMessage() instanceof GuidoResponsiveMessage) {
       ((GuidoResponsiveMessage) event.getMessage()).save(jda);
@@ -60,7 +59,7 @@ public class GuidoMessagesController implements ResponsiveMessageController, Gui
   }
 
   @Override
-  public @NotNull Collection<ResponsiveMessage> getResponsiveMessages(@Nullable Guild guild) {
+  public @NonNull Collection<ResponsiveMessage> getResponsiveMessages(Guild guild) {
     if (guild != null) {
       return new HashSet<>(
           Guido.getDataLoader().getGuildDataOrCreate(guild.getIdLong()).getMessages());

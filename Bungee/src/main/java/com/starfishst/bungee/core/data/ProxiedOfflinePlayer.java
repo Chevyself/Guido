@@ -2,6 +2,7 @@ package com.starfishst.bungee.core.data;
 
 import java.util.Map;
 import java.util.UUID;
+import lombok.NonNull;
 import me.googas.api.client.data.SimpleLinkableInfo;
 import me.googas.api.client.data.SimpleValuesMap;
 import me.googas.api.links.LinkableInfo;
@@ -9,16 +10,15 @@ import me.googas.api.links.LinkableType;
 import me.googas.commons.UUIDUtils;
 import me.googas.commons.maps.MapBuilder;
 import me.googas.commons.maps.Maps;
-import org.jetbrains.annotations.NotNull;
 
 /** An offline proxied player */
 public class ProxiedOfflinePlayer {
 
   /** The uuid of the offline player */
-  @NotNull private final UUID uuid;
+  @NonNull private final UUID uuid;
 
   /** The nick of the offline user */
-  @NotNull private final String nickname;
+  @NonNull private final String nickname;
 
   /**
    * Create the player
@@ -26,7 +26,7 @@ public class ProxiedOfflinePlayer {
    * @param uuid the uuid of the player
    * @param nickname the nickname of the offline user
    */
-  public ProxiedOfflinePlayer(@NotNull UUID uuid, @NotNull String nickname) {
+  public ProxiedOfflinePlayer(@NonNull UUID uuid, @NonNull String nickname) {
     this.uuid = uuid;
     this.nickname = nickname;
   }
@@ -37,7 +37,7 @@ public class ProxiedOfflinePlayer {
    * @deprecated use {@link #getParams()} when allowed
    * @return the unique id
    */
-  @NotNull
+  @NonNull
   public UUID getUniqueId() {
     return this.uuid;
   }
@@ -48,7 +48,7 @@ public class ProxiedOfflinePlayer {
    * @deprecated use {@link #getParams()} when allowed
    * @return the nickname
    */
-  @NotNull
+  @NonNull
   public String getNickname() {
     return this.nickname;
   }
@@ -80,7 +80,7 @@ public class ProxiedOfflinePlayer {
    *
    * @return the link information
    */
-  @NotNull
+  @NonNull
   public LinkableInfo getLinkedInfo() {
     return new SimpleLinkableInfo(
         LinkableType.MINECRAFT,

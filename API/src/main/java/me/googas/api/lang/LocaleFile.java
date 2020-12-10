@@ -1,10 +1,9 @@
 package me.googas.api.lang;
 
 import java.util.Map;
+import lombok.NonNull;
 import me.googas.commons.Strings;
 import me.googas.commons.maps.MapBuilder;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 /** The file of localized messages */
 public interface LocaleFile {
@@ -18,8 +17,7 @@ public interface LocaleFile {
    * @param path the path to the string
    * @return the string if the path leads to one else null
    */
-  @Nullable
-  String getRaw(@NotNull String path);
+  String getRaw(@NonNull String path);
 
   /**
    * Get the string or the path to create it
@@ -27,8 +25,8 @@ public interface LocaleFile {
    * @param path the path to the string
    * @return the string if the path leads to one else the path
    */
-  @NotNull
-  default String get(@NotNull String path) {
+  @NonNull
+  default String get(@NonNull String path) {
     String raw = this.getRaw(path);
     return raw == null ? path : raw;
   }
@@ -41,8 +39,8 @@ public interface LocaleFile {
    * @param placeholders the string to build the string
    * @return the built string
    */
-  @NotNull
-  default String get(@NotNull String path, @NotNull Map<String, String> placeholders) {
+  @NonNull
+  default String get(@NonNull String path, @NonNull Map<String, String> placeholders) {
     return Strings.buildMessage(this.get(path), placeholders);
   }
 
@@ -54,8 +52,8 @@ public interface LocaleFile {
    * @param placeholders the string to build the string
    * @return the built string
    */
-  @NotNull
-  default String get(@NotNull String path, @NotNull MapBuilder<String, String> placeholders) {
+  @NonNull
+  default String get(@NonNull String path, @NonNull MapBuilder<String, String> placeholders) {
     return Strings.buildMessage(this.get(path), placeholders);
   }
 
@@ -64,6 +62,6 @@ public interface LocaleFile {
    *
    * @return the language that this entity is provides
    */
-  @NotNull
+  @NonNull
   String getLang();
 }

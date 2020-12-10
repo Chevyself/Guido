@@ -14,6 +14,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import lombok.NonNull;
 import me.googas.api.lang.LocaleFile;
 import me.googas.api.matches.Ladder;
 import me.googas.api.matches.Match;
@@ -36,7 +37,6 @@ import me.googas.commons.Lots;
 import me.googas.commons.maps.Maps;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
-import org.jetbrains.annotations.NotNull;
 
 /** Commands related to matches */
 public class MatchCommands {
@@ -137,7 +137,7 @@ public class MatchCommands {
       BotGuild guild,
       @Required(name = "finish.match", description = "finish.match.desc") Match match,
       @Optional(name = "finish.winners", description = "finish.winners.desc") JoinedStrings name) {
-    Map<String, @NotNull String> placeholders = Maps.singleton("id", match.getId());
+    Map<String, @NonNull String> placeholders = Maps.singleton("id", match.getId());
     if (match.getGuildId() == guild.getId()) {
       if (match.getStatus() == MatchStatus.FINISHED) {
         return new Result(ResultType.USAGE, locale.get("finish.already", placeholders));

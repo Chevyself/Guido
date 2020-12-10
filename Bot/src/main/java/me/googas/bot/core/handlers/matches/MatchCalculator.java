@@ -1,6 +1,7 @@
 package me.googas.bot.core.handlers.matches;
 
 import java.util.logging.Level;
+import lombok.NonNull;
 import me.googas.api.links.Linkable;
 import me.googas.api.matches.Ladder;
 import me.googas.api.matches.Match;
@@ -14,7 +15,6 @@ import me.googas.bot.core.handlers.GuidoEventHandler;
 import me.googas.bot.core.util.GuidoLogBuilder;
 import me.googas.commons.events.ListenPriority;
 import me.googas.commons.events.Listener;
-import org.jetbrains.annotations.NotNull;
 
 /**
  * This handler listens to the end of a match and gives the winners the respective elo also gives
@@ -28,7 +28,7 @@ public class MatchCalculator implements GuidoEventHandler {
    * @param event the event of a match updating its status
    */
   @Listener(priority = ListenPriority.MEDIUM)
-  public void onMatchStatusUpdatedEvent(@NotNull MatchStatusUpdatedEvent event) {
+  public void onMatchStatusUpdatedEvent(@NonNull MatchStatusUpdatedEvent event) {
     GuidoLogBuilder builder = new GuidoLogBuilder(Level.INFO);
     Match match = event.getMatch();
     Team winners = match.getWinners();
@@ -47,14 +47,14 @@ public class MatchCalculator implements GuidoEventHandler {
             this.newElo(
                 winnersElo,
                 this.calculateExpected(winnersElo, losersElo),
-                ladder.getOptions().getOr("win-multiplier", Integer.class, 1));
+                ladder.getOptions().getOr("win-multiplier", Double.class, 1.0));
         float newLosers =
             this.newElo(
                 losersElo,
                 this.calculateExpected(losersElo, winnersElo),
-                ladder.getOptions().getOr("lose-multiplier", Integer.class, 0));
-        float winnersDifference = newWinners - winnersElo;
-        float losersDifference = losersElo - newLosers;
+                ladder.getOptions().getOr("lose-multiplier", Double.class, 0.0));
+        int winnersDifference = Math.round(newWinners - winnersElo);
+        int losersDifference = Math.round(losersElo - newLosers);
         match.getDetails().put("winners-difference", winnersDifference);
         match.getDetails().put("losers-difference", losersDifference);
         this.setElo(match, ladder, winnersDifference, losersDifference);
@@ -73,7 +73,7 @@ public class MatchCalculator implements GuidoEventHandler {
    * @param losersDifference the amount of elo that the other teams lost
    */
   public void setElo(
-      @NotNull Match match, Ladder ladder, float winnersDifference, float losersDifference) {
+      @NonNull Match match, Ladder ladder, float winnersDifference, int losersDifference) {
     Team winners = match.getWinners();
     String ladderName = ladder.getName();
     for (Team team : match.getTeams()) {
@@ -93,6 +93,33 @@ public class MatchCalculator implements GuidoEventHandler {
   }
 
   /**
+   * This method voids the match, meaning that removes the win of winners and removes the lose from
+   * losers.
+   *
+   * @param match the match to void
+   */
+  public void voidMatch(@NonNull Match match) {
+    Team winners = match.getWinners();
+    Ladder ladder = match.getLadder();
+    if (winners == null || ladder == null) return;
+    for (Team team : match.getTeams()) {
+      if (team.equals(winners)) {
+        for (TeamMember member : team.getMembers()) {
+          member
+              .getLinkInfo()
+              .decreaseElo(ladder, match.getDetails().getOr("", Number.class, 16).floatValue());
+        }
+      } else {
+        for (TeamMember member : team.getMembers()) {
+          member
+              .getLinkInfo()
+              .increaseElo(ladder, match.getDetails().getOr("", Number.class, 16).floatValue());
+        }
+      }
+    }
+  }
+
+  /**
    * Calculate new elo
    *
    * @param oldElo the old elo
@@ -101,7 +128,7 @@ public class MatchCalculator implements GuidoEventHandler {
    *     give a different amount of elo
    * @return the new elo
    */
-  public float newElo(float oldElo, double expected, int multiplier) {
+  public float newElo(float oldElo, double expected, double multiplier) {
     return (float) Math.floor(oldElo + 32 * (multiplier - expected));
   }
 

@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.logging.Level;
+import lombok.NonNull;
 import me.googas.api.lang.LocaleFile;
 import me.googas.bot.api.loader.BotDataLoader;
 import me.googas.bot.core.Guido;
@@ -14,24 +15,22 @@ import me.googas.bot.core.handlers.GuidoHandler;
 import me.googas.commons.CoreFiles;
 import me.googas.commons.maps.Maps;
 import me.googas.commons.time.Time;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 /** Handles the language for guido messages */
 public class GuidoLanguageHandler implements MessagesProvider, GuidoHandler {
 
   /** The files that this handler is using */
-  @NotNull private final Set<GuidoLocaleFile> files = new HashSet<>();
+  @NonNull private final Set<GuidoLocaleFile> files = new HashSet<>();
 
   /** The loader to get the localization */
-  @NotNull private BotDataLoader dataLoader;
+  @NonNull private BotDataLoader dataLoader;
 
   /**
    * Create the guido localization handler
    *
    * @param dataLoader the file loader to get the user data
    */
-  public GuidoLanguageHandler(@NotNull BotDataLoader dataLoader) {
+  public GuidoLanguageHandler(@NonNull BotDataLoader dataLoader) {
     this.dataLoader = dataLoader;
   }
 
@@ -60,8 +59,8 @@ public class GuidoLanguageHandler implements MessagesProvider, GuidoHandler {
    * @param lang the lang to get the file for
    * @return the file from the lang
    */
-  @NotNull
-  public GuidoLocaleFile getFile(@NotNull String lang) {
+  @NonNull
+  public GuidoLocaleFile getFile(@NonNull String lang) {
     for (GuidoLocaleFile file : this.files) {
       if (file.getLang().equalsIgnoreCase(lang)) {
         return file;
@@ -77,8 +76,8 @@ public class GuidoLanguageHandler implements MessagesProvider, GuidoHandler {
    * @return the file that posses the unicode
    * @throws IllegalArgumentException if the unicode does not match any file
    */
-  @NotNull
-  public GuidoLocaleFile getFileFromUnicode(@NotNull String unicode) {
+  @NonNull
+  public GuidoLocaleFile getFileFromUnicode(@NonNull String unicode) {
     for (GuidoLocaleFile file : this.files) {
       if (file.getUnicode().equalsIgnoreCase(unicode)) {
         return file;
@@ -93,8 +92,8 @@ public class GuidoLanguageHandler implements MessagesProvider, GuidoHandler {
    * @param context the context to get the lang and the file
    * @return the file or "en" if not found
    */
-  @NotNull
-  public GuidoLocaleFile getFile(@Nullable CommandContext context) {
+  @NonNull
+  public GuidoLocaleFile getFile(CommandContext context) {
     GuidoLocaleFile file;
     if (context == null) {
       file = this.getFile("en");
@@ -111,8 +110,8 @@ public class GuidoLanguageHandler implements MessagesProvider, GuidoHandler {
    * @param context the context to get the language form
    * @return the locale for the user
    */
-  @NotNull
-  public String getLang(@NotNull CommandContext context) {
+  @NonNull
+  public String getLang(@NonNull CommandContext context) {
     return this.dataLoader
         .getDiscordUserData(context.getSender().getIdLong())
         .getPreferences()
@@ -120,13 +119,12 @@ public class GuidoLanguageHandler implements MessagesProvider, GuidoHandler {
   }
 
   /**
-   * Get the default locale file which in this case is english
+   * Set the data loader for the language handler
    *
-   * @return the default locale file
+   * @param dataLoader the new data loader
    */
-  @NotNull
-  public LocaleFile getDefault() {
-    return this.getFile("en");
+  public void setDataLoader(@NonNull BotDataLoader dataLoader) {
+    this.dataLoader = dataLoader;
   }
 
   @Override
@@ -136,43 +134,53 @@ public class GuidoLanguageHandler implements MessagesProvider, GuidoHandler {
   public void unregister() {}
 
   /**
+   * Get the default locale file which in this case is english
+   *
+   * @return the default locale file
+   */
+  @NonNull
+  public LocaleFile getDefault() {
+    return this.getFile("en");
+  }
+
+  /**
    * Get the files that are loaded
    *
    * @return the files that are loaded
    */
-  @NotNull
+  @NonNull
   public Set<GuidoLocaleFile> getFiles() {
     return this.files;
   }
 
   @Override
-  public @NotNull String invalidLong(@NotNull String s, @NotNull CommandContext context) {
+  public @NonNull String invalidLong(@NonNull String s, @NonNull CommandContext context) {
     return this.getFile(context).get("invalid.number", Maps.singleton("string", s));
   }
 
   @Override
-  public @NotNull String invalidInteger(@NotNull String s, @NotNull CommandContext context) {
+  public @NonNull String invalidInteger(@NonNull String s, @NonNull CommandContext context) {
     return this.getFile(context).get("invalid.number", Maps.singleton("string", s));
   }
 
   @Override
-  public @NotNull String invalidDouble(@NotNull String s, @NotNull CommandContext context) {
+  public @NonNull String invalidDouble(@NonNull String s, @NonNull CommandContext context) {
     return this.getFile(context).get("invalid.double", Maps.singleton("string", s));
   }
 
   @Override
-  public @NotNull String invalidBoolean(@NotNull String s, @NotNull CommandContext context) {
+  public @NonNull String invalidBoolean(@NonNull String s, @NonNull CommandContext context) {
     return this.getFile(context).get("invalid.boolean", Maps.singleton("string", s));
   }
 
   @Override
-  public @NotNull String invalidTime(@NotNull String s, @NotNull CommandContext context) {
+  public @NonNull String invalidTime(@NonNull String s, @NonNull CommandContext context) {
     return this.getFile(context).get("invalid.time", Maps.singleton("string", s));
   }
 
   @Override
-  public @NotNull String missingArgument(
-      @NotNull String s, @NotNull String s1, int i, CommandContext context) {
+  public @NonNull String missingArgument(
+      @NonNull String s, @NonNull String s1, int i, CommandContext context) {
     return this.getFile(context)
         .get(
             "missing-argument",
@@ -182,38 +190,28 @@ public class GuidoLanguageHandler implements MessagesProvider, GuidoHandler {
   }
 
   @Override
-  public @NotNull String invalidNumber(@NotNull String s, @NotNull CommandContext context) {
+  public @NonNull String invalidNumber(@NonNull String s, @NonNull CommandContext context) {
     return this.getFile(context).get("invalid.number", Maps.singleton("string", s));
   }
 
   @Override
-  public @NotNull String emptyDouble(@NotNull CommandContext context) {
+  public @NonNull String emptyDouble(@NonNull CommandContext context) {
     return this.getFile(context).get("invalid.double-empty");
   }
 
-  /**
-   * Set the data loader for the language handler
-   *
-   * @param dataLoader the new data loader
-   */
-  public void setDataLoader(@NotNull BotDataLoader dataLoader) {
-    this.dataLoader = dataLoader;
-  }
-
   @Override
-  public @NotNull String commandNotFound(
-      @NotNull String s, @NotNull CommandContext commandContext) {
+  public @NonNull String commandNotFound(
+      @NonNull String s, @NonNull CommandContext commandContext) {
     return this.getFile(commandContext).get("command-not-found", Maps.builder("name", s));
   }
 
   @Override
-  public @NotNull String footer(@Nullable CommandContext commandContext) {
+  public @NonNull String footer(CommandContext commandContext) {
     return this.getFile(commandContext).get("footer");
   }
 
   @Override
-  public @NotNull String getTitle(
-      @NotNull ResultType resultType, @Nullable CommandContext commandContext) {
+  public @NonNull String getTitle(@NonNull ResultType resultType, CommandContext commandContext) {
     GuidoLocaleFile file = this.getFile(commandContext);
     switch (resultType) {
       case UNKNOWN:
@@ -231,61 +229,61 @@ public class GuidoLanguageHandler implements MessagesProvider, GuidoHandler {
   }
 
   @Override
-  public @NotNull String response(
-      @NotNull String s, @NotNull String s1, @Nullable CommandContext commandContext) {
+  public @NonNull String response(
+      @NonNull String s, @NonNull String s1, CommandContext commandContext) {
     return this.getFile(commandContext)
         .get("response", Maps.builder("title", s).append("description", s1));
   }
 
   @Override
-  public @NotNull String notAllowed(@NotNull CommandContext commandContext) {
+  public @NonNull String notAllowed(@NonNull CommandContext commandContext) {
     return this.getFile(commandContext).get("not-allowed");
   }
 
   @Override
-  public @NotNull String guildOnly(@NotNull CommandContext commandContext) {
+  public @NonNull String guildOnly(@NonNull CommandContext commandContext) {
     return this.getFile(commandContext).get("guild-only");
   }
 
   @Override
-  public @NotNull String thumbnailUrl(@Nullable CommandContext commandContext) {
+  public @NonNull String thumbnailUrl(CommandContext commandContext) {
     return this.getFile(commandContext).get("thumbnail-url");
   }
 
   @Override
-  public @NotNull String cooldown(@NotNull Time time, @Nullable CommandContext commandContext) {
+  public @NonNull String cooldown(@NonNull Time time, CommandContext commandContext) {
     return this.getFile(commandContext)
         .get("cooldown", Maps.singleton("cooldown", time.toEffectiveString()));
   }
 
   @Override
-  public @NotNull String invalidUser(@NotNull String s, @NotNull CommandContext commandContext) {
+  public @NonNull String invalidUser(@NonNull String s, @NonNull CommandContext commandContext) {
     return this.getFile(commandContext).get("invalid.user", Maps.singleton("string", s));
   }
 
   @Override
-  public @NotNull String invalidMember(@NotNull String s, @NotNull CommandContext commandContext) {
+  public @NonNull String invalidMember(@NonNull String s, @NonNull CommandContext commandContext) {
     return this.getFile(commandContext).get("invalid.member", Maps.singleton("string", s));
   }
 
   @Override
-  public @NotNull String invalidRole(@NotNull String s, @NotNull CommandContext commandContext) {
+  public @NonNull String invalidRole(@NonNull String s, @NonNull CommandContext commandContext) {
     return this.getFile(commandContext).get("invalid.role", Maps.singleton("string", s));
   }
 
   @Override
-  public @NotNull String invalidTextChannel(String s, CommandContext commandContext) {
+  public @NonNull String invalidTextChannel(String s, CommandContext commandContext) {
     return this.getFile(commandContext).get("invalid.channel", Maps.singleton("string", s));
   }
 
   @Override
-  public @NotNull String missingStrings(
-      @NotNull String s,
-      @NotNull String s1,
+  public @NonNull String missingStrings(
+      @NonNull String s,
+      @NonNull String s1,
       int i,
       int i1,
       int i2,
-      @NotNull CommandContext context) {
+      @NonNull CommandContext context) {
     return this.getFile(context)
         .get(
             "invalid.strings",

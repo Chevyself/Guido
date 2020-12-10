@@ -2,8 +2,8 @@ package com.starfishst.bukkit.api.events.anticheat;
 
 import com.starfishst.bukkit.api.events.GuidoEvent;
 import com.starfishst.bukkit.listeners.anticheat.AntiCheatDetector;
+import lombok.NonNull;
 import org.bukkit.entity.Player;
-import org.jetbrains.annotations.NotNull;
 
 /** Called when a player is suspected to be using cheats */
 public class SuspectDetectedEvent extends GuidoEvent {
@@ -12,16 +12,16 @@ public class SuspectDetectedEvent extends GuidoEvent {
   private final long sentAt;
 
   /** The player that is suspected to be using cheats */
-  @NotNull private final Player player;
+  @NonNull private final Player player;
 
   /** Which detector found out the player is suspected */
-  @NotNull private final AntiCheatDetector detector;
+  @NonNull private final AntiCheatDetector detector;
 
   /** The reason to which the player might be cheating */
-  @NotNull private final String reason;
+  @NonNull private final String reason;
 
   /** The level to which the player is suspected to be cheating */
-  @NotNull private final SuspectLevel suspectLevel;
+  @NonNull private final SuspectLevel suspectLevel;
 
   /**
    * Called when a player is suspected to be cheating
@@ -32,10 +32,10 @@ public class SuspectDetectedEvent extends GuidoEvent {
    * @param suspectLevel the level to which the player is suspected to be cheating
    */
   public SuspectDetectedEvent(
-      @NotNull Player player,
-      @NotNull AntiCheatDetector detector,
-      @NotNull String reason,
-      @NotNull SuspectLevel suspectLevel) {
+      @NonNull Player player,
+      @NonNull AntiCheatDetector detector,
+      @NonNull String reason,
+      @NonNull SuspectLevel suspectLevel) {
     this.suspectLevel = suspectLevel;
     this.sentAt = System.currentTimeMillis();
     this.player = player;
@@ -57,7 +57,7 @@ public class SuspectDetectedEvent extends GuidoEvent {
    *
    * @return the bukkit player
    */
-  @NotNull
+  @NonNull
   public Player getPlayer() {
     return this.player;
   }
@@ -67,7 +67,7 @@ public class SuspectDetectedEvent extends GuidoEvent {
    *
    * @return the anti cheat
    */
-  @NotNull
+  @NonNull
   public AntiCheatDetector getDetector() {
     return this.detector;
   }
@@ -77,7 +77,7 @@ public class SuspectDetectedEvent extends GuidoEvent {
    *
    * @return the reason as a string
    */
-  @NotNull
+  @NonNull
   public String getReason() {
     return this.reason;
   }
@@ -87,7 +87,7 @@ public class SuspectDetectedEvent extends GuidoEvent {
    *
    * @return the level of suspect
    */
-  @NotNull
+  @NonNull
   public SuspectLevel getSuspectLevel() {
     return this.suspectLevel;
   }

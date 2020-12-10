@@ -1,21 +1,21 @@
 package me.googas.api.client.data;
 
 import java.util.Objects;
+import lombok.NonNull;
 import me.googas.api.links.LinkableInfo;
 import me.googas.api.links.LinkableType;
 import me.googas.api.matches.TeamMember;
 import me.googas.api.matches.TeamRole;
 import me.googas.commons.builder.ToStringBuilder;
-import org.jetbrains.annotations.NotNull;
 
 /** Implementation for team member */
 public class SimpleTeamMember implements TeamMember {
 
   /** The information of the team */
-  @NotNull private final LinkableInfo linkInfo;
+  @NonNull private final LinkableInfo linkInfo;
 
   /** The role of the member in the team */
-  @NotNull private final TeamRole role;
+  @NonNull private final TeamRole role;
 
   /**
    * Create the team member
@@ -23,7 +23,7 @@ public class SimpleTeamMember implements TeamMember {
    * @param linkInfo the info of the team
    * @param role the role of the team
    */
-  public SimpleTeamMember(@NotNull LinkableInfo linkInfo, @NotNull TeamRole role) {
+  public SimpleTeamMember(@NonNull LinkableInfo linkInfo, @NonNull TeamRole role) {
     this.linkInfo = linkInfo;
     this.role = role;
   }
@@ -34,12 +34,12 @@ public class SimpleTeamMember implements TeamMember {
   }
 
   @Override
-  public @NotNull LinkableInfo getLinkInfo() {
+  public @NonNull LinkableInfo getLinkInfo() {
     return this.linkInfo;
   }
 
   @Override
-  public @NotNull TeamRole getTeamRole() {
+  public @NonNull TeamRole getTeamRole() {
     return this.role;
   }
 

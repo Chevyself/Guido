@@ -6,34 +6,34 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
+import lombok.NonNull;
 import me.googas.api.permissions.Group;
 import me.googas.api.permissions.PermissionStack;
 import me.googas.api.utility.ValuesMap;
 import me.googas.commons.builder.ToStringBuilder;
 import me.googas.commons.time.Time;
 import me.googas.commons.time.Unit;
-import org.jetbrains.annotations.NotNull;
 
 /** An implementation for group */
 public class SimpleGroup implements Group {
 
   /** The id of the group */
-  @NotNull private final String id;
+  @NonNull private final String id;
 
   /** The weight of the group */
   private final int weight;
 
   /** The name of the group */
-  @NotNull private final String name;
+  @NonNull private final String name;
 
   /** The preferences of the group */
-  @NotNull private final ValuesMap preferences;
+  @NonNull private final ValuesMap preferences;
 
   /** The permissions of the group */
-  @NotNull private final Set<PermissionStack> permissions;
+  @NonNull private final Set<PermissionStack> permissions;
 
   /** The ids of the parents of the group */
-  @NotNull private final List<String> parents;
+  @NonNull private final List<String> parents;
 
   /**
    * Create the group
@@ -46,12 +46,12 @@ public class SimpleGroup implements Group {
    * @param parents the ids of the parents of the group
    */
   public SimpleGroup(
-      @NotNull String id,
+      @NonNull String id,
       int weight,
-      @NotNull String name,
-      @NotNull ValuesMap preferences,
-      @NotNull Set<PermissionStack> permissions,
-      @NotNull List<String> parents) {
+      @NonNull String name,
+      @NonNull ValuesMap preferences,
+      @NonNull Set<PermissionStack> permissions,
+      @NonNull List<String> parents) {
     this.id = id;
     this.weight = weight;
     this.name = name;
@@ -69,22 +69,22 @@ public class SimpleGroup implements Group {
   public void onRemove() {}
 
   @Override
-  public @NotNull Time getToRemove() {
+  public @NonNull Time getToRemove() {
     return new Time(0, Unit.SECONDS);
   }
 
   @Override
-  public @NotNull Set<PermissionStack> getPermissions() {
+  public @NonNull Set<PermissionStack> getPermissions() {
     return this.permissions;
   }
 
   @Override
-  public boolean addPermission(@NotNull String context, @NotNull String node, boolean enabled) {
+  public boolean addPermission(@NonNull String context, @NonNull String node, boolean enabled) {
     return false;
   }
 
   @Override
-  public boolean removePermission(@NotNull String context, @NotNull String node) {
+  public boolean removePermission(@NonNull String context, @NonNull String node) {
     return false;
   }
 
@@ -94,12 +94,12 @@ public class SimpleGroup implements Group {
   }
 
   @Override
-  public void setName(@NotNull String name) {
+  public void setName(@NonNull String name) {
     throw new UnsupportedOperationException("Cannot change the name of implemented groups");
   }
 
   @Override
-  public @NotNull String getId() {
+  public @NonNull String getId() {
     return this.id;
   }
 
@@ -109,18 +109,18 @@ public class SimpleGroup implements Group {
   }
 
   @Override
-  public @NotNull String getName() {
+  public @NonNull String getName() {
     return this.name;
   }
 
-  @NotNull
+  @NonNull
   @Override
   public ValuesMap getPreferences() {
     return this.preferences;
   }
 
   @Override
-  public @NotNull Collection<String> getParents() {
+  public @NonNull Collection<String> getParents() {
     return this.parents;
   }
 

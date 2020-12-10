@@ -1,21 +1,21 @@
 package me.googas.bot.api.events.data.group;
 
+import lombok.NonNull;
 import me.googas.api.permissions.Group;
 import me.googas.bot.api.events.GuidoEvent;
-import org.jetbrains.annotations.NotNull;
 
 /** An event with a group involved */
 public class GroupEvent implements GuidoEvent {
 
   /** The group involved in the event */
-  @NotNull private final Group group;
+  @NonNull private final Group group;
 
   /**
    * Create the event
    *
    * @param group the group involved
    */
-  public GroupEvent(@NotNull Group group) {
+  public GroupEvent(@NonNull Group group) {
     this.group = group;
   }
 
@@ -24,7 +24,7 @@ public class GroupEvent implements GuidoEvent {
    *
    * @return the group involved
    */
-  @NotNull
+  @NonNull
   public Group getGroup() {
     return this.group;
   }

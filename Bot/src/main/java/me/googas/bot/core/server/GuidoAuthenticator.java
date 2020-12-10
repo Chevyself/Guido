@@ -2,6 +2,7 @@ package me.googas.bot.core.server;
 
 import java.util.HashMap;
 import java.util.Map;
+import lombok.NonNull;
 import me.googas.api.token.AuthLevel;
 import me.googas.api.token.AuthToken;
 import me.googas.bot.core.Guido;
@@ -13,20 +14,18 @@ import me.googas.messaging.json.ParamName;
 import me.googas.messaging.json.Receptor;
 import me.googas.messaging.json.server.Authenticator;
 import me.googas.messaging.json.server.JsonClientThread;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 /** The implementation for authentication in guido */
 public class GuidoAuthenticator implements Authenticator {
 
   /** Each client and its authentication level */
-  @NotNull private final HashMap<JsonClientThread, AuthLevel> levels = new HashMap<>();
+  @NonNull private final HashMap<JsonClientThread, AuthLevel> levels = new HashMap<>();
 
   /** Each client and its provided information */
-  @NotNull private final HashMap<JsonClientThread, GuidoValuesMap> info = new HashMap<>();
+  @NonNull private final HashMap<JsonClientThread, GuidoValuesMap> info = new HashMap<>();
 
   /** The required level for each receptor. By default all receptors have read_write */
-  @NotNull
+  @NonNull
   private final Map<String, AuthLevel> requiredLevel =
       Maps.builder("auth", AuthLevel.NONE)
           .append("client-info", AuthLevel.ADMINISTRATIVE)
@@ -43,7 +42,7 @@ public class GuidoAuthenticator implements Authenticator {
    *
    * @param client the client to remove
    */
-  public void remove(@NotNull JsonClientThread client) {
+  public void remove(@NonNull JsonClientThread client) {
     this.levels.remove(client);
     this.info.remove(client);
   }
@@ -53,7 +52,7 @@ public class GuidoAuthenticator implements Authenticator {
    *
    * @param client the client to add
    */
-  public void add(@NotNull JsonClientThread client) {
+  public void add(@NonNull JsonClientThread client) {
     this.levels.put(client, AuthLevel.NONE);
   }
 
@@ -65,7 +64,7 @@ public class GuidoAuthenticator implements Authenticator {
    * @return whether the user was authenticated
    */
   @Receptor("auth")
-  public boolean auth(@NotNull JsonMessenger messenger, @ParamName("token") String token) {
+  public boolean auth(@NonNull JsonMessenger messenger, @ParamName("token") String token) {
     if (messenger instanceof JsonClientThread) {
       AuthToken authToken = Guido.getDataLoader().getAuthToken(token);
       if (authToken != null) {
@@ -86,7 +85,7 @@ public class GuidoAuthenticator implements Authenticator {
    */
   @Receptor("client-info")
   public boolean info(
-      @NotNull JsonMessenger messenger, @ParamName("info") Map<String, Object> info) {
+      @NonNull JsonMessenger messenger, @ParamName("info") Map<String, Object> info) {
     if (messenger instanceof JsonClientThread) {
       GuidoValuesMap map = new GuidoValuesMap();
       info.forEach(
@@ -106,7 +105,6 @@ public class GuidoAuthenticator implements Authenticator {
    *
    * @return the client of the bungee
    */
-  @Nullable
   public JsonClientThread getBungee() {
     for (JsonClientThread client : this.info.keySet()) {
       if (this.info.get(client).getOr("bungee", Boolean.class, false)) {
@@ -116,17 +114,6 @@ public class GuidoAuthenticator implements Authenticator {
     return null;
   }
 
-  @Override
-  public boolean isAuthenticated(@NotNull JsonClientThread client, @NotNull IRequest request) {
-    if (this.levels.containsKey(client)) {
-      AuthLevel authLevel = this.levels.get(client);
-      AuthLevel required =
-          this.requiredLevel.getOrDefault(request.getMethod(), AuthLevel.READ_WRITE);
-      return required.intValue() <= authLevel.intValue();
-    }
-    return false;
-  }
-
   /**
    * Disconnects a client
    *
@@ -134,7 +121,18 @@ public class GuidoAuthenticator implements Authenticator {
    * @return true if the client was disconnected
    */
   @Receptor("disconnect")
-  public void disconnect(@NotNull JsonMessenger client) {
+  public void disconnect(@NonNull JsonMessenger client) {
     client.close();
+  }
+
+  @Override
+  public boolean isAuthenticated(@NonNull JsonClientThread client, @NonNull IRequest request) {
+    if (this.levels.containsKey(client)) {
+      AuthLevel authLevel = this.levels.get(client);
+      AuthLevel required =
+          this.requiredLevel.getOrDefault(request.getMethod(), AuthLevel.READ_WRITE);
+      return required.intValue() <= authLevel.intValue();
+    }
+    return false;
   }
 }

@@ -1,7 +1,7 @@
 package me.googas.bot.api.types;
 
 import com.starfishst.jda.utils.responsive.ResponsiveMessage;
-import org.jetbrains.annotations.NotNull;
+import lombok.NonNull;
 
 /** An extension for responsive messages */
 public interface BotResponsiveMessage extends ResponsiveMessage {
@@ -11,6 +11,6 @@ public interface BotResponsiveMessage extends ResponsiveMessage {
    *
    * @return the type of responsive message
    */
-  @NotNull
+  @NonNull
   String getType();
 }

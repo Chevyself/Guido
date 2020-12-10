@@ -8,20 +8,20 @@ import com.starfishst.core.exceptions.ArgumentProviderException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import lombok.NonNull;
 import me.googas.api.permissions.Group;
 import me.googas.commons.maps.Maps;
-import org.jetbrains.annotations.NotNull;
 
 /** Provides groups in commands */
 public class GroupProvider implements BungeeArgumentProvider<Group> {
   @Override
-  public @NotNull Class<Group> getClazz() {
+  public @NonNull Class<Group> getClazz() {
     return Group.class;
   }
 
-  @NotNull
+  @NonNull
   @Override
-  public Group fromString(@NotNull String s, @NotNull CommandContext commandContext)
+  public Group fromString(@NonNull String s, @NonNull CommandContext commandContext)
       throws ArgumentProviderException {
     Collection<Group> groups = Guido.getListener(GroupListener.class).getGroups();
     for (Group group : groups) {
@@ -36,7 +36,7 @@ public class GroupProvider implements BungeeArgumentProvider<Group> {
   }
 
   @Override
-  public @NotNull List<String> getSuggestions(CommandContext commandContext) {
+  public @NonNull List<String> getSuggestions(CommandContext commandContext) {
     Collection<Group> groups = Guido.getListener(GroupListener.class).getGroups();
     List<String> names = new ArrayList<>();
     for (Group group : groups) {

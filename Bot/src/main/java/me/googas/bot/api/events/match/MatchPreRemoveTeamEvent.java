@@ -1,15 +1,15 @@
 package me.googas.bot.api.events.match;
 
+import lombok.NonNull;
 import me.googas.api.matches.Match;
 import me.googas.api.matches.Team;
 import me.googas.bot.api.events.GuidoCancellable;
-import org.jetbrains.annotations.NotNull;
 
 /** Called before a team is removed from a match */
 public class MatchPreRemoveTeamEvent extends MatchEvent implements GuidoCancellable {
 
   /** The team that is being removed from the match */
-  @NotNull private final Team team;
+  @NonNull private final Team team;
 
   /** Whether the event is cancelled */
   private boolean cancelled;
@@ -19,7 +19,7 @@ public class MatchPreRemoveTeamEvent extends MatchEvent implements GuidoCancella
    * @param match the match involved
    * @param team the team that is being removed from the match
    */
-  public MatchPreRemoveTeamEvent(@NotNull Match match, @NotNull Team team) {
+  public MatchPreRemoveTeamEvent(@NonNull Match match, @NonNull Team team) {
     super(match);
     this.team = team;
   }

@@ -6,23 +6,23 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import lombok.NonNull;
 import org.bukkit.configuration.ConfigurationSection;
-import org.jetbrains.annotations.NotNull;
 
 /** The configuration for the pgm implementation */
 public class GuidoConfiguration implements Configuration {
 
   /** The context in which the server is on */
-  @NotNull private final String context;
+  @NonNull private final String context;
 
   /** The token to connect with the bot */
-  @NotNull private final String token;
+  @NonNull private final String token;
 
   /** The set of enabled commands */
-  @NotNull private final List<String> enabledCommands;
+  @NonNull private final List<String> enabledCommands;
 
   /** The listener settings of the bot */
-  @NotNull private final List<GuidoListenerSettings> settings = new ArrayList<>();
+  @NonNull private final List<GuidoListenerSettings> settings = new ArrayList<>();
 
   /** Create the configuration */
   public GuidoConfiguration() {
@@ -36,7 +36,7 @@ public class GuidoConfiguration implements Configuration {
    *
    * @param section the configuration section to use and get the configuration
    */
-  public GuidoConfiguration(@NotNull ConfigurationSection section) {
+  public GuidoConfiguration(@NonNull ConfigurationSection section) {
     this.context = section.getString("context", "Bukkit");
     this.token = section.getString("token", "none");
     if (section.get("enabled-commands") != null) {
@@ -61,12 +61,12 @@ public class GuidoConfiguration implements Configuration {
                * @return the preferences map
                */
               @Override
-              public @NotNull Map<String, Object> getMap() {
+              public @NonNull Map<String, Object> getMap() {
                 return settings;
               }
 
               @Override
-              public @NotNull String getName() {
+              public @NonNull String getName() {
                 return name;
               }
             });
@@ -75,12 +75,12 @@ public class GuidoConfiguration implements Configuration {
   }
 
   @Override
-  public @NotNull String getContext() {
+  public @NonNull String getContext() {
     return this.context;
   }
 
   @Override
-  public @NotNull String getToken() {
+  public @NonNull String getToken() {
     return this.token;
   }
 
@@ -90,12 +90,12 @@ public class GuidoConfiguration implements Configuration {
    * @return the list of enabled commands
    */
   @Override
-  @NotNull
+  @NonNull
   public List<String> getEnabledCommands() {
     return this.enabledCommands;
   }
 
-  @NotNull
+  @NonNull
   @Override
   public List<GuidoListenerSettings> getListenersSettings() {
     return this.settings;

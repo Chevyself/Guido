@@ -6,6 +6,7 @@ import com.starfishst.jda.result.Result;
 import com.starfishst.jda.utils.embeds.EmbedFactory;
 import com.starfishst.jda.utils.embeds.EmbedQuery;
 import java.util.Collection;
+import lombok.NonNull;
 import me.googas.api.matches.Ladder;
 import me.googas.api.matches.Queue;
 import me.googas.api.matches.Queueable;
@@ -18,13 +19,12 @@ import me.googas.commons.Strings;
 import me.googas.commons.maps.Maps;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.events.message.react.MessageReactionAddEvent;
-import org.jetbrains.annotations.NotNull;
 
 /** A message that allows users to join a queue easily */
 public class JoinQueueReactionResponse extends SimpleCommandReactionResponse {
 
   /** The ladder which this message will add the user to */
-  @NotNull private final String ladder;
+  @NonNull private final String ladder;
 
   /**
    * Create the reaction response
@@ -32,7 +32,7 @@ public class JoinQueueReactionResponse extends SimpleCommandReactionResponse {
    * @param unicode the unicode or the name of the emote that executes it
    * @param ladder the ladder which the user will join
    */
-  public JoinQueueReactionResponse(@NotNull String unicode, @NotNull String ladder) {
+  public JoinQueueReactionResponse(@NonNull String unicode, @NonNull String ladder) {
     super("queue", unicode, Lots.array(ladder));
     this.ladder = ladder;
   }
@@ -48,7 +48,7 @@ public class JoinQueueReactionResponse extends SimpleCommandReactionResponse {
    * @param guild the guild requesting the message
    * @return the built message
    */
-  public EmbedQuery buildMessage(@NotNull Guild guild) {
+  public EmbedQuery buildMessage(@NonNull Guild guild) {
     CommandManager manager = Guido.getCommandManager();
     CommandListener listener = manager.getListener();
     EmbedQuery query = EmbedFactory.fromResult(new Result(""), listener, null);
@@ -82,7 +82,7 @@ public class JoinQueueReactionResponse extends SimpleCommandReactionResponse {
   }
 
   @Override
-  public void onReaction(@NotNull MessageReactionAddEvent event) {
+  public void onReaction(@NonNull MessageReactionAddEvent event) {
     super.onReaction(event);
     event
         .getChannel()

@@ -1,14 +1,14 @@
 package me.googas.bot.api.events.match;
 
+import lombok.NonNull;
 import me.googas.api.matches.Match;
 import me.googas.api.matches.Team;
-import org.jetbrains.annotations.NotNull;
 
 /** Called when a team has been added to a match */
 public class MatchAddTeamEvent extends MatchEvent {
 
   /** The team that has been added to the match */
-  @NotNull private final Team team;
+  @NonNull private final Team team;
 
   /**
    * Create the match event
@@ -16,7 +16,7 @@ public class MatchAddTeamEvent extends MatchEvent {
    * @param match the match involved
    * @param team the team that has been added to the match
    */
-  public MatchAddTeamEvent(@NotNull Match match, @NotNull Team team) {
+  public MatchAddTeamEvent(@NonNull Match match, @NonNull Team team) {
     super(match);
     this.team = team;
   }
@@ -26,7 +26,7 @@ public class MatchAddTeamEvent extends MatchEvent {
    *
    * @return the team that is has been added
    */
-  @NotNull
+  @NonNull
   public Team getTeam() {
     return this.team;
   }

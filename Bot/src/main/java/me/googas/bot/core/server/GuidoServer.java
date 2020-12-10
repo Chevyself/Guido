@@ -3,6 +3,7 @@ package me.googas.bot.core.server;
 import com.google.gson.GsonBuilder;
 import java.io.IOException;
 import java.util.logging.Level;
+import lombok.NonNull;
 import me.googas.api.links.LinkableInfo;
 import me.googas.api.matches.Team;
 import me.googas.api.matches.TeamMember;
@@ -33,13 +34,12 @@ import me.googas.messaging.api.Message;
 import me.googas.messaging.json.adapters.MessageDeserializer;
 import me.googas.messaging.json.server.JsonClientThread;
 import me.googas.messaging.json.server.JsonSocketServer;
-import org.jetbrains.annotations.NotNull;
 
 /** A server for implementations connections */
 public class GuidoServer extends JsonSocketServer implements BotServer {
 
   /** The authentication system for the guido server */
-  @NotNull private final GuidoAuthenticator authenticator = new GuidoAuthenticator();
+  @NonNull private final GuidoAuthenticator authenticator = new GuidoAuthenticator();
 
   /**
    * Creates the guido socket server
@@ -83,13 +83,13 @@ public class GuidoServer extends JsonSocketServer implements BotServer {
   }
 
   @Override
-  protected void onRemove(@NotNull JsonClientThread client) {
+  protected void onRemove(@NonNull JsonClientThread client) {
     this.authenticator.remove(client);
     new GuidoServerDisconnectionEvent(this, client).call();
   }
 
   @Override
-  protected void onConnection(@NotNull JsonClientThread client) {
+  protected void onConnection(@NonNull JsonClientThread client) {
     this.authenticator.add(client);
     new GuidoServerConnectionEvent(this, client).call();
   }
@@ -100,7 +100,7 @@ public class GuidoServer extends JsonSocketServer implements BotServer {
     super.close();
   }
 
-  @NotNull
+  @NonNull
   @Override
   public GuidoAuthenticator getAuthenticator() {
     return this.authenticator;

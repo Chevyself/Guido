@@ -3,6 +3,7 @@ package me.googas.bot.core.handlers.responsive.lang;
 import com.starfishst.jda.utils.responsive.ReactionResponse;
 import java.util.HashSet;
 import java.util.Set;
+import lombok.NonNull;
 import me.googas.api.links.Linkable;
 import me.googas.bot.api.types.BotCatchable;
 import me.googas.bot.core.Guido;
@@ -14,7 +15,6 @@ import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.entities.User;
-import org.jetbrains.annotations.NotNull;
 
 /** A responsive message made to allow an user to change the language */
 public class LangChangeResponsiveMessage implements GuidoResponsiveMessage, BotCatchable {
@@ -34,7 +34,7 @@ public class LangChangeResponsiveMessage implements GuidoResponsiveMessage, BotC
    * @param toChange the user that has to change its language
    * @param message the message that is the responsive message in discord
    */
-  public LangChangeResponsiveMessage(@NotNull User toChange, @NotNull Message message) {
+  public LangChangeResponsiveMessage(@NonNull User toChange, @NonNull Message message) {
     this.id = message.getIdLong();
     this.channelId = message.getChannel().getIdLong();
     Linkable userData = Guido.getDataLoader().getDiscordUserData(toChange.getIdLong());
@@ -51,7 +51,7 @@ public class LangChangeResponsiveMessage implements GuidoResponsiveMessage, BotC
   public void onRemove() throws Throwable {}
 
   @Override
-  public @NotNull Time getToRemove() {
+  public @NonNull Time getToRemove() {
     return new Time(30, Unit.SECONDS);
   }
 
@@ -61,7 +61,7 @@ public class LangChangeResponsiveMessage implements GuidoResponsiveMessage, BotC
   }
 
   @Override
-  public void save(@NotNull JDA jda) {
+  public void save(@NonNull JDA jda) {
     TextChannel channel = jda.getTextChannelById(this.channelId);
     if (channel != null) {
       channel.deleteMessageById(this.id).queue();
@@ -74,7 +74,7 @@ public class LangChangeResponsiveMessage implements GuidoResponsiveMessage, BotC
   }
 
   @Override
-  public @NotNull Set<ReactionResponse> getReactions() {
+  public @NonNull Set<ReactionResponse> getReactions() {
     return this.reactions;
   }
 }

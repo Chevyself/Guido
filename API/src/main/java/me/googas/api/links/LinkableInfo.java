@@ -1,9 +1,8 @@
 package me.googas.api.links;
 
+import lombok.NonNull;
 import me.googas.api.matches.Queueable;
 import me.googas.api.utility.ValuesMap;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 /**
  * LinkedInf represents the linked data as an object to get it. This means that this contains the
@@ -18,7 +17,7 @@ public interface LinkableInfo extends Queueable {
    * @param identification the identification to compare
    * @return true if it is the same type and the identification matches
    */
-  default boolean compare(@NotNull LinkableType type, @NotNull ValuesMap identification) {
+  default boolean compare(@NonNull LinkableType type, @NonNull ValuesMap identification) {
     if (this.getType() != type) return false;
     switch (type) {
       case DISCORD_GUILD:
@@ -49,7 +48,7 @@ public interface LinkableInfo extends Queueable {
    * @param info the information of the data comparing
    * @return true if it is the same type and the identification matches
    */
-  default boolean compare(@NotNull LinkableInfo info) {
+  default boolean compare(@NonNull LinkableInfo info) {
     if (this == info) {
       return true;
     } else {
@@ -62,7 +61,7 @@ public interface LinkableInfo extends Queueable {
    * @param data the other data comparing
    * @return true if it is the same type and the identification matches
    */
-  default boolean compare(@NotNull Linkable data) {
+  default boolean compare(@NonNull Linkable data) {
     return this.compare(data.getInfo());
   }
 
@@ -71,7 +70,6 @@ public interface LinkableInfo extends Queueable {
    *
    * @return the data
    */
-  @Nullable
   Linkable getLink();
 
   /**
@@ -79,7 +77,7 @@ public interface LinkableInfo extends Queueable {
    *
    * @return the type of linked data
    */
-  @NotNull
+  @NonNull
   LinkableType getType();
 
   /**
@@ -87,6 +85,6 @@ public interface LinkableInfo extends Queueable {
    *
    * @return the identification of the data
    */
-  @NotNull
+  @NonNull
   ValuesMap getIdentification();
 }

@@ -5,6 +5,7 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import lombok.NonNull;
 import me.googas.api.permissions.PermissionStack;
 import me.googas.bot.api.events.data.group.GroupUnloadedEvent;
 import me.googas.bot.api.types.BotGroup;
@@ -12,28 +13,23 @@ import me.googas.bot.core.Guido;
 import me.googas.bot.core.types.maps.GuidoValuesMap;
 import me.googas.commons.time.Time;
 import me.googas.commons.time.Unit;
-import org.jetbrains.annotations.NotNull;
 
 /** An implementation for the bot group */
 public class GuidoGroup implements BotGroup {
 
   /** The id of the group */
-  @NotNull private final String id;
+  @NonNull private final String id;
 
   /** The weight of the group */
   private int weight;
-
-  /** The name of the group */
-  @NotNull private String name;
-
   /** The preferences of the group */
-  @NotNull private final GuidoValuesMap preferences;
-
+  @NonNull private final GuidoValuesMap preferences;
   /** The permissions of the group */
-  @NotNull private final Set<PermissionStack> permissions;
-
+  @NonNull private final Set<PermissionStack> permissions;
   /** The ids of parents of the group */
-  @NotNull private final List<String> parents;
+  @NonNull private final List<String> parents;
+  /** The name of the group */
+  @NonNull private String name;
 
   /**
    * Create the group
@@ -46,12 +42,12 @@ public class GuidoGroup implements BotGroup {
    * @param parents the ids of the parents of the group
    */
   public GuidoGroup(
-      @NotNull String id,
+      @NonNull String id,
       int weight,
-      @NotNull String name,
-      @NotNull GuidoValuesMap preferences,
-      @NotNull Set<PermissionStack> permissions,
-      @NotNull List<String> parents) {
+      @NonNull String name,
+      @NonNull GuidoValuesMap preferences,
+      @NonNull Set<PermissionStack> permissions,
+      @NonNull List<String> parents) {
     this.id = id;
     this.preferences = preferences;
     this.permissions = permissions;
@@ -71,8 +67,8 @@ public class GuidoGroup implements BotGroup {
    */
   public GuidoGroup(
       int weight,
-      @NotNull GuidoValuesMap preferences,
-      @NotNull Set<PermissionStack> permissions,
+      @NonNull GuidoValuesMap preferences,
+      @NonNull Set<PermissionStack> permissions,
       String name,
       List<String> parents) {
     this(Guido.getDataLoader().nextGroupId(), weight, name, preferences, permissions, parents);
@@ -88,7 +84,7 @@ public class GuidoGroup implements BotGroup {
   }
 
   @Override
-  public void setName(@NotNull String name) {
+  public void setName(@NonNull String name) {
     this.name = name;
   }
 
@@ -98,17 +94,17 @@ public class GuidoGroup implements BotGroup {
   }
 
   @Override
-  public @NotNull Time getToRemove() {
+  public @NonNull Time getToRemove() {
     return new Time(5, Unit.MINUTES);
   }
 
   @Override
-  public @NotNull Set<PermissionStack> getPermissions() {
+  public @NonNull Set<PermissionStack> getPermissions() {
     return this.permissions;
   }
 
   @Override
-  public @NotNull String getId() {
+  public @NonNull String getId() {
     return this.id;
   }
 
@@ -118,18 +114,18 @@ public class GuidoGroup implements BotGroup {
   }
 
   @Override
-  public @NotNull String getName() {
+  public @NonNull String getName() {
     return this.name;
   }
 
-  @NotNull
+  @NonNull
   @Override
   public GuidoValuesMap getPreferences() {
     return this.preferences;
   }
 
   @Override
-  public @NotNull Collection<String> getParents() {
+  public @NonNull Collection<String> getParents() {
     return this.parents;
   }
 
@@ -155,7 +151,7 @@ public class GuidoGroup implements BotGroup {
    * @return this same object instance
    */
   @Override
-  public @NotNull GuidoGroup cache() {
+  public @NonNull GuidoGroup cache() {
     return (GuidoGroup) BotGroup.super.cache();
   }
 }

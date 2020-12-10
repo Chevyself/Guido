@@ -1,7 +1,7 @@
 package me.googas.bot.api.events.match;
 
+import lombok.NonNull;
 import me.googas.api.matches.Match;
-import org.jetbrains.annotations.NotNull;
 
 /** Called when a match gets unloaded */
 public class MatchUnloadedEvent extends MatchEvent {
@@ -11,7 +11,7 @@ public class MatchUnloadedEvent extends MatchEvent {
    *
    * @param match the match involved
    */
-  public MatchUnloadedEvent(@NotNull Match match) {
+  public MatchUnloadedEvent(@NonNull Match match) {
     super(match);
   }
 }

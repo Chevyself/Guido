@@ -2,25 +2,24 @@ package com.starfishst.bungee.core.lang;
 
 import com.starfishst.bungee.utils.BungeeUtils;
 import java.util.Map;
+import lombok.NonNull;
 import me.googas.api.lang.LocaleFile;
 import me.googas.commons.maps.MapBuilder;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.config.Configuration;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 /** The implementation for bungee of locale file */
 public class BungeeLocaleFile implements LocaleFile {
 
   /** The configuration to get the messages from */
-  @NotNull private final Configuration config;
+  @NonNull private final Configuration config;
 
   /**
    * Create the bungee locale file
    *
    * @param config the configuration to get the messages from
    */
-  public BungeeLocaleFile(@NotNull Configuration config) {
+  public BungeeLocaleFile(@NonNull Configuration config) {
     this.config = config;
   }
 
@@ -30,7 +29,7 @@ public class BungeeLocaleFile implements LocaleFile {
    * @param key the key to get from the file and turn it into component
    * @return the component from the given key
    */
-  public @NotNull BaseComponent[] getComponent(@NotNull String key) {
+  public @NonNull BaseComponent[] getComponent(@NonNull String key) {
     return BungeeUtils.getComponent(BungeeUtils.build(this.get(key)));
   }
 
@@ -41,8 +40,8 @@ public class BungeeLocaleFile implements LocaleFile {
    * @param placeholders the placeholders of the component
    * @return the component from the given key
    */
-  public @NotNull BaseComponent[] getComponent(
-      @NotNull String key, @NotNull Map<String, String> placeholders) {
+  public @NonNull BaseComponent[] getComponent(
+      @NonNull String key, @NonNull Map<String, String> placeholders) {
     return BungeeUtils.getComponent(BungeeUtils.build(this.get(key, placeholders)));
   }
 
@@ -53,13 +52,13 @@ public class BungeeLocaleFile implements LocaleFile {
    * @param placeholders the placeholders in the component
    * @return the component from the given key
    */
-  public @NotNull BaseComponent[] getComponent(
-      @NotNull String key, @NotNull MapBuilder<String, String> placeholders) {
+  public @NonNull BaseComponent[] getComponent(
+      @NonNull String key, @NonNull MapBuilder<String, String> placeholders) {
     return BungeeUtils.getComponent(BungeeUtils.build(this.get(key, placeholders)));
   }
 
   @Override
-  public @NotNull String getLang() {
+  public @NonNull String getLang() {
     return this.get("locale");
   }
 
@@ -69,7 +68,7 @@ public class BungeeLocaleFile implements LocaleFile {
   }
 
   @Override
-  public @Nullable String getRaw(@NotNull String s) {
+  public String getRaw(@NonNull String s) {
     return this.config.getString(s);
   }
 
@@ -80,7 +79,7 @@ public class BungeeLocaleFile implements LocaleFile {
    * @return the string if the path leads to one else the path
    */
   @Override
-  public @NotNull String get(@NotNull String path) {
+  public @NonNull String get(@NonNull String path) {
     String raw = this.getRaw(path);
     return raw == null ? path : raw;
   }

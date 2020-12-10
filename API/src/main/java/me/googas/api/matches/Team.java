@@ -3,8 +3,8 @@ package me.googas.api.matches;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import lombok.NonNull;
 import me.googas.api.links.Linkable;
-import org.jetbrains.annotations.NotNull;
 
 /** This object represents a team. Which is basically a collection of members */
 public interface Team {
@@ -15,7 +15,7 @@ public interface Team {
    * @param ladder the ladder to calculate the elo to
    * @return the average elo of the team
    */
-  default float getElo(@NotNull Ladder ladder) {
+  default float getElo(@NonNull Ladder ladder) {
     if (!this.getMembers().isEmpty()) {
       float sum = 0;
       for (TeamMember member : this.getMembers()) {
@@ -36,7 +36,7 @@ public interface Team {
    * @param member the member to add
    * @return whether the member was added to the team
    */
-  boolean add(@NotNull TeamMember member);
+  boolean add(@NonNull TeamMember member);
 
   /**
    * Removes a member from the team
@@ -44,14 +44,14 @@ public interface Team {
    * @param member the member to remove
    * @return whether the member was removed from the team
    */
-  boolean remove(@NotNull TeamMember member);
+  boolean remove(@NonNull TeamMember member);
 
   /**
    * Get the members of the team
    *
    * @return the members of the team
    */
-  @NotNull
+  @NonNull
   Collection<TeamMember> getMembers();
 
   /**
@@ -59,7 +59,7 @@ public interface Team {
    *
    * @return the name of the team
    */
-  @NotNull
+  @NonNull
   String getName();
 
   /**
@@ -67,7 +67,7 @@ public interface Team {
    *
    * @return the single identification
    */
-  @NotNull
+  @NonNull
   default Collection<String> getMemberSingles() {
     List<String> singles = new ArrayList<>();
     for (TeamMember member : this.getMembers()) {

@@ -1,14 +1,14 @@
 package me.googas.api.client.data;
 
 import java.util.Objects;
+import lombok.NonNull;
 import me.googas.api.permissions.Permission;
-import org.jetbrains.annotations.NotNull;
 
 /** An implementation for permission */
 public class SimplePermission implements Permission {
 
   /** The node of the permission */
-  @NotNull private final String node;
+  @NonNull private final String node;
 
   /** Whether the permission is enabled */
   private final boolean enabled;
@@ -19,13 +19,13 @@ public class SimplePermission implements Permission {
    * @param node the node of the permission
    * @param enabled whether the permission is enabled
    */
-  public SimplePermission(@NotNull String node, boolean enabled) {
+  public SimplePermission(@NonNull String node, boolean enabled) {
     this.node = node;
     this.enabled = enabled;
   }
 
   @Override
-  public @NotNull String getNode() {
+  public @NonNull String getNode() {
     return this.node;
   }
 

@@ -6,6 +6,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
+import lombok.NonNull;
 import me.googas.api.links.LinkableType;
 import me.googas.api.permissions.PermissionStack;
 import me.googas.api.user.UserData;
@@ -21,25 +22,22 @@ import me.googas.commons.time.Unit;
 import me.googas.messaging.Request;
 import me.googas.messaging.json.server.JsonClientThread;
 import net.dv8tion.jda.api.entities.User;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 /** The implementation of bot linked ata */
 public class GuidoLinkable implements BotLinkable, BotPermissible {
 
   /** The type of the linked data */
-  @NotNull private final LinkableType type;
+  @NonNull private final LinkableType type;
   /** The way to identify this data */
-  @NotNull private final GuidoValuesMap identification;
+  @NonNull private final GuidoValuesMap identification;
   /** The preferences of the user */
-  @NotNull private final GuidoValuesMap preferences;
+  @NonNull private final GuidoValuesMap preferences;
   /** The stats of the data */
-  @NotNull private final Map<String, Float> stats;
+  @NonNull private final Map<String, Float> stats;
   /** The permissions */
-  @NotNull private final Set<PermissionStack> permissions;
+  @NonNull private final Set<PermissionStack> permissions;
   /** The id of the linked user */
   @SerializedName("linked-id")
-  @Nullable
   private String user;
 
   /**
@@ -53,12 +51,12 @@ public class GuidoLinkable implements BotLinkable, BotPermissible {
    * @param permissions the permissions of this data
    */
   public GuidoLinkable(
-      @NotNull LinkableType type,
-      @Nullable String user,
-      @NotNull GuidoValuesMap identification,
-      @NotNull GuidoValuesMap preferences,
-      @NotNull Map<String, Float> stats,
-      @NotNull Set<PermissionStack> permissions) {
+      @NonNull LinkableType type,
+      String user,
+      @NonNull GuidoValuesMap identification,
+      @NonNull GuidoValuesMap preferences,
+      @NonNull Map<String, Float> stats,
+      @NonNull Set<PermissionStack> permissions) {
     this.type = type;
     this.user = user;
     this.identification = identification;
@@ -79,7 +77,7 @@ public class GuidoLinkable implements BotLinkable, BotPermissible {
   }
 
   @Override
-  public @NotNull Set<PermissionStack> getPermissions() {
+  public @NonNull Set<PermissionStack> getPermissions() {
     return this.permissions;
   }
 
@@ -89,22 +87,22 @@ public class GuidoLinkable implements BotLinkable, BotPermissible {
   }
 
   @Override
-  public @NotNull Time getToRemove() {
+  public @NonNull Time getToRemove() {
     return new Time(3, Unit.MINUTES);
   }
 
   @Override
-  public @NotNull Map<String, Float> getStats() {
+  public @NonNull Map<String, Float> getStats() {
     return this.stats;
   }
 
   @Override
-  public @NotNull LinkableType getType() {
+  public @NonNull LinkableType getType() {
     return this.type;
   }
 
   @Override
-  public @NotNull ValuesMap getIdentification() {
+  public @NonNull ValuesMap getIdentification() {
     return this.identification;
   }
 
@@ -117,22 +115,22 @@ public class GuidoLinkable implements BotLinkable, BotPermissible {
   public void setCredits(float value) {}
 
   @Override
-  public @NotNull ValuesMap getPreferences() {
+  public @NonNull ValuesMap getPreferences() {
     return this.preferences;
   }
 
   @Override
-  public @Nullable String getLinkedUserId() {
+  public String getLinkedUserId() {
     return this.user;
   }
 
   @Override
-  public void setLinkedUser(@Nullable UserData user) {
+  public void setLinkedUser(UserData user) {
     this.user = user == null ? null : user.getId();
   }
 
   @Override
-  public void sendMessage(@NotNull String message) {
+  public void sendMessage(@NonNull String message) {
     switch (this.getType()) {
       default:
       case DISCORD_GUILD:
@@ -166,17 +164,17 @@ public class GuidoLinkable implements BotLinkable, BotPermissible {
 
   // TODO make that the user is localized and not each different link
   @Override
-  public void sendLocalized(@NotNull String key) {
+  public void sendLocalized(@NonNull String key) {
     this.sendMessage(Guido.getLanguageHandler().getDefault().get(key));
   }
 
   @Override
-  public void sendLocalized(@NotNull String key, @NotNull Map<String, String> placeholders) {
+  public void sendLocalized(@NonNull String key, @NonNull Map<String, String> placeholders) {
     this.sendMessage(Guido.getLanguageHandler().getDefault().get(key, placeholders));
   }
 
   @Override
-  public @NotNull GuidoLinkableInfo getInfo() {
+  public @NonNull GuidoLinkableInfo getInfo() {
     return new GuidoLinkableInfo(this.getType(), this.identification);
   }
 
@@ -229,7 +227,7 @@ public class GuidoLinkable implements BotLinkable, BotPermissible {
    * @return this same object instance
    */
   @Override
-  public @NotNull GuidoLinkable cache() {
+  public @NonNull GuidoLinkable cache() {
     return (GuidoLinkable) BotLinkable.super.cache();
   }
 }

@@ -1,7 +1,6 @@
 package me.googas.api.permissions;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import lombok.NonNull;
 
 /** Represents the information to get a {@link Group} */
 public interface GroupInfo {
@@ -11,7 +10,7 @@ public interface GroupInfo {
    *
    * @return the id of the group
    */
-  @NotNull
+  @NonNull
   String getId();
 
   /**
@@ -26,7 +25,7 @@ public interface GroupInfo {
    *
    * @return the name of the group
    */
-  @NotNull
+  @NonNull
   String getName();
 
   /**
@@ -34,6 +33,5 @@ public interface GroupInfo {
    *
    * @return the group if it is found null otherwise
    */
-  @Nullable
   Group getGroup();
 }

@@ -1,19 +1,19 @@
 package me.googas.bot.api.types;
 
 import java.util.HashSet;
+import lombok.NonNull;
 import me.googas.api.permissions.Permissible;
 import me.googas.api.permissions.PermissionStack;
 import me.googas.bot.api.events.data.permissible.PermissiblePermissionAddedEvent;
 import me.googas.bot.api.events.data.permissible.PermissiblePermissionRemovedEvent;
 import me.googas.bot.core.types.permissions.GuidoPermission;
 import me.googas.bot.core.types.permissions.GuidoPermissionStack;
-import org.jetbrains.annotations.NotNull;
 
 /** A bot implementation for {@link Permissible} */
 public interface BotPermissible extends Permissible, BotCatchable {
 
   @Override
-  default boolean addPermission(@NotNull String context, @NotNull String node, boolean enabled) {
+  default boolean addPermission(@NonNull String context, @NonNull String node, boolean enabled) {
     PermissionStack stack = this.getPermissions(context);
     if (stack == null) {
       stack = new GuidoPermissionStack(context, new HashSet<>());
@@ -30,7 +30,7 @@ public interface BotPermissible extends Permissible, BotCatchable {
   }
 
   @Override
-  default boolean removePermission(@NotNull String context, @NotNull String node) {
+  default boolean removePermission(@NonNull String context, @NonNull String node) {
     PermissionStack stack = this.getPermissions(context);
     if (stack != null) {
       if (stack.containsPermission(node)) {

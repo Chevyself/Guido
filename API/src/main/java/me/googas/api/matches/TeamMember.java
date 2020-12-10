@@ -1,7 +1,7 @@
 package me.googas.api.matches;
 
+import lombok.NonNull;
 import me.googas.api.links.LinkableInfo;
-import org.jetbrains.annotations.NotNull;
 
 /** Represents the linked info inside a team */
 public interface TeamMember {
@@ -11,7 +11,7 @@ public interface TeamMember {
    *
    * @return the linked information
    */
-  @NotNull
+  @NonNull
   LinkableInfo getLinkInfo();
 
   /**
@@ -19,6 +19,6 @@ public interface TeamMember {
    *
    * @return the role of the member
    */
-  @NotNull
+  @NonNull
   TeamRole getTeamRole();
 }

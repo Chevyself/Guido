@@ -1,13 +1,13 @@
 package me.googas.bot.core.types;
 
+import lombok.NonNull;
 import me.googas.api.ranks.RankRange;
-import org.jetbrains.annotations.NotNull;
 
 /** Rank range implementation for the guido bot */
 public class GuidoRankRange implements RankRange {
 
   /** The ladder that is using this range */
-  @NotNull private final String ladder;
+  @NonNull private final String ladder;
 
   /** The minimum value of the range */
   private final int min;
@@ -22,7 +22,7 @@ public class GuidoRankRange implements RankRange {
    * @param min the minimum value of the range
    * @param max the maximum value of the range
    */
-  public GuidoRankRange(@NotNull String ladder, int min, int max) {
+  public GuidoRankRange(@NonNull String ladder, int min, int max) {
     this.ladder = ladder;
     this.min = min;
     this.max = max;
@@ -44,7 +44,7 @@ public class GuidoRankRange implements RankRange {
   }
 
   @Override
-  public @NotNull String getLadder() {
+  public @NonNull String getLadder() {
     return this.ladder;
   }
 }

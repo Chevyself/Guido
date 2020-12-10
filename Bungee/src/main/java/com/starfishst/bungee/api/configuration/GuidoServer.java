@@ -2,8 +2,8 @@ package com.starfishst.bungee.api.configuration;
 
 import com.starfishst.bungee.api.Guido;
 import java.net.InetSocketAddress;
+import lombok.NonNull;
 import me.googas.commons.fallback.Fallback;
-import org.jetbrains.annotations.NotNull;
 
 /** This object represents a server that can be connected to a bungee that has the guido plugin */
 public interface GuidoServer {
@@ -34,7 +34,7 @@ public interface GuidoServer {
    *
    * @return the name of the server
    */
-  @NotNull
+  @NonNull
   String getName();
 
   /**
@@ -42,7 +42,7 @@ public interface GuidoServer {
    *
    * @return the address
    */
-  @NotNull
+  @NonNull
   String getAddress();
 
   /**

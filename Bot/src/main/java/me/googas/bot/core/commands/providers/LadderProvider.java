@@ -4,23 +4,23 @@ import com.starfishst.core.exceptions.ArgumentProviderException;
 import com.starfishst.jda.context.CommandContext;
 import com.starfishst.jda.context.GuildCommandContext;
 import com.starfishst.jda.providers.type.JdaArgumentProvider;
+import lombok.NonNull;
 import me.googas.api.matches.Ladder;
 import me.googas.bot.api.types.BotGuild;
 import me.googas.bot.core.Guido;
 import me.googas.commons.maps.Maps;
-import org.jetbrains.annotations.NotNull;
 
 /** Provides ladders for command */
 public class LadderProvider implements JdaArgumentProvider<Ladder> {
 
   @Override
-  public @NotNull Class<Ladder> getClazz() {
+  public @NonNull Class<Ladder> getClazz() {
     return Ladder.class;
   }
 
-  @NotNull
+  @NonNull
   @Override
-  public Ladder fromString(@NotNull String s, @NotNull CommandContext context)
+  public Ladder fromString(@NonNull String s, @NonNull CommandContext context)
       throws ArgumentProviderException {
     if (context instanceof GuildCommandContext) {
       BotGuild guild =

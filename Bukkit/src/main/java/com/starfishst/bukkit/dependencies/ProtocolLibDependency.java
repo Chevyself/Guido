@@ -5,14 +5,15 @@ import com.starfishst.bukkit.api.dependencies.Dependency;
 import com.starfishst.bukkit.api.events.GuidoListener;
 import com.starfishst.bukkit.context.CommandContext;
 import com.starfishst.bukkit.listeners.AntiCheatListener;
+import com.starfishst.bukkit.listeners.VelocityImprovement;
 import com.starfishst.bukkit.listeners.anticheat.AutoClickDetector;
 import com.starfishst.bukkit.listeners.anticheat.ReachDetector;
 import com.starfishst.core.providers.type.IContextualProvider;
 import java.util.ArrayList;
 import java.util.Collection;
+import lombok.NonNull;
 import me.googas.commons.Lots;
 import org.bukkit.plugin.Plugin;
-import org.jetbrains.annotations.NotNull;
 
 /** The dependency in ProtocolLib */
 public class ProtocolLibDependency implements Dependency {
@@ -20,7 +21,7 @@ public class ProtocolLibDependency implements Dependency {
   private boolean enabled = false;
 
   @Override
-  public @NotNull String getName() {
+  public @NonNull String getName() {
     return "ProtocolLib";
   }
 
@@ -35,9 +36,12 @@ public class ProtocolLibDependency implements Dependency {
   }
 
   @Override
-  public @NotNull Collection<GuidoListener> getListeners(@NotNull Plugin plugin) {
+  public @NonNull Collection<GuidoListener> getListeners(@NonNull Plugin plugin) {
     return Lots.list(
-        new AntiCheatListener(), new AutoClickDetector(plugin), new ReachDetector(plugin));
+        new AntiCheatListener(),
+        new AutoClickDetector(plugin),
+        new ReachDetector(plugin),
+        new VelocityImprovement());
   }
 
   /**
@@ -46,7 +50,7 @@ public class ProtocolLibDependency implements Dependency {
    * @return the collection of commands to register
    */
   @Override
-  public @NotNull Collection<GuidoCommand> getCommands() {
+  public @NonNull Collection<GuidoCommand> getCommands() {
     return new ArrayList<>();
   }
 

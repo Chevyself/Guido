@@ -1,22 +1,22 @@
 package me.googas.api.client.receptors;
 
+import lombok.NonNull;
 import me.googas.api.client.Client;
 import me.googas.messaging.json.Receptor;
 import me.googas.messaging.json.client.JsonClient;
-import org.jetbrains.annotations.NotNull;
 
 /** Receptors for the implementation */
 public class SimpleReceptors {
 
   /** The client using the receptors */
-  @NotNull private final Client client;
+  @NonNull private final Client client;
 
   /**
    * Create the receptors
    *
    * @param client the client using the receptors
    */
-  public SimpleReceptors(@NotNull Client client) {
+  public SimpleReceptors(@NonNull Client client) {
     this.client = client;
   }
 

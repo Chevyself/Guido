@@ -4,31 +4,31 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.function.BiConsumer;
+import lombok.NonNull;
 import me.googas.bot.api.server.BotServer;
 import me.googas.messaging.Request;
 import me.googas.messaging.api.Messenger;
 import me.googas.messaging.json.JsonMessenger;
-import org.jetbrains.annotations.NotNull;
 
 /** A fallback server in case {@link GuidoServer does not work} */
 public class GuidoFallbackServer implements BotServer {
 
   @Override
-  public @NotNull GuidoAuthenticator getAuthenticator() {
+  public @NonNull GuidoAuthenticator getAuthenticator() {
     throw new UnsupportedOperationException("There's no authentication for fallback server");
   }
 
   @Override
-  public @NotNull Set<? extends Messenger> getClients() {
+  public @NonNull Set<? extends Messenger> getClients() {
     return new HashSet<>();
   }
 
   @Override
   public <T> void sendRequest(
-      @NotNull Request<T> request, BiConsumer<JsonMessenger, T> biConsumer) {}
+      @NonNull Request<T> request, BiConsumer<JsonMessenger, T> biConsumer) {}
 
   @Override
-  public @NotNull <T> HashMap<JsonMessenger, T> sendRequest(@NotNull Request<T> request) {
+  public @NonNull <T> HashMap<JsonMessenger, T> sendRequest(@NonNull Request<T> request) {
     return new HashMap<>();
   }
 

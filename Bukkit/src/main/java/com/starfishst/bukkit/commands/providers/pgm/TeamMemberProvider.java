@@ -9,9 +9,9 @@ import com.starfishst.bukkit.listeners.pgm.matches.creation.PickTeamSelection;
 import com.starfishst.bukkit.listeners.pgm.matches.creation.TeamCreation;
 import com.starfishst.bukkit.providers.type.BukkitExtraArgumentProvider;
 import com.starfishst.core.exceptions.ArgumentProviderException;
+import lombok.NonNull;
 import me.googas.api.matches.TeamMember;
 import org.bukkit.entity.Player;
-import org.jetbrains.annotations.NotNull;
 
 /**
  * @deprecated This provider is terminar and might be deleted in the future it only should be used
@@ -20,13 +20,13 @@ import org.jetbrains.annotations.NotNull;
 public class TeamMemberProvider implements BukkitExtraArgumentProvider<TeamMember> {
 
   @Override
-  public @NotNull Class<TeamMember> getClazz() {
+  public @NonNull Class<TeamMember> getClazz() {
     return TeamMember.class;
   }
 
-  @NotNull
+  @NonNull
   @Override
-  public TeamMember getObject(@NotNull CommandContext context) throws ArgumentProviderException {
+  public TeamMember getObject(@NonNull CommandContext context) throws ArgumentProviderException {
     PGMMatchMakingListener listener = Guido.getListener(PGMMatchMakingListener.class);
     BukkitLocaleFile locale = Guido.getLanguageHandler().getFile(context);
     if (context.getSender() instanceof Player) {

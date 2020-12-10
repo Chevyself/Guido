@@ -6,25 +6,24 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.function.Consumer;
+import lombok.NonNull;
 import me.googas.api.permissions.Group;
 import me.googas.commons.Lots;
 import me.googas.messaging.Request;
 import me.googas.messaging.json.client.JsonClient;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 /** Handles groups used for permissions */
 public class GroupListener implements GuidoListener {
 
   /** The list of loaded groups */
-  @NotNull private final List<Group> groups = new ArrayList<>();
+  @NonNull private final List<Group> groups = new ArrayList<>();
 
   /**
    * Loads new groups requesting them to the bot
    *
    * @param consumer what ever you would like to do with the new loaded groups
    */
-  public void loadGroups(@Nullable Consumer<List<Group>> consumer) {
+  public void loadGroups(Consumer<List<Group>> consumer) {
     JsonClient connection = Guido.getClient().getConnection();
     if (connection != null) {
       connection.sendRequest(
@@ -49,7 +48,7 @@ public class GroupListener implements GuidoListener {
    *
    * @param consumer what ever to do with the new loaded groups
    */
-  public void reload(@Nullable Consumer<List<Group>> consumer) {
+  public void reload(Consumer<List<Group>> consumer) {
     this.unloadGroups();
     this.loadGroups(consumer);
   }
@@ -60,8 +59,7 @@ public class GroupListener implements GuidoListener {
    * @param permission the permission to match
    * @return the group if matches null otherwise
    */
-  @Nullable
-  public Group getGroupByPermission(@NotNull String permission) {
+  public Group getGroupByPermission(@NonNull String permission) {
     for (Group group : this.groups) {
       if (this.toPermission(group).equalsIgnoreCase(permission)) {
         return group;
@@ -76,7 +74,7 @@ public class GroupListener implements GuidoListener {
    * @param group the group to get as a permission node
    * @return the group
    */
-  public String toPermission(@NotNull Group group) {
+  public String toPermission(@NonNull Group group) {
     return "guido.group." + group.getName().replace(" ", "-");
   }
 
@@ -86,7 +84,7 @@ public class GroupListener implements GuidoListener {
    * @param group the group to get the parents
    * @return the list of groups
    */
-  public List<Group> getParents(@NotNull Group group) {
+  public List<Group> getParents(@NonNull Group group) {
     ArrayList<Group> parents = new ArrayList<>();
     for (String id : group.getParents()) {
       parents.add(this.getGroup(id));
@@ -122,7 +120,7 @@ public class GroupListener implements GuidoListener {
   }
 
   @Override
-  public @NotNull String getName() {
+  public @NonNull String getName() {
     return "groups";
   }
 }

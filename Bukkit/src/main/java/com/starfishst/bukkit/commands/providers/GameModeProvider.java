@@ -7,22 +7,21 @@ import com.starfishst.core.exceptions.ArgumentProviderException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+import lombok.NonNull;
 import me.googas.commons.Lots;
 import org.bukkit.GameMode;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 /** Provides the command manager with {@link GameMode} */
 public class GameModeProvider implements BukkitArgumentProvider<GameMode> {
 
   @Override
-  public @NotNull Class<GameMode> getClazz() {
+  public @NonNull Class<GameMode> getClazz() {
     return GameMode.class;
   }
 
-  @NotNull
+  @NonNull
   @Override
-  public GameMode fromString(@NotNull String s, @NotNull CommandContext context)
+  public GameMode fromString(@NonNull String s, @NonNull CommandContext context)
       throws ArgumentProviderException {
     GuidoGameMode guidoGameMode = GuidoGameMode.fromString(s);
     if (guidoGameMode != null) {
@@ -33,7 +32,7 @@ public class GameModeProvider implements BukkitArgumentProvider<GameMode> {
   }
 
   @Override
-  public @NotNull List<String> getSuggestions(@NotNull String s, CommandContext commandContext) {
+  public @NonNull List<String> getSuggestions(@NonNull String s, CommandContext commandContext) {
     List<String> names = new ArrayList<>();
     for (GameMode value : GameMode.values()) {
       names.add(value.toString().toLowerCase());
@@ -53,7 +52,7 @@ public class GameModeProvider implements BukkitArgumentProvider<GameMode> {
     SPECTATOR(Lots.set("3", "o", "spectator"), GameMode.SPECTATOR);
 
     /** The set of aliases that can be used to identify the gamemode */
-    @NotNull private final Set<String> aliases;
+    @NonNull private final Set<String> aliases;
 
     /** The bukkit gamemode */
     private final GameMode bukkit;
@@ -64,7 +63,7 @@ public class GameModeProvider implements BukkitArgumentProvider<GameMode> {
      * @param aliases the aliases for the gamemode
      * @param bukkit the bukkit gamemode
      */
-    GuidoGameMode(@NotNull Set<String> aliases, GameMode bukkit) {
+    GuidoGameMode(@NonNull Set<String> aliases, GameMode bukkit) {
       this.aliases = aliases;
       this.bukkit = bukkit;
     }
@@ -75,8 +74,7 @@ public class GameModeProvider implements BukkitArgumentProvider<GameMode> {
      * @param string the string to get it from
      * @return the guido gamemode if matches else null
      */
-    @Nullable
-    public static GuidoGameMode fromString(@NotNull String string) {
+    public static GuidoGameMode fromString(@NonNull String string) {
       for (GuidoGameMode value : GuidoGameMode.values()) {
         for (String alias : value.getAliases()) {
           if (alias.equalsIgnoreCase(string)) {
@@ -92,7 +90,7 @@ public class GameModeProvider implements BukkitArgumentProvider<GameMode> {
      *
      * @return the list of aliases
      */
-    @NotNull
+    @NonNull
     public Set<String> getAliases() {
       return this.aliases;
     }
@@ -102,7 +100,7 @@ public class GameModeProvider implements BukkitArgumentProvider<GameMode> {
      *
      * @return the bukkit counterpart
      */
-    @NotNull
+    @NonNull
     public GameMode getBukkit() {
       return this.bukkit;
     }

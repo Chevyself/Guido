@@ -8,10 +8,10 @@ import com.starfishst.bungee.core.lang.BungeeLocaleFile;
 import com.starfishst.core.annotations.settings.Setting;
 import com.starfishst.core.annotations.settings.Settings;
 import java.util.Map;
+import lombok.NonNull;
 import me.googas.api.links.LinkableInfo;
 import me.googas.commons.maps.Maps;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
-import org.jetbrains.annotations.NotNull;
 
 /** Commands for linking minecraft accounts */
 public class LinkCommand {
@@ -27,7 +27,7 @@ public class LinkCommand {
   @Command(aliases = "link")
   public void link(ProxiedPlayer player, BungeeLocaleFile locale) {
     ProxiedOfflinePlayer offline = new ProxiedOfflinePlayer(player.getUniqueId(), player.getName());
-    Map<String, @NotNull LinkableInfo> params = Maps.singleton("info", offline.getLinkedInfo());
+    Map<String, @NonNull LinkableInfo> params = Maps.singleton("info", offline.getLinkedInfo());
     new BungeeBooleanRequest("is-linked", params)
         .send(
             linked -> {

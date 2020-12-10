@@ -2,9 +2,9 @@ package me.googas.bot.core.types.maps;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
+import lombok.NonNull;
 import me.googas.api.utility.ValuesMap;
 import me.googas.commons.maps.Maps;
-import org.jetbrains.annotations.NotNull;
 
 /** A guido linked values map uses {@link java.util.LinkedHashMap} instead of a hash map */
 public class GuidoLinkedValuesMap extends GuidoValuesMap {
@@ -14,7 +14,7 @@ public class GuidoLinkedValuesMap extends GuidoValuesMap {
    *
    * @param map to create the map from
    */
-  public GuidoLinkedValuesMap(@NotNull Map<String, Object> map) {
+  public GuidoLinkedValuesMap(@NonNull Map<String, Object> map) {
     super(new LinkedHashMap<>(map));
   }
 
@@ -24,7 +24,7 @@ public class GuidoLinkedValuesMap extends GuidoValuesMap {
    * @param key the key to start the map
    * @param value the value to start the map
    */
-  public GuidoLinkedValuesMap(@NotNull String key, @NotNull Object value) {
+  public GuidoLinkedValuesMap(@NonNull String key, @NonNull Object value) {
     super(new LinkedHashMap<>(Maps.singleton(key, value)));
   }
 
@@ -33,19 +33,19 @@ public class GuidoLinkedValuesMap extends GuidoValuesMap {
     super(new LinkedHashMap<>());
   }
 
-  @NotNull
+  @NonNull
   @Override
-  public GuidoLinkedValuesMap put(@NotNull String name, @NotNull Object value) {
+  public GuidoLinkedValuesMap put(@NonNull String name, @NonNull Object value) {
     return (GuidoLinkedValuesMap) super.put(name, value);
   }
 
   @Override
-  public GuidoLinkedValuesMap put(@NotNull Map<String, Object> map) {
+  public GuidoLinkedValuesMap put(@NonNull Map<String, Object> map) {
     return (GuidoLinkedValuesMap) super.put(map);
   }
 
   @Override
-  public GuidoLinkedValuesMap put(@NotNull ValuesMap map) {
+  public GuidoLinkedValuesMap put(@NonNull ValuesMap map) {
     return (GuidoLinkedValuesMap) super.put(map);
   }
 }

@@ -1,7 +1,7 @@
 package me.googas.bot.api.events.data.links;
 
+import lombok.NonNull;
 import me.googas.bot.api.types.BotLinkable;
-import org.jetbrains.annotations.NotNull;
 
 /** Called when linked data gets unloaded */
 public class LinkedDataUnloadedEvent extends LinkedDataEvent {
@@ -10,7 +10,7 @@ public class LinkedDataUnloadedEvent extends LinkedDataEvent {
    *
    * @param data the data involved in the event
    */
-  public LinkedDataUnloadedEvent(@NotNull BotLinkable data) {
+  public LinkedDataUnloadedEvent(@NonNull BotLinkable data) {
     super(data);
   }
 }

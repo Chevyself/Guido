@@ -2,7 +2,7 @@ package me.googas.bot.core.server.request;
 
 import java.util.Map;
 import java.util.UUID;
-import org.jetbrains.annotations.NotNull;
+import lombok.NonNull;
 
 /** An extension to request booleans */
 public class BooleanGuidoRequest extends GuidoRequest<Boolean> {
@@ -14,7 +14,7 @@ public class BooleanGuidoRequest extends GuidoRequest<Boolean> {
    * @param parameters the parameters that will use the receptor to process the request
    */
   public BooleanGuidoRequest(
-      @NotNull UUID id, @NotNull String method, @NotNull Map<String, ?> parameters) {
+      @NonNull UUID id, @NonNull String method, @NonNull Map<String, ?> parameters) {
     super(Boolean.class, id, method, parameters);
   }
 
@@ -24,7 +24,7 @@ public class BooleanGuidoRequest extends GuidoRequest<Boolean> {
    * @param method the method which will be used to get the receptor to process the request
    * @param parameters the parameters that will use the receptor to process the request
    */
-  public BooleanGuidoRequest(@NotNull String method, @NotNull Map<String, ?> parameters) {
+  public BooleanGuidoRequest(@NonNull String method, @NonNull Map<String, ?> parameters) {
     super(Boolean.class, method, parameters);
   }
 
@@ -33,7 +33,7 @@ public class BooleanGuidoRequest extends GuidoRequest<Boolean> {
    *
    * @param method the method which will be used to get the receptor to process the request
    */
-  public BooleanGuidoRequest(@NotNull String method) {
+  public BooleanGuidoRequest(@NonNull String method) {
     super(Boolean.class, method);
   }
 }

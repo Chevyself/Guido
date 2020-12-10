@@ -1,7 +1,7 @@
 package me.googas.bot.api.events.responsive;
 
 import com.starfishst.jda.utils.responsive.ResponsiveMessage;
-import org.jetbrains.annotations.NotNull;
+import lombok.NonNull;
 
 /** Called when a responsive message gets unloaded */
 public class ResponsiveMessageUnloadedEvent extends ResponsiveMessageEvent {
@@ -10,7 +10,7 @@ public class ResponsiveMessageUnloadedEvent extends ResponsiveMessageEvent {
    *
    * @param message the responsive message involved in the event
    */
-  public ResponsiveMessageUnloadedEvent(@NotNull ResponsiveMessage message) {
+  public ResponsiveMessageUnloadedEvent(@NonNull ResponsiveMessage message) {
     super(message);
   }
 }

@@ -6,24 +6,22 @@ import com.starfishst.bukkit.listeners.pgm.matches.HostedMatch;
 import com.starfishst.bukkit.listeners.pgm.matches.PGMMatchMakingListener;
 import com.starfishst.bukkit.providers.type.BukkitExtraArgumentProvider;
 import com.starfishst.core.exceptions.ArgumentProviderException;
-import org.jetbrains.annotations.NotNull;
+import lombok.NonNull;
 
 /** Provides commands with hosted matches */
 public class HostedMatchProvider implements BukkitExtraArgumentProvider<HostedMatch> {
   @Override
-  public @NotNull Class<HostedMatch> getClazz() {
+  public @NonNull Class<HostedMatch> getClazz() {
     return HostedMatch.class;
   }
 
-  @NotNull
+  @NonNull
   @Override
-  public HostedMatch getObject(@NotNull CommandContext context) throws ArgumentProviderException {
+  public HostedMatch getObject(@NonNull CommandContext context) throws ArgumentProviderException {
     PGMMatchMakingListener listener = Guido.getListener(PGMMatchMakingListener.class);
     if (listener == null) throw new ArgumentProviderException("This command is not available");
     HostedMatch match = listener.getMatch(context.getSender());
-    if (match != null) {
-      return match;
-    }
+    if (match != null) return match;
     throw new ArgumentProviderException(
         Guido.getLanguageHandler().getFile(context).get("participant-only"));
   }

@@ -8,6 +8,7 @@ import com.starfishst.jda.messages.MessagesProvider;
 import com.starfishst.jda.result.Result;
 import com.starfishst.jda.result.ResultType;
 import java.util.Set;
+import lombok.NonNull;
 import me.googas.bot.api.loader.BotDataLoader;
 import me.googas.bot.api.types.BotLinkable;
 import me.googas.bot.api.types.BotRole;
@@ -16,8 +17,6 @@ import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Role;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 /** Checks the permissions for the guido bot */
 public class GuidoPermissionChecker implements PermissionChecker {
@@ -26,13 +25,13 @@ public class GuidoPermissionChecker implements PermissionChecker {
    * The set of developers which are allowed to use any command without having the respective
    * permission
    */
-  @NotNull private final Set<Long> developers = Lots.set(86321059636203520L);
+  @NonNull private final Set<Long> developers = Lots.set(86321059636203520L);
 
   /** The messages provider in case that it has to remove a result */
-  @NotNull private final MessagesProvider messagesProvider;
+  @NonNull private final MessagesProvider messagesProvider;
 
   /** The data loader to get the permissions */
-  @NotNull private final BotDataLoader dataLoader;
+  @NonNull private final BotDataLoader dataLoader;
 
   /**
    * Create the permission checker
@@ -41,7 +40,7 @@ public class GuidoPermissionChecker implements PermissionChecker {
    * @param dataLoader the data loader to get the permissions from the user
    */
   public GuidoPermissionChecker(
-      @NotNull MessagesProvider messagesProvider, @NotNull BotDataLoader dataLoader) {
+      @NonNull MessagesProvider messagesProvider, @NonNull BotDataLoader dataLoader) {
     this.messagesProvider = messagesProvider;
     this.dataLoader = dataLoader;
   }
@@ -54,7 +53,7 @@ public class GuidoPermissionChecker implements PermissionChecker {
    * @param perm the permission to check
    * @return if this is true the user has the permission
    */
-  public boolean checkMemberPermission(@NotNull GuildCommandContext context, @NotNull Perm perm) {
+  public boolean checkMemberPermission(@NonNull GuildCommandContext context, @NonNull Perm perm) {
     Member discordMember = context.getMember();
     Guild guild = context.getGuild();
     BotLinkable member =
@@ -76,7 +75,7 @@ public class GuidoPermissionChecker implements PermissionChecker {
   }
 
   @Override
-  public @Nullable Result checkPermission(@NotNull CommandContext context, @NotNull Perm perm) {
+  public Result checkPermission(@NonNull CommandContext context, @NonNull Perm perm) {
     if (!perm.node().isEmpty()) {
       if (this.developers.contains(context.getSender().getIdLong())) {
         return null;
@@ -98,7 +97,7 @@ public class GuidoPermissionChecker implements PermissionChecker {
   }
 
   @Override
-  public @NotNull MessagesProvider getMessagesProvider() {
+  public @NonNull MessagesProvider getMessagesProvider() {
     return this.messagesProvider;
   }
 }

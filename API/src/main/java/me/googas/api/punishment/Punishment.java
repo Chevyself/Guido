@@ -1,10 +1,9 @@
 package me.googas.api.punishment;
 
+import lombok.NonNull;
 import me.googas.api.links.LinkableInfo;
 import me.googas.api.utility.ValuesMap;
 import me.googas.commons.cache.Catchable;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 /** This class represents a punishment which can be done to any kind of data */
 public interface Punishment extends Catchable {
@@ -14,7 +13,7 @@ public interface Punishment extends Catchable {
    *
    * @return the type of punishment
    */
-  @NotNull
+  @NonNull
   PunishmentType getType();
 
   /**
@@ -22,7 +21,7 @@ public interface Punishment extends Catchable {
    *
    * @return the status of the punishment
    */
-  @NotNull
+  @NonNull
   PunishmentStatus getStatus();
 
   /**
@@ -30,7 +29,6 @@ public interface Punishment extends Catchable {
    *
    * @return the info of the punisher
    */
-  @Nullable
   LinkableInfo getPunisher();
 
   /**
@@ -38,7 +36,7 @@ public interface Punishment extends Catchable {
    *
    * @return the info of the punished
    */
-  @NotNull
+  @NonNull
   LinkableInfo getPunished();
 
   /**
@@ -46,6 +44,6 @@ public interface Punishment extends Catchable {
    *
    * @return the details of the punishment
    */
-  @NotNull
+  @NonNull
   ValuesMap getDetails();
 }

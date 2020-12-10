@@ -1,16 +1,16 @@
 package com.starfishst.bungee.core.configuration;
 
 import com.starfishst.bungee.api.configuration.GuidoServer;
-import org.jetbrains.annotations.NotNull;
+import lombok.NonNull;
 
 /** An implementation for guido servers */
 public class GuidoServerImpl implements GuidoServer {
 
   /** The name of the server */
-  @NotNull private final String name;
+  @NonNull private final String name;
 
   /** The address of the server */
-  @NotNull private final String address;
+  @NonNull private final String address;
 
   /** Whether the server is restricted */
   private final boolean restricted;
@@ -22,19 +22,19 @@ public class GuidoServerImpl implements GuidoServer {
    * @param address the address
    * @param restricted whether it is restricted
    */
-  public GuidoServerImpl(@NotNull String name, @NotNull String address, boolean restricted) {
+  public GuidoServerImpl(@NonNull String name, @NonNull String address, boolean restricted) {
     this.name = name;
     this.address = address;
     this.restricted = restricted;
   }
 
   @Override
-  public @NotNull String getName() {
+  public @NonNull String getName() {
     return this.name;
   }
 
   @Override
-  public @NotNull String getAddress() {
+  public @NonNull String getAddress() {
     return this.address;
   }
 

@@ -9,8 +9,8 @@ import com.starfishst.bukkit.result.Result;
 import java.time.Duration;
 import java.util.HashSet;
 import java.util.Set;
+import lombok.NonNull;
 import me.googas.commons.maps.Maps;
-import org.jetbrains.annotations.NotNull;
 import tc.oc.pgm.api.match.Match;
 import tc.oc.pgm.api.party.Party;
 import tc.oc.pgm.start.StartCountdown;
@@ -20,7 +20,7 @@ import tc.oc.pgm.teams.Team;
 public class ReadyCommand implements GuidoCommand {
 
   /** The parties that are ready */
-  @NotNull private final Set<Party> partiesReady = new HashSet<>();
+  @NonNull private final Set<Party> partiesReady = new HashSet<>();
   /** Whether the command is enabled */
   private boolean enabled = false;
 
@@ -85,7 +85,7 @@ public class ReadyCommand implements GuidoCommand {
    * @param match the match to be started
    * @return the duration
    */
-  public Duration calculateDuration(@NotNull Match match) {
+  public Duration calculateDuration(@NonNull Match match) {
     int base = PGMMatchMakingListener.secondsToStart;
     if (this.partiesReady.isEmpty()) {
       return Duration.ofSeconds(base);
@@ -108,7 +108,7 @@ public class ReadyCommand implements GuidoCommand {
    * @param match the match to see the amount of parties participating
    * @return the amount of parties participating
    */
-  public int getParticipating(@NotNull Match match) {
+  public int getParticipating(@NonNull Match match) {
     int participating = 0;
     for (Party party : match.getParties()) {
       if (party != match.getDefaultParty() && party instanceof Team) {
@@ -134,7 +134,7 @@ public class ReadyCommand implements GuidoCommand {
    * @return the name of the command
    */
   @Override
-  public @NotNull String getName() {
+  public @NonNull String getName() {
     return "ready";
   }
 

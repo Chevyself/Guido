@@ -1,14 +1,14 @@
 package me.googas.bot.api.events.queue;
 
+import lombok.NonNull;
 import me.googas.api.links.LinkableInfo;
 import me.googas.api.matches.Queue;
-import org.jetbrains.annotations.NotNull;
 
 /** Called when data joins a queue */
 public class QueueJoinEvent extends QueueEvent {
 
   /** The data that joined the queue */
-  @NotNull private final LinkableInfo data;
+  @NonNull private final LinkableInfo data;
 
   /**
    * Create the event
@@ -16,7 +16,7 @@ public class QueueJoinEvent extends QueueEvent {
    * @param queue the queue involved in the event
    * @param data the data that joined the queue
    */
-  public QueueJoinEvent(@NotNull Queue queue, @NotNull LinkableInfo data) {
+  public QueueJoinEvent(@NonNull Queue queue, @NonNull LinkableInfo data) {
     super(queue);
     this.data = data;
   }
@@ -26,7 +26,7 @@ public class QueueJoinEvent extends QueueEvent {
    *
    * @return the data that joined the queue
    */
-  @NotNull
+  @NonNull
   public LinkableInfo getData() {
     return this.data;
   }

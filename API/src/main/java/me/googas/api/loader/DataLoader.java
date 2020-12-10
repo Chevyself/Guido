@@ -2,6 +2,7 @@ package me.googas.api.loader;
 
 import java.util.Collection;
 import java.util.Map;
+import lombok.NonNull;
 import me.googas.api.discord.GuildData;
 import me.googas.api.links.Linkable;
 import me.googas.api.links.LinkableInfo;
@@ -16,8 +17,6 @@ import me.googas.api.token.AuthToken;
 import me.googas.api.user.UserData;
 import me.googas.api.utility.ValuesMap;
 import me.googas.commons.RandomUtils;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 /** Loads the data. */
 public interface DataLoader {
@@ -28,7 +27,7 @@ public interface DataLoader {
    * @param id the id of the guild
    * @return the data of the guild or null if not found
    */
-  @NotNull
+  @NonNull
   GuildData getGuildDataOrCreate(long id);
 
   /**
@@ -37,7 +36,6 @@ public interface DataLoader {
    * @param id the id of the guild
    * @return the data of the guild or null if not found
    */
-  @Nullable
   GuildData getGuildData(long id);
 
   /**
@@ -46,8 +44,7 @@ public interface DataLoader {
    * @param id the id of the user
    * @return the data of the user or null if not found
    */
-  @Nullable
-  UserData getUserData(@Nullable String id);
+  UserData getUserData(String id);
 
   /**
    * Get an auth token using its unique string
@@ -55,8 +52,7 @@ public interface DataLoader {
    * @param token the unique string of the token
    * @return the token if found else null
    */
-  @Nullable
-  AuthToken getAuthToken(@NotNull String token);
+  AuthToken getAuthToken(@NonNull String token);
 
   /**
    * Get the links from an user
@@ -64,8 +60,8 @@ public interface DataLoader {
    * @param user the user to get the links from
    * @return the links
    */
-  @NotNull
-  Collection<Linkable> getLinks(@NotNull UserData user);
+  @NonNull
+  Collection<Linkable> getLinks(@NonNull UserData user);
 
   /**
    * Get the links from an user in a certain type
@@ -74,8 +70,8 @@ public interface DataLoader {
    * @param types the types to get the team from
    * @return the links
    */
-  @NotNull
-  Collection<Linkable> getLinks(@NotNull UserData user, @NotNull LinkableType... types);
+  @NonNull
+  Collection<Linkable> getLinks(@NonNull UserData user, @NonNull LinkableType... types);
 
   /**
    * Get all the links that exist in the bot
@@ -85,7 +81,7 @@ public interface DataLoader {
    * @param types the types of links to get
    * @return the collection of links
    */
-  Collection<LinkableInfo> getLinks(int page, int limit, @NotNull LinkableType... types);
+  Collection<LinkableInfo> getLinks(int page, int limit, @NonNull LinkableType... types);
 
   /**
    * Get the tokens from an user
@@ -93,8 +89,8 @@ public interface DataLoader {
    * @param user the user to get the tokens from
    * @return the tokens gene rated by an user
    */
-  @NotNull
-  Collection<AuthToken> getTokens(@NotNull UserData user);
+  @NonNull
+  Collection<AuthToken> getTokens(@NonNull UserData user);
 
   /**
    * Get some linked data using identification
@@ -103,8 +99,7 @@ public interface DataLoader {
    * @param identification the identification to get the linked data from
    * @return the linked data if found else null
    */
-  @Nullable
-  Linkable getLinkedData(@NotNull LinkableType type, @NotNull ValuesMap identification);
+  Linkable getLinkedData(@NonNull LinkableType type, @NonNull ValuesMap identification);
 
   /**
    * Get a match using its id
@@ -112,8 +107,7 @@ public interface DataLoader {
    * @param id the id of the match
    * @return the id of the match
    */
-  @Nullable
-  Match getMatch(@NotNull String id);
+  Match getMatch(@NonNull String id);
 
   /**
    * Get all the matches in which a link is participating
@@ -123,18 +117,18 @@ public interface DataLoader {
    * @param status the statutes that must match
    * @return the matches in which the link is participating and have the given status
    */
-  @NotNull
+  @NonNull
   Collection<Match> getParticipating(
-      @NotNull LinkableType type,
-      @NotNull ValuesMap identification,
-      @NotNull MatchStatus... status);
+      @NonNull LinkableType type,
+      @NonNull ValuesMap identification,
+      @NonNull MatchStatus... status);
 
   /**
    * Get a new id for an user
    *
    * @return the new id for an user
    */
-  @NotNull
+  @NonNull
   default String nextUserId() {
     String id = RandomUtils.nextString(6);
     UserData user = this.getUserData(id);
@@ -150,7 +144,7 @@ public interface DataLoader {
    *
    * @return the new id for an user
    */
-  @NotNull
+  @NonNull
   default String nextMatchId() {
     String id = RandomUtils.nextString(16);
     Match user = this.getMatch(id);
@@ -166,7 +160,7 @@ public interface DataLoader {
    *
    * @return the id of the new group
    */
-  @NotNull
+  @NonNull
   default String nextGroupId() {
     String id = RandomUtils.nextString(6);
     Group group = this.getGroup(id);
@@ -183,8 +177,7 @@ public interface DataLoader {
    * @param id the id of the group
    * @return the group if found else null
    */
-  @Nullable
-  Group getGroup(@NotNull String id);
+  Group getGroup(@NonNull String id);
 
   /**
    * Delete the group with the given id
@@ -203,29 +196,14 @@ public interface DataLoader {
   long countLinks(LinkableType... types);
 
   /**
-   * Get all the created groups
-   *
-   * @return the created groups
-   */
-  @NotNull
-  Collection<Group> getGroups();
-
-  /**
    * Get all the created groups but only the information of them
    *
    * @param page the page of groups to see
    * @param size the size of the groups per page
    * @return the created groups
    */
-  @NotNull
+  @NonNull
   Collection<GroupInfo> getGroupsInfo(int page, int size);
-
-  /**
-   * Get how many groups there are
-   *
-   * @return the amount of groups that there is
-   */
-  long countGroups();
 
   /**
    * Get the leaderboard in certain ladder
@@ -235,8 +213,15 @@ public interface DataLoader {
    * @param size the size to show of the leaderboard
    * @return the leaderboard
    */
-  @NotNull
-  Map<Integer, LinkableInfo> getLeaderboard(@NotNull Ladder ladder, int page, int size);
+  @NonNull
+  Map<Integer, LinkableInfo> getLeaderboard(@NonNull Ladder ladder, int page, int size);
+
+  /**
+   * Get how many groups there are
+   *
+   * @return the amount of groups that there is
+   */
+  long countGroups();
 
   /**
    * Get the leaderboard for certain stat
@@ -247,9 +232,9 @@ public interface DataLoader {
    * @param inverted whether the leaderboard should be inverted this means low to high
    * @return the leaderboard
    */
-  @NotNull
+  @NonNull
   Map<Integer, LinkableInfo> getLeaderboard(
-      @NotNull String stat, int page, int size, boolean inverted);
+      @NonNull String stat, int page, int size, boolean inverted);
 
   /**
    * Get all the matches
@@ -259,6 +244,14 @@ public interface DataLoader {
    * @param statuses the status of the matches to get
    * @return the collection of matches
    */
-  @NotNull
-  Collection<MatchInfo> getMatches(int page, int size, @NotNull MatchStatus... statuses);
+  @NonNull
+  Collection<MatchInfo> getMatches(int page, int size, @NonNull MatchStatus... statuses);
+
+  /**
+   * Get all the created groups
+   *
+   * @return the created groups
+   */
+  @NonNull
+  Collection<Group> getGroups();
 }

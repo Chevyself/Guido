@@ -7,6 +7,7 @@ import com.comphenix.protocol.events.PacketEvent;
 import com.comphenix.protocol.wrappers.EnumWrappers;
 import com.starfishst.bukkit.api.events.anticheat.SuspectDetectedEvent;
 import com.starfishst.bukkit.api.events.anticheat.SuspectLevel;
+import lombok.NonNull;
 import me.googas.commons.math.MathUtils;
 import me.googas.commons.math.geometry.Point;
 import org.bukkit.Bukkit;
@@ -14,8 +15,6 @@ import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 /** Attempts to detect reach hackers */
 public class ReachDetector extends PacketAdapter implements AntiCheatDetector {
@@ -25,7 +24,7 @@ public class ReachDetector extends PacketAdapter implements AntiCheatDetector {
    *
    * @param plugin the plugin using the detector
    */
-  public ReachDetector(@NotNull Plugin plugin) {
+  public ReachDetector(@NonNull Plugin plugin) {
     super(plugin, PacketType.Play.Client.USE_ENTITY);
   }
 
@@ -35,7 +34,6 @@ public class ReachDetector extends PacketAdapter implements AntiCheatDetector {
    * @param id the entity id to match
    * @return the player if the id matches else null
    */
-  @Nullable
   public Player getPlayer(int id) {
     for (Player player : Bukkit.getOnlinePlayers()) {
       if (player.getEntityId() == id) {
@@ -51,8 +49,8 @@ public class ReachDetector extends PacketAdapter implements AntiCheatDetector {
    * @param location the location to get the point from
    * @return the point
    */
-  @NotNull
-  public Point getPoint(@NotNull Location location) {
+  @NonNull
+  public Point getPoint(@NonNull Location location) {
     return new Point(location.getX(), location.getY(), location.getZ());
   }
 
@@ -99,7 +97,7 @@ public class ReachDetector extends PacketAdapter implements AntiCheatDetector {
   public void onUnload() {}
 
   @Override
-  public @NotNull String getName() {
+  public @NonNull String getName() {
     return "reach-detector";
   }
 }

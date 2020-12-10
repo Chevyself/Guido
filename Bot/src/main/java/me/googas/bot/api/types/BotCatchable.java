@@ -1,9 +1,9 @@
 package me.googas.bot.api.types;
 
 import java.util.logging.Level;
+import lombok.NonNull;
 import me.googas.bot.core.Guido;
 import me.googas.commons.cache.Catchable;
-import org.jetbrains.annotations.NotNull;
 
 /** An extension for catchable to use in the bot */
 public interface BotCatchable extends Catchable {
@@ -13,7 +13,7 @@ public interface BotCatchable extends Catchable {
    *
    * @return this same object instance
    */
-  @NotNull
+  @NonNull
   default BotCatchable cache() {
     Guido.getCache().add(this);
     return this;

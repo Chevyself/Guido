@@ -1,18 +1,18 @@
 package me.googas.bot.api.events.queue;
 
+import lombok.NonNull;
 import me.googas.api.links.LinkableInfo;
 import me.googas.api.matches.Queue;
 import me.googas.bot.api.events.GuidoCancellable;
-import org.jetbrains.annotations.NotNull;
 
 /** Called before someone joins a queue and is not already on it */
 public class QueuePreJoinEvent extends QueueEvent implements GuidoCancellable {
 
   /** The information of the user joining the queue */
-  @NotNull private final LinkableInfo data;
+  @NonNull private final LinkableInfo data;
 
   /** Why was the join event cancelled */
-  @NotNull private final String reason;
+  @NonNull private final String reason;
 
   /** Whether the event is cancelled */
   private boolean cancelled;
@@ -26,7 +26,7 @@ public class QueuePreJoinEvent extends QueueEvent implements GuidoCancellable {
    * @param cancelled whether the event is cancelled
    */
   private QueuePreJoinEvent(
-      @NotNull Queue queue, @NotNull LinkableInfo data, @NotNull String reason, boolean cancelled) {
+      @NonNull Queue queue, @NonNull LinkableInfo data, @NonNull String reason, boolean cancelled) {
     super(queue);
     this.data = data;
     this.reason = reason;
@@ -39,7 +39,7 @@ public class QueuePreJoinEvent extends QueueEvent implements GuidoCancellable {
    * @param queue the queue involved in the event
    * @param data the data that joined the queue
    */
-  public QueuePreJoinEvent(@NotNull Queue queue, @NotNull LinkableInfo data) {
+  public QueuePreJoinEvent(@NonNull Queue queue, @NonNull LinkableInfo data) {
     this(queue, data, "No reason provided", false);
   }
 

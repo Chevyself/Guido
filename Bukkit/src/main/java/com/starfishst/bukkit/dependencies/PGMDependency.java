@@ -1,5 +1,6 @@
 package com.starfishst.bukkit.dependencies;
 
+import com.starfishst.bukkit.api.Guido;
 import com.starfishst.bukkit.api.commands.GuidoCommand;
 import com.starfishst.bukkit.api.dependencies.Dependency;
 import com.starfishst.bukkit.api.events.GuidoListener;
@@ -14,9 +15,9 @@ import com.starfishst.bukkit.listeners.pgm.PGMStatsListener;
 import com.starfishst.bukkit.listeners.pgm.matches.PGMMatchMakingListener;
 import com.starfishst.core.providers.type.IContextualProvider;
 import java.util.Collection;
+import lombok.NonNull;
 import me.googas.commons.Lots;
 import org.bukkit.plugin.Plugin;
-import org.jetbrains.annotations.NotNull;
 
 /** The dependency to the PGM */
 public class PGMDependency implements Dependency {
@@ -25,7 +26,7 @@ public class PGMDependency implements Dependency {
   private boolean enabled = false;
 
   @Override
-  public @NotNull String getName() {
+  public @NonNull String getName() {
     return "PGM";
   }
 
@@ -40,7 +41,7 @@ public class PGMDependency implements Dependency {
   }
 
   @Override
-  public @NotNull Collection<GuidoListener> getListeners(@NotNull Plugin plugin) {
+  public @NonNull Collection<GuidoListener> getListeners(@NonNull Plugin plugin) {
     return Lots.list(new PGMStatsListener(), new PGMMatchMakingListener());
   }
 
@@ -50,7 +51,7 @@ public class PGMDependency implements Dependency {
    * @return the collection of commands to register
    */
   @Override
-  public @NotNull Collection<GuidoCommand> getCommands() {
+  public @NonNull Collection<GuidoCommand> getCommands() {
     return Lots.list(new ReadyCommand(), new PickCommands());
   }
 
@@ -66,5 +67,12 @@ public class PGMDependency implements Dependency {
         new PartyProvider(),
         new PlayerInfoProvider(),
         new TeamMemberProvider());
+  }
+
+  @Override
+  public void onEnable() {
+    PGMMatchMakingListener listener = Guido.getListener(PGMMatchMakingListener.class);
+    if (listener == null || !listener.isEnabled()) return;
+    listener.readyToHost();
   }
 }

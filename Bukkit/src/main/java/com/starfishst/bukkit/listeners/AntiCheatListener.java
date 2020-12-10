@@ -5,6 +5,7 @@ import com.starfishst.bukkit.api.events.anticheat.SuspectDetectedEvent;
 import com.starfishst.bukkit.utils.BukkitUtils;
 import java.util.HashMap;
 import java.util.UUID;
+import lombok.NonNull;
 import me.googas.commons.Strings;
 import me.googas.commons.maps.MapBuilder;
 import me.googas.commons.maps.Maps;
@@ -13,7 +14,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
-import org.jetbrains.annotations.NotNull;
 
 /** Listens for warning calls from anti-cheat detectors */
 public class AntiCheatListener implements GuidoListener {
@@ -22,7 +22,7 @@ public class AntiCheatListener implements GuidoListener {
   // @NotNull private final HashMap<UUID, List<SuspectDetectedEvent>> calls = new HashMap<>();
 
   /** The calls that have been printed */
-  @NotNull private final HashMap<UUID, SuspectDetectedEvent> printed = new HashMap<>();
+  @NonNull private final HashMap<UUID, SuspectDetectedEvent> printed = new HashMap<>();
 
   /**
    * Listens to suspicious calls from players
@@ -73,7 +73,7 @@ public class AntiCheatListener implements GuidoListener {
    *
    * @return the delay between calls
    */
-  @NotNull
+  @NonNull
   public Time getDelay() {
     return Time.fromString(this.getSettings().getOr("delay", String.class, "5s"));
   }
@@ -84,7 +84,7 @@ public class AntiCheatListener implements GuidoListener {
   }
 
   @Override
-  public @NotNull String getName() {
+  public @NonNull String getName() {
     return "anti-cheat";
   }
 }

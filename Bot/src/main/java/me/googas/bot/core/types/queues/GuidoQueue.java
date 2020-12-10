@@ -2,6 +2,7 @@ package me.googas.bot.core.types.queues;
 
 import java.util.ArrayList;
 import java.util.List;
+import lombok.NonNull;
 import me.googas.api.links.Linkable;
 import me.googas.api.links.LinkableInfo;
 import me.googas.api.matches.Ladder;
@@ -12,8 +13,6 @@ import me.googas.bot.api.events.queue.QueuePreJoinEvent;
 import me.googas.bot.core.Guido;
 import me.googas.bot.core.types.GuidoMatch;
 import me.googas.commons.Validate;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 /** An implementation for queue */
 public class GuidoQueue implements Queue {
@@ -33,7 +32,7 @@ public class GuidoQueue implements Queue {
    * @param guildId the id where this queue was created
    * @param ladder the names of the ladders waiting for queue
    */
-  public GuidoQueue(long guildId, @NotNull String ladder) {
+  public GuidoQueue(long guildId, @NonNull String ladder) {
     this.guildId = guildId;
     this.ladder = ladder;
   }
@@ -43,14 +42,14 @@ public class GuidoQueue implements Queue {
    *
    * @return the ladder
    */
-  @NotNull
+  @NonNull
   public Ladder getLadder() {
     return Validate.notNull(
         Guido.getDataLoader().getGuildDataOrCreate(this.guildId).getLadder(this.ladder),
         "Ladder was deleted?");
   }
 
-  @NotNull
+  @NonNull
   public String getLadderName() {
     return this.ladder;
   }
@@ -61,7 +60,7 @@ public class GuidoQueue implements Queue {
   }
 
   @Override
-  public boolean join(@NotNull LinkableInfo data) {
+  public boolean join(@NonNull LinkableInfo data) {
     if (!this.isWaiting(data) && new QueuePreJoinEvent(this, data).callAndGet()) {
       this.getWaiting().add(data);
       new QueueJoinEvent(this, data).call();
@@ -75,7 +74,7 @@ public class GuidoQueue implements Queue {
   }
 
   @Override
-  public boolean leave(@NotNull LinkableInfo data) {
+  public boolean leave(@NonNull LinkableInfo data) {
     if (this.isWaiting(data)) {
       return this.getWaiting().remove(data);
     }
@@ -83,12 +82,11 @@ public class GuidoQueue implements Queue {
   }
 
   @Override
-  @Nullable
   public GuidoMatch checkReady() {
     return null;
   }
 
-  @NotNull
+  @NonNull
   public List<Queueable> getWaiting() {
     return this.waiting;
   }

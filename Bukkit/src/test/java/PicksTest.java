@@ -3,6 +3,7 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import lombok.NonNull;
 import me.googas.api.client.data.SimpleLinkableInfo;
 import me.googas.api.client.data.SimpleTeam;
 import me.googas.api.client.data.SimpleTeamMember;
@@ -15,12 +16,10 @@ import me.googas.api.matches.TeamRole;
 import me.googas.commons.Lots;
 import me.googas.commons.RandomUtils;
 import me.googas.commons.maps.Maps;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 public class PicksTest {
 
-  @Nullable public static TeamMember currentlyPicking;
+  public static TeamMember currentlyPicking;
 
   public static void main(String[] args) {
     SimpleLinkableInfo player1 =
@@ -63,14 +62,14 @@ public class PicksTest {
   }
 
   public static void pick(
-      Set<LinkableInfo> playersLeft, List<Team> teams, Team team, @NotNull LinkableInfo selected) {
+      Set<LinkableInfo> playersLeft, List<Team> teams, Team team, @NonNull LinkableInfo selected) {
     team.getMembers().add(new SimpleTeamMember(selected, TeamRole.NORMAL));
     playersLeft.remove(selected);
     PicksTest.nextPick(playersLeft, teams, team);
   }
 
   public static void nextPick(
-      @NotNull Set<LinkableInfo> playersLeft, @NotNull List<Team> teams, @NotNull Team team) {
+      @NonNull Set<LinkableInfo> playersLeft, @NonNull List<Team> teams, @NonNull Team team) {
     if (playersLeft.isEmpty()) {
       System.out.println(teams);
       System.out.println("Finished picking");
@@ -89,7 +88,7 @@ public class PicksTest {
     }
   }
 
-  @NotNull
+  @NonNull
   private static Team getNextTeam(List<Team> teams, Team team) {
     int index = teams.indexOf(team);
     if (index == teams.size() - 1) {
@@ -98,8 +97,8 @@ public class PicksTest {
     return teams.get(index + 1);
   }
 
-  @NotNull
-  public static TeamMember getLeader(@NotNull Team team) {
+  @NonNull
+  public static TeamMember getLeader(@NonNull Team team) {
     for (TeamMember member : team.getMembers()) {
       if (member.getTeamRole() == TeamRole.LEADER) {
         return member;
@@ -108,8 +107,8 @@ public class PicksTest {
     throw new IllegalArgumentException(team + " does not have a leader");
   }
 
-  @NotNull
-  public static Team getTeam(@NotNull Collection<Team> teams, @NotNull TeamMember member) {
+  @NonNull
+  public static Team getTeam(@NonNull Collection<Team> teams, @NonNull TeamMember member) {
     for (Team team : teams) {
       if (team.getMembers().contains(member)) {
         return team;

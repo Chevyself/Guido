@@ -3,9 +3,8 @@ package me.googas.api.utility;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import lombok.NonNull;
 import me.googas.commons.Validate;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 /** This object represents certain changes and configurations for an object */
 public interface ValuesMap {
@@ -16,8 +15,7 @@ public interface ValuesMap {
    * @param key the key to get the value from
    * @return the value or null if the map does not contain it
    */
-  @Nullable
-  default Object get(@NotNull String key) {
+  default Object get(@NonNull String key) {
     return this.getMap().get(key);
   }
 
@@ -29,8 +27,7 @@ public interface ValuesMap {
    * @param <T> the type of the clazz to which the value of the preference will be casted to
    * @return the value of the preference or null if it does not have one
    */
-  @Nullable
-  default <T> T get(@NotNull String name, @NotNull Class<T> clazz) {
+  default <T> T get(@NonNull String name, @NonNull Class<T> clazz) {
     Object obj = this.getMap().get(name);
     if (obj != null && clazz.isAssignableFrom(obj.getClass())) {
       return clazz.cast(obj);
@@ -47,8 +44,8 @@ public interface ValuesMap {
    * @param <T> the type of the clazz to which the value of the preference will be casted to
    * @return the value of the preference or null if it does not have one
    */
-  @NotNull
-  default <T> T validated(@NotNull String name, @NotNull Class<T> clazz) {
+  @NonNull
+  default <T> T validated(@NonNull String name, @NonNull Class<T> clazz) {
     Object obj = this.getMap().get(name);
     if (obj != null && clazz.isAssignableFrom(obj.getClass())) {
       return clazz.cast(obj);
@@ -66,8 +63,8 @@ public interface ValuesMap {
    * @param <T> the type of the clazz to which the value of the preference will be casted to
    * @return the value of the preference or null if it does not have one
    */
-  @NotNull
-  default <T> T getOr(@NotNull String name, @NotNull Class<T> clazz, @NotNull T def) {
+  @NonNull
+  default <T> T getOr(@NonNull String name, @NonNull Class<T> clazz, @NonNull T def) {
     return Validate.notNullOr(this.get(name, clazz), def);
   }
 
@@ -78,8 +75,8 @@ public interface ValuesMap {
    * @param value the value to add
    * @return this same instance
    */
-  @NotNull
-  default ValuesMap put(@NotNull String name, @NotNull Object value) {
+  @NonNull
+  default ValuesMap put(@NonNull String name, @NonNull Object value) {
     this.getMap().put(name, value);
     return this;
   }
@@ -90,7 +87,7 @@ public interface ValuesMap {
    * @param map the map to add the values from
    * @return this same instance
    */
-  default ValuesMap put(@NotNull Map<String, Object> map) {
+  default ValuesMap put(@NonNull Map<String, Object> map) {
     map.forEach(this::put);
     return this;
   }
@@ -101,7 +98,7 @@ public interface ValuesMap {
    * @param map the map to add the values from
    * @return this same instance
    */
-  default ValuesMap put(@NotNull ValuesMap map) {
+  default ValuesMap put(@NonNull ValuesMap map) {
     this.put(map.getMap());
     return this;
   }
@@ -111,7 +108,7 @@ public interface ValuesMap {
    *
    * @param key the key inside the map
    */
-  default void remove(@NotNull String key) {
+  default void remove(@NonNull String key) {
     this.getMap().remove(key);
   }
 
@@ -123,8 +120,8 @@ public interface ValuesMap {
    * @return the list or empty if the preference does not exist
    */
   @SuppressWarnings("unchecked")
-  @NotNull
-  default <T> List<T> getListValue(@NotNull String name) {
+  @NonNull
+  default <T> List<T> getListValue(@NonNull String name) {
     List<T> list = new ArrayList<>();
     Class<List<T>> aClass = (Class<List<T>>) list.getClass();
     list.addAll(this.getOr(name, aClass, new ArrayList<>()));
@@ -136,6 +133,6 @@ public interface ValuesMap {
    *
    * @return the preferences map
    */
-  @NotNull
+  @NonNull
   Map<String, Object> getMap();
 }

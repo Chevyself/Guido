@@ -3,6 +3,7 @@ package me.googas.bot.core.handlers.decorations;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import lombok.NonNull;
 import me.googas.api.links.Linkable;
 import me.googas.api.links.LinkableType;
 import me.googas.api.matches.Ladder;
@@ -18,7 +19,6 @@ import me.googas.commons.events.ListenPriority;
 import me.googas.commons.events.Listener;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Role;
-import org.jetbrains.annotations.NotNull;
 
 /** Handles decorations for linked data */
 public class DecorationsHandler implements GuidoEventHandler {
@@ -29,7 +29,7 @@ public class DecorationsHandler implements GuidoEventHandler {
    * @param event the event of a match updating its status
    */
   @Listener(priority = ListenPriority.HIGHEST)
-  public void onMatchStatusUpdatedEvent(@NotNull MatchStatusUpdatedEvent event) {
+  public void onMatchStatusUpdatedEvent(@NonNull MatchStatusUpdatedEvent event) {
     Match match = event.getMatch();
     long guildId = match.getGuildId();
     String ladderName = match.getDetails().get("ladder", String.class);

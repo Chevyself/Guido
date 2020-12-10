@@ -4,7 +4,7 @@ import com.starfishst.bukkit.api.events.GuidoListener;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import org.jetbrains.annotations.NotNull;
+import lombok.NonNull;
 
 /** The configuration for the guido implementation of pgm */
 public interface Configuration {
@@ -15,8 +15,8 @@ public interface Configuration {
    * @param listener the listener that requires the settings
    * @return the settings of the listener
    */
-  @NotNull
-  default GuidoListenerSettings getListenerSettings(@NotNull GuidoListener listener) {
+  @NonNull
+  default GuidoListenerSettings getListenerSettings(@NonNull GuidoListener listener) {
     for (GuidoListenerSettings listenerSettings : this.getListenersSettings()) {
       if (listenerSettings.getName().equalsIgnoreCase(listener.getName())) {
         return listenerSettings;
@@ -24,12 +24,12 @@ public interface Configuration {
     }
     return new GuidoListenerSettings() {
       @Override
-      public @NotNull String getName() {
+      public @NonNull String getName() {
         return listener.getName();
       }
 
       @Override
-      public @NotNull Map<String, Object> getMap() {
+      public @NonNull Map<String, Object> getMap() {
         return new HashMap<>();
       }
     };
@@ -40,7 +40,7 @@ public interface Configuration {
    *
    * @return the context
    */
-  @NotNull
+  @NonNull
   String getContext();
 
   /**
@@ -48,7 +48,7 @@ public interface Configuration {
    *
    * @return the token to authenticate
    */
-  @NotNull
+  @NonNull
   String getToken();
 
   /**
@@ -56,7 +56,7 @@ public interface Configuration {
    *
    * @return the enabled commands
    */
-  @NotNull
+  @NonNull
   List<String> getEnabledCommands();
 
   /**
@@ -64,6 +64,6 @@ public interface Configuration {
    *
    * @return the settings for listeners
    */
-  @NotNull
+  @NonNull
   List<GuidoListenerSettings> getListenersSettings();
 }

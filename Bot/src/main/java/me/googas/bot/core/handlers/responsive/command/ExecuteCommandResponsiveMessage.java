@@ -4,9 +4,9 @@ import com.starfishst.jda.utils.responsive.ReactionResponse;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
+import lombok.NonNull;
 import me.googas.bot.api.types.BotResponsiveMessage;
 import net.dv8tion.jda.api.entities.Message;
-import org.jetbrains.annotations.NotNull;
 
 /** A responsive message that its reactions execute commands */
 public class ExecuteCommandResponsiveMessage implements BotResponsiveMessage {
@@ -15,7 +15,7 @@ public class ExecuteCommandResponsiveMessage implements BotResponsiveMessage {
   private final long id;
 
   /** The command reactions */
-  @NotNull private final Set<SimpleCommandReactionResponse> responses = new HashSet<>();
+  @NonNull private final Set<SimpleCommandReactionResponse> responses = new HashSet<>();
 
   /**
    * Create the responsive message
@@ -33,7 +33,7 @@ public class ExecuteCommandResponsiveMessage implements BotResponsiveMessage {
    * @param responses the command executions that the message can do
    */
   public ExecuteCommandResponsiveMessage(
-      @NotNull Message message, @NotNull Collection<SimpleCommandReactionResponse> responses) {
+      @NonNull Message message, @NonNull Collection<SimpleCommandReactionResponse> responses) {
     this.id = message.getIdLong();
     this.responses.addAll(responses);
     for (SimpleCommandReactionResponse response : responses) {
@@ -52,7 +52,7 @@ public class ExecuteCommandResponsiveMessage implements BotResponsiveMessage {
    * @return the type of responsive message
    */
   @Override
-  public @NotNull String getType() {
+  public @NonNull String getType() {
     return "execute";
   }
 
@@ -62,7 +62,7 @@ public class ExecuteCommandResponsiveMessage implements BotResponsiveMessage {
   }
 
   @Override
-  public @NotNull Set<ReactionResponse> getReactions() {
+  public @NonNull Set<ReactionResponse> getReactions() {
     return new HashSet<>(this.responses);
   }
 }

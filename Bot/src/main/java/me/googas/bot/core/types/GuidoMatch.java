@@ -3,6 +3,7 @@ package me.googas.bot.core.types;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
+import lombok.NonNull;
 import me.googas.api.matches.MatchStatus;
 import me.googas.api.matches.Team;
 import me.googas.bot.api.events.match.MatchAddTeamEvent;
@@ -18,24 +19,22 @@ import me.googas.bot.core.types.maps.GuidoLinkedValuesMap;
 import me.googas.bot.core.types.maps.GuidoValuesMap;
 import me.googas.commons.time.Time;
 import me.googas.commons.time.Unit;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 /** An implementation for a match */
 public class GuidoMatch implements BotMatch {
 
   /** The id of the match */
-  @NotNull private final String id;
+  @NonNull private final String id;
 
   /** The id of the guild where the match is happening */
   private final long guildId;
 
   /** The teams inside the match */
-  @NotNull private final Set<Team> teams;
+  @NonNull private final Set<Team> teams;
   /** The details of the match */
-  @NotNull private final GuidoLinkedValuesMap details;
+  @NonNull private final GuidoLinkedValuesMap details;
   /** The status of the match */
-  @NotNull private MatchStatus status;
+  @NonNull private MatchStatus status;
   /** The winners id team winners of the match */
   private int winners;
 
@@ -50,11 +49,11 @@ public class GuidoMatch implements BotMatch {
    * @param winners the winners of the match
    */
   public GuidoMatch(
-      @NotNull String id,
+      @NonNull String id,
       long guildId,
-      @NotNull MatchStatus status,
-      @NotNull Set<Team> teams,
-      @NotNull GuidoLinkedValuesMap details,
+      @NonNull MatchStatus status,
+      @NonNull Set<Team> teams,
+      @NonNull GuidoLinkedValuesMap details,
       int winners) {
     this.id = id;
     this.guildId = guildId;
@@ -73,10 +72,10 @@ public class GuidoMatch implements BotMatch {
    * @param details the details of the match
    */
   public GuidoMatch(
-      @NotNull String id,
+      @NonNull String id,
       long guildId,
-      @NotNull Set<Team> teams,
-      @NotNull GuidoLinkedValuesMap details) {
+      @NonNull Set<Team> teams,
+      @NonNull GuidoLinkedValuesMap details) {
     this(id, guildId, MatchStatus.WAITING, teams, details, -1);
   }
 
@@ -87,7 +86,7 @@ public class GuidoMatch implements BotMatch {
    * @param teams the teams inside the match
    * @param details the details of the match
    */
-  public GuidoMatch(long guildId, @NotNull Set<Team> teams, @NotNull GuidoLinkedValuesMap details) {
+  public GuidoMatch(long guildId, @NonNull Set<Team> teams, @NonNull GuidoLinkedValuesMap details) {
     this(Guido.getDataLoader().nextMatchId(), guildId, MatchStatus.WAITING, teams, details, -1);
   }
 
@@ -102,12 +101,12 @@ public class GuidoMatch implements BotMatch {
   }
 
   @Override
-  public @NotNull Time getToRemove() {
+  public @NonNull Time getToRemove() {
     return new Time(3, Unit.MINUTES);
   }
 
   @Override
-  public @NotNull String getId() {
+  public @NonNull String getId() {
     return this.id;
   }
 
@@ -121,24 +120,24 @@ public class GuidoMatch implements BotMatch {
    *
    * @return the status of the match
    */
-  @NotNull
+  @NonNull
   @Override
   public MatchStatus getStatus() {
     return this.status;
   }
 
   @Override
-  public @NotNull Collection<Team> getTeams() {
+  public @NonNull Collection<Team> getTeams() {
     return this.teams;
   }
 
   @Override
-  public @Nullable Team getWinners() {
+  public Team getWinners() {
     return this.getTeam(this.winners);
   }
 
   @Override
-  public @NotNull GuidoValuesMap getDetails() {
+  public @NonNull GuidoValuesMap getDetails() {
     return this.details;
   }
 
@@ -148,7 +147,7 @@ public class GuidoMatch implements BotMatch {
    * @param winners the winners of the match
    */
   @Override
-  public void setWinners(@Nullable Team winners) {
+  public void setWinners(Team winners) {
     new MatchWinnersSetEvent(this, winners);
     if (winners != null) {
       this.winners = winners.getId();
@@ -163,24 +162,26 @@ public class GuidoMatch implements BotMatch {
    * @param status the new status of the match
    */
   @Override
-  public void setStatus(@NotNull MatchStatus status) {
+  public void setStatus(@NonNull MatchStatus status) {
     if (new MatchStatusUpdatedEvent(this, status).callAndGet()) {
       this.status = status;
     }
   }
 
   @Override
-  public boolean addTeam(@NotNull Team team) {
+  public boolean addTeam(@NonNull Team team) {
     if (!this.getTeams().contains(team) && new MatchPreAddTeamEvent(this, team).callAndGet()) {
       new MatchAddTeamEvent(this, team).call();
       this.getTeams().add(team);
+      Team participants = this.getTeam(-2);
+      if (participants != null) this.removeTeam(participants);
       return true;
     }
     return false;
   }
 
   @Override
-  public boolean removeTeam(@NotNull Team team) {
+  public boolean removeTeam(@NonNull Team team) {
     if (this.getTeams().contains(team) && new MatchPreRemoveTeamEvent(this, team).callAndGet()) {
       new MatchRemoveTeamEvent(this, team).call();
       this.getTeams().remove(team);
@@ -233,7 +234,7 @@ public class GuidoMatch implements BotMatch {
    * @return this same object instance
    */
   @Override
-  public @NotNull GuidoMatch cache() {
+  public @NonNull GuidoMatch cache() {
     return (GuidoMatch) BotMatch.super.cache();
   }
 }

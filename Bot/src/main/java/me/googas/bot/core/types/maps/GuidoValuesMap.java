@@ -2,23 +2,22 @@ package me.googas.bot.core.types.maps;
 
 import java.util.HashMap;
 import java.util.Map;
+import lombok.NonNull;
 import me.googas.api.utility.ValuesMap;
 import me.googas.commons.maps.Maps;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 /** An implementation of {@link ValuesMap} */
 public class GuidoValuesMap implements ValuesMap {
 
   /** The map of values */
-  @NotNull private final Map<String, Object> map;
+  @NonNull private final Map<String, Object> map;
 
   /**
    * Create the values map
    *
    * @param map the map of values
    */
-  public GuidoValuesMap(@NotNull Map<String, Object> map) {
+  public GuidoValuesMap(@NonNull Map<String, Object> map) {
     this.map = map;
   }
 
@@ -28,7 +27,7 @@ public class GuidoValuesMap implements ValuesMap {
    * @param key the initial key
    * @param value the initial value
    */
-  public GuidoValuesMap(@NotNull String key, @NotNull Object value) {
+  public GuidoValuesMap(@NonNull String key, @NonNull Object value) {
     this.map = Maps.singleton(key, value);
   }
 
@@ -37,18 +36,13 @@ public class GuidoValuesMap implements ValuesMap {
     this(new HashMap<>());
   }
 
-  @Override
-  public @NotNull Map<String, Object> getMap() {
-    return this.map;
-  }
-
   /**
    * Check whether this values map equals to another map
    *
    * @param that the map to compare
    * @return true if the maps are the same
    */
-  private boolean equalsMap(@NotNull Map<?, ?> that) {
+  private boolean equalsMap(@NonNull Map<?, ?> that) {
     if (this.map.isEmpty() || that.isEmpty()) {
       return false;
     } else if (this.map.size() != that.size()) {
@@ -65,7 +59,12 @@ public class GuidoValuesMap implements ValuesMap {
   }
 
   @Override
-  public boolean equals(@Nullable Object object) {
+  public @NonNull Map<String, Object> getMap() {
+    return this.map;
+  }
+
+  @Override
+  public boolean equals(Object object) {
     if (this == object) return true;
     if (object instanceof Map) {
       Map<?, ?> that = (Map<?, ?>) object;
@@ -82,19 +81,19 @@ public class GuidoValuesMap implements ValuesMap {
     return this.map.hashCode();
   }
 
-  @NotNull
+  @NonNull
   @Override
-  public GuidoValuesMap put(@NotNull String name, @NotNull Object value) {
+  public GuidoValuesMap put(@NonNull String name, @NonNull Object value) {
     return (GuidoValuesMap) ValuesMap.super.put(name, value);
   }
 
   @Override
-  public GuidoValuesMap put(@NotNull Map<String, Object> map) {
+  public GuidoValuesMap put(@NonNull Map<String, Object> map) {
     return (GuidoValuesMap) ValuesMap.super.put(map);
   }
 
   @Override
-  public GuidoValuesMap put(@NotNull ValuesMap map) {
+  public GuidoValuesMap put(@NonNull ValuesMap map) {
     return (GuidoValuesMap) ValuesMap.super.put(map);
   }
 

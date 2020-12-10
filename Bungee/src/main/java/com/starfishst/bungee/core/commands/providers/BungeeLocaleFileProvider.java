@@ -4,18 +4,18 @@ import com.starfishst.bungee.api.Guido;
 import com.starfishst.bungee.context.CommandContext;
 import com.starfishst.bungee.core.lang.BungeeLocaleFile;
 import com.starfishst.bungee.providers.type.BungeeExtraArgumentProvider;
-import org.jetbrains.annotations.NotNull;
+import lombok.NonNull;
 
 /** Create the locale file provider */
 public class BungeeLocaleFileProvider implements BungeeExtraArgumentProvider<BungeeLocaleFile> {
   @Override
-  public @NotNull Class<BungeeLocaleFile> getClazz() {
+  public @NonNull Class<BungeeLocaleFile> getClazz() {
     return BungeeLocaleFile.class;
   }
 
-  @NotNull
+  @NonNull
   @Override
-  public BungeeLocaleFile getObject(@NotNull CommandContext commandContext) {
+  public BungeeLocaleFile getObject(@NonNull CommandContext commandContext) {
     return Guido.getLanguageHandler().getFile(commandContext);
   }
 }

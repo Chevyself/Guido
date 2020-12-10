@@ -1,14 +1,14 @@
 package me.googas.bot.api.events.queue;
 
+import lombok.NonNull;
 import me.googas.api.links.LinkableInfo;
 import me.googas.api.matches.Queue;
-import org.jetbrains.annotations.NotNull;
 
 /** Called when an user leaves the queue */
 public class QueueLeaveEvent extends QueueEvent {
 
   /** The data that left the queue */
-  @NotNull private final LinkableInfo data;
+  @NonNull private final LinkableInfo data;
 
   /**
    * Create the event
@@ -16,7 +16,7 @@ public class QueueLeaveEvent extends QueueEvent {
    * @param queue the queue involved in the event
    * @param data the data that left the queue
    */
-  public QueueLeaveEvent(@NotNull Queue queue, @NotNull LinkableInfo data) {
+  public QueueLeaveEvent(@NonNull Queue queue, @NonNull LinkableInfo data) {
     super(queue);
     this.data = data;
   }
@@ -26,7 +26,7 @@ public class QueueLeaveEvent extends QueueEvent {
    *
    * @return the data that left the queue
    */
-  @NotNull
+  @NonNull
   public LinkableInfo getData() {
     return this.data;
   }

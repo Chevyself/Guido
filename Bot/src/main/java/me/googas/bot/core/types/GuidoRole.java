@@ -2,12 +2,12 @@ package me.googas.bot.core.types;
 
 import java.util.HashSet;
 import java.util.Set;
+import lombok.NonNull;
 import me.googas.api.permissions.PermissionStack;
 import me.googas.bot.api.events.data.role.BotRoleUnloadedEvent;
 import me.googas.bot.api.types.BotRole;
 import me.googas.commons.time.Time;
 import me.googas.commons.time.Unit;
-import org.jetbrains.annotations.NotNull;
 
 /**
  * This object represents the data for a role. Roles can be permissible which makes them have their
@@ -22,7 +22,7 @@ public class GuidoRole implements BotRole {
   private final long guildId;
 
   /** The set of permission that the role possess */
-  @NotNull private final Set<PermissionStack> permissions;
+  @NonNull private final Set<PermissionStack> permissions;
 
   /**
    * Create the guido role
@@ -31,7 +31,7 @@ public class GuidoRole implements BotRole {
    * @param guildId the unique id of the guild where this role exists
    * @param permissions the permission that the role posses
    */
-  public GuidoRole(long id, long guildId, @NotNull Set<PermissionStack> permissions) {
+  public GuidoRole(long id, long guildId, @NonNull Set<PermissionStack> permissions) {
     this.id = id;
     this.guildId = guildId;
     this.permissions = new HashSet<>(permissions);
@@ -53,7 +53,7 @@ public class GuidoRole implements BotRole {
   }
 
   @Override
-  public @NotNull Set<PermissionStack> getPermissions() {
+  public @NonNull Set<PermissionStack> getPermissions() {
     return this.permissions;
   }
 
@@ -63,7 +63,7 @@ public class GuidoRole implements BotRole {
   }
 
   @Override
-  public @NotNull Time getToRemove() {
+  public @NonNull Time getToRemove() {
     return new Time(3, Unit.MINUTES);
   }
 
@@ -73,7 +73,7 @@ public class GuidoRole implements BotRole {
    * @return this same object instance
    */
   @Override
-  public @NotNull GuidoRole cache() {
+  public @NonNull GuidoRole cache() {
     return (GuidoRole) BotRole.super.cache();
   }
 }

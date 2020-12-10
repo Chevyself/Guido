@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import lombok.NonNull;
 import me.googas.api.matches.Ladder;
 import me.googas.api.ranks.RankRange;
 import me.googas.bot.api.events.data.guild.BotGuildUnloadedEvent;
@@ -12,7 +13,6 @@ import me.googas.bot.api.types.BotGuild;
 import me.googas.bot.api.types.BotResponsiveMessage;
 import me.googas.commons.time.Time;
 import me.googas.commons.time.Unit;
-import org.jetbrains.annotations.NotNull;
 
 /** This object represents the data for a guild that is using this bot */
 public class GuidoGuild implements BotGuild {
@@ -21,22 +21,22 @@ public class GuidoGuild implements BotGuild {
   private final long id;
 
   /** The ladders of the guild */
-  @NotNull private final Set<Ladder> ladders;
+  @NonNull private final Set<Ladder> ladders;
 
   /** The rank ranges of the guild */
-  @NotNull private final Map<Long, RankRange> ranges;
+  @NonNull private final Map<Long, RankRange> ranges;
 
   /** The map of channels and its ids for the guild */
-  @NotNull private final Map<String, Long> channels;
+  @NonNull private final Map<String, Long> channels;
 
   /** The map of voice channels and its ids for the guild */
-  @NotNull private final Map<String, Long> voiceChannels;
+  @NonNull private final Map<String, Long> voiceChannels;
 
   /** The map of categories and its ids for the guild */
-  @NotNull private final Map<String, Long> categories;
+  @NonNull private final Map<String, Long> categories;
 
   /** The messages which be executed inside the guild */
-  @NotNull private final Set<BotResponsiveMessage> messages;
+  @NonNull private final Set<BotResponsiveMessage> messages;
 
   /**
    * Create the guido guild
@@ -51,12 +51,12 @@ public class GuidoGuild implements BotGuild {
    */
   public GuidoGuild(
       long id,
-      @NotNull Set<Ladder> ladders,
-      @NotNull Map<Long, RankRange> ranges,
-      @NotNull Map<String, Long> channels,
-      @NotNull Map<String, Long> voiceChannels,
-      @NotNull HashMap<String, Long> categories,
-      @NotNull Set<BotResponsiveMessage> messages) {
+      @NonNull Set<Ladder> ladders,
+      @NonNull Map<Long, RankRange> ranges,
+      @NonNull Map<String, Long> channels,
+      @NonNull Map<String, Long> voiceChannels,
+      @NonNull HashMap<String, Long> categories,
+      @NonNull Set<BotResponsiveMessage> messages) {
     this.id = id;
     this.ladders = ladders;
     this.ranges = ranges;
@@ -78,14 +78,17 @@ public class GuidoGuild implements BotGuild {
         new HashSet<>());
   }
 
-  /**
-   * Get the responsive messages of the server
-   *
-   * @return the responsive messages
-   */
   @Override
-  public @NotNull Collection<BotResponsiveMessage> getMessages() {
+  public @NonNull Collection<BotResponsiveMessage> getMessages() {
     return this.messages;
+  }
+
+  @Override
+  public BotResponsiveMessage getMessage(long id) {
+    for (BotResponsiveMessage message : this.messages) {
+      if (message != null && message.getId() == id) return message;
+    }
+    return null;
   }
 
   @Override
@@ -93,20 +96,20 @@ public class GuidoGuild implements BotGuild {
     return this.id;
   }
 
-  @NotNull
+  @NonNull
   @Override
   public Set<Ladder> getLadders() {
     return this.ladders;
   }
 
-  @NotNull
+  @NonNull
   @Override
   public Map<Long, RankRange> getRanges() {
     return this.ranges;
   }
 
   @Override
-  public @NotNull Map<String, Long> getChannels() {
+  public @NonNull Map<String, Long> getChannels() {
     return this.channels;
   }
 
@@ -116,12 +119,12 @@ public class GuidoGuild implements BotGuild {
    * @return the map of channels
    */
   @Override
-  public @NotNull Map<String, Long> getVoiceChannels() {
+  public @NonNull Map<String, Long> getVoiceChannels() {
     return this.voiceChannels;
   }
 
   @Override
-  public @NotNull Map<String, Long> getCategories() {
+  public @NonNull Map<String, Long> getCategories() {
     return this.categories;
   }
 
@@ -131,7 +134,7 @@ public class GuidoGuild implements BotGuild {
   }
 
   @Override
-  public @NotNull Time getToRemove() {
+  public @NonNull Time getToRemove() {
     return new Time(10, Unit.MINUTES);
   }
 
@@ -141,7 +144,7 @@ public class GuidoGuild implements BotGuild {
    * @return this same object instance
    */
   @Override
-  public @NotNull GuidoGuild cache() {
+  public @NonNull GuidoGuild cache() {
     return (GuidoGuild) BotGuild.super.cache();
   }
 

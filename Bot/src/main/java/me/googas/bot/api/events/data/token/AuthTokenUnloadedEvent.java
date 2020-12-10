@@ -1,7 +1,7 @@
 package me.googas.bot.api.events.data.token;
 
+import lombok.NonNull;
 import me.googas.api.token.AuthToken;
-import org.jetbrains.annotations.NotNull;
 
 /** Called when an auth token gets unloaded */
 public class AuthTokenUnloadedEvent extends AuthTokenEvent {
@@ -10,7 +10,7 @@ public class AuthTokenUnloadedEvent extends AuthTokenEvent {
    *
    * @param token the auth token involved in the event
    */
-  public AuthTokenUnloadedEvent(@NotNull AuthToken token) {
+  public AuthTokenUnloadedEvent(@NonNull AuthToken token) {
     super(token);
   }
 }

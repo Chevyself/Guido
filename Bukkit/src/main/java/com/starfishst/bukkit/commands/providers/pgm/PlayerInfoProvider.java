@@ -11,9 +11,9 @@ import com.starfishst.bukkit.providers.type.BukkitArgumentProvider;
 import com.starfishst.core.exceptions.ArgumentProviderException;
 import java.util.ArrayList;
 import java.util.List;
+import lombok.NonNull;
 import me.googas.api.links.LinkableInfo;
 import me.googas.commons.maps.Maps;
-import org.jetbrains.annotations.NotNull;
 
 /**
  * @deprecated This provider is temporal and may change in the future as it only should be used in
@@ -22,13 +22,13 @@ import org.jetbrains.annotations.NotNull;
 public class PlayerInfoProvider implements BukkitArgumentProvider<LinkableInfo> {
 
   @Override
-  public @NotNull Class<LinkableInfo> getClazz() {
+  public @NonNull Class<LinkableInfo> getClazz() {
     return LinkableInfo.class;
   }
 
-  @NotNull
+  @NonNull
   @Override
-  public LinkableInfo fromString(@NotNull String s, @NotNull CommandContext context)
+  public LinkableInfo fromString(@NonNull String s, @NonNull CommandContext context)
       throws ArgumentProviderException {
     BukkitLocaleFile locale = Guido.getLanguageHandler().getFile(context);
     PGMMatchMakingListener listener = Guido.getListener(PGMMatchMakingListener.class);
@@ -49,19 +49,14 @@ public class PlayerInfoProvider implements BukkitArgumentProvider<LinkableInfo> 
   }
 
   @Override
-  public @NotNull List<String> getSuggestions(@NotNull String s, @NotNull CommandContext context) {
+  public @NonNull List<String> getSuggestions(@NonNull String s, @NonNull CommandContext context) {
     List<String> names = new ArrayList<>();
     PGMMatchMakingListener listener = Guido.getListener(PGMMatchMakingListener.class);
     if (listener != null) {
       TeamCreation creation = listener.getCreation("pick");
       HostedMatch match = listener.getMatch(context.getSender());
       if (creation instanceof PickTeamSelection && match != null) {
-        for (LinkableInfo info : ((PickTeamSelection) creation).getPlayersLeft(match.getId())) {
-          String nickname = info.getIdentification().get("nickname", String.class);
-          if (nickname != null) {
-            names.add(nickname);
-          }
-        }
+        return ((PickTeamSelection) creation).getParticipantsNames(match.getId());
       }
     }
 

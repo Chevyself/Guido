@@ -1,10 +1,10 @@
 package me.googas.bot.core.handlers.responsive.roles;
 
 import com.starfishst.jda.utils.responsive.ReactionResponse;
+import lombok.NonNull;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.events.message.react.MessageReactionAddEvent;
-import org.jetbrains.annotations.NotNull;
 
 /** When the user reacts to this response they will be given the role */
 public class GiveRoleReactionResponse implements ReactionResponse {
@@ -13,7 +13,7 @@ public class GiveRoleReactionResponse implements ReactionResponse {
   private final long role;
 
   /** The unicode for users to react and get the role */
-  @NotNull private final String unicode;
+  @NonNull private final String unicode;
 
   /**
    * Create the reaction response
@@ -21,7 +21,7 @@ public class GiveRoleReactionResponse implements ReactionResponse {
    * @param role the role to give
    * @param unicode the unicode for the users to react and get the role
    */
-  public GiveRoleReactionResponse(long role, @NotNull String unicode) {
+  public GiveRoleReactionResponse(long role, @NonNull String unicode) {
     this.role = role;
     this.unicode = unicode;
   }
@@ -32,7 +32,7 @@ public class GiveRoleReactionResponse implements ReactionResponse {
   }
 
   @Override
-  public void onReaction(@NotNull MessageReactionAddEvent event) {
+  public void onReaction(@NonNull MessageReactionAddEvent event) {
     Role role = event.getGuild().getRoleById(this.role);
     Member member = event.getMember();
     if (role == null || member == null || member.getRoles().contains(role)) return;
@@ -40,7 +40,7 @@ public class GiveRoleReactionResponse implements ReactionResponse {
   }
 
   @Override
-  public @NotNull String getUnicode() {
+  public @NonNull String getUnicode() {
     return this.unicode;
   }
 }

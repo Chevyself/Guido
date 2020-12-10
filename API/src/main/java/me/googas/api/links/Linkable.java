@@ -1,6 +1,8 @@
 package me.googas.api.links;
 
 import java.util.Collection;
+import lombok.NonNull;
+import me.googas.api.client.data.SimpleValuesMap;
 import me.googas.api.lang.LocaleFile;
 import me.googas.api.lang.Localized;
 import me.googas.api.permissions.Permissible;
@@ -8,8 +10,7 @@ import me.googas.api.user.UserData;
 import me.googas.api.utility.Stateable;
 import me.googas.api.utility.ValuesMap;
 import me.googas.commons.cache.Catchable;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import me.googas.commons.maps.Maps;
 
 /** This object represents data that can been linked to an user */
 public interface Linkable extends Permissible, Stateable, Catchable, Localized {
@@ -21,7 +22,7 @@ public interface Linkable extends Permissible, Stateable, Catchable, Localized {
    * @param identification the identification to compare
    * @return true if it is the same type and the identification matches
    */
-  default boolean compare(@NotNull LinkableType type, @NotNull ValuesMap identification) {
+  default boolean compare(@NonNull LinkableType type, @NonNull ValuesMap identification) {
     return this.getInfo().compare(type, identification);
   }
 
@@ -30,7 +31,7 @@ public interface Linkable extends Permissible, Stateable, Catchable, Localized {
    * @param info the information of the data comparing
    * @return true if it is the same type and the identification matches
    */
-  default boolean compare(@NotNull LinkableInfo info) {
+  default boolean compare(@NonNull LinkableInfo info) {
     return this.getInfo().compare(info);
   }
 
@@ -41,8 +42,62 @@ public interface Linkable extends Permissible, Stateable, Catchable, Localized {
    * @param locale the locale that needs to read it
    * @return the readable string
    */
-  @NotNull
+  @NonNull
   String getReadable(LocaleFile locale);
+
+  /**
+   * @see #getLinks() this will get only the links of certain type
+   * @param types the types of links to get
+   * @return the links
+   */
+  @NonNull
+  Collection<Linkable> getLinks(@NonNull LinkableType... types);
+
+  /**
+   * @see #compare(LinkableType, ValuesMap)
+   * @param data the other data comparing
+   * @return true if it is the same type and the identification matches
+   */
+  default boolean compare(@NonNull Linkable data) {
+    if (this == data) return true;
+    return this.compare(data.getInfo());
+  }
+
+  /**
+   * Set the linked user to this data
+   *
+   * @param user the new linked user
+   */
+  void setLinkedUser(UserData user);
+
+  /**
+   * Get the map which is used to identify the user. {@link #getIdentification()} can contain
+   * multiple identifications but this one is of objects that wont change: such as an uuid in
+   * minecraft
+   *
+   * @return the identification map
+   */
+  @NonNull
+  default ValuesMap getIdentificationMap() {
+    switch (this.getType()) {
+      case MINECRAFT:
+        return new SimpleValuesMap(Maps.singleton("uuid", this.getTrimmedUniqueId()));
+      case DISCORD:
+      case DISCORD_GUILD:
+        return this.getIdentification();
+      default:
+        throw new IllegalStateException(this.getType() + " does not have an identification map");
+    }
+  }
+
+  /**
+   * Get the trimmed uuid of the {@link LinkableType#MINECRAFT}
+   *
+   * @return the trimmed uuid
+   */
+  default String getTrimmedUniqueId() {
+    return this.getIdentification().get("uuid", String.class);
+  }
 
   /**
    * Get this linked data as a single way to identify it. For example in the case of discord it will
@@ -50,38 +105,14 @@ public interface Linkable extends Permissible, Stateable, Catchable, Localized {
    *
    * @return a simple way to identify the data
    */
-  @NotNull
+  @NonNull
   String getSingle();
-
-  /**
-   * @see #getLinks() this will get only the links of certain type
-   * @param types the types of links to get
-   * @return the links
-   */
-  @NotNull
-  Collection<Linkable> getLinks(@NotNull LinkableType... types);
-
-  /**
-   * Set the linked user to this data
-   *
-   * @param user the new linked user
-   */
-  void setLinkedUser(@Nullable UserData user);
-
-  /**
-   * Get the preferences of a linked data
-   *
-   * @return the preferences
-   */
-  @NotNull
-  ValuesMap getPreferences();
 
   /**
    * Get the id of the user that is linked to this data
    *
    * @return the id of the user that is linked to this data
    */
-  @Nullable
   String getLinkedUserId();
 
   /**
@@ -89,25 +120,22 @@ public interface Linkable extends Permissible, Stateable, Catchable, Localized {
    *
    * @return the user that is linked to this data
    */
-  @Nullable
   UserData getLinkedUser();
 
   /**
-   * @see #compare(LinkableType, ValuesMap)
-   * @param data the other data comparing
-   * @return true if it is the same type and the identification matches
+   * Get the preferences of a linked data
+   *
+   * @return the preferences
    */
-  default boolean compare(@NotNull Linkable data) {
-    if (this == data) return true;
-    return this.compare(data.getInfo());
-  }
+  @NonNull
+  ValuesMap getPreferences();
 
   /**
    * Get this linked data but only the type and identification
    *
    * @return the data as uncompleted
    */
-  @NotNull
+  @NonNull
   LinkableInfo getInfo();
 
   /**
@@ -122,7 +150,7 @@ public interface Linkable extends Permissible, Stateable, Catchable, Localized {
    *
    * @return the collection of connected links
    */
-  @NotNull
+  @NonNull
   Collection<Linkable> getLinks();
 
   /**
@@ -130,7 +158,7 @@ public interface Linkable extends Permissible, Stateable, Catchable, Localized {
    *
    * @return the identification of the data
    */
-  @NotNull
+  @NonNull
   ValuesMap getIdentification();
 
   /**
@@ -138,7 +166,7 @@ public interface Linkable extends Permissible, Stateable, Catchable, Localized {
    *
    * @return the type of linked data
    */
-  @NotNull
+  @NonNull
   LinkableType getType();
 
   /**

@@ -1,9 +1,9 @@
 package me.googas.api.permissions;
 
 import java.util.Collection;
+import lombok.NonNull;
 import me.googas.api.utility.ValuesMap;
 import me.googas.commons.cache.Catchable;
-import org.jetbrains.annotations.NotNull;
 
 /** This class represents a group which can be used to have multiple permissions in one */
 public interface Group extends Permissible, Catchable {
@@ -20,14 +20,14 @@ public interface Group extends Permissible, Catchable {
    *
    * @param name the new name of the group
    */
-  void setName(@NotNull String name);
+  void setName(@NonNull String name);
 
   /**
    * The unique way to identify the group
    *
    * @return the id of the group
    */
-  @NotNull
+  @NonNull
   String getId();
 
   /**
@@ -42,7 +42,7 @@ public interface Group extends Permissible, Catchable {
    *
    * @return the name of the group
    */
-  @NotNull
+  @NonNull
   String getName();
 
   /**
@@ -50,7 +50,7 @@ public interface Group extends Permissible, Catchable {
    *
    * @return the preferences of the group
    */
-  @NotNull
+  @NonNull
   ValuesMap getPreferences();
 
   /**
@@ -59,6 +59,6 @@ public interface Group extends Permissible, Catchable {
    *
    * @return the collection of ids
    */
-  @NotNull
+  @NonNull
   Collection<String> getParents();
 }

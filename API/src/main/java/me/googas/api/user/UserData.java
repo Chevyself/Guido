@@ -1,11 +1,11 @@
 package me.googas.api.user;
 
 import java.util.Collection;
+import lombok.NonNull;
 import me.googas.api.lang.Localized;
 import me.googas.api.links.Linkable;
 import me.googas.api.utility.ValuesMap;
 import me.googas.commons.cache.Catchable;
-import org.jetbrains.annotations.NotNull;
 
 /** The data of a discord user not required to be in a guild */
 public interface UserData extends Catchable, Localized {
@@ -15,7 +15,7 @@ public interface UserData extends Catchable, Localized {
    *
    * @return the unique id of the user
    */
-  @NotNull
+  @NonNull
   String getId();
 
   /**
@@ -23,7 +23,7 @@ public interface UserData extends Catchable, Localized {
    *
    * @return the preferences of the user
    */
-  @NotNull
+  @NonNull
   ValuesMap getPreferences();
 
   /**

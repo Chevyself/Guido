@@ -5,25 +5,35 @@ import com.starfishst.bungee.api.events.GuidoListener;
 import com.starfishst.bungee.core.GuidoPlugin;
 import com.starfishst.bungee.core.lang.BungeeLanguageHandler;
 import java.util.logging.Logger;
+import lombok.NonNull;
 import me.googas.api.client.Client;
 import me.googas.commons.Validate;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 /** Static utilities for the guido bungee plugin */
 public class Guido {
 
   /** The instance of the guido plugin */
-  @Nullable private static GuidoPlugin plugin;
+  private static GuidoPlugin plugin;
 
   /**
    * Gives the instance validated to not be null
    *
    * @return the not null instance
    */
-  @NotNull
+  @NonNull
   public static GuidoPlugin validated() {
     return Validate.notNull(Guido.plugin, "Guido might not have been initialized");
+  }
+
+  /**
+   * Delegated from {@link GuidoPlugin#getListener(Class)}
+   *
+   * @param clazz the class to match
+   * @param <T> the type of listener to get
+   * @return the listener
+   */
+  public static <T extends GuidoListener> T getListener(@NonNull Class<T> clazz) {
+    return Guido.validated().getListener(clazz);
   }
 
   /**
@@ -31,7 +41,7 @@ public class Guido {
    *
    * @param plugin the plugin to set
    */
-  public static void setPlugin(@Nullable GuidoPlugin plugin) {
+  public static void setPlugin(GuidoPlugin plugin) {
     if (plugin != null && Guido.plugin != null) {
       throw new IllegalStateException("Plugin is already initialized");
     }
@@ -43,7 +53,7 @@ public class Guido {
    *
    * @return the configuration that the plugin is using
    */
-  @NotNull
+  @NonNull
   public static BungeeConfiguration getConfiguration() {
     return Guido.validated().getBungeeConfiguration();
   }
@@ -53,7 +63,7 @@ public class Guido {
    *
    * @return the client used in the bot
    */
-  @NotNull
+  @NonNull
   public static Client getClient() {
     return Guido.validated().getClient();
   }
@@ -63,7 +73,7 @@ public class Guido {
    *
    * @return the language handler
    */
-  @NotNull
+  @NonNull
   public static BungeeLanguageHandler getLanguageHandler() {
     return Guido.validated().getLanguageHandler();
   }
@@ -73,19 +83,8 @@ public class Guido {
    *
    * @return the logger of the plugin
    */
-  @NotNull
+  @NonNull
   public static Logger getLogger() {
     return Guido.validated().getLogger();
-  }
-
-  /**
-   * Delegated from {@link GuidoPlugin#getListener(Class)}
-   *
-   * @param clazz the class to match
-   * @param <T> the type of listener to get
-   * @return the listener
-   */
-  public static <T extends GuidoListener> T getListener(@NotNull Class<T> clazz) {
-    return Guido.validated().getListener(clazz);
   }
 }

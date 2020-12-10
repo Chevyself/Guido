@@ -1,6 +1,6 @@
 package com.starfishst.bukkit.api.commands;
 
-import org.jetbrains.annotations.NotNull;
+import lombok.NonNull;
 
 /** A command of guido */
 public interface GuidoCommand {
@@ -17,7 +17,7 @@ public interface GuidoCommand {
    *
    * @return the name of the command
    */
-  @NotNull
+  @NonNull
   String getName();
 
   /**

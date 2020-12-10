@@ -1,7 +1,7 @@
 package me.googas.api.permissions;
 
 import java.util.Collection;
-import org.jetbrains.annotations.NotNull;
+import lombok.NonNull;
 
 /**
  * A permission stack contains permissions with certain context to use its permissions in different
@@ -15,7 +15,7 @@ public interface PermissionStack {
    * @param node the node of the permission
    * @return true if this has the permission and is enabled
    */
-  default boolean hasPermission(@NotNull String node) {
+  default boolean hasPermission(@NonNull String node) {
     for (Permission permission : this.getPermissions()) {
       if (permission.getNode().equalsIgnoreCase(node) && permission.isEnabled()) {
         return true;
@@ -30,7 +30,7 @@ public interface PermissionStack {
    * @param node the node of the permission
    * @return true if the stack has the permission
    */
-  default boolean containsPermission(@NotNull String node) {
+  default boolean containsPermission(@NonNull String node) {
     for (Permission permission : this.getPermissions()) {
       if (permission.getNode().equalsIgnoreCase(node)) {
         return true;
@@ -40,20 +40,12 @@ public interface PermissionStack {
   }
 
   /**
-   * Get the context of the permission stack
-   *
-   * @return the context of the permission stack
-   */
-  @NotNull
-  String getContext();
-
-  /**
    * Adds a permission to the set
    *
    * @param perm the permission to add
    * @return whether the permission was added
    */
-  default boolean add(@NotNull Permission perm) {
+  default boolean add(@NonNull Permission perm) {
     return this.getPermissions().add(perm);
   }
 
@@ -63,15 +55,23 @@ public interface PermissionStack {
    * @param perm the permission to remove
    * @return whether the permission was removed
    */
-  default boolean remove(@NotNull Permission perm) {
+  default boolean remove(@NonNull Permission perm) {
     return this.getPermissions().remove(perm);
   }
+
+  /**
+   * Get the context of the permission stack
+   *
+   * @return the context of the permission stack
+   */
+  @NonNull
+  String getContext();
 
   /**
    * Get the permissions that the stack has
    *
    * @return the permission that the stack has
    */
-  @NotNull
+  @NonNull
   Collection<Permission> getPermissions();
 }

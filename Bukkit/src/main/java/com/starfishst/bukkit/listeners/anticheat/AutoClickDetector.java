@@ -8,47 +8,47 @@ import com.starfishst.bukkit.api.events.anticheat.SuspectDetectedEvent;
 import com.starfishst.bukkit.api.events.anticheat.SuspectLevel;
 import java.util.HashMap;
 import java.util.UUID;
+import lombok.NonNull;
 import me.googas.commons.Lots;
 import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.player.PlayerGameModeChangeEvent;
 import org.bukkit.plugin.Plugin;
-import org.jetbrains.annotations.NotNull;
 
 /** Detects for players using auto-click */
 public class AutoClickDetector extends PacketAdapter implements AntiCheatDetector {
 
   /** The tick tracker to get the delay between hits */
-  @NotNull private final AutoClickTicksTracker tracker;
+  @NonNull private final AutoClickTicksTracker tracker;
 
   /**
    * The uuid and the list containing the clicks of a player. This is the amount of times that the
    * uuid has clicked
    */
-  @NotNull private final HashMap<UUID, Integer> clicks = new HashMap<>();
+  @NonNull private final HashMap<UUID, Integer> clicks = new HashMap<>();
 
   /**
    * This map contains the unique id of the player and the time that the player has been clicking.
    * It will reset if the player delays the amount set in the configuration 'reset-delay'
    */
-  @NotNull private final HashMap<UUID, Integer> time = new HashMap<>();
+  @NonNull private final HashMap<UUID, Integer> time = new HashMap<>();
 
   /** Whether a player is digging */
-  @NotNull private final HashMap<UUID, Boolean> digging = new HashMap<>();
+  @NonNull private final HashMap<UUID, Boolean> digging = new HashMap<>();
 
   /** The average speed to which a player is clicking given in clicks per second */
-  @NotNull private final HashMap<UUID, Float> averageSpeed = new HashMap<>();
+  @NonNull private final HashMap<UUID, Float> averageSpeed = new HashMap<>();
 
   /** The average deviation to which a player is clicking given in clicks per second */
-  @NotNull private final HashMap<UUID, Float> averageDeviation = new HashMap<>();
+  @NonNull private final HashMap<UUID, Float> averageDeviation = new HashMap<>();
 
   /**
    * Create the detector
    *
    * @param plugin the plugin to register the {@link PacketAdapter}
    */
-  public AutoClickDetector(@NotNull Plugin plugin) {
+  public AutoClickDetector(@NonNull Plugin plugin) {
     super(
         plugin, Lots.list(PacketType.Play.Client.ARM_ANIMATION, PacketType.Play.Client.BLOCK_DIG));
     this.tracker = new AutoClickTicksTracker(plugin, this);
@@ -147,7 +147,7 @@ public class AutoClickDetector extends PacketAdapter implements AntiCheatDetecto
   }
 
   @Override
-  public @NotNull String getName() {
+  public @NonNull String getName() {
     return "auto-click-detector";
   }
 
@@ -162,10 +162,10 @@ public class AutoClickDetector extends PacketAdapter implements AntiCheatDetecto
      *
      * <p>= -1 the player is not digging = -2 the player has aborted digging
      */
-    @NotNull private final HashMap<UUID, Integer> ticksOnStopped = new HashMap<>();
+    @NonNull private final HashMap<UUID, Integer> ticksOnStopped = new HashMap<>();
 
     /** The auto click detector that is using this tracker */
-    @NotNull private final AutoClickDetector detector;
+    @NonNull private final AutoClickDetector detector;
 
     /**
      * Create the ticks tracker
@@ -173,13 +173,13 @@ public class AutoClickDetector extends PacketAdapter implements AntiCheatDetecto
      * @param plugin the plugin that requires track ticks
      * @param detector the auto click detector that is using this tracker
      */
-    public AutoClickTicksTracker(@NotNull Plugin plugin, @NotNull AutoClickDetector detector) {
+    public AutoClickTicksTracker(@NonNull Plugin plugin, @NonNull AutoClickDetector detector) {
       super(plugin);
       this.detector = detector;
     }
 
     @Override
-    void onIncrease(@NotNull Player player, int amount) {
+    void onIncrease(@NonNull Player player, int amount) {
       UUID uniqueId = player.getUniqueId();
       if (this.ticksOnStopped.getOrDefault(uniqueId, -1) >= 0) {
         this.ticksOnStopped.put(uniqueId, this.ticksOnStopped.get(uniqueId) + amount);

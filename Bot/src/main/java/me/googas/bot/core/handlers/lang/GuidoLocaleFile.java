@@ -6,20 +6,19 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Reader;
 import java.util.Properties;
+import lombok.NonNull;
 import me.googas.api.lang.LocaleFile;
 import me.googas.commons.CoreFiles;
 import me.googas.commons.Validate;
 import me.googas.commons.fallback.Fallback;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 /** The locale file for the guido bot. It is loaded using {@link java.util.Properties} */
 public class GuidoLocaleFile implements LocaleFile {
 
   /** The actual file that this is using */
-  @NotNull private final File file;
+  @NonNull private final File file;
   /** The properties used to get the strings */
-  @NotNull private final Properties properties = new Properties();
+  @NonNull private final Properties properties = new Properties();
 
   /**
    * Create the guido locale file
@@ -27,7 +26,7 @@ public class GuidoLocaleFile implements LocaleFile {
    * @param file the properties file to get the properties
    * @throws IOException in case that the properties file cannot be read
    */
-  public GuidoLocaleFile(@NotNull File file) throws IOException {
+  public GuidoLocaleFile(@NonNull File file) throws IOException {
     this.file = file;
     Reader reader = new FileReader(this.file);
     this.properties.load(reader);
@@ -56,12 +55,12 @@ public class GuidoLocaleFile implements LocaleFile {
    *
    * @return the unicode to differentiate this language
    */
-  public @NotNull String getUnicode() {
+  public @NonNull String getUnicode() {
     return Validate.notNull(this.getRaw("unicode"), this + " has a null unicode property");
   }
 
   @Override
-  public @NotNull String getLang() {
+  public @NonNull String getLang() {
     return Validate.notNull(this.getRaw("lang"), this + " has a null lang property!");
   }
 
@@ -78,7 +77,7 @@ public class GuidoLocaleFile implements LocaleFile {
   }
 
   @Override
-  public @Nullable String getRaw(@NotNull String path) {
+  public String getRaw(@NonNull String path) {
     return this.properties.getProperty(path);
   }
 

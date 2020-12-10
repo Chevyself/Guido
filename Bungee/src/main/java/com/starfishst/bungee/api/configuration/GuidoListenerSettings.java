@@ -3,9 +3,8 @@ package com.starfishst.bungee.api.configuration;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import lombok.NonNull;
 import me.googas.commons.Validate;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 /** The settings for a listener */
 public interface GuidoListenerSettings {
@@ -18,8 +17,7 @@ public interface GuidoListenerSettings {
    * @param <T> the type of the clazz to which the value of the setting will be casted to
    * @return the value of the setting or null if it does not have one
    */
-  @Nullable
-  default <T> T getSetting(@NotNull String name, @NotNull Class<T> clazz) {
+  default <T> T getSetting(@NonNull String name, @NonNull Class<T> clazz) {
     Object obj = this.getSettings().get(name);
     if (obj != null) {
       return clazz.cast(obj);
@@ -36,8 +34,8 @@ public interface GuidoListenerSettings {
    * @return the list or empty if the setting does not exist
    */
   @SuppressWarnings("unchecked")
-  @NotNull
-  default <T> List<T> getListSetting(@NotNull String name) {
+  @NonNull
+  default <T> List<T> getListSetting(@NonNull String name) {
     List<T> list = new ArrayList<>();
     Class<List<T>> aClass = (Class<List<T>>) list.getClass();
     list.addAll(this.getSettingOr(name, aClass, new ArrayList<>()));
@@ -53,8 +51,8 @@ public interface GuidoListenerSettings {
    * @param <T> the type of the clazz to which the value of the setting will be casted to
    * @return the value of the setting or null if it does not have one
    */
-  @NotNull
-  default <T> T getSettingOr(@NotNull String name, @NotNull Class<T> clazz, @NotNull T def) {
+  @NonNull
+  default <T> T getSettingOr(@NonNull String name, @NonNull Class<T> clazz, @NonNull T def) {
     return Validate.notNullOr(this.getSetting(name, clazz), def);
   }
 
@@ -63,7 +61,7 @@ public interface GuidoListenerSettings {
    *
    * @return the name of the listener
    */
-  @NotNull
+  @NonNull
   String getName();
 
   /**
@@ -71,6 +69,6 @@ public interface GuidoListenerSettings {
    *
    * @return the settings of this listener
    */
-  @NotNull
+  @NonNull
   HashMap<String, Object> getSettings();
 }

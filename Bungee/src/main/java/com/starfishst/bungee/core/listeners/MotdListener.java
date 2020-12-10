@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.UUID;
 import javax.imageio.ImageIO;
+import lombok.NonNull;
 import me.googas.commons.CoreFiles;
 import me.googas.commons.RandomUtils;
 import me.googas.commons.fallback.Fallback;
@@ -15,14 +16,12 @@ import net.md_5.bungee.api.ServerPing;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.event.ProxyPingEvent;
 import net.md_5.bungee.event.EventHandler;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 /** Changes the motd when a player pings the server */
 public class MotdListener implements GuidoListener {
 
   /** The favicon that will be the response on a server ping */
-  @Nullable private final Favicon favicon;
+  private final Favicon favicon;
 
   /** Create the motd listener */
   public MotdListener() {
@@ -35,7 +34,6 @@ public class MotdListener implements GuidoListener {
    *
    * @return the read favicon or null if the file could not be read
    */
-  @Nullable
   private Favicon readFavicon() {
     File file = CoreFiles.getFile(CoreFiles.currentDirectory(), "server.png");
     if (file != null) {
@@ -65,7 +63,7 @@ public class MotdListener implements GuidoListener {
    * @param event the event of a player getting a server ping
    * @return the server ping
    */
-  @NotNull
+  @NonNull
   public ServerPing getPing(ProxyPingEvent event) {
     ServerPing.Protocol version = event.getResponse().getVersion();
     int online = event.getResponse().getPlayers().getOnline();
@@ -81,7 +79,7 @@ public class MotdListener implements GuidoListener {
    *
    * @return the description to send to the client
    */
-  @NotNull
+  @NonNull
   public BaseComponent getDescription() {
     return BungeeUtils.getComponent(
         BungeeUtils.build(
@@ -93,7 +91,7 @@ public class MotdListener implements GuidoListener {
    *
    * @return the list of players names
    */
-  @NotNull
+  @NonNull
   public List<String> getPlayers() {
     return RandomUtils.getRandom(this.getSettings().getListSetting("players"));
   }
@@ -103,7 +101,7 @@ public class MotdListener implements GuidoListener {
    *
    * @return the player info to send
    */
-  @NotNull
+  @NonNull
   private ServerPing.PlayerInfo[] getPlayerInfo() {
     List<String> players = this.getPlayers();
     ServerPing.PlayerInfo[] info = new ServerPing.PlayerInfo[players.size()];
@@ -114,7 +112,7 @@ public class MotdListener implements GuidoListener {
   }
 
   @Override
-  public @NotNull String getName() {
+  public @NonNull String getName() {
     return "motd";
   }
 

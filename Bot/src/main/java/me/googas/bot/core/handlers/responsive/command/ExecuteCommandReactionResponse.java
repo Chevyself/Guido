@@ -9,6 +9,7 @@ import com.starfishst.jda.utils.embeds.EmbedFactory;
 import com.starfishst.jda.utils.responsive.ReactionResponse;
 import gnu.trove.set.hash.TLongHashSet;
 import java.util.concurrent.TimeUnit;
+import lombok.NonNull;
 import me.googas.bot.core.Guido;
 import me.googas.commons.Strings;
 import me.googas.commons.Validate;
@@ -16,7 +17,6 @@ import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.events.message.react.MessageReactionAddEvent;
 import net.dv8tion.jda.internal.entities.ReceivedMessage;
-import org.jetbrains.annotations.NotNull;
 
 /** A reaction response which will execute a command when reacted */
 public interface ExecuteCommandReactionResponse extends ReactionResponse {
@@ -26,7 +26,7 @@ public interface ExecuteCommandReactionResponse extends ReactionResponse {
    *
    * @return the name of the command to execute
    */
-  @NotNull
+  @NonNull
   String getCommandName();
 
   /**
@@ -34,7 +34,7 @@ public interface ExecuteCommandReactionResponse extends ReactionResponse {
    *
    * @return the arguments
    */
-  @NotNull
+  @NonNull
   String[] getArguments();
 
   @Override
@@ -43,7 +43,7 @@ public interface ExecuteCommandReactionResponse extends ReactionResponse {
   }
 
   @Override
-  default void onReaction(@NotNull MessageReactionAddEvent event) {
+  default void onReaction(@NonNull MessageReactionAddEvent event) {
     if (event.getUser() == null) return;
     CommandManager manager = Guido.getCommandManager();
     CommandListener listener = manager.getListener();

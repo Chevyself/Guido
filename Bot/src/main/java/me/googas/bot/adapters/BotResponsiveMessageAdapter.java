@@ -8,22 +8,24 @@ import com.google.gson.JsonSerializationContext;
 import java.lang.reflect.Type;
 import java.util.HashMap;
 import java.util.Map;
+import lombok.NonNull;
 import me.googas.bot.api.types.BotResponsiveMessage;
 import me.googas.bot.core.handlers.responsive.command.ExecuteCommandResponsiveMessage;
 import me.googas.bot.core.handlers.responsive.queue.JoinQueueResponsiveMessage;
+import me.googas.bot.core.handlers.responsive.roles.GiveRoleResponsiveMessage;
 import me.googas.commons.gson.adapters.JsonAdapter;
-import org.jetbrains.annotations.NotNull;
 
 /** Adapts responsive messages */
 public class BotResponsiveMessageAdapter implements JsonAdapter<BotResponsiveMessage> {
 
   /** The type of message and the class of it */
-  @NotNull private final Map<String, Class<? extends BotResponsiveMessage>> types = new HashMap<>();
+  @NonNull private final Map<String, Class<? extends BotResponsiveMessage>> types = new HashMap<>();
 
   /** Create the responsive messages adapter */
   public BotResponsiveMessageAdapter() {
     this.types.put("queue", JoinQueueResponsiveMessage.class);
     this.types.put("execute", ExecuteCommandResponsiveMessage.class);
+    this.types.put("give-role", GiveRoleResponsiveMessage.class);
   }
 
   @Override

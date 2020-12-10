@@ -1,9 +1,9 @@
 package me.googas.bot.core.types;
 
 import java.util.Collection;
+import lombok.NonNull;
 import me.googas.api.matches.Team;
 import me.googas.api.matches.TeamMember;
-import org.jetbrains.annotations.NotNull;
 
 /** An implementation for team */
 public class GuidoTeam implements Team {
@@ -12,10 +12,10 @@ public class GuidoTeam implements Team {
   private final int id;
 
   /** The name of the team */
-  @NotNull private final String name;
+  @NonNull private final String name;
 
   /** The members of the team */
-  @NotNull private final Collection<TeamMember> members;
+  @NonNull private final Collection<TeamMember> members;
 
   /**
    * Create the team
@@ -24,24 +24,24 @@ public class GuidoTeam implements Team {
    * @param members the members inside the team
    * @param name the name of the team
    */
-  public GuidoTeam(int id, @NotNull Collection<TeamMember> members, @NotNull String name) {
+  public GuidoTeam(int id, @NonNull Collection<TeamMember> members, @NonNull String name) {
     this.id = id;
     this.members = members;
     this.name = name;
   }
 
   @Override
-  public @NotNull String getName() {
+  public @NonNull String getName() {
     return this.name;
   }
 
   @Override
-  public boolean add(@NotNull TeamMember member) {
+  public boolean add(@NonNull TeamMember member) {
     return false;
   }
 
   @Override
-  public boolean remove(@NotNull TeamMember member) {
+  public boolean remove(@NonNull TeamMember member) {
     return false;
   }
 
@@ -51,7 +51,7 @@ public class GuidoTeam implements Team {
   }
 
   @Override
-  public @NotNull Collection<TeamMember> getMembers() {
+  public @NonNull Collection<TeamMember> getMembers() {
     return this.members;
   }
 

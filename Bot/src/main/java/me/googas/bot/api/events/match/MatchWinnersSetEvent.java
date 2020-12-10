@@ -1,15 +1,14 @@
 package me.googas.bot.api.events.match;
 
+import lombok.NonNull;
 import me.googas.api.matches.Match;
 import me.googas.api.matches.Team;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 /** Called when the winners of a match get set */
 public class MatchWinnersSetEvent extends MatchEvent {
 
   /** The new winners of the match */
-  @Nullable private final Team winners;
+  private final Team winners;
 
   /**
    * Create the match event
@@ -17,7 +16,7 @@ public class MatchWinnersSetEvent extends MatchEvent {
    * @param match the match involved
    * @param winners the winners of the match
    */
-  public MatchWinnersSetEvent(@NotNull Match match, @Nullable Team winners) {
+  public MatchWinnersSetEvent(@NonNull Match match, Team winners) {
     super(match);
     this.winners = winners;
   }
@@ -27,7 +26,6 @@ public class MatchWinnersSetEvent extends MatchEvent {
    *
    * @return the winners of the match
    */
-  @Nullable
   public Team getWinners() {
     return this.winners;
   }

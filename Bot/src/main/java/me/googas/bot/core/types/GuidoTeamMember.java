@@ -1,20 +1,20 @@
 package me.googas.bot.core.types;
 
+import lombok.NonNull;
 import me.googas.api.links.LinkableInfo;
 import me.googas.api.links.LinkableType;
 import me.googas.api.matches.TeamMember;
 import me.googas.api.matches.TeamRole;
 import me.googas.bot.core.types.maps.GuidoValuesMap;
-import org.jetbrains.annotations.NotNull;
 
 /** Implementation for team member */
 public class GuidoTeamMember implements TeamMember {
 
   /** The information of the team */
-  @NotNull private final LinkableInfo linkInfo;
+  @NonNull private final LinkableInfo linkInfo;
 
   /** The role of the member in the team */
-  @NotNull private final TeamRole role;
+  @NonNull private final TeamRole role;
 
   /**
    * Create the team member
@@ -22,7 +22,7 @@ public class GuidoTeamMember implements TeamMember {
    * @param linkInfo the info of the team
    * @param role the role of the team
    */
-  public GuidoTeamMember(@NotNull LinkableInfo linkInfo, @NotNull TeamRole role) {
+  public GuidoTeamMember(@NonNull LinkableInfo linkInfo, @NonNull TeamRole role) {
     this.linkInfo = linkInfo;
     this.role = role;
   }
@@ -33,12 +33,12 @@ public class GuidoTeamMember implements TeamMember {
   }
 
   @Override
-  public @NotNull LinkableInfo getLinkInfo() {
+  public @NonNull LinkableInfo getLinkInfo() {
     return this.linkInfo;
   }
 
   @Override
-  public @NotNull TeamRole getTeamRole() {
+  public @NonNull TeamRole getTeamRole() {
     return this.role;
   }
 

@@ -1,10 +1,10 @@
 package me.googas.bot.core.handlers.responsive.queue;
 
 import java.util.Collection;
+import lombok.NonNull;
 import me.googas.bot.core.handlers.responsive.command.ExecuteCommandResponsiveMessage;
 import me.googas.bot.core.handlers.responsive.command.SimpleCommandReactionResponse;
 import net.dv8tion.jda.api.entities.Message;
-import org.jetbrains.annotations.NotNull;
 
 /** A responsive message which makes an user join a queue */
 public class JoinQueueResponsiveMessage extends ExecuteCommandResponsiveMessage {
@@ -25,7 +25,7 @@ public class JoinQueueResponsiveMessage extends ExecuteCommandResponsiveMessage 
    * @param responses the command executions that the message can do
    */
   public JoinQueueResponsiveMessage(
-      @NotNull Message message, @NotNull Collection<SimpleCommandReactionResponse> responses) {
+      @NonNull Message message, @NonNull Collection<SimpleCommandReactionResponse> responses) {
     super(message, responses);
   }
 
@@ -40,7 +40,7 @@ public class JoinQueueResponsiveMessage extends ExecuteCommandResponsiveMessage 
    * @return the type of responsive message
    */
   @Override
-  public @NotNull String getType() {
+  public @NonNull String getType() {
     return "queue";
   }
 }

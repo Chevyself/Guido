@@ -3,17 +3,25 @@ package me.googas.bot.core.commands;
 import com.starfishst.core.annotations.Optional;
 import com.starfishst.core.annotations.Required;
 import com.starfishst.jda.annotations.Command;
+import com.starfishst.jda.context.CommandContext;
 import com.starfishst.jda.result.Result;
 import com.starfishst.jda.result.ResultType;
+import com.starfishst.jda.utils.embeds.EmbedFactory;
+import com.starfishst.jda.utils.embeds.EmbedQuery;
 import java.util.Collection;
+import lombok.NonNull;
+import me.googas.api.discord.GuildData;
 import me.googas.api.lang.LocaleFile;
 import me.googas.api.links.Linkable;
 import me.googas.api.links.LinkableInfo;
+import me.googas.api.links.LinkableType;
 import me.googas.api.user.UserData;
+import me.googas.api.utility.SortedStats;
 import me.googas.bot.api.loader.BotDataLoader;
 import me.googas.bot.api.types.BotLinkable;
 import me.googas.bot.core.Guido;
 import me.googas.bot.core.handlers.link.LinkHandler;
+import me.googas.bot.core.types.maps.GuidoValuesMap;
 import me.googas.commons.Strings;
 import me.googas.commons.maps.Maps;
 
@@ -88,6 +96,73 @@ public class UserCommands {
     } else {
       return new Result(ResultType.USAGE, locale.get("link.code-not-match"));
     }
+  }
+
+  @Command(aliases = "stats", description = "guido.stats.desc")
+  public Result stats(
+      CommandContext context,
+      GuildData guild,
+      LocaleFile locale,
+      UserData data,
+      @Optional(name = "stats.name", description = "stats.name.desc") String nickname) {
+    Collection<Linkable> links = Guido.getDataLoader().getLinks(data, LinkableType.MINECRAFT);
+    if (nickname != null) {
+      BotLinkable link =
+          Guido.getDataLoader()
+              .getLinkedData(LinkableType.MINECRAFT, new GuidoValuesMap("nickname", nickname));
+      if (link != null) {
+        return new Result(this.buildStats(guild, locale, context, link));
+      } else {
+        return new Result(locale.get("stats.player-not-found", Maps.singleton("nick", nickname)));
+      }
+    } else {
+      if (!links.isEmpty()) {
+        for (Linkable link : links) {
+          return new Result(this.buildStats(guild, locale, context, link));
+        }
+        return new Result(locale.get("stats.not-linked"));
+      } else {
+        return new Result(locale.get("stats.not-linked"));
+      }
+    }
+  }
+
+  private EmbedQuery buildStats(
+      GuildData guild,
+      @NonNull LocaleFile locale,
+      @NonNull CommandContext context,
+      @NonNull Linkable linkable) {
+    String nickname = linkable.getIdentification().getOr("nickname", String.class, "");
+    EmbedQuery query =
+        EmbedFactory.fromResult(
+            new Result(locale.get("stats.desc", Maps.singleton("nick", nickname))),
+            Guido.getCommandManager().getListener(),
+            context);
+    query
+        .getEmbedBuilder()
+        .setTitle(locale.get(locale.get("stats.title", Maps.singleton("nick", nickname))));
+    query.getEmbedBuilder().setThumbnail("https://minotar.net/helm/" + nickname + "/100.png");
+    SortedStats organized = linkable.getOrganized(guild);
+    organized
+        .getMap()
+        .forEach(
+            (statContext, stats) -> {
+              StringBuilder builder = Strings.getBuilder();
+              stats.forEach(
+                  (stat, value) ->
+                      builder
+                          .append("\n")
+                          .append("- **")
+                          .append(stat)
+                          .append("**: ")
+                          .append("`")
+                          .append(value)
+                          .append("`"));
+              query
+                  .getEmbedBuilder()
+                  .addField(statContext.replace("_", " "), builder.toString(), true);
+            });
+    return query;
   }
 }
 

@@ -1,13 +1,13 @@
 package me.googas.bot.api.events.data.permissible;
 
+import lombok.NonNull;
 import me.googas.bot.api.types.BotPermissible;
-import org.jetbrains.annotations.NotNull;
 
 /** Called when a permissible gets a permission removed */
 public class PermissiblePermissionRemovedEvent extends PermissibleEvent {
 
   /** The node of the permission that was removed */
-  @NotNull private final String node;
+  @NonNull private final String node;
 
   /**
    * Create the event
@@ -17,7 +17,7 @@ public class PermissiblePermissionRemovedEvent extends PermissibleEvent {
    * @param node the node of the permission that was removed
    */
   public PermissiblePermissionRemovedEvent(
-      @NotNull BotPermissible permissible, @NotNull String context, @NotNull String node) {
+      @NonNull BotPermissible permissible, @NonNull String context, @NonNull String node) {
     super(permissible);
     this.node = node;
   }

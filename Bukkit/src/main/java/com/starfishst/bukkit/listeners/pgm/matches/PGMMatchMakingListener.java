@@ -18,11 +18,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ExecutionException;
+import java.util.logging.Level;
 import java.util.logging.Logger;
+import lombok.NonNull;
 import me.googas.api.client.data.SimpleMatch;
 import me.googas.api.client.data.SimpleValuesMap;
 import me.googas.api.matches.Ladder;
 import me.googas.commons.RandomUtils;
+import me.googas.commons.builder.LogBuilder;
 import me.googas.commons.maps.Maps;
 import me.googas.messaging.api.MessengerListenFailException;
 import me.googas.messaging.json.ParamName;
@@ -33,17 +36,17 @@ import org.bukkit.Server;
 import org.bukkit.command.CommandSender;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import tc.oc.pgm.api.PGM;
 import tc.oc.pgm.api.map.MapInfo;
 import tc.oc.pgm.api.match.Match;
 import tc.oc.pgm.api.match.MatchManager;
+import tc.oc.pgm.api.match.MatchPhase;
 import tc.oc.pgm.api.match.event.MatchFinishEvent;
 import tc.oc.pgm.api.party.Competitor;
 import tc.oc.pgm.api.party.Party;
 import tc.oc.pgm.api.player.MatchPlayer;
 import tc.oc.pgm.api.player.event.MatchPlayerAddEvent;
+import tc.oc.pgm.restart.RestartManager;
 
 /** Creates matches for the bot */
 public class PGMMatchMakingListener implements GuidoListener {
@@ -52,17 +55,17 @@ public class PGMMatchMakingListener implements GuidoListener {
   public static final int secondsToStart = 120;
 
   /** The team creators for matches */
-  @NotNull
+  @NonNull
   private final Map<String, TeamCreation> creator =
       Maps.builder("random", (TeamCreation) new RandomTeamCreation())
           .append("pick", new PickTeamSelection())
           .build();
 
   /** The list of matches hosted by the server */
-  @NotNull private final List<HostedMatch> matches = new ArrayList<>();
+  @NonNull private final List<HostedMatch> matches = new ArrayList<>();
 
   /** The users to add in case they could not be added */
-  @NotNull private final Map<UUID, Party> toAdd = new HashMap<>();
+  @NonNull private final Map<UUID, Party> toAdd = new HashMap<>();
 
   /**
    * Checks whether this match maker can host a match
@@ -79,9 +82,11 @@ public class PGMMatchMakingListener implements GuidoListener {
     Match pgmMatch = this.getCurrentPgm();
     logger.info("Received info to host match \n " + match);
     if (type.equalsIgnoreCase("pgm")
-        && ladderName != null
-        && PGM.get().isEnabled()
-        && (pgmMatch == null || !pgmMatch.isRunning())) {
+            && ladderName != null
+            && PGM.get().isEnabled()
+            && !RestartManager.isQueued()
+            && (pgmMatch == null || (pgmMatch.getPhase() == MatchPhase.FINISHED))
+        || pgmMatch != null && !this.isMatch(pgmMatch)) {
       JsonClient connection = Guido.getClient().getConnection();
       if (connection != null) {
         try {
@@ -105,13 +110,23 @@ public class PGMMatchMakingListener implements GuidoListener {
   }
 
   /**
+   * Check whether a pgm match is a simple match
+   *
+   * @param pgmMatch the pgm match to check
+   * @return true if the match is a host
+   */
+  private boolean isMatch(@NonNull Match pgmMatch) {
+    return this.getMatchByPgm(pgmMatch.getId()) != null;
+  }
+
+  /**
    * get all the map that are suitable for a ladder
    *
    * @param ladder the ladder
    * @return the list of suitable maps
    */
-  @NotNull
-  public List<MapInfo> getSuitableMaps(@NotNull Ladder ladder) {
+  @NonNull
+  public List<MapInfo> getSuitableMaps(@NonNull Ladder ladder) {
     Logger logger = Guido.getLogger();
     List<MapInfo> suitableMaps = new ArrayList<>();
     Iterator<MapInfo> iterator = PGM.get().getMapLibrary().getMaps();
@@ -172,14 +187,15 @@ public class PGMMatchMakingListener implements GuidoListener {
                               ladder.getOptions().getOr("team-selection", String.class, "random"))
                           .put("players-per-team", ladder.playersPerTeam()));
               this.matches.add(hostedMatch);
-              new BukkitBooleanRequest(
-                      "match-remove-team-by-id",
-                      Maps.objects("id", match.getId()).append("team", -2).build())
-                  .send(bol -> {});
               TeamCreation teamCreation =
                   this.creator.get(
                       hostedMatch.getDetails().getOr("team-selection", String.class, "random"));
-              teamCreation.createTeams(this, hostedMatch, loaded);
+              Bukkit.getScheduler()
+                  .runTask(
+                      Guido.validated(),
+                      () -> {
+                        teamCreation.createTeams(this, hostedMatch, loaded);
+                      });
               Server server = Bukkit.getServer();
               return server.getIp() + ":" + server.getPort();
             }
@@ -199,14 +215,14 @@ public class PGMMatchMakingListener implements GuidoListener {
    * @param maps the maps available for the match
    * @return the random selected map
    */
-  @NotNull
-  public MapInfo getMatchMap(@NotNull PGM pgm, @NotNull List<MapInfo> maps) {
+  @NonNull
+  public MapInfo getMatchMap(@NonNull PGM pgm, @NonNull List<MapInfo> maps) {
     MapInfo random = RandomUtils.getRandom(maps);
     pgm.getMapOrder().setNextMap(random);
     return random;
   }
 
-  public void add(@NotNull UUID uuid, @NotNull Party party) {
+  public void add(@NonNull UUID uuid, @NonNull Party party) {
     MatchManager matchManager = PGM.get().getMatchManager();
     MatchPlayer player = matchManager.getPlayer(uuid);
     if (player != null && player.getMatch().equals(party.getMatch())) {
@@ -221,8 +237,7 @@ public class PGMMatchMakingListener implements GuidoListener {
    * @param matchId the id of the match to get
    * @return the match if found null otherwise
    */
-  @Nullable
-  public HostedMatch getMatch(@NotNull String matchId) {
+  public HostedMatch getMatch(@NonNull String matchId) {
     for (HostedMatch match : this.matches) {
       if (match.getId().equals(matchId)) return match;
     }
@@ -232,14 +247,22 @@ public class PGMMatchMakingListener implements GuidoListener {
   /**
    * Get the match where a command sender is participating
    *
-   * @param sender the sendedr to get the match
+   * @param sender the sender to get the match
    */
-  @Nullable
-  public HostedMatch getMatch(@NotNull CommandSender sender) {
+  public HostedMatch getMatch(@NonNull CommandSender sender) {
     for (HostedMatch match : this.matches) {
       if (match.isParticipating(sender)) return match;
     }
+    Match match = PGM.get().getMatchManager().getMatch(sender);
+    if (match != null) {
+      return this.getMatchByPgm(match.getId());
+    }
     return null;
+  }
+
+  /** Called when the server is ready to host a match */
+  public void readyToHost() {
+    new BukkitBooleanRequest("server-ready").send(ignored -> {});
   }
 
   /**
@@ -247,7 +270,6 @@ public class PGMMatchMakingListener implements GuidoListener {
    *
    * @return the current match being played in pgm
    */
-  @Nullable
   private Match getCurrentPgm() {
     Iterator<Match> matches = PGM.get().getMatchManager().getMatches();
     if (matches.hasNext()) {
@@ -279,13 +301,23 @@ public class PGMMatchMakingListener implements GuidoListener {
   public void onMatchFinish(MatchFinishEvent event) {
     JsonClient connection = Guido.getClient().getConnection();
     HostedMatch hostedMatch = this.getMatchByPgm(event.getMatch().getId());
+    LogBuilder log = new LogBuilder(Level.INFO, "Checking hosted match not null...");
     if (hostedMatch == null) return;
+    log.append("\n Match is not null");
     int winnersId = hostedMatch.getTeamId(this.getWinnersId(event));
+    log.append("\n Winners=" + winnersId);
     if (connection != null) {
+      log.append("\n There's connection with the bot sending finished");
       new BukkitBooleanRequest(
               "match-finish-id",
               Maps.objects("id", hostedMatch.getId()).append("winners", winnersId))
-          .send(bol -> {});
+          .send(
+              bol -> {
+                log.append("\n Hosted match is finished? " + bol);
+                log.send(Guido.getLogger());
+              });
+      log.append("\n Sending new match can be hosted");
+      this.readyToHost();
       this.matches.remove(hostedMatch);
     }
     this.toAdd.clear();
@@ -299,8 +331,7 @@ public class PGMMatchMakingListener implements GuidoListener {
    * @param event the event of a match finishing
    * @return the id of the winners of the match
    */
-  @Nullable
-  public String getWinnersId(@NotNull MatchFinishEvent event) {
+  public String getWinnersId(@NonNull MatchFinishEvent event) {
     for (Competitor winner : event.getWinners()) {
       return winner.getId();
     }
@@ -327,18 +358,13 @@ public class PGMMatchMakingListener implements GuidoListener {
   @Override
   public void onUnload() {}
 
-  @Override
-  public @NotNull String getName() {
-    return "match-making";
-  }
-
-  @NotNull
-  public Map<UUID, Party> getToAdd() {
-    return this.toAdd;
-  }
-
-  @Nullable
-  public TeamCreation getCreation(@NotNull String key) {
+  /**
+   * Get the team creation for the given key
+   *
+   * @param key the key to get what team creation is assigned to
+   * @return the team creation which is assigned to the key
+   */
+  public TeamCreation getCreation(@NonNull String key) {
     return this.creator.get(key);
   }
 
@@ -348,12 +374,27 @@ public class PGMMatchMakingListener implements GuidoListener {
    * @param pgmId the id of the pgm match
    * @return the match if found else null
    */
-  @Nullable
-  public HostedMatch getMatchByPgm(@NotNull String pgmId) {
+  public HostedMatch getMatchByPgm(@NonNull String pgmId) {
     for (HostedMatch match : this.matches) {
       if (match.getPgmId().equals(pgmId)) return match;
     }
     return null;
+  }
+
+  /**
+   * Get the map of player to add. This map contains the uuid of the player and the party they are
+   * on
+   *
+   * @return the map
+   */
+  @NonNull
+  public Map<UUID, Party> getToAdd() {
+    return this.toAdd;
+  }
+
+  @Override
+  public @NonNull String getName() {
+    return "match-making";
   }
 
   /**

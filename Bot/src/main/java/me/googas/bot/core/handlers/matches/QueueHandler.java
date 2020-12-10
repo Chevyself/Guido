@@ -6,11 +6,12 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import lombok.NonNull;
+import me.googas.api.discord.GuildData;
 import me.googas.api.links.Linkable;
 import me.googas.api.links.LinkableInfo;
 import me.googas.api.matches.Ladder;
 import me.googas.api.matches.Queue;
-import me.googas.api.user.UserData;
 import me.googas.bot.api.events.queue.QueueLeaveEvent;
 import me.googas.bot.api.types.BotGuild;
 import me.googas.bot.api.types.BotLinkable;
@@ -18,21 +19,23 @@ import me.googas.bot.core.Guido;
 import me.googas.bot.core.handlers.GuidoEventHandler;
 import me.googas.commons.events.ListenPriority;
 import me.googas.commons.events.Listener;
+import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.GuildVoiceState;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.VoiceChannel;
+import net.dv8tion.jda.api.events.guild.voice.GuildVoiceJoinEvent;
 import net.dv8tion.jda.api.events.guild.voice.GuildVoiceLeaveEvent;
+import net.dv8tion.jda.api.events.guild.voice.GuildVoiceMoveEvent;
 import net.dv8tion.jda.api.hooks.SubscribeEvent;
-import org.jetbrains.annotations.NotNull;
 
 /** Handles the queue */
 public class QueueHandler implements GuidoEventHandler {
 
   /** The queues that are working right now in the handler */
-  @NotNull private final Set<Queue> queues = new HashSet<>();
+  @NonNull private final Set<Queue> queues = new HashSet<>();
 
   /** The waiting channel for the users in queue */
-  @NotNull private final Map<Long, Long> waitingChannels = new HashMap<>();
+  @NonNull private final Map<Long, Long> waitingChannels = new HashMap<>();
 
   /**
    * Check when a member leaves a voice channel. If the voice channel is the queues waiting channel
@@ -41,17 +44,65 @@ public class QueueHandler implements GuidoEventHandler {
    * @param event the event of a member leaving a voice channel
    */
   @SubscribeEvent
-  public void onGuildVoiceLeave(@NotNull GuildVoiceLeaveEvent event) {
-    VoiceChannel channel = event.getChannelLeft();
-    long guildId = event.getGuild().getIdLong();
+  public void onGuildVoiceLeave(@NonNull GuildVoiceLeaveEvent event) {
+    this.checkRemoveQueue(event.getChannelLeft(), event.getGuild(), event.getMember());
+  }
+
+  /**
+   * Check when a member leaves a voice channel. If the voice channel is the queues waiting channel
+   * then remove them from the queue
+   *
+   * @param event the event of a member leaving a voice channel
+   */
+  @SubscribeEvent
+  public void onGuildVoiceMove(@NonNull GuildVoiceMoveEvent event) {
+    this.checkRemoveQueue(event.getChannelLeft(), event.getGuild(), event.getMember());
+    this.joinQueueFromVoice(
+        event.getGuild().getIdLong(), event.getChannelJoined(), event.getMember());
+  }
+
+  /**
+   * Make a player join a queue from voice channel
+   *
+   * @param guildId the id of the guild where this is happening
+   * @param channelJoined the channel that the member joined
+   * @param member the member that joined the channel
+   */
+  public void joinQueueFromVoice(
+      long guildId, @NonNull VoiceChannel channelJoined, @NonNull Member member) {
+    BotGuild guild = Guido.getDataLoader().getGuildDataOrCreate(guildId);
+    String key = guild.getVoiceChannel(channelJoined.getIdLong());
+    if (key != null && key.startsWith("join-")) {
+      String ladderName = key.substring(5);
+      Ladder ladder = guild.getLadder(ladderName);
+      if (ladder == null) return;
+      this.joinQueue(guild, member, ladder);
+    }
+  }
+
+  @SubscribeEvent
+  public void onGuildVoiceJoinEvent(@NonNull GuildVoiceJoinEvent event) {
+    this.joinQueueFromVoice(
+        event.getGuild().getIdLong(), event.getChannelJoined(), event.getMember());
+  }
+
+  /**
+   * Check if the user that left the channel may leave the queue
+   *
+   * @param channelLeft the channel that the user left
+   * @param guild the guild in which the event happened
+   * @param disc the event that left the queue
+   */
+  public void checkRemoveQueue(
+      @NonNull VoiceChannel channelLeft, @NonNull Guild guild, @NonNull Member disc) {
+    long guildId = guild.getIdLong();
     long channelId = this.waitingChannels.getOrDefault(guildId, -1L);
-    if (channelId == channel.getIdLong()) {
-      BotLinkable member =
-          Guido.getDataLoader().getMemberData(event.getMember().getIdLong(), guildId);
+    if (channelId == channelLeft.getIdLong()) {
+      BotLinkable member = Guido.getDataLoader().getMemberData(disc.getIdLong(), guildId);
       for (Linkable data : member.getLinks()) {
         this.leaveQueue(data.getInfo());
       }
-      this.checkDeletion(channel, guildId);
+      this.checkDeletion(channelLeft, guildId);
     }
   }
 
@@ -84,7 +135,7 @@ public class QueueHandler implements GuidoEventHandler {
    *
    * @param info the information of the data to leave all queues
    */
-  public void leaveQueue(@NotNull LinkableInfo info) {
+  public void leaveQueue(@NonNull LinkableInfo info) {
     for (Queue queue : this.getQueues(info)) {
       queue.leave(info);
     }
@@ -96,7 +147,7 @@ public class QueueHandler implements GuidoEventHandler {
    * @param channel the channel which is being checked whether to delete it
    * @param guildId the id of the guild
    */
-  private void checkDeletion(@NotNull VoiceChannel channel, long guildId) {
+  private void checkDeletion(@NonNull VoiceChannel channel, long guildId) {
     List<Member> members = channel.getMembers();
     if (members.isEmpty()) {
       this.waitingChannels.remove(guildId);
@@ -110,7 +161,7 @@ public class QueueHandler implements GuidoEventHandler {
    * @param guild the guild waiting for a channel
    * @return the channel
    */
-  @NotNull
+  @NonNull
   private VoiceChannel getWaitingChannel(BotGuild guild) {
     long id =
         this.waitingChannels.computeIfAbsent(
@@ -148,10 +199,10 @@ public class QueueHandler implements GuidoEventHandler {
    * @param guild the guild to get the queue from
    * @param ladder the ladder that needs the queue
    * @return the queue if exists else a new one will be created from {@link
-   *     Ladder#createQueue(GuildData)}
+   *     Ladder#createQueue(GuildData)})}
    */
-  @NotNull
-  public Queue getQueue(@NotNull BotGuild guild, @NotNull Ladder ladder) {
+  @NonNull
+  public Queue getQueue(@NonNull BotGuild guild, @NonNull Ladder ladder) {
     Set<Queue> queues = this.getQueues(guild.getId());
     for (Queue queue : queues) {
       if (queue.getLadderName().equalsIgnoreCase(ladder.getName())) {
@@ -172,7 +223,7 @@ public class QueueHandler implements GuidoEventHandler {
    * @return whether the member joined the queue
    */
   public boolean joinQueue(
-      @NotNull BotGuild guild, @NotNull Member member, @NotNull Ladder ladder) {
+      @NonNull BotGuild guild, @NonNull Member member, @NonNull Ladder ladder) {
     Queue queue = this.getQueue(guild, ladder);
     if (queue.join(
         Guido.getDataLoader().getMemberData(member.getIdLong(), guild.getId()).getInfo())) {
@@ -188,21 +239,12 @@ public class QueueHandler implements GuidoEventHandler {
    * @param info the information of a link
    * @return the collection of queues where the link is waiting
    */
-  public Collection<Queue> getQueues(@NotNull LinkableInfo info) {
+  public Collection<Queue> getQueues(@NonNull LinkableInfo info) {
     Set<Queue> queues = new HashSet<>();
     for (Queue queue : this.queues) {
       if (queue.isWaiting(info)) {
         queues.add(queue);
       }
-    }
-    return queues;
-  }
-
-  public Collection<Queue> getQueues(@NotNull UserData data) {
-    Set<Queue> queues = new HashSet<>();
-    Collection<Linkable> links = Guido.getDataLoader().getLinks(data);
-    for (Linkable link : links) {
-      queues.addAll(this.getQueues(link.getInfo()));
     }
     return queues;
   }
@@ -216,7 +258,7 @@ public class QueueHandler implements GuidoEventHandler {
    * @return true if the member is waiting in the queue
    */
   public boolean isWaiting(
-      @NotNull BotGuild guild, @NotNull Member member, @NotNull Ladder ladder) {
+      @NonNull BotGuild guild, @NonNull Member member, @NonNull Ladder ladder) {
     BotLinkable memberData = Guido.getDataLoader().getMemberData(member.getIdLong(), guild.getId());
     Queue queue = this.getQueue(guild, ladder);
     for (Linkable link : memberData.getLinks()) {

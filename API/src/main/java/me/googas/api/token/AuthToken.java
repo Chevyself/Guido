@@ -1,9 +1,8 @@
 package me.googas.api.token;
 
+import lombok.NonNull;
 import me.googas.api.user.UserData;
 import me.googas.commons.cache.Catchable;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 /** Token used by clients to authenticate */
 public interface AuthToken extends Catchable {
@@ -13,7 +12,7 @@ public interface AuthToken extends Catchable {
    *
    * @return the token
    */
-  @NotNull
+  @NonNull
   String getToken();
 
   /**
@@ -21,7 +20,7 @@ public interface AuthToken extends Catchable {
    *
    * @return the id of the user that created the token
    */
-  @NotNull
+  @NonNull
   String getUserId();
 
   /**
@@ -29,7 +28,6 @@ public interface AuthToken extends Catchable {
    *
    * @return the user that created the token
    */
-  @Nullable
   UserData getUser();
 
   /**
@@ -37,6 +35,6 @@ public interface AuthToken extends Catchable {
    *
    * @return the level of authentication
    */
-  @NotNull
+  @NonNull
   AuthLevel getLevel();
 }

@@ -4,10 +4,10 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
+import lombok.NonNull;
 import me.googas.api.matches.Team;
 import me.googas.api.matches.TeamMember;
 import me.googas.commons.builder.ToStringBuilder;
-import org.jetbrains.annotations.NotNull;
 
 /** An implementation for teams */
 public class SimpleTeam implements Team {
@@ -15,10 +15,10 @@ public class SimpleTeam implements Team {
   /** The id of the team */
   private final int id;
   /** The name of the team */
-  @NotNull private final String name;
+  @NonNull private final String name;
 
   /** The members of the team */
-  @NotNull private final Set<TeamMember> members;
+  @NonNull private final Set<TeamMember> members;
 
   /**
    * Create the team
@@ -27,7 +27,7 @@ public class SimpleTeam implements Team {
    * @param name the name of the team
    * @param members the members of the team
    */
-  public SimpleTeam(int id, @NotNull String name, @NotNull Set<TeamMember> members) {
+  public SimpleTeam(int id, @NonNull String name, @NonNull Set<TeamMember> members) {
     this.id = id;
     this.name = name;
     this.members = members;
@@ -44,22 +44,22 @@ public class SimpleTeam implements Team {
   }
 
   @Override
-  public @NotNull Collection<TeamMember> getMembers() {
+  public @NonNull Collection<TeamMember> getMembers() {
     return this.members;
   }
 
   @Override
-  public @NotNull String getName() {
+  public @NonNull String getName() {
     return this.name;
   }
 
   @Override
-  public boolean add(@NotNull TeamMember member) {
+  public boolean add(@NonNull TeamMember member) {
     return false;
   }
 
   @Override
-  public boolean remove(@NotNull TeamMember member) {
+  public boolean remove(@NonNull TeamMember member) {
     return false;
   }
 

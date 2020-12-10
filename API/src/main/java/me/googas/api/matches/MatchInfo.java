@@ -1,7 +1,6 @@
 package me.googas.api.matches;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import lombok.NonNull;
 
 /** This object represents the information of a match */
 public interface MatchInfo {
@@ -11,7 +10,7 @@ public interface MatchInfo {
    *
    * @return the unique id of the match
    */
-  @NotNull
+  @NonNull
   String getId();
 
   /**
@@ -26,6 +25,5 @@ public interface MatchInfo {
    *
    * @return the match if found null otherwise
    */
-  @Nullable
   Match getMatch();
 }

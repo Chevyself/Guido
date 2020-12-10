@@ -2,7 +2,7 @@ package me.googas.bot.core.commands.providers;
 
 import com.starfishst.jda.messages.MessagesProvider;
 import com.starfishst.jda.providers.registry.JdaProvidersRegistry;
-import org.jetbrains.annotations.NotNull;
+import lombok.NonNull;
 
 /** The providers registry for guido */
 public class GuidoProvidersRegistry extends JdaProvidersRegistry {
@@ -12,7 +12,7 @@ public class GuidoProvidersRegistry extends JdaProvidersRegistry {
    *
    * @param messages the messages provider for default providers
    */
-  public GuidoProvidersRegistry(@NotNull MessagesProvider messages) {
+  public GuidoProvidersRegistry(@NonNull MessagesProvider messages) {
     super(messages);
     this.addProvider(new AuthLevelProvider());
     this.addProvider(new GuildDataProvider());

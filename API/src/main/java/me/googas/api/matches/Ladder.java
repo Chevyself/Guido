@@ -1,8 +1,8 @@
 package me.googas.api.matches;
 
+import lombok.NonNull;
 import me.googas.api.discord.GuildData;
 import me.googas.api.utility.ValuesMap;
-import org.jetbrains.annotations.NotNull;
 
 /** A ladder is a ranked system that users may use to climb */
 public interface Ladder {
@@ -34,15 +34,15 @@ public interface Ladder {
    * @param guild the guild that the queue is being created to
    * @return the created queue
    */
-  @NotNull
-  Queue createQueue(@NotNull GuildData guild);
+  @NonNull
+  Queue createQueue(@NonNull GuildData guild);
 
   /**
    * Get the name of the ladder
    *
    * @return the name of the ladder
    */
-  @NotNull
+  @NonNull
   String getName();
 
   /**
@@ -50,6 +50,6 @@ public interface Ladder {
    *
    * @return the options in a map
    */
-  @NotNull
+  @NonNull
   ValuesMap getOptions();
 }

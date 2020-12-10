@@ -169,8 +169,7 @@ public class MatchReceptors {
   @Receptor("server-ready")
   public boolean ready(JsonMessenger messenger) {
     if (messenger instanceof JsonClientThread) {
-      MatchMakingHandler handler = Guido.getHandler(MatchMakingHandler.class);
-      // TODO
+      Guido.getHandler(MatchMakingHandler.class).serverReady();
       return true;
     }
     return false;

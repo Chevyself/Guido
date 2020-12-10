@@ -2,11 +2,11 @@ package me.googas.bot.core.handlers.responsive.lang;
 
 import com.starfishst.jda.utils.responsive.ReactionResponse;
 import com.starfishst.jda.utils.responsive.ResponsiveMessage;
+import lombok.NonNull;
 import me.googas.bot.api.types.BotLinkable;
 import me.googas.bot.core.Guido;
 import me.googas.bot.core.handlers.responsive.GuidoMessagesController;
 import net.dv8tion.jda.api.events.message.react.MessageReactionAddEvent;
-import org.jetbrains.annotations.NotNull;
 
 /** The response to change the language from an user */
 public class LangChangeReactionResponse implements ReactionResponse {
@@ -15,7 +15,7 @@ public class LangChangeReactionResponse implements ReactionResponse {
   private final long userId;
 
   /** The unicode to use. This will also be used to get the language */
-  @NotNull private final String unicode;
+  @NonNull private final String unicode;
 
   /**
    * Create the reaction response
@@ -23,7 +23,7 @@ public class LangChangeReactionResponse implements ReactionResponse {
    * @param userId the id of the user to change
    * @param unicode the unicode to use. Also used to get the language
    */
-  public LangChangeReactionResponse(long userId, @NotNull String unicode) {
+  public LangChangeReactionResponse(long userId, @NonNull String unicode) {
     this.userId = userId;
     this.unicode = unicode;
   }
@@ -34,7 +34,7 @@ public class LangChangeReactionResponse implements ReactionResponse {
   }
 
   @Override
-  public void onReaction(@NotNull MessageReactionAddEvent event) {
+  public void onReaction(@NonNull MessageReactionAddEvent event) {
     if (event.getUserIdLong() == this.userId) {
       String lang = Guido.getLanguageHandler().getFileFromUnicode(this.unicode).getLang();
       BotLinkable userData = Guido.getDataLoader().getDiscordUserData(event.getUserIdLong());
@@ -53,7 +53,7 @@ public class LangChangeReactionResponse implements ReactionResponse {
   }
 
   @Override
-  public @NotNull String getUnicode() {
+  public @NonNull String getUnicode() {
     return this.unicode;
   }
 }

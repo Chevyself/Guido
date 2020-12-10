@@ -2,10 +2,10 @@ package com.starfishst.bungee.api.events;
 
 import com.starfishst.bungee.api.Guido;
 import com.starfishst.bungee.api.configuration.GuidoListenerSettings;
+import lombok.NonNull;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.api.plugin.Plugin;
-import org.jetbrains.annotations.NotNull;
 
 /** Listens for bungee events */
 public interface GuidoListener extends Listener {
@@ -15,7 +15,7 @@ public interface GuidoListener extends Listener {
    *
    * @param plugin the plugin to register the listener to
    */
-  default void register(@NotNull Plugin plugin) {
+  default void register(@NonNull Plugin plugin) {
     plugin.getProxy().getPluginManager().registerListener(plugin, this);
   }
 
@@ -33,7 +33,7 @@ public interface GuidoListener extends Listener {
    *
    * @return the name of the listener
    */
-  @NotNull
+  @NonNull
   String getName();
 
   /**
@@ -41,7 +41,7 @@ public interface GuidoListener extends Listener {
    *
    * @return the settings of this listener
    */
-  @NotNull
+  @NonNull
   default GuidoListenerSettings getSettings() {
     return Guido.getConfiguration().getListenerSettings(this);
   }

@@ -4,6 +4,7 @@ import com.starfishst.bungee.api.Guido;
 import com.starfishst.bungee.api.configuration.GuidoServer;
 import com.starfishst.bungee.api.events.GuidoListener;
 import com.starfishst.bungee.core.lang.BungeeLocaleFile;
+import com.starfishst.bungee.core.listeners.JoinListener;
 import com.starfishst.bungee.utils.BungeeUtils;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -13,6 +14,7 @@ import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
+import lombok.NonNull;
 import me.googas.api.client.data.SimpleLinkableInfo;
 import me.googas.api.client.data.SimpleValuesMap;
 import me.googas.api.links.LinkableType;
@@ -26,14 +28,12 @@ import net.md_5.bungee.api.config.ServerInfo;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.event.PlayerDisconnectEvent;
 import net.md_5.bungee.event.EventHandler;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 /** Receptors made for bungee */
 public class BungeeReceptors implements GuidoListener {
 
   /** The uuids of the player in queue */
-  @NotNull private final Set<UUID> inQueue = new HashSet<>();
+  @NonNull private final Set<UUID> inQueue = new HashSet<>();
 
   /**
    * Check whether the player with the given id is online the server
@@ -48,7 +48,8 @@ public class BungeeReceptors implements GuidoListener {
         return true;
       }
     }
-    return false;
+    JoinListener listener = Guido.getListener(JoinListener.class);
+    return listener.isJoining(uuid);
   }
 
   /**
@@ -72,7 +73,7 @@ public class BungeeReceptors implements GuidoListener {
    */
   @Receptor("send-message")
   public boolean sendMessage(
-      @ParamName("uuid") UUID uuid, @ParamName("message") @NotNull String message) {
+      @ParamName("uuid") UUID uuid, @ParamName("message") @NonNull String message) {
     ProxiedPlayer player = ProxyServer.getInstance().getPlayer(uuid);
     if (player != null) {
       player.sendMessage(BungeeUtils.getComponent(message));
@@ -210,8 +211,7 @@ public class BungeeReceptors implements GuidoListener {
    * @param ip the ip to get the server from
    * @return the server if the ip matches one else null
    */
-  @Nullable
-  private ServerInfo getServer(@NotNull String ip) {
+  private ServerInfo getServer(@NonNull String ip) {
     for (GuidoServer server : Guido.getConfiguration().getServers()) {
       Guido.getLogger().info(ip);
       if (server.getAddress().equalsIgnoreCase(ip)) {
@@ -255,7 +255,7 @@ public class BungeeReceptors implements GuidoListener {
   public void onUnload() {}
 
   @Override
-  public @NotNull String getName() {
+  public @NonNull String getName() {
     return "receptors";
   }
 }

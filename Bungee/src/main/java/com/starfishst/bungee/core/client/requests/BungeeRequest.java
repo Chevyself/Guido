@@ -3,12 +3,11 @@ package com.starfishst.bungee.core.client.requests;
 import com.starfishst.bungee.api.Guido;
 import java.util.Map;
 import java.util.function.Consumer;
+import lombok.NonNull;
 import me.googas.commons.maps.MapBuilder;
 import me.googas.messaging.Request;
 import me.googas.messaging.api.MessengerListenFailException;
 import me.googas.messaging.json.client.JsonClient;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 /**
  * An extension for requests in bungee
@@ -25,7 +24,7 @@ public class BungeeRequest<T> extends Request<T> {
    * @param parameters the method to get the receptor
    */
   public BungeeRequest(
-      @NotNull Class<T> clazz, @NotNull String method, @NotNull MapBuilder<String, ?> parameters) {
+      @NonNull Class<T> clazz, @NonNull String method, @NonNull MapBuilder<String, ?> parameters) {
     super(clazz, method, parameters.build());
   }
 
@@ -37,7 +36,7 @@ public class BungeeRequest<T> extends Request<T> {
    * @param parameters the method to get the receptor
    */
   public BungeeRequest(
-      @NotNull Class<T> clazz, @NotNull String method, @NotNull Map<String, ?> parameters) {
+      @NonNull Class<T> clazz, @NonNull String method, @NonNull Map<String, ?> parameters) {
     super(clazz, method, parameters);
   }
 
@@ -47,7 +46,7 @@ public class BungeeRequest<T> extends Request<T> {
    * @param clazz the class that is being requested
    * @param method the id of the request
    */
-  public BungeeRequest(@NotNull Class<T> clazz, @NotNull String method) {
+  public BungeeRequest(@NonNull Class<T> clazz, @NonNull String method) {
     super(clazz, method);
   }
 
@@ -57,7 +56,7 @@ public class BungeeRequest<T> extends Request<T> {
    * @param consumer the consumer for the given object
    * @param exception the consumer for the exception in case there's one
    */
-  public void send(@NotNull Consumer<T> consumer, @Nullable Consumer<Throwable> exception) {
+  public void send(@NonNull Consumer<T> consumer, Consumer<Throwable> exception) {
     JsonClient connection = Guido.getClient().getConnection();
     if (connection != null) {
       if (exception != null) {
@@ -73,7 +72,7 @@ public class BungeeRequest<T> extends Request<T> {
    *
    * @param consumer the consumer for the given object
    */
-  public void send(@NotNull Consumer<T> consumer) {
+  public void send(@NonNull Consumer<T> consumer) {
     this.send(consumer, null);
   }
 

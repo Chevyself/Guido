@@ -13,15 +13,15 @@ import java.lang.ref.SoftReference;
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;
+import lombok.NonNull;
 import me.googas.bot.core.Guido;
 import me.googas.commons.cache.Catchable;
-import org.jetbrains.annotations.NotNull;
 
 /** Commands made for the developer */
 public class DeveloperCommands {
 
   /** The script engine to use */
-  @NotNull private final ScriptEngine engine;
+  @NonNull private final ScriptEngine engine;
 
   /** Create the developer commands */
   public DeveloperCommands() {

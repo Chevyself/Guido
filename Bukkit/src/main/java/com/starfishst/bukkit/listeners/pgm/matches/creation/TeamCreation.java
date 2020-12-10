@@ -2,7 +2,7 @@ package com.starfishst.bukkit.listeners.pgm.matches.creation;
 
 import com.starfishst.bukkit.listeners.pgm.matches.HostedMatch;
 import com.starfishst.bukkit.listeners.pgm.matches.PGMMatchMakingListener;
-import org.jetbrains.annotations.NotNull;
+import lombok.NonNull;
 import tc.oc.pgm.api.match.Match;
 
 /** Helps {@link PGMMatchMakingListener} creating teams */
@@ -16,9 +16,9 @@ public interface TeamCreation {
    * @param match the match waiting for the teams
    */
   void createTeams(
-      @NotNull PGMMatchMakingListener listener,
-      @NotNull HostedMatch hostedMatch,
-      @NotNull Match match);
+      @NonNull PGMMatchMakingListener listener,
+      @NonNull HostedMatch hostedMatch,
+      @NonNull Match match);
 
   /** Clears the team creator */
   void clear();

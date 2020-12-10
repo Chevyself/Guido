@@ -8,9 +8,9 @@ import com.starfishst.bukkit.listeners.GroupListener;
 import com.starfishst.bukkit.result.Result;
 import com.starfishst.core.annotations.settings.Setting;
 import com.starfishst.core.annotations.settings.Settings;
+import lombok.NonNull;
 import me.googas.commons.maps.Maps;
 import org.bukkit.command.CommandSender;
-import org.jetbrains.annotations.NotNull;
 
 /** Commands for configuration */
 public class ConfigurationCommands implements GuidoCommand {
@@ -51,7 +51,7 @@ public class ConfigurationCommands implements GuidoCommand {
    * @return the name of the command
    */
   @Override
-  public @NotNull String getName() {
+  public @NonNull String getName() {
     return "configuration";
   }
 

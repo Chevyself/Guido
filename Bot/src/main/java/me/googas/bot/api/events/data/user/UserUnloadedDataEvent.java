@@ -1,7 +1,7 @@
 package me.googas.bot.api.events.data.user;
 
+import lombok.NonNull;
 import me.googas.api.user.UserData;
-import org.jetbrains.annotations.NotNull;
 
 /** Called when the user data gets unloaded */
 public class UserUnloadedDataEvent extends UserDataEvent {
@@ -10,7 +10,7 @@ public class UserUnloadedDataEvent extends UserDataEvent {
    *
    * @param data the user data involved in the event
    */
-  public UserUnloadedDataEvent(@NotNull UserData data) {
+  public UserUnloadedDataEvent(@NonNull UserData data) {
     super(data);
   }
 }

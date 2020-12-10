@@ -1,22 +1,22 @@
 package me.googas.bot.api.events.data.permissible;
 
+import lombok.NonNull;
 import me.googas.api.permissions.Permissible;
 import me.googas.bot.api.events.GuidoEvent;
 import me.googas.bot.api.types.BotPermissible;
-import org.jetbrains.annotations.NotNull;
 
 /** An event that involves a {@link Permissible} */
 public class PermissibleEvent implements GuidoEvent {
 
   /** The permissible involved in the event */
-  @NotNull private final BotPermissible permissible;
+  @NonNull private final BotPermissible permissible;
 
   /**
    * Create the event
    *
    * @param permissible the permissible involved in the event
    */
-  public PermissibleEvent(@NotNull BotPermissible permissible) {
+  public PermissibleEvent(@NonNull BotPermissible permissible) {
     this.permissible = permissible;
   }
 
@@ -25,7 +25,7 @@ public class PermissibleEvent implements GuidoEvent {
    *
    * @return the permissible
    */
-  @NotNull
+  @NonNull
   public BotPermissible getPermissible() {
     return this.permissible;
   }

@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import lombok.NonNull;
 import me.googas.api.lang.LocaleFile;
 import me.googas.api.matches.Ladder;
 import me.googas.bot.api.types.BotGuild;
@@ -21,8 +22,6 @@ import me.googas.commons.Pagination;
 import me.googas.commons.Strings;
 import me.googas.commons.maps.MapBuilder;
 import me.googas.commons.maps.Maps;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 /** Commands for ladders */
 public class LadderCommands {
@@ -172,6 +171,26 @@ public class LadderCommands {
   }
 
   /**
+   * @see #setValue(LocaleFile, Ladder, String, Object). This sets double values
+   * @param locale the locale of the command sender
+   * @param ladder the ladder to edit
+   * @param key the key of the new value
+   * @param value the new value
+   * @return whether the value was set
+   */
+  @Command(
+      aliases = "double",
+      description = "ladder.edit.double",
+      permission = @Perm(node = "guido.ladders.edit"))
+  public Result integer(
+      LocaleFile locale,
+      @Required(name = "ladder.edit.ladder", description = "ladder.edit.ladder.desc") Ladder ladder,
+      @Optional(name = "ladder.edit.key", description = "ladder.edit.key.desc") String key,
+      @Required(name = "ladder.edit.value", description = "ladder.edit.value.desc") double value) {
+    return this.setValue(locale, ladder, key, value);
+  }
+
+  /**
    * Set the value of an option in a ladder
    *
    * @param locale the locale of the command sender
@@ -181,10 +200,7 @@ public class LadderCommands {
    * @return whether the value was set
    */
   private Result setValue(
-      @NotNull LocaleFile locale,
-      @NotNull Ladder ladder,
-      @NotNull String key,
-      @Nullable Object value) {
+      @NonNull LocaleFile locale, @NonNull Ladder ladder, @NonNull String key, Object value) {
     if (value == null && ladder.getOptions().getMap().containsKey(key)) {
       ladder.getOptions().remove(key);
     } else if (value != null) {

@@ -3,6 +3,7 @@ package com.starfishst.bukkit.listeners;
 import com.starfishst.bukkit.api.events.GuidoListener;
 import com.starfishst.bukkit.utils.BukkitUtils;
 import java.util.List;
+import lombok.NonNull;
 import me.googas.commons.Strings;
 import me.googas.commons.maps.Maps;
 import org.bukkit.Bukkit;
@@ -10,7 +11,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
-import org.jetbrains.annotations.NotNull;
 
 /** Listens for the commands that are being executed by other players */
 public class CommandExecutionListener implements GuidoListener {
@@ -49,7 +49,7 @@ public class CommandExecutionListener implements GuidoListener {
    * @param commandName the name of the command to check if it is banned
    * @return if the name of the command is contained inside {@link #getBanned()} it will return true
    */
-  public boolean isBanned(@NotNull String commandName) {
+  public boolean isBanned(@NonNull String commandName) {
     for (String bannedName : this.getBanned()) {
       if (bannedName.equalsIgnoreCase(commandName)) {
         return true;
@@ -64,13 +64,13 @@ public class CommandExecutionListener implements GuidoListener {
    *
    * @return the list of banned commands
    */
-  @NotNull
+  @NonNull
   public List<String> getBanned() {
     return this.getSettings().getListValue("banned");
   }
 
   @Override
-  public @NotNull String getName() {
+  public @NonNull String getName() {
     return "command-execution";
   }
 

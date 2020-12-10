@@ -6,8 +6,11 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
+import lombok.NonNull;
 import me.googas.api.client.data.SimpleLinkableInfo;
 import me.googas.api.client.data.SimplePermissionStack;
 import me.googas.api.client.data.SimpleValuesMap;
@@ -21,8 +24,8 @@ import me.googas.messaging.Request;
 import me.googas.messaging.json.client.JsonClient;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.event.PostLoginEvent;
+import net.md_5.bungee.api.event.PreLoginEvent;
 import net.md_5.bungee.event.EventHandler;
-import org.jetbrains.annotations.NotNull;
 
 /**
  * Listens for the joining users to give them
@@ -30,6 +33,17 @@ import org.jetbrains.annotations.NotNull;
  * <p>TODO needs refactoring
  */
 public class JoinListener implements GuidoListener {
+
+  @NonNull private final Set<UUID> joining = new HashSet<>();
+
+  /**
+   * Add them to the set of players pre login
+   *
+   * @param event the event of a player pre login
+   */
+  public void onPreJoinEvent(PreLoginEvent event) {
+    this.joining.add(event.getConnection().getUniqueId());
+  }
 
   /**
    * Listens for players joining the game and requests the member to be used in the implementation
@@ -119,13 +133,24 @@ public class JoinListener implements GuidoListener {
     } catch (IOException e) {
       e.printStackTrace();
     }
+    this.joining.remove(event.getPlayer().getUniqueId());
+  }
+
+  /**
+   * Check whether a player is joining a server
+   *
+   * @param uuid the uuid of the player
+   * @return true if the player is joining
+   */
+  public boolean isJoining(@NonNull UUID uuid) {
+    return this.joining.contains(uuid);
   }
 
   @Override
   public void onUnload() {}
 
   @Override
-  public @NotNull String getName() {
+  public @NonNull String getName() {
     return "join";
   }
 }

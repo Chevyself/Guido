@@ -6,23 +6,23 @@ import com.comphenix.protocol.events.PacketEvent;
 import com.starfishst.bukkit.api.events.GuidoPacketListener;
 import java.util.HashMap;
 import java.util.UUID;
+import lombok.NonNull;
 import me.googas.commons.Lots;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
-import org.jetbrains.annotations.NotNull;
 
 /** Tracks the ticks for players */
 public abstract class TicksTracker extends PacketAdapter implements GuidoPacketListener {
 
   /** The amount of ticks that have been sent from the player */
-  @NotNull private final HashMap<UUID, Integer> ticks = new HashMap<>();
+  @NonNull private final HashMap<UUID, Integer> ticks = new HashMap<>();
 
   /**
    * Create the ticks tracker
    *
    * @param plugin the plugin that requires track ticks
    */
-  public TicksTracker(@NotNull Plugin plugin) {
+  public TicksTracker(@NonNull Plugin plugin) {
     super(
         plugin,
         Lots.list(
@@ -38,7 +38,7 @@ public abstract class TicksTracker extends PacketAdapter implements GuidoPacketL
    * @param uniqueId the unique id to increase the ticks to
    * @param amount the amount of ticks to increase
    */
-  public void increase(@NotNull UUID uniqueId, int amount) {
+  public void increase(@NonNull UUID uniqueId, int amount) {
     this.ticks.put(uniqueId, this.ticks.getOrDefault(uniqueId, 0) + amount);
   }
 
@@ -48,7 +48,7 @@ public abstract class TicksTracker extends PacketAdapter implements GuidoPacketL
    * @param player the player which got its ticks increased
    * @param amount the amount of ticks that got increased
    */
-  abstract void onIncrease(@NotNull Player player, int amount);
+  abstract void onIncrease(@NonNull Player player, int amount);
 
   /**
    * Increase the ticks that were sent by the player for certain amount. This will get the UUID of
@@ -57,7 +57,7 @@ public abstract class TicksTracker extends PacketAdapter implements GuidoPacketL
    * @param player the player to get the unique id and increase the ticks to
    * @param amount the amount of ticks to increase
    */
-  public void increase(@NotNull Player player, int amount) {
+  public void increase(@NonNull Player player, int amount) {
     this.onIncrease(player, amount);
     this.increase(player.getUniqueId(), amount);
   }
@@ -67,7 +67,7 @@ public abstract class TicksTracker extends PacketAdapter implements GuidoPacketL
    *
    * @param uniqueId the uuid to set the ticks sent to 0
    */
-  public void clear(@NotNull UUID uniqueId) {
+  public void clear(@NonNull UUID uniqueId) {
     this.ticks.put(uniqueId, 0);
   }
 
@@ -78,7 +78,7 @@ public abstract class TicksTracker extends PacketAdapter implements GuidoPacketL
    * @param clear whether to clear the amount of ticks sent
    * @return the amount of ticks sent with that unique id
    */
-  public int getTicks(@NotNull UUID uniqueId, boolean clear) {
+  public int getTicks(@NonNull UUID uniqueId, boolean clear) {
     int ticks = this.ticks.getOrDefault(uniqueId, 0);
     if (clear) {
       this.clear(uniqueId);
@@ -92,7 +92,7 @@ public abstract class TicksTracker extends PacketAdapter implements GuidoPacketL
    * @param uniqueId the unique id to get the ticks from
    * @return the amount of ticks sent with that unique id
    */
-  public int getTicks(@NotNull UUID uniqueId) {
+  public int getTicks(@NonNull UUID uniqueId) {
     return this.getTicks(uniqueId, false);
   }
 
@@ -107,7 +107,7 @@ public abstract class TicksTracker extends PacketAdapter implements GuidoPacketL
   }
 
   @Override
-  public @NotNull String getName() {
+  public @NonNull String getName() {
     return "tick-tracker";
   }
 }

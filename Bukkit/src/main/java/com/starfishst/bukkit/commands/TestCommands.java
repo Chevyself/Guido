@@ -4,7 +4,7 @@ import com.starfishst.bukkit.annotations.Command;
 import com.starfishst.bukkit.api.commands.GuidoCommand;
 import com.starfishst.bukkit.result.Result;
 import java.util.Iterator;
-import org.jetbrains.annotations.NotNull;
+import lombok.NonNull;
 import tc.oc.pgm.api.PGM;
 import tc.oc.pgm.api.match.Match;
 
@@ -24,7 +24,7 @@ public class TestCommands implements GuidoCommand {
   public void setEnabled(boolean bol) {}
 
   @Override
-  public @NotNull String getName() {
+  public @NonNull String getName() {
     return "test-commands";
   }
 
