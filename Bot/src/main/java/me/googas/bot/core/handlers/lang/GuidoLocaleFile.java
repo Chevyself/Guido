@@ -8,9 +8,9 @@ import java.io.Reader;
 import java.util.Properties;
 import lombok.NonNull;
 import me.googas.api.lang.LocaleFile;
+import me.googas.bot.core.Guido;
 import me.googas.commons.CoreFiles;
 import me.googas.commons.Validate;
-import me.googas.commons.fallback.Fallback;
 
 /** The locale file for the guido bot. It is loaded using {@link java.util.Properties} */
 public class GuidoLocaleFile implements LocaleFile {
@@ -45,8 +45,8 @@ public class GuidoLocaleFile implements LocaleFile {
         }
       }
     } catch (IOException e) {
-      Fallback.addError("IOException: The defaults for " + this + " could not be saved");
-      e.printStackTrace();
+      Guido.getFallback()
+          .process(e, "IOException: The defaults for " + this + " could not be saved");
     }
   }
 
@@ -71,18 +71,12 @@ public class GuidoLocaleFile implements LocaleFile {
       this.properties.store(writer, "No comments");
       writer.close();
     } catch (IOException e) {
-      Fallback.addError("IOException: Lang file from " + this + " could not be saved");
-      e.printStackTrace();
+      Guido.getFallback().process(e, "IOException: Lang file from " + this + " could not be saved");
     }
   }
 
   @Override
   public String getRaw(@NonNull String path) {
     return this.properties.getProperty(path);
-  }
-
-  @Override
-  public String toString() {
-    return "GuidoLocaleFile{" + "file=" + this.file + "}";
   }
 }

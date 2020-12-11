@@ -11,6 +11,7 @@ import me.googas.api.matches.Ladder;
 import me.googas.api.matches.Match;
 import me.googas.api.matches.MatchInfo;
 import me.googas.api.matches.MatchStatus;
+import me.googas.api.matches.TeamData;
 import me.googas.api.permissions.Group;
 import me.googas.api.permissions.GroupInfo;
 import me.googas.api.token.AuthToken;
@@ -131,11 +132,7 @@ public interface DataLoader {
   @NonNull
   default String nextUserId() {
     String id = RandomUtils.nextString(6);
-    UserData user = this.getUserData(id);
-    while (user != null) {
-      id = RandomUtils.nextString(6);
-      user = this.getUserData(id);
-    }
+    if (this.getUserData(id) != null) return this.nextUserId();
     return id;
   }
 
@@ -147,11 +144,7 @@ public interface DataLoader {
   @NonNull
   default String nextMatchId() {
     String id = RandomUtils.nextString(16);
-    Match user = this.getMatch(id);
-    while (user != null) {
-      id = RandomUtils.nextString(16);
-      user = this.getMatch(id);
-    }
+    if (this.getMatch(id) != null) return this.nextMatchId();
     return id;
   }
 
@@ -163,11 +156,19 @@ public interface DataLoader {
   @NonNull
   default String nextGroupId() {
     String id = RandomUtils.nextString(6);
-    Group group = this.getGroup(id);
-    while (group != null) {
-      id = RandomUtils.nextString(6);
-      group = this.getGroup(id);
-    }
+    if (this.getGroup(id) != null) return this.nextGroupId();
+    return id;
+  }
+
+  /**
+   * Get a new id fr a team
+   *
+   * @return the new id fr the team
+   */
+  @NonNull
+  default String nextTeamId() {
+    String id = RandomUtils.nextString(6);
+    if (this.getTeam(id) != null) return this.nextTeamId();
     return id;
   }
 
@@ -254,4 +255,20 @@ public interface DataLoader {
    */
   @NonNull
   Collection<Group> getGroups();
+
+  /**
+   * Get a team by its id
+   *
+   * @param id the id of the team
+   * @return the team if found else null
+   */
+  TeamData getTeam(@NonNull String id);
+
+  /**
+   * Get a team by its name
+   *
+   * @param name the name of the team
+   * @return the team if found else null
+   */
+  TeamData getTeamByName(@NonNull String name);
 }

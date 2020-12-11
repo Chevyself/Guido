@@ -34,7 +34,7 @@ public class LangChangeReactionResponse implements ReactionResponse {
   }
 
   @Override
-  public void onReaction(@NonNull MessageReactionAddEvent event) {
+  public boolean onReaction(@NonNull MessageReactionAddEvent event) {
     if (event.getUserIdLong() == this.userId) {
       String lang = Guido.getLanguageHandler().getFileFromUnicode(this.unicode).getLang();
       BotLinkable userData = Guido.getDataLoader().getDiscordUserData(event.getUserIdLong());
@@ -50,6 +50,7 @@ public class LangChangeReactionResponse implements ReactionResponse {
         }
       }
     }
+    return true;
   }
 
   @Override

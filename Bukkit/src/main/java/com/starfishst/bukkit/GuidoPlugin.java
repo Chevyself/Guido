@@ -36,7 +36,6 @@ import java.util.Set;
 import lombok.NonNull;
 import me.googas.api.client.Client;
 import me.googas.commons.Lots;
-import me.googas.commons.fallback.Fallback;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -125,7 +124,6 @@ public class GuidoPlugin extends JavaPlugin {
       configuration.save(file);
       this.configuration = new GuidoConfiguration(configuration);
     } catch (IOException | InvalidConfigurationException e) {
-      Fallback.addError("IOException: guidoConfiguration could not be loaded");
       e.printStackTrace();
     }
   }
@@ -163,7 +161,6 @@ public class GuidoPlugin extends JavaPlugin {
     try {
       this.getClient().startConnection();
     } catch (IOException e) {
-      Fallback.addError("Server could not be connected");
       e.printStackTrace();
     }
   }

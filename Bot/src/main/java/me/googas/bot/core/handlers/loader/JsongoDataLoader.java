@@ -33,6 +33,7 @@ import me.googas.api.matches.Match;
 import me.googas.api.matches.MatchInfo;
 import me.googas.api.matches.MatchStatus;
 import me.googas.api.matches.Team;
+import me.googas.api.matches.TeamData;
 import me.googas.api.matches.TeamMember;
 import me.googas.api.permissions.Group;
 import me.googas.api.permissions.GroupInfo;
@@ -60,6 +61,7 @@ import me.googas.bot.api.events.data.role.BotRoleUnloadedEvent;
 import me.googas.bot.api.events.data.token.AuthTokenUnloadedEvent;
 import me.googas.bot.api.events.data.user.UserUnloadedDataEvent;
 import me.googas.bot.api.events.match.MatchUnloadedEvent;
+import me.googas.bot.api.events.match.team.TeamDataUnloadedEvent;
 import me.googas.bot.api.loader.BotDataLoader;
 import me.googas.bot.api.types.BotCatchable;
 import me.googas.bot.api.types.BotGroup;
@@ -77,6 +79,7 @@ import me.googas.bot.core.types.GuidoLinkableInfo;
 import me.googas.bot.core.types.GuidoMatch;
 import me.googas.bot.core.types.GuidoMatchInfo;
 import me.googas.bot.core.types.GuidoRole;
+import me.googas.bot.core.types.GuidoTeamData;
 import me.googas.bot.core.types.GuidoUser;
 import me.googas.bot.core.types.maps.GuidoLinkedValuesMap;
 import me.googas.bot.core.types.maps.GuidoValuesMap;
@@ -138,6 +141,9 @@ public class JsongoDataLoader implements BotDataLoader {
   /** The collection containing matches */
   @NonNull private final MongoCollection<Document> groups;
 
+  /** The collection containing teams */
+  @NonNull private final MongoCollection<Document> teams;
+
   /**
    * Create the mongo data loader
    *
@@ -154,6 +160,7 @@ public class JsongoDataLoader implements BotDataLoader {
     this.tokens = database.getCollection("tokens");
     this.matches = database.getCollection("matches");
     this.groups = database.getCollection("groups");
+    this.teams = database.getCollection("teams");
   }
 
   /**
@@ -184,6 +191,11 @@ public class JsongoDataLoader implements BotDataLoader {
   @Listener(priority = ListenPriority.HIGHEST)
   public void onBotRoleUnloaded(@NonNull BotRoleUnloadedEvent event) {
     this.save(this.roles, new Document("id", event.getData().getId()), event.getData());
+  }
+
+  @Listener(priority = ListenPriority.HIGHEST)
+  public void onTeamDataUnloaded(@NonNull TeamDataUnloadedEvent event) {
+    this.save(this.teams, new Document("id", event.getData().getId()), event.getData());
   }
 
   /**
@@ -314,14 +326,12 @@ public class JsongoDataLoader implements BotDataLoader {
       log.append("\n Found first document=").append(first);
       T t = this.getObjectFromDocument(typeOfT, first);
       T catchable = Guido.getCache().get(typeOfT, tCatchable -> tCatchable.equals(t));
-      log.append("\n Was it already in cache? ").append(catchable != null).send();
       if (catchable != null) return catchable;
       if (t instanceof BotCatchable) {
         ((BotCatchable) t).cache();
       }
       return t;
     } else {
-      log.append("\n Document not found").send();
       return null;
     }
   }
@@ -706,10 +716,8 @@ public class JsongoDataLoader implements BotDataLoader {
     GuidoLogBuilder builder = new GuidoLogBuilder("Getting match with the id: " + id);
     GuidoMatch data = Guido.getCache().get(GuidoMatch.class, match -> match.getId().equals(id));
     if (data != null) {
-      builder.append("\n match was in cache...").send();
       return data;
     } else {
-      builder.append("\n looking for the match in documents").send();
       return this.getCatchableObjectFromQuery(
           GuidoMatch.class, this.matches, new Document("id", id));
     }
@@ -800,6 +808,27 @@ public class JsongoDataLoader implements BotDataLoader {
                 GuidoGroup.class, this.groups, new Document(), -1, -1, group -> true));
     groups.sort(Comparator.comparingInt(Group::getWeight));
     return groups;
+  }
+
+  @Override
+  public TeamData getTeam(@NonNull String id) {
+    return Guido.getCache()
+        .getOrSupply(
+            GuidoTeamData.class,
+            team -> team.getId().equals(id),
+            this.supplyObjectFromQuery(GuidoTeamData.class, this.teams, new Document("id", id)));
+  }
+
+  @Override
+  public TeamData getTeamByName(@NonNull String name) {
+    return Guido.getCache()
+        .getOrSupply(
+            GuidoTeamData.class,
+            team -> team.getName().equalsIgnoreCase(name),
+            this.supplyObjectFromQuery(
+                GuidoTeamData.class,
+                this.teams,
+                new Document("name", Pattern.compile(name, Pattern.CASE_INSENSITIVE))));
   }
 
   /**

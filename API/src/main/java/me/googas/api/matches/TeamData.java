@@ -1,11 +1,16 @@
 package me.googas.api.matches;
 
 import java.util.Collection;
+import java.util.Map;
 import lombok.NonNull;
 import me.googas.api.lang.Localized;
+import me.googas.api.links.Linkable;
 import me.googas.commons.cache.Catchable;
 
-/** Team data is a team which can be saved to the database. */
+/**
+ * Team data is a team which can be saved to the database. TODO this should be named Team and {@link
+ * Team} must be MatchTeam
+ */
 public interface TeamData extends Catchable, Localized, Queueable {
 
   /**
@@ -29,6 +34,14 @@ public interface TeamData extends Catchable, Localized, Queueable {
   }
 
   /**
+   * Get the unique id of the team
+   *
+   * @return the id of the team as a string
+   */
+  @NonNull
+  String getId();
+
+  /**
    * Get the name of the team
    *
    * @return the name of the team
@@ -43,4 +56,31 @@ public interface TeamData extends Catchable, Localized, Queueable {
    */
   @NonNull
   Collection<TeamMember> getMembers();
+
+  @Override
+  default void sendMessage(@NonNull String message) {
+    for (TeamMember member : this.getMembers()) {
+      Linkable link = member.getLinkInfo().getLink();
+      if (link == null) return;
+      link.sendMessage(message);
+    }
+  }
+
+  @Override
+  default void sendLocalized(@NonNull String key) {
+    for (TeamMember member : this.getMembers()) {
+      Linkable link = member.getLinkInfo().getLink();
+      if (link == null) return;
+      link.sendLocalized(key);
+    }
+  }
+
+  @Override
+  default void sendLocalized(@NonNull String key, @NonNull Map<String, String> placeholders) {
+    for (TeamMember member : this.getMembers()) {
+      Linkable link = member.getLinkInfo().getLink();
+      if (link == null) return;
+      link.sendLocalized(key, placeholders);
+    }
+  }
 }

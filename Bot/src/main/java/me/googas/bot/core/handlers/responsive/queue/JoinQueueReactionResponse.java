@@ -73,22 +73,23 @@ public class JoinQueueReactionResponse extends SimpleCommandReactionResponse {
               .append(queueable.getElo(ladder));
         }
       }
-      query.getEmbedBuilder().setTitle("Join the queue for " + ladder.getName());
-      query.getEmbedBuilder().addField("Currently", String.valueOf(waiting.size()), true);
-      query.getEmbedBuilder().addField("Needed", String.valueOf(ladder.playersPerTeam() * 2), true);
+      query.setTitle("Join the queue for " + ladder.getName());
+      query.addField("Currently", String.valueOf(waiting.size()), true);
+      query.addField("Needed", String.valueOf(ladder.playersPerTeam() * 2), true);
     }
-    query.getEmbedBuilder().addField("Waiting", participants.toString(), false);
+    query.addField("Waiting", participants.toString(), false);
     return query;
   }
 
   @Override
-  public void onReaction(@NonNull MessageReactionAddEvent event) {
-    super.onReaction(event);
+  public boolean onReaction(@NonNull MessageReactionAddEvent event) {
+    boolean bol = super.onReaction(event);
     event
         .getChannel()
         .editMessageById(
             event.getMessageIdLong(),
-            this.buildMessage(event.getGuild()).getAsMessageQuery().getMessage())
+            this.buildMessage(event.getGuild()).getAsMessageQuery().build())
         .queue();
+    return bol;
   }
 }

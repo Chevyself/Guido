@@ -20,6 +20,7 @@ public class GuidoProvidersRegistry extends JdaProvidersRegistry {
     this.addProvider(new UserDataSenderProvider());
     this.addProvider(new LadderProvider());
     this.addProvider(new LocaleFileProvider());
+    this.addProvider(new TeamDataProvider());
     this.addProvider(new MatchProvider());
   }
 }

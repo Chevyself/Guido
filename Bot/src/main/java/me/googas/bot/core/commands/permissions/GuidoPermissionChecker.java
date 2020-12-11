@@ -1,10 +1,10 @@
 package me.googas.bot.core.commands.permissions;
 
-import com.starfishst.jda.PermissionChecker;
-import com.starfishst.jda.annotations.Perm;
 import com.starfishst.jda.context.CommandContext;
 import com.starfishst.jda.context.GuildCommandContext;
 import com.starfishst.jda.messages.MessagesProvider;
+import com.starfishst.jda.permissions.JdaPermission;
+import com.starfishst.jda.permissions.PermissionChecker;
 import com.starfishst.jda.result.Result;
 import com.starfishst.jda.result.ResultType;
 import java.util.Set;
@@ -53,20 +53,21 @@ public class GuidoPermissionChecker implements PermissionChecker {
    * @param perm the permission to check
    * @return if this is true the user has the permission
    */
-  public boolean checkMemberPermission(@NonNull GuildCommandContext context, @NonNull Perm perm) {
+  public boolean checkMemberPermission(
+      @NonNull GuildCommandContext context, @NonNull JdaPermission perm) {
     Member discordMember = context.getMember();
     Guild guild = context.getGuild();
     BotLinkable member =
         this.dataLoader.getMemberData(discordMember.getIdLong(), guild.getIdLong());
-    if (member.hasPermission(perm.node(), "discord")
+    if (member.hasPermission(perm.getNode(), "discord")
         || discordMember.hasPermission(Permission.ADMINISTRATOR)
-        || (perm.permission() != Permission.UNKNOWN
-            && discordMember.hasPermission(perm.permission()))) {
+        || (perm.getPermission() != Permission.UNKNOWN
+            && discordMember.hasPermission(perm.getPermission()))) {
       return true;
     }
     for (Role role : discordMember.getRoles()) {
       BotRole roleData = this.dataLoader.getRoleData(role.getIdLong(), guild.getIdLong());
-      if (roleData.hasPermission(perm.node(), "discord")
+      if (roleData.hasPermission(perm.getNode(), "discord")
           || role.hasPermission(Permission.ADMINISTRATOR)) {
         return true;
       }
@@ -75,8 +76,8 @@ public class GuidoPermissionChecker implements PermissionChecker {
   }
 
   @Override
-  public Result checkPermission(@NonNull CommandContext context, @NonNull Perm perm) {
-    if (!perm.node().isEmpty()) {
+  public Result checkPermission(@NonNull CommandContext context, @NonNull JdaPermission perm) {
+    if (!perm.getNode().isEmpty()) {
       if (this.developers.contains(context.getSender().getIdLong())) {
         return null;
       }
@@ -85,7 +86,8 @@ public class GuidoPermissionChecker implements PermissionChecker {
           return null;
         }
       } else {
-        String node = perm.node().startsWith("user:") ? perm.node().substring(5) : perm.node();
+        String node =
+            perm.getNode().startsWith("user:") ? perm.getNode().substring(5) : perm.getNode();
         BotLinkable userData = this.dataLoader.getDiscordUserData(context.getSender().getIdLong());
         if (userData.hasPermission(node, "discord")) {
           return null;

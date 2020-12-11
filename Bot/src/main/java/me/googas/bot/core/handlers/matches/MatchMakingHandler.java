@@ -66,9 +66,8 @@ public class MatchMakingHandler implements GuidoEventHandler {
       if (match instanceof BotMatch) {
         TextChannel channel = guildData.getTextChannel("matches");
         EmbedQuery information = ((BotMatch) match).getInformation(locale);
-        information
-            .getEmbedBuilder()
-            .setTitle(locale.get("match.announce.title", Maps.singleton("id", match.getId())));
+        information.setTitle(
+            locale.get("match.announce.title", Maps.singleton("id", match.getId())));
         information.send(channel);
       }
       Map<Integer, Long> voices = this.getVoices(match.getId());

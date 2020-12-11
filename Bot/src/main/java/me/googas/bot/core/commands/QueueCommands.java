@@ -3,7 +3,6 @@ package me.googas.bot.core.commands;
 import com.starfishst.core.annotations.Optional;
 import com.starfishst.core.annotations.Required;
 import com.starfishst.jda.annotations.Command;
-import com.starfishst.jda.annotations.Perm;
 import com.starfishst.jda.result.Result;
 import com.starfishst.jda.result.ResultType;
 import java.util.Collection;
@@ -104,7 +103,7 @@ public class QueueCommands {
   @Command(
       aliases = {"queueMsg", "qMsg"},
       description = "Create a message to easily join a queue",
-      permission = @Perm(node = "guido.queue-msg"))
+      node = "guido.queue-msg")
   public Result queueMsg(
       GuildData guild,
       Message message,
@@ -138,7 +137,7 @@ public class QueueCommands {
                     reactionResponse
                         .buildMessage(((BotGuild) guild).getDiscord())
                         .getAsMessageQuery()
-                        .getMessage())
+                        .build())
                 .queue();
           }
         });

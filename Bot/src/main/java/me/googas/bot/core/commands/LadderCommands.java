@@ -4,7 +4,6 @@ import com.starfishst.core.annotations.Optional;
 import com.starfishst.core.annotations.Parent;
 import com.starfishst.core.annotations.Required;
 import com.starfishst.jda.annotations.Command;
-import com.starfishst.jda.annotations.Perm;
 import com.starfishst.jda.result.Result;
 import com.starfishst.jda.result.ResultType;
 import java.util.ArrayList;
@@ -38,7 +37,7 @@ public class LadderCommands {
   @Command(
       aliases = {"ladders", "ladder"},
       description = "ladders.desc",
-      permission = @Perm(node = "guido.ladders"))
+      node = "guido.ladders")
   public Result ladders(
       LocaleFile locale,
       BotGuild guild,
@@ -85,7 +84,7 @@ public class LadderCommands {
   @Command(
       aliases = {"create", "make"},
       description = "ladders.make.desc",
-      permission = @Perm(node = "guido.ladders.make"))
+      node = "guido.ladders.make")
   public Result create(
       LocaleFile locale,
       BotGuild guild,
@@ -116,7 +115,7 @@ public class LadderCommands {
   @Command(
       aliases = {"delete", "del"},
       description = "ladders.del.desc",
-      permission = @Perm(node = "guido.ladders.del"))
+      node = "guido.ladders.del")
   public Result delete(
       LocaleFile locale,
       BotGuild guild,
@@ -138,10 +137,7 @@ public class LadderCommands {
    * @param value the new value
    * @return whether the value was set
    */
-  @Command(
-      aliases = "string",
-      description = "ladder.edit.string",
-      permission = @Perm(node = "guido.ladders.edit"))
+  @Command(aliases = "string", description = "ladder.edit.string", node = "guido.ladders.edit")
   public Result string(
       LocaleFile locale,
       @Required(name = "ladder.edit.ladder", description = "ladder.edit.ladder.desc") Ladder ladder,
@@ -158,10 +154,7 @@ public class LadderCommands {
    * @param value the new value
    * @return whether the value was set
    */
-  @Command(
-      aliases = "integer",
-      description = "ladder.edit.integer",
-      permission = @Perm(node = "guido.ladders.edit"))
+  @Command(aliases = "integer", description = "ladder.edit.integer", node = "guido.ladders.edit")
   public Result integer(
       LocaleFile locale,
       @Required(name = "ladder.edit.ladder", description = "ladder.edit.ladder.desc") Ladder ladder,
@@ -178,10 +171,7 @@ public class LadderCommands {
    * @param value the new value
    * @return whether the value was set
    */
-  @Command(
-      aliases = "double",
-      description = "ladder.edit.double",
-      permission = @Perm(node = "guido.ladders.edit"))
+  @Command(aliases = "double", description = "ladder.edit.double", node = "guido.ladders.edit")
   public Result integer(
       LocaleFile locale,
       @Required(name = "ladder.edit.ladder", description = "ladder.edit.ladder.desc") Ladder ladder,

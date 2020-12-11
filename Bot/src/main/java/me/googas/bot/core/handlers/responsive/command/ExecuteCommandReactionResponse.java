@@ -43,8 +43,8 @@ public interface ExecuteCommandReactionResponse extends ReactionResponse {
   }
 
   @Override
-  default void onReaction(@NonNull MessageReactionAddEvent event) {
-    if (event.getUser() == null) return;
+  default boolean onReaction(@NonNull MessageReactionAddEvent event) {
+    if (event.getUser() == null) return true;
     CommandManager manager = Guido.getCommandManager();
     CommandListener listener = manager.getListener();
     TextChannel channel = event.getTextChannel();
@@ -89,5 +89,6 @@ public interface ExecuteCommandReactionResponse extends ReactionResponse {
       EmbedFactory.fromResult(result, listener, context)
           .send(channel, msg -> msg.delete().queueAfter(15, TimeUnit.SECONDS));
     }
+    return true;
   }
 }

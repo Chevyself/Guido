@@ -138,10 +138,8 @@ public class UserCommands {
             new Result(locale.get("stats.desc", Maps.singleton("nick", nickname))),
             Guido.getCommandManager().getListener(),
             context);
-    query
-        .getEmbedBuilder()
-        .setTitle(locale.get(locale.get("stats.title", Maps.singleton("nick", nickname))));
-    query.getEmbedBuilder().setThumbnail("https://minotar.net/helm/" + nickname + "/100.png");
+    query.setTitle(locale.get(locale.get("stats.title", Maps.singleton("nick", nickname))));
+    query.setThumbnail("https://minotar.net/helm/" + nickname + "/100.png");
     SortedStats organized = linkable.getOrganized(guild);
     organized
         .getMap()
@@ -158,9 +156,7 @@ public class UserCommands {
                           .append("`")
                           .append(value)
                           .append("`"));
-              query
-                  .getEmbedBuilder()
-                  .addField(statContext.replace("_", " "), builder.toString(), true);
+              query.addField(statContext.replace("_", " "), builder.toString(), true);
             });
     return query;
   }

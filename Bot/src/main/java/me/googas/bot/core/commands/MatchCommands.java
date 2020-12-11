@@ -4,7 +4,6 @@ import com.starfishst.core.annotations.Optional;
 import com.starfishst.core.annotations.Required;
 import com.starfishst.core.objects.JoinedStrings;
 import com.starfishst.jda.annotations.Command;
-import com.starfishst.jda.annotations.Perm;
 import com.starfishst.jda.context.CommandContext;
 import com.starfishst.jda.result.Result;
 import com.starfishst.jda.result.ResultType;
@@ -51,7 +50,7 @@ public class MatchCommands {
    * @param ladder the ladder in which this match happened
    * @return the result of the command execution
    */
-  @Command(aliases = "match", description = "match.desc", permission = @Perm(node = "guido.match"))
+  @Command(aliases = "match", description = "match.desc", node = "guido.match")
   public Result match(
       CommandContext context,
       LocaleFile locale,
@@ -128,10 +127,7 @@ public class MatchCommands {
    * @param name the name of the team to select as winners
    * @return whether the match was finished
    */
-  @Command(
-      aliases = "finish",
-      description = "finish.desc",
-      permission = @Perm(node = "guido.finish"))
+  @Command(aliases = "finish", description = "finish.desc", node = "guido.finish")
   public Result finish(
       LocaleFile locale,
       BotGuild guild,
@@ -168,10 +164,7 @@ public class MatchCommands {
    * @param member the member to check where it is playing
    * @return the matches where the query is playing
    */
-  @Command(
-      aliases = "currently",
-      description = "currently.desc",
-      permission = @Perm(node = "guido.currently"))
+  @Command(aliases = "currently", description = "currently.desc", node = "guido.currently")
   public Result currently(
       LocaleFile locale,
       UserData sender,
@@ -210,7 +203,7 @@ public class MatchCommands {
   @Command(
       aliases = "look",
       description = "Makes the active PGM matches look for servers",
-      permission = @Perm(node = "user:guido.look"))
+      node = "user:guido.look")
   public void look() {
     Guido.getHandler(PGMMatchHandler.class).lookForServers();
   }

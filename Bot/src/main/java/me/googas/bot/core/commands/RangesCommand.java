@@ -3,7 +3,6 @@ package me.googas.bot.core.commands;
 import com.starfishst.core.annotations.Parent;
 import com.starfishst.core.annotations.Required;
 import com.starfishst.jda.annotations.Command;
-import com.starfishst.jda.annotations.Perm;
 import com.starfishst.jda.result.Result;
 import com.starfishst.jda.result.ResultType;
 import me.googas.api.lang.LocaleFile;
@@ -26,7 +25,7 @@ public class RangesCommand {
    * @return the range
    */
   @Parent
-  @Command(aliases = "range", description = "range.desc", permission = @Perm(node = "guido.range"))
+  @Command(aliases = "range", description = "range.desc", node = "guido.range")
   public Result range(
       LocaleFile locale,
       BotGuild guild,
@@ -58,10 +57,7 @@ public class RangesCommand {
    * @param max the maximum value of the range
    * @return the result saying that the range was set
    */
-  @Command(
-      aliases = "set",
-      description = "range.set.desc",
-      permission = @Perm(node = "guido.range.set"))
+  @Command(aliases = "set", description = "range.set.desc", node = "guido.range.set")
   public Result set(
       LocaleFile locale,
       BotGuild guild,
@@ -91,7 +87,7 @@ public class RangesCommand {
   @Command(
       aliases = {"delete", "remove", "del"},
       description = "range.del.desc",
-      permission = @Perm(node = "guido.range.delete"))
+      node = "guido.range.delete")
   public Result set(
       LocaleFile locale,
       BotGuild guild,

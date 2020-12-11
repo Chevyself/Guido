@@ -27,6 +27,7 @@ import me.googas.bot.core.server.receptors.MatchReceptors;
 import me.googas.bot.core.server.receptors.MinecraftDataReceptors;
 import me.googas.bot.core.server.receptors.QueueReceptors;
 import me.googas.bot.core.server.receptors.SecurityReceptors;
+import me.googas.bot.core.server.receptors.TeamDataReceptors;
 import me.googas.bot.core.types.maps.GuidoLinkedValuesMap;
 import me.googas.bot.core.types.maps.GuidoValuesMap;
 import me.googas.messaging.Request;
@@ -79,6 +80,7 @@ public class GuidoServer extends JsonSocketServer implements BotServer {
         new MinecraftDataReceptors(),
         new QueueReceptors(),
         new SecurityReceptors(),
+        new TeamDataReceptors(),
         this.authenticator);
   }
 

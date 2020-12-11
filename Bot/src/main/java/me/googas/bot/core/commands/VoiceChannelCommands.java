@@ -3,7 +3,6 @@ package me.googas.bot.core.commands;
 import com.starfishst.core.annotations.Parent;
 import com.starfishst.core.annotations.Required;
 import com.starfishst.jda.annotations.Command;
-import com.starfishst.jda.annotations.Perm;
 import com.starfishst.jda.result.Result;
 import com.starfishst.jda.result.ResultType;
 import java.util.Map;
@@ -31,7 +30,7 @@ public class VoiceChannelCommands {
   @Command(
       aliases = {"voiceChannels", "vc"},
       description = "vc.desc",
-      permission = @Perm(node = "guido.channels"))
+      node = "guido.channels")
   public Result categories(LocaleFile locale, Guild guild, BotGuild botGuild) {
     Map<String, String> placeholders = Maps.singleton("name", guild.getName());
     Map<String, Long> voiceChannels = botGuild.getVoiceChannels();
@@ -64,10 +63,7 @@ public class VoiceChannelCommands {
    * @param key the key of the channel to set
    * @return whether the channel was set or unset
    */
-  @Command(
-      aliases = "set",
-      description = "vc.set.desc",
-      permission = @Perm(node = "guido.channels.set"))
+  @Command(aliases = "set", description = "vc.set.desc", node = "guido.channels.set")
   public Result set(
       LocaleFile locale,
       BotGuild guild,

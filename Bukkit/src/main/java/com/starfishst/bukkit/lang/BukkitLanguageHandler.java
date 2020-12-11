@@ -14,7 +14,6 @@ import java.util.List;
 import java.util.Map;
 import lombok.NonNull;
 import me.googas.commons.Lots;
-import me.googas.commons.fallback.Fallback;
 import me.googas.commons.maps.MapBuilder;
 import me.googas.commons.maps.Maps;
 import org.bukkit.Bukkit;
@@ -46,7 +45,6 @@ public class BukkitLanguageHandler implements GuidoListener, MessagesProvider {
         configuration.load(reader);
         this.files.add(new BukkitLocaleFile(configuration));
       } catch (IOException | InvalidConfigurationException e) {
-        Fallback.addError(lang + " could not be loaded");
         e.printStackTrace();
       }
       plugin.getLogger().info(lang + ".yml has been loaded");

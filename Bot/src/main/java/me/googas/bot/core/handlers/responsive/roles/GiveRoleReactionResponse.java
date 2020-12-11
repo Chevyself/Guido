@@ -32,11 +32,12 @@ public class GiveRoleReactionResponse implements ReactionResponse {
   }
 
   @Override
-  public void onReaction(@NonNull MessageReactionAddEvent event) {
+  public boolean onReaction(@NonNull MessageReactionAddEvent event) {
     Role role = event.getGuild().getRoleById(this.role);
     Member member = event.getMember();
-    if (role == null || member == null || member.getRoles().contains(role)) return;
+    if (role == null || member == null || member.getRoles().contains(role)) return true;
     event.getGuild().addRoleToMember(member, role).queue();
+    return true;
   }
 
   @Override

@@ -13,6 +13,7 @@ import me.googas.api.matches.Ladder;
 import me.googas.api.matches.Match;
 import me.googas.api.matches.MatchInfo;
 import me.googas.api.matches.MatchStatus;
+import me.googas.api.matches.TeamData;
 import me.googas.api.permissions.Group;
 import me.googas.api.permissions.GroupInfo;
 import me.googas.api.token.AuthToken;
@@ -21,6 +22,7 @@ import me.googas.api.utility.ValuesMap;
 import me.googas.bot.api.events.data.guild.BotGuildUnloadedEvent;
 import me.googas.bot.api.events.data.role.BotRoleUnloadedEvent;
 import me.googas.bot.api.events.data.user.UserUnloadedDataEvent;
+import me.googas.bot.api.events.match.team.TeamDataUnloadedEvent;
 import me.googas.bot.api.loader.BotDataLoader;
 import me.googas.bot.api.types.BotGroup;
 import me.googas.bot.api.types.BotGuild;
@@ -43,6 +45,11 @@ public class GuidoFileLoader implements BotDataLoader {
   @Listener(priority = ListenPriority.HIGHEST)
   public void onGuildDataUnloaded(@NonNull BotGuildUnloadedEvent event) {
     throw new UnsupportedOperationException("Guild data cannot be find using file loader");
+  }
+
+  @Listener(priority = ListenPriority.HIGHEST)
+  public void onTeamDataUnloaded(@NonNull TeamDataUnloadedEvent event) {
+    throw new UnsupportedOperationException("Team data cannot be find using file loader");
   }
 
   /**
@@ -153,6 +160,16 @@ public class GuidoFileLoader implements BotDataLoader {
   @Override
   public @NonNull Collection<Group> getGroups() {
     throw new UnsupportedOperationException("There's no groups");
+  }
+
+  @Override
+  public TeamData getTeam(@NonNull String id) {
+    return null;
+  }
+
+  @Override
+  public TeamData getTeamByName(@NonNull String name) {
+    return null;
   }
 
   /**

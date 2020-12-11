@@ -3,7 +3,6 @@ package me.googas.bot.core.commands;
 import com.starfishst.core.annotations.Parent;
 import com.starfishst.core.annotations.Required;
 import com.starfishst.jda.annotations.Command;
-import com.starfishst.jda.annotations.Perm;
 import com.starfishst.jda.result.Result;
 import java.util.Map;
 import me.googas.api.lang.LocaleFile;
@@ -26,10 +25,7 @@ public class CategoryCommands {
    * @return the categories in the guild
    */
   @Parent
-  @Command(
-      aliases = "categories",
-      description = "categories.desc",
-      permission = @Perm(node = "guido.categories"))
+  @Command(aliases = "categories", description = "categories.desc", node = "guido.categories")
   public Result categories(LocaleFile locale, Guild guild, BotGuild botGuild) {
     Map<String, String> placeholders = Maps.singleton("name", guild.getName());
     Map<String, Long> categories = botGuild.getCategories();
@@ -62,10 +58,7 @@ public class CategoryCommands {
    * @param key the key of the category to set
    * @return whether the category was set or unset
    */
-  @Command(
-      aliases = "set",
-      description = "categories.set.desc",
-      permission = @Perm(node = "guido.categories.set"))
+  @Command(aliases = "set", description = "categories.set.desc", node = "guido.categories.set")
   public Result set(
       LocaleFile locale,
       BotGuild guild,

@@ -3,7 +3,6 @@ package me.googas.bot.core.commands;
 import com.starfishst.core.annotations.Optional;
 import com.starfishst.core.annotations.Required;
 import com.starfishst.jda.annotations.Command;
-import com.starfishst.jda.annotations.Perm;
 import com.starfishst.jda.result.Result;
 import com.starfishst.jda.result.ResultType;
 import me.googas.api.discord.GuildData;
@@ -31,10 +30,7 @@ public class AdministrationCommands {
    * @param unicode the unicode the user has to use to get the role
    * @return whether the message was created
    */
-  @Command(
-      aliases = "giver",
-      description = "Make the message given a role",
-      permission = @Perm(node = "guido.giver"))
+  @Command(aliases = "giver", description = "Make the message given a role", node = "guido.giver")
   public Result giver(
       Message message,
       GuildData guild,

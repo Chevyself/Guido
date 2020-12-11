@@ -27,7 +27,7 @@
         <dependency>
             <groupId>me.googas.messaging</groupId>
             <artifactId>Commons-Messaging</artifactId>
-            <version>1.0.10-SNAPSHOT</version>
+            <version>1.0.11-SNAPSHOT</version>
             <scope>compile</scope>
         </dependency>
 

@@ -3,7 +3,6 @@ package me.googas.bot.core.commands;
 import com.starfishst.core.annotations.Parent;
 import com.starfishst.core.annotations.Required;
 import com.starfishst.jda.annotations.Command;
-import com.starfishst.jda.annotations.Perm;
 import com.starfishst.jda.result.Result;
 import java.util.Collection;
 import me.googas.api.lang.LocaleFile;
@@ -29,7 +28,7 @@ public class TokenCommands {
   @Command(
       aliases = {"tokens", "token"},
       description = "tokens.desc",
-      permission = @Perm(node = "user:guido.token"))
+      node = "user:guido.token")
   public Result token(LocaleFile locale, UserData sender) {
     Collection<? extends AuthToken> tokens = Guido.getDataLoader().getTokens(sender);
     if (tokens.isEmpty()) {
@@ -54,10 +53,7 @@ public class TokenCommands {
    * @param level the level of the token
    * @return the generated token
    */
-  @Command(
-      aliases = "generate",
-      description = "token.gen.desc",
-      permission = @Perm(node = "user:guido.token.generate"))
+  @Command(aliases = "generate", description = "token.gen.desc", node = "user:guido.token.generate")
   public Result generate(
       UserData user,
       @Required(name = "token.gen.perm", description = "token.gen.perm.desc") AuthLevel level) {

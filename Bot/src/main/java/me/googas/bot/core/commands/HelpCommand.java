@@ -43,7 +43,7 @@ public class HelpCommand {
       if (command != null) {
         if (command.hasPermission(context)) {
           StringBuilder builder = Strings.getBuilder();
-          String node = command.getPermission().node();
+          String node = command.getPermission().getNode();
           builder.append(
               locale.get(
                   "help.cmd.title",

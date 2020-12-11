@@ -8,3 +8,5 @@ description: An implementation for the Guido bot to use PGM
 version: ${project.version}
 softdepend:
   - PGM
+  - Events
+  -

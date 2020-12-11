@@ -49,7 +49,7 @@ public class AntiCheatListener implements GuidoListener {
               Maps.builder("player", event.getPlayer().getName())
                   .append("player_display", event.getPlayer().getDisplayName())
                   .append("reason", event.getReason());
-          player.sendMessage(Strings.buildMessage(msg, placeholders));
+          player.sendMessage(Strings.build(msg, placeholders));
         }
       }
     }

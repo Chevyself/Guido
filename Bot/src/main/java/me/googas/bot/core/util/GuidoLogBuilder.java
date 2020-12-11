@@ -25,9 +25,4 @@ public class GuidoLogBuilder extends LogBuilder {
   public void send() {
     Guido.getLogger().log(this.build());
   }
-
-  @Override
-  public @NonNull GuidoLogBuilder append(Object obj) {
-    return (GuidoLogBuilder) super.append(obj);
-  }
 }

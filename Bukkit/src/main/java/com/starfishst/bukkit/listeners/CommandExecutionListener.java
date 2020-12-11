@@ -34,7 +34,7 @@ public class CommandExecutionListener implements GuidoListener {
                     .getOr(
                         "chat", String.class, "[&6A&r] %player_display% &6executed &r%command%"));
         onlinePlayer.sendMessage(
-            Strings.buildMessage(
+            Strings.build(
                 msg,
                 Maps.builder("player", player.getName())
                     .append("player_display", player.getDisplayName())

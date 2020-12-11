@@ -13,6 +13,7 @@ import java.util.TimerTask;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.logging.SimpleFormatter;
+import lombok.Getter;
 import lombok.NonNull;
 import me.googas.api.loader.DataLoader;
 import me.googas.bot.api.events.GuidoCancellable;
@@ -28,6 +29,7 @@ import me.googas.bot.core.commands.LadderCommands;
 import me.googas.bot.core.commands.LangCommands;
 import me.googas.bot.core.commands.LeaderboardCommands;
 import me.googas.bot.core.commands.MatchCommands;
+import me.googas.bot.core.commands.ProvisionalTeamCommands;
 import me.googas.bot.core.commands.QueueCommands;
 import me.googas.bot.core.commands.RangesCommand;
 import me.googas.bot.core.commands.TeamCommands;
@@ -57,6 +59,8 @@ import me.googas.commons.cache.Catchable;
 import me.googas.commons.cache.MemoryCache;
 import me.googas.commons.events.Event;
 import me.googas.commons.events.ListenerManager;
+import me.googas.commons.fallback.Fallback;
+import me.googas.commons.fallback.SimpleFallback;
 import me.googas.commons.log.LoggerFactory;
 import me.googas.commons.log.formatters.CustomFormatter;
 import me.googas.commons.maps.Maps;
@@ -82,6 +86,9 @@ public class Guido {
       Guido.logger.log(Level.SEVERE, e, null);
     }
   }
+
+  @NonNull @Getter private static final Fallback fallback = new SimpleFallback();
+
   /** The timer which can be used in other instances of the bot */
   @NonNull private static final Timer timer = new Timer(Guido.class.getName());
   /** The connection of guido with discord */
@@ -200,6 +207,7 @@ public class Guido {
             new LangCommands(),
             new LeaderboardCommands(),
             new MatchCommands(),
+            new ProvisionalTeamCommands(),
             new QueueCommands(),
             new RangesCommand(),
             new TeamCommands(),
