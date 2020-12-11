@@ -26,7 +26,6 @@ import lombok.NonNull;
 import me.googas.api.client.Client;
 import me.googas.commons.CoreFiles;
 import me.googas.commons.Lots;
-import me.googas.commons.fallback.Fallback;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.config.ServerInfo;
 import net.md_5.bungee.api.plugin.Plugin;
@@ -70,7 +69,7 @@ public class GuidoPlugin extends Plugin {
           new GuidoBungeeConfiguration(
               ConfigurationProvider.getProvider(YamlConfiguration.class).load(file));
     } catch (IOException e) {
-      Fallback.addError("IOException: config.yml could not be loaded");
+      // Fallback.addError("IOException: config.yml could not be loaded");
       e.printStackTrace();
     }
   }

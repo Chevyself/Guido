@@ -3,7 +3,6 @@ package com.starfishst.bungee.api.configuration;
 import com.starfishst.bungee.api.Guido;
 import java.net.InetSocketAddress;
 import lombok.NonNull;
-import me.googas.commons.fallback.Fallback;
 
 /** This object represents a server that can be connected to a bungee that has the guido plugin */
 public interface GuidoServer {
@@ -22,7 +21,7 @@ public interface GuidoServer {
       try {
         port = Integer.parseInt(split[1]);
       } catch (NumberFormatException e) {
-        Fallback.addError("Servers: " + Integer.parseInt(split[1]) + " is not a valid port");
+        // Fallback.addError("Servers: " + Integer.parseInt(split[1]) + " is not a valid port");
       }
     }
     Guido.getLogger().info("Using " + address + " and port " + port);

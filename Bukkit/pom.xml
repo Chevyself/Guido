@@ -45,6 +45,7 @@
                                     <include>me.googas.api:API</include>
                                     <include>com.starfishst.bukkit:Bukkit</include>
                                     <include>me.googas.messaging:Commons-Messaging</include>
+                                    <include>me.googas.commons:Commons</include>
                                 </includes>
                             </artifactSet>
                         </configuration>
@@ -87,7 +88,7 @@
         <dependency>
             <groupId>com.starfishst.bukkit</groupId>
             <artifactId>Bukkit</artifactId>
-            <version>1.0.7-SNAPSHOT</version>
+            <version>1.0.8-SNAPSHOT</version>
         </dependency>
         <!-- ProtocolLib -->
         <dependency>
@@ -100,6 +101,12 @@
             <groupId>tc.oc.pgm</groupId>
             <artifactId>core</artifactId>
             <version>0.10-SNAPSHOT</version>
+        </dependency>
+        <!-- PGM Events -->
+        <dependency>
+            <groupId>dev.pgm</groupId>
+            <artifactId>Events</artifactId>
+            <version>1.0.0-SNAPSHOT</version>
         </dependency>
     </dependencies>
 

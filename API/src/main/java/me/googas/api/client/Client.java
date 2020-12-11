@@ -13,6 +13,7 @@ import me.googas.api.client.adapters.MatchAdapter;
 import me.googas.api.client.adapters.PermissionAdapter;
 import me.googas.api.client.adapters.PermissionStackAdapter;
 import me.googas.api.client.adapters.TeamAdapter;
+import me.googas.api.client.adapters.TeamDataAdapter;
 import me.googas.api.client.adapters.TeamMemberAdapter;
 import me.googas.api.client.adapters.ValuesMapAdapter;
 import me.googas.api.client.data.SimpleValuesMap;
@@ -21,6 +22,7 @@ import me.googas.api.links.LinkableInfo;
 import me.googas.api.matches.Ladder;
 import me.googas.api.matches.Match;
 import me.googas.api.matches.Team;
+import me.googas.api.matches.TeamData;
 import me.googas.api.matches.TeamMember;
 import me.googas.api.permissions.Group;
 import me.googas.api.permissions.Permission;
@@ -86,6 +88,7 @@ public class Client {
                 .registerTypeAdapter(Permission.class, new PermissionAdapter())
                 .registerTypeAdapter(PermissionStack.class, new PermissionStackAdapter())
                 .registerTypeAdapter(Team.class, new TeamAdapter())
+                .registerTypeAdapter(TeamData.class, new TeamDataAdapter())
                 .registerTypeAdapter(TeamMember.class, new TeamMemberAdapter())
                 .registerTypeAdapter(ValuesMap.class, new ValuesMapAdapter())
                 .registerTypeAdapter(SimpleValuesMap.class, new ValuesMapAdapter())

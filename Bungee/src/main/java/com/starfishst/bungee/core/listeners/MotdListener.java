@@ -10,7 +10,6 @@ import javax.imageio.ImageIO;
 import lombok.NonNull;
 import me.googas.commons.CoreFiles;
 import me.googas.commons.RandomUtils;
-import me.googas.commons.fallback.Fallback;
 import net.md_5.bungee.api.Favicon;
 import net.md_5.bungee.api.ServerPing;
 import net.md_5.bungee.api.chat.BaseComponent;
@@ -40,7 +39,7 @@ public class MotdListener implements GuidoListener {
       try {
         return Favicon.create(ImageIO.read(file));
       } catch (IOException e) {
-        Fallback.addError("IOException: server.png could not be read");
+        // Fallback.addError("IOException: server.png could not be read");
         e.printStackTrace();
       }
     }

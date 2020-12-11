@@ -9,4 +9,4 @@ version: ${project.version}
 softdepend:
   - PGM
   - Events
-  -
+  - ProtocolLib

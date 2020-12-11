@@ -2,6 +2,7 @@ package com.starfishst.bukkit.dependencies;
 
 import com.starfishst.bukkit.api.dependencies.Dependency;
 import com.starfishst.bukkit.api.dependencies.DependencyManager;
+import com.starfishst.bukkit.dependencies.events.EventsDependency;
 import java.util.Collection;
 import java.util.Set;
 import lombok.NonNull;
@@ -17,7 +18,7 @@ public class GuidoDependencies implements DependencyManager {
   /** The dependencies that guido has */
   @NonNull
   private final Set<Dependency> dependencies =
-      Lots.set(new PGMDependency(), new ProtocolLibDependency());
+      Lots.set(new EventsDependency(), new PGMDependency(), new ProtocolLibDependency());
 
   /**
    * Create the dependencies manager

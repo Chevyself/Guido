@@ -15,6 +15,7 @@ import me.googas.api.client.data.SimpleValuesMap;
 import me.googas.api.links.LinkableInfo;
 import me.googas.api.links.LinkableType;
 import me.googas.api.matches.Ladder;
+import me.googas.api.matches.TeamData;
 import me.googas.api.matches.TeamRole;
 import me.googas.api.permissions.Group;
 import me.googas.commons.Lots;
@@ -33,7 +34,7 @@ public class ClientTest {
     String debug = "45.43.24.28";
     // 5Eh8QKdS7GmrE0Gs
     String debugToken = "1Uv2AZduciPKwUL8";
-    Client client = new Client("5Eh8QKdS7GmrE0Gs", "45.43.24.28", 3000);
+    Client client = new Client("5Eh8QKdS7GmrE0Gs", "167.114.49.251", 3000);
     String nick = "Selfie";
     UUID uuid = UUID.fromString("5eed208d-de58-4022-9ba7-6ccb5ea7e92a");
     String trimmed = UUIDUtils.trim(uuid);
@@ -194,6 +195,10 @@ public class ClientTest {
               bol -> {
                 System.out.println("Is bungee? " + bol);
               });
+        } else if (line.equalsIgnoreCase("team")) {
+            conn.sendRequest(new Request<>(TeamData.class, "team-by-name", Maps.singleton("name", "Googas")), team -> {
+                System.out.println(team);
+            });
         }
       }
     }

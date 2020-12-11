@@ -7,6 +7,7 @@ import java.util.Map;
 import lombok.NonNull;
 import me.googas.api.matches.TeamData;
 import me.googas.api.matches.TeamMember;
+import me.googas.commons.builder.ToStringBuilder;
 import me.googas.commons.time.Time;
 import me.googas.commons.time.Unit;
 
@@ -61,5 +62,14 @@ public class SimpleTeamData implements TeamData {
   @Override
   public @NonNull Collection<TeamMember> getMembers() {
     return this.members;
+  }
+
+  @Override
+  public String toString() {
+    return new ToStringBuilder(this)
+            .append("id", this.id)
+            .append("name", this.name)
+            .append("members", this.members)
+            .build();
   }
 }
