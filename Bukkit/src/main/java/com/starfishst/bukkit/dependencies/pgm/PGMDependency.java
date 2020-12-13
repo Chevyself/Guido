@@ -1,4 +1,4 @@
-package com.starfishst.bukkit.dependencies;
+package com.starfishst.bukkit.dependencies.pgm;
 
 import com.starfishst.bukkit.api.Guido;
 import com.starfishst.bukkit.api.commands.GuidoCommand;
@@ -11,8 +11,8 @@ import com.starfishst.bukkit.commands.providers.pgm.PartyProvider;
 import com.starfishst.bukkit.commands.providers.pgm.PlayerInfoProvider;
 import com.starfishst.bukkit.commands.providers.pgm.TeamMemberProvider;
 import com.starfishst.bukkit.context.CommandContext;
-import com.starfishst.bukkit.listeners.pgm.PGMStatsListener;
-import com.starfishst.bukkit.listeners.pgm.matches.PGMMatchMakingListener;
+import com.starfishst.bukkit.dependencies.pgm.listeners.PGMStatsListener;
+import com.starfishst.bukkit.dependencies.pgm.listeners.matches.PGMMatchMakingListener;
 import com.starfishst.core.providers.type.IContextualProvider;
 import java.util.Collection;
 import lombok.NonNull;

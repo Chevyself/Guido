@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.function.Consumer;
 import java.util.logging.Logger;
 import lombok.NonNull;
@@ -67,8 +68,21 @@ public class GroupListener implements GuidoListener {
     for (Group group : this.groups) {
       PGMConfig.Group toPGM = this.toPGM(group);
       log.info(toPGM.getPermission().getName() + " has been loaded");
-      config.getGroups().add(toPGM);
+      if (this.notLoaded(toPGM)) config.getGroups().add(toPGM);
     }
+  }
+
+  /**
+   * Checks if a group is not loaded already
+   *
+   * @param toPGM the group to check if it is not loaded
+   * @return true if the group is not loaded else false
+   */
+  private boolean notLoaded(@NonNull PGMConfig.Group toPGM) {
+    for (Config.Group group : PGM.get().getConfiguration().getGroups()) {
+      if (group.getId().equals(toPGM.getId())) return false;
+    }
+    return true;
   }
 
   /**
@@ -117,31 +131,35 @@ public class GroupListener implements GuidoListener {
    */
   @NonNull
   public Permission toBukkit(@NonNull Group group, String context) {
-    String contextToUse = context == null ? Guido.getConfiguration().getContext() : context;
-    PermissionStack stack = group.getPermissions(contextToUse);
+    if (context == null)
+      return Permissions.register(
+          new Permission(this.getNode(group), PermissionDefault.FALSE, new HashMap<>()));
     Map<String, Boolean> permissions = new HashMap<>();
-    if (stack != null) {
-      for (me.googas.api.permissions.Permission permission : stack.getPermissions()) {
-        permissions.put(permission.getNode(), permission.isEnabled());
+    Set<PermissionStack> stacks =
+        Lots.set(
+            group.getPermissions(context),
+            group.getPermissions(Guido.getConfiguration().getContext()),
+            group.getPermissions("global"));
+    for (PermissionStack stack : stacks) {
+      if (stack != null) {
+        for (me.googas.api.permissions.Permission permission : stack.getPermissions()) {
+          permissions.put(permission.getNode(), permission.isEnabled());
+        }
       }
     }
     return Permissions.register(
-        new Permission(this.getNode(group, context), PermissionDefault.FALSE, permissions));
+        new Permission(this.getNode(group), PermissionDefault.FALSE, permissions));
   }
 
   /**
    * Get the node of a context
    *
    * @param group the group that will be appended in the node
-   * @param context the context of the permission
    * @return the node of the permission
    */
   @NonNull
-  public String getNode(@NonNull Group group, String context) {
-    if (context == null) {
-      return "guido.group." + group.getName().replace(" ", "-");
-    }
-    return "guido.group." + group.getName().replace(" ", "-") + "." + context;
+  public String getNode(@NonNull Group group) {
+    return "guido.group." + group.getName().replace(" ", "-");
   }
 
   /** Clears the list of loaded groups */

@@ -2,11 +2,11 @@ package com.starfishst.bukkit.commands.providers.pgm;
 
 import com.starfishst.bukkit.api.Guido;
 import com.starfishst.bukkit.context.CommandContext;
+import com.starfishst.bukkit.dependencies.pgm.listeners.matches.HostedMatch;
+import com.starfishst.bukkit.dependencies.pgm.listeners.matches.PGMMatchMakingListener;
+import com.starfishst.bukkit.dependencies.pgm.listeners.matches.creation.PickTeamSelection;
+import com.starfishst.bukkit.dependencies.pgm.listeners.matches.creation.TeamCreation;
 import com.starfishst.bukkit.lang.BukkitLocaleFile;
-import com.starfishst.bukkit.listeners.pgm.matches.HostedMatch;
-import com.starfishst.bukkit.listeners.pgm.matches.PGMMatchMakingListener;
-import com.starfishst.bukkit.listeners.pgm.matches.creation.PickTeamSelection;
-import com.starfishst.bukkit.listeners.pgm.matches.creation.TeamCreation;
 import com.starfishst.bukkit.providers.type.BukkitExtraArgumentProvider;
 import com.starfishst.core.exceptions.ArgumentProviderException;
 import lombok.NonNull;

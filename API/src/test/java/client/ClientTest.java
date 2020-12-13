@@ -196,9 +196,11 @@ public class ClientTest {
                 System.out.println("Is bungee? " + bol);
               });
         } else if (line.equalsIgnoreCase("team")) {
-            conn.sendRequest(new Request<>(TeamData.class, "team-by-name", Maps.singleton("name", "Googas")), team -> {
+          conn.sendRequest(
+              new Request<>(TeamData.class, "team-by-name", Maps.singleton("name", "Googas")),
+              team -> {
                 System.out.println(team);
-            });
+              });
         }
       }
     }

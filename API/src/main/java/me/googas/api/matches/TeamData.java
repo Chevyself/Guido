@@ -30,7 +30,22 @@ public interface TeamData extends Catchable, Localized, Queueable {
    * @return whether the user was removed
    */
   default boolean remove(@NonNull TeamMember member) {
-    return this.getMembers().remove(member);
+    return this.getMembers()
+        .removeIf(teamMember -> member.getLinkInfo().compare(teamMember.getLinkInfo()));
+  }
+
+  /**
+   * Check whether the link is a member of this team
+   *
+   * @param linkable the link to check if it is a member of the team
+   * @return true if it is in this team
+   */
+  default boolean contains(Linkable linkable) {
+    if (linkable == null) return false;
+    for (TeamMember member : this.getMembers()) {
+      if (member.getLinkInfo().compare(linkable)) return true;
+    }
+    return false;
   }
 
   /**

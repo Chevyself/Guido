@@ -172,6 +172,11 @@ public class GuidoFileLoader implements BotDataLoader {
     return null;
   }
 
+  @Override
+  public TeamData getTeam(@NonNull Linkable linkable) {
+    return null;
+  }
+
   /**
    * Get all the created groups but only the information of them
    *
@@ -227,6 +232,11 @@ public class GuidoFileLoader implements BotDataLoader {
   public @NonNull Collection<MatchInfo> getMatches(
       int page, int size, @NonNull MatchStatus... statuses) {
     return new HashSet<>();
+  }
+
+  @Override
+  public boolean deleteTeam(@NonNull String id) {
+    return false;
   }
 
   @Override

@@ -249,6 +249,14 @@ public interface DataLoader {
   Collection<MatchInfo> getMatches(int page, int size, @NonNull MatchStatus... statuses);
 
   /**
+   * Delete a team by using its id
+   *
+   * @param id the id of the team to delete
+   * @return whether the team was deleted
+   */
+  boolean deleteTeam(@NonNull String id);
+
+  /**
    * Get all the created groups
    *
    * @return the created groups
@@ -271,4 +279,12 @@ public interface DataLoader {
    * @return the team if found else null
    */
   TeamData getTeamByName(@NonNull String name);
+
+  /**
+   * Get the team in which a linkable is on
+   *
+   * @param linkable the linkable to get the team
+   * @return the team if found else null
+   */
+  TeamData getTeam(@NonNull Linkable linkable);
 }

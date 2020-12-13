@@ -1,4 +1,4 @@
-package com.starfishst.bukkit.listeners.pgm;
+package com.starfishst.bukkit.dependencies.pgm.listeners;
 
 import com.starfishst.bukkit.api.Guido;
 import com.starfishst.bukkit.api.events.GuidoListener;
@@ -17,6 +17,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import tc.oc.pgm.api.match.event.MatchFinishEvent;
 import tc.oc.pgm.api.party.Competitor;
+import tc.oc.pgm.api.party.Party;
 import tc.oc.pgm.api.player.MatchPlayer;
 import tc.oc.pgm.api.player.event.MatchPlayerDeathEvent;
 import tc.oc.pgm.core.CoreLeakEvent;
@@ -84,7 +85,7 @@ public class PGMStatsListener implements GuidoListener {
     for (DestroyableContribution contribution : event.getDestroyable().getContributions()) {
       this.increase(
           contribution.getPlayerState().getId(),
-          Guido.getConfiguration().getContext() + "monuments");
+          Guido.getConfiguration().getContext() + "-monuments");
     }
   }
 
@@ -111,7 +112,9 @@ public class PGMStatsListener implements GuidoListener {
         if (this.didWin(event, player)) {
           this.increase(player.getId(), context + "-wins");
         } else {
-          this.increase(player.getId(), context + "-loses");
+          if (this.isPlaying(event, player)) {
+            this.increase(player.getId(), context + "-loses");
+          }
         }
       } else {
         this.increase(player.getId(), context + "-ties");
@@ -138,6 +141,22 @@ public class PGMStatsListener implements GuidoListener {
           });
     }
     this.stats.clear();
+  }
+
+  /**
+   * Checks that the user queried is playing in the match that ended
+   *
+   * @param event the event of a match ending
+   * @param player the player to check
+   * @return true if the player was playing in the match that ended
+   */
+  private boolean isPlaying(@NonNull MatchFinishEvent event, @NonNull MatchPlayer player) {
+    for (Party party : event.getMatch().getParties()) {
+      if (party.isParticipating() && party.getPlayer(player.getId()) != null) {
+        return true;
+      }
+    }
+    return false;
   }
 
   /**

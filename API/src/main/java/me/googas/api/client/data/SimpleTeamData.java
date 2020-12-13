@@ -67,9 +67,9 @@ public class SimpleTeamData implements TeamData {
   @Override
   public String toString() {
     return new ToStringBuilder(this)
-            .append("id", this.id)
-            .append("name", this.name)
-            .append("members", this.members)
-            .build();
+        .append("id", this.id)
+        .append("name", this.name)
+        .append("members", this.members)
+        .build();
   }
 }

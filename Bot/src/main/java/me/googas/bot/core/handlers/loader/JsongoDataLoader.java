@@ -831,6 +831,23 @@ public class JsongoDataLoader implements BotDataLoader {
                 new Document("name", Pattern.compile(name, Pattern.CASE_INSENSITIVE))));
   }
 
+  @Override
+  public TeamData getTeam(@NonNull Linkable linkable) {
+    Document query = new Document();
+    linkable
+        .getIdentificationMap()
+        .getMap()
+        .forEach(
+            (key, value) -> {
+              query.append("members.linkInfo.identification." + key, value);
+            });
+    return Guido.getCache()
+        .getOrSupply(
+            GuidoTeamData.class,
+            team -> team.contains(linkable),
+            this.supplyObjectFromQuery(GuidoTeamData.class, this.teams, query));
+  }
+
   /**
    * Get how many groups there are
    *
@@ -902,6 +919,22 @@ public class JsongoDataLoader implements BotDataLoader {
         new Document("type", new Document("$in", names)),
         size,
         page * size);
+  }
+
+  @Override
+  public boolean deleteTeam(@NonNull String id) {
+    TeamData team = this.getTeam(id);
+    if (team != null) {
+      try {
+        if (team instanceof BotCatchable) {
+          ((BotCatchable) team).unload(false);
+        }
+      } catch (Throwable throwable) {
+        throwable.printStackTrace();
+      }
+      return this.deleteObject(this.teams, new Document("id", id));
+    }
+    return false;
   }
 
   @Override

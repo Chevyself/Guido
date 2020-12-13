@@ -3,6 +3,7 @@ package com.starfishst.bukkit.dependencies;
 import com.starfishst.bukkit.api.dependencies.Dependency;
 import com.starfishst.bukkit.api.dependencies.DependencyManager;
 import com.starfishst.bukkit.dependencies.events.EventsDependency;
+import com.starfishst.bukkit.dependencies.pgm.PGMDependency;
 import java.util.Collection;
 import java.util.Set;
 import lombok.NonNull;

@@ -8,6 +8,7 @@ import java.util.Set;
 import java.util.UUID;
 import lombok.NonNull;
 import me.googas.api.links.LinkableType;
+import me.googas.api.matches.TeamData;
 import me.googas.api.permissions.PermissionStack;
 import me.googas.api.user.UserData;
 import me.googas.api.utility.ValuesMap;
@@ -181,6 +182,11 @@ public class GuidoLinkable implements BotLinkable, BotPermissible {
   @Override
   public boolean isLinked() {
     return this.getLinkedUser() != null;
+  }
+
+  @Override
+  public TeamData getTeam() {
+    return Guido.getDataLoader().getTeam(this);
   }
 
   @Override

@@ -9,7 +9,6 @@ import me.googas.api.links.LinkableInfo;
 import me.googas.api.links.LinkableType;
 import me.googas.api.matches.TeamData;
 import me.googas.api.matches.TeamMember;
-import me.googas.api.matches.TeamRole;
 import me.googas.commons.UUIDUtils;
 
 public class GuidoTournamentTeam implements TournamentTeam {
@@ -29,7 +28,7 @@ public class GuidoTournamentTeam implements TournamentTeam {
     for (TeamMember member : data.getMembers()) {
       UUID uuid = GuidoTournamentTeam.getUuid(member.getLinkInfo());
       if (uuid == null) continue;
-      players.add(new GuidoTournamentPlayer(uuid, member.getTeamRole() == TeamRole.LEADER));
+      players.add(new GuidoTournamentPlayer(uuid, true));
     }
     return new GuidoTournamentTeam(data.getName(), players);
   }

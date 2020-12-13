@@ -133,10 +133,8 @@ public class PermissionListener implements GuidoListener {
           if (groupListener != null && permission.getNode().startsWith("guido.group.")) {
             Group group = groupListener.getGroupByPermission(permission.getNode());
             groups.add(group);
-            permissionsToGive.add(permission);
-          } else {
-            permissionsToGive.add(permission);
           }
+          permissionsToGive.add(permission);
         }
       }
       ArrayList<Group> groupsCopy = new ArrayList<>(groups);
@@ -216,7 +214,7 @@ public class PermissionListener implements GuidoListener {
    *
    * @param event the event of a player joining the game
    */
-  @EventHandler(priority = EventPriority.LOW)
+  @EventHandler(priority = EventPriority.LOWEST)
   public void onPlayerJoin(PlayerLoginEvent event) {
     Collection<Permission> permissions = this.toGive.get(event.getPlayer().getUniqueId());
     Guido.getLogger().info("Permissions to give " + event.getPlayer() + " are " + permissions);
@@ -228,8 +226,8 @@ public class PermissionListener implements GuidoListener {
           this.disablePermission(permission.getNode(), event.getPlayer(), true);
         }
       }
-      this.toGive.remove(event.getPlayer().getUniqueId());
     }
+    event.getPlayer().recalculatePermissions();
   }
 
   /**

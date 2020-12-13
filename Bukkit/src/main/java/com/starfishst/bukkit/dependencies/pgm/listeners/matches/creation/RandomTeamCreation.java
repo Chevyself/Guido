@@ -1,8 +1,8 @@
-package com.starfishst.bukkit.listeners.pgm.matches.creation;
+package com.starfishst.bukkit.dependencies.pgm.listeners.matches.creation;
 
 import com.starfishst.bukkit.client.BukkitIntRequest;
-import com.starfishst.bukkit.listeners.pgm.matches.HostedMatch;
-import com.starfishst.bukkit.listeners.pgm.matches.PGMMatchMakingListener;
+import com.starfishst.bukkit.dependencies.pgm.listeners.matches.HostedMatch;
+import com.starfishst.bukkit.dependencies.pgm.listeners.matches.PGMMatchMakingListener;
 import java.time.Duration;
 import java.util.HashMap;
 import java.util.HashSet;

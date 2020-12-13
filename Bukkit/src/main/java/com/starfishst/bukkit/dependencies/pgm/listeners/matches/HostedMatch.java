@@ -1,4 +1,4 @@
-package com.starfishst.bukkit.listeners.pgm.matches;
+package com.starfishst.bukkit.dependencies.pgm.listeners.matches;
 
 import java.util.ArrayList;
 import java.util.Collection;

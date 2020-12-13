@@ -12,7 +12,7 @@
 
     <groupId>com.starfishst.guido.bukkit</groupId>
     <artifactId>Bukkit</artifactId>
-    <version>1.2.0-PRE-3</version>
+    <version>1.2.0-PRE-4</version>
     <description>Implementations for bukkit</description>
     <packaging>jar</packaging>
 

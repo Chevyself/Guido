@@ -1,4 +1,4 @@
-package com.starfishst.bukkit.listeners.pgm.matches;
+package com.starfishst.bukkit.dependencies.pgm.listeners.matches;
 
 import com.starfishst.bukkit.AnnotatedCommand;
 import com.starfishst.bukkit.api.Guido;
@@ -6,9 +6,9 @@ import com.starfishst.bukkit.api.events.GuidoListener;
 import com.starfishst.bukkit.client.BukkitBooleanRequest;
 import com.starfishst.bukkit.client.BukkitRequest;
 import com.starfishst.bukkit.commands.ReadyCommand;
-import com.starfishst.bukkit.listeners.pgm.matches.creation.PickTeamSelection;
-import com.starfishst.bukkit.listeners.pgm.matches.creation.RandomTeamCreation;
-import com.starfishst.bukkit.listeners.pgm.matches.creation.TeamCreation;
+import com.starfishst.bukkit.dependencies.pgm.listeners.matches.creation.PickTeamSelection;
+import com.starfishst.bukkit.dependencies.pgm.listeners.matches.creation.RandomTeamCreation;
+import com.starfishst.bukkit.dependencies.pgm.listeners.matches.creation.TeamCreation;
 import com.starfishst.bukkit.utils.BukkitUtils;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -86,7 +86,7 @@ public class PGMMatchMakingListener implements GuidoListener {
             && PGM.get().isEnabled()
             && !RestartManager.isQueued()
             && (pgmMatch == null || (pgmMatch.getPhase() == MatchPhase.FINISHED))
-        || pgmMatch != null && !this.isMatch(pgmMatch)) {
+        || pgmMatch != null && !this.isMatch(pgmMatch) && !RestartManager.isQueued()) {
       JsonClient connection = Guido.getClient().getConnection();
       if (connection != null) {
         try {

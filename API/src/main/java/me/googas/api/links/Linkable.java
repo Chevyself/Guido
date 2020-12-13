@@ -5,6 +5,7 @@ import lombok.NonNull;
 import me.googas.api.client.data.SimpleValuesMap;
 import me.googas.api.lang.LocaleFile;
 import me.googas.api.lang.Localized;
+import me.googas.api.matches.TeamData;
 import me.googas.api.permissions.Permissible;
 import me.googas.api.user.UserData;
 import me.googas.api.utility.Stateable;
@@ -184,4 +185,11 @@ public interface Linkable extends Permissible, Stateable, Catchable, Localized {
   default boolean isLinked() {
     return this.getLinkedUser() != null;
   }
+
+  /**
+   * Get the team in which the link is on
+   *
+   * @return the team in which it is on
+   */
+  TeamData getTeam();
 }
