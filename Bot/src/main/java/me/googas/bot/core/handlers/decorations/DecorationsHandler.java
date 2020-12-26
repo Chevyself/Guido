@@ -6,14 +6,14 @@ import java.util.List;
 import lombok.NonNull;
 import me.googas.api.links.Linkable;
 import me.googas.api.links.LinkableType;
-import me.googas.api.matches.Ladder;
 import me.googas.api.matches.Match;
-import me.googas.api.matches.Team;
-import me.googas.api.matches.TeamMember;
+import me.googas.api.matches.MatchTeam;
+import me.googas.api.matches.ladder.Ladder;
+import me.googas.api.matches.team.TeamMember;
+import me.googas.bot.Guido;
 import me.googas.bot.api.events.match.MatchStatusUpdatedEvent;
-import me.googas.bot.api.types.BotGuild;
-import me.googas.bot.api.types.BotLinkable;
-import me.googas.bot.core.Guido;
+import me.googas.bot.api.types.discord.BotGuild;
+import me.googas.bot.api.types.links.BotLinkable;
 import me.googas.bot.core.handlers.GuidoEventHandler;
 import me.googas.commons.events.ListenPriority;
 import me.googas.commons.events.Listener;
@@ -37,14 +37,14 @@ public class DecorationsHandler implements GuidoEventHandler {
       BotGuild guildData = Guido.getDataLoader().getGuildDataOrCreate(guildId);
       Ladder ladder = guildData.getLadder(ladderName);
       if (ladder != null) {
-        for (Team team : event.getMatch().getTeams()) {
-          for (TeamMember teamMember : team.getMembers()) {
+        for (MatchTeam matchTeam : event.getMatch().getTeams()) {
+          for (TeamMember teamMember : matchTeam.getMembers()) {
             Linkable data = teamMember.getLinkInfo().getLink();
             if (data instanceof BotLinkable) {
               Member member = ((BotLinkable) data).getDiscordMember(guildId);
               if (member != null) {
                 float elo = data.getElo(ladder);
-                float global = data.getGlobalElo(guildData);
+                float global = data.getGlobalElo(guildData.getLadders());
                 List<Role> toAdd =
                     new ArrayList<>(guildData.getRolesDiscord(ladder, (int) elo, true));
                 List<Role> toRemove =

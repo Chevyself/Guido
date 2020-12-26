@@ -5,7 +5,7 @@ import com.starfishst.jda.context.CommandContext;
 import com.starfishst.jda.providers.type.JdaExtraArgumentProvider;
 import lombok.NonNull;
 import me.googas.api.user.UserData;
-import me.googas.bot.core.Guido;
+import me.googas.bot.Guido;
 
 /** Provides the commands with bot user as a command sender */
 public class UserDataSenderProvider implements JdaExtraArgumentProvider<UserData> {

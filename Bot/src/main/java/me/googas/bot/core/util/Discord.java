@@ -8,7 +8,7 @@ import java.util.Set;
 import java.util.function.Consumer;
 import java.util.logging.Level;
 import lombok.NonNull;
-import me.googas.bot.core.Guido;
+import me.googas.bot.Guido;
 import me.googas.commons.Lots;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.GuildChannel;

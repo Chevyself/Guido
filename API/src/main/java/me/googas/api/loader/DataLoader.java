@@ -3,41 +3,24 @@ package me.googas.api.loader;
 import java.util.Collection;
 import java.util.Map;
 import lombok.NonNull;
-import me.googas.api.discord.GuildData;
+import me.googas.api.ValuesMap;
 import me.googas.api.links.Linkable;
 import me.googas.api.links.LinkableInfo;
 import me.googas.api.links.LinkableType;
-import me.googas.api.matches.Ladder;
 import me.googas.api.matches.Match;
 import me.googas.api.matches.MatchInfo;
 import me.googas.api.matches.MatchStatus;
-import me.googas.api.matches.TeamData;
+import me.googas.api.matches.ladder.Ladder;
+import me.googas.api.matches.team.Team;
 import me.googas.api.permissions.Group;
 import me.googas.api.permissions.GroupInfo;
+import me.googas.api.punishment.Punishment;
 import me.googas.api.token.AuthToken;
 import me.googas.api.user.UserData;
-import me.googas.api.utility.ValuesMap;
 import me.googas.commons.RandomUtils;
 
 /** Loads the data. */
 public interface DataLoader {
-
-  /**
-   * Load the data of a guild. If the data cannot be loaded create a fallback but don't return null
-   *
-   * @param id the id of the guild
-   * @return the data of the guild or null if not found
-   */
-  @NonNull
-  GuildData getGuildDataOrCreate(long id);
-
-  /**
-   * Load the data of a guild
-   *
-   * @param id the id of the guild
-   * @return the data of the guild or null if not found
-   */
-  GuildData getGuildData(long id);
 
   /**
    * Load the data of an user
@@ -100,7 +83,29 @@ public interface DataLoader {
    * @param identification the identification to get the linked data from
    * @return the linked data if found else null
    */
-  Linkable getLinkedData(@NonNull LinkableType type, @NonNull ValuesMap identification);
+  Linkable getLink(@NonNull LinkableType type, @NonNull ValuesMap identification);
+
+  /**
+   * Get some link using an identification map and a recognition map
+   *
+   * @param type the type of the link to find
+   * @param identification the identification map
+   * @param recognition the recognition map
+   * @return the link if found else null
+   */
+  Linkable getLink(
+      @NonNull LinkableType type,
+      @NonNull ValuesMap identification,
+      @NonNull ValuesMap recognition);
+
+  /**
+   * Get some link using its recognition map
+   *
+   * @param type the type of link to find
+   * @param recognition the recognition map to match
+   * @return the link if found else null
+   */
+  Linkable getLinkByRecognition(@NonNull LinkableType type, @NonNull ValuesMap recognition);
 
   /**
    * Get a match using its id
@@ -161,6 +166,26 @@ public interface DataLoader {
   }
 
   /**
+   * Get a new id for a punishment
+   *
+   * @return the id of the new punishment
+   */
+  @NonNull
+  default String nextPunishmentId() {
+    String id = RandomUtils.nextString(6);
+    if (this.getPunishment(id) != null) return this.nextPunishmentId();
+    return id;
+  }
+
+  /**
+   * Get a punishment by its id
+   *
+   * @param id the id of the punishment to match
+   * @return the punishment
+   */
+  Punishment getPunishment(@NonNull String id);
+
+  /**
    * Get a new id fr a team
    *
    * @return the new id fr the team
@@ -204,7 +229,7 @@ public interface DataLoader {
    * @return the created groups
    */
   @NonNull
-  Collection<GroupInfo> getGroupsInfo(int page, int size);
+  Collection<GroupInfo> getGroups(int page, int size);
 
   /**
    * Get the leaderboard in certain ladder
@@ -257,20 +282,12 @@ public interface DataLoader {
   boolean deleteTeam(@NonNull String id);
 
   /**
-   * Get all the created groups
-   *
-   * @return the created groups
-   */
-  @NonNull
-  Collection<Group> getGroups();
-
-  /**
    * Get a team by its id
    *
    * @param id the id of the team
    * @return the team if found else null
    */
-  TeamData getTeam(@NonNull String id);
+  Team getTeam(@NonNull String id);
 
   /**
    * Get a team by its name
@@ -278,7 +295,7 @@ public interface DataLoader {
    * @param name the name of the team
    * @return the team if found else null
    */
-  TeamData getTeamByName(@NonNull String name);
+  Team getTeamByName(@NonNull String name);
 
   /**
    * Get the team in which a linkable is on
@@ -286,5 +303,13 @@ public interface DataLoader {
    * @param linkable the linkable to get the team
    * @return the team if found else null
    */
-  TeamData getTeam(@NonNull Linkable linkable);
+  Team getTeam(@NonNull Linkable linkable);
+
+  /**
+   * Get all the created groups
+   *
+   * @return the created groups
+   */
+  @NonNull
+  Collection<GroupInfo> getGroups();
 }

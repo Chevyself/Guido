@@ -5,24 +5,23 @@ import com.starfishst.jda.context.CommandContext;
 import com.starfishst.jda.context.GuildCommandContext;
 import com.starfishst.jda.providers.type.JdaExtraArgumentProvider;
 import lombok.NonNull;
-import me.googas.api.discord.GuildData;
-import me.googas.bot.core.Guido;
+import me.googas.bot.Guido;
+import me.googas.bot.api.types.discord.BotGuild;
 
-/** Provides the data of a guild */
-public class GuildDataProvider implements JdaExtraArgumentProvider<GuildData> {
+public class GuildDataProvider implements JdaExtraArgumentProvider<BotGuild> {
   @Override
-  public @NonNull Class<GuildData> getClazz() {
-    return GuildData.class;
+  public @NonNull Class<BotGuild> getClazz() {
+    return BotGuild.class;
   }
 
   @Override
   public boolean provides(@NonNull Class<?> clazz) {
-    return GuildData.class.isAssignableFrom(clazz);
+    return BotGuild.class.isAssignableFrom(clazz);
   }
 
   @NonNull
   @Override
-  public GuildData getObject(@NonNull CommandContext context) throws ArgumentProviderException {
+  public BotGuild getObject(@NonNull CommandContext context) throws ArgumentProviderException {
     if (context instanceof GuildCommandContext) {
       return Guido.getDataLoader()
           .getGuildDataOrCreate(((GuildCommandContext) context).getGuild().getIdLong());

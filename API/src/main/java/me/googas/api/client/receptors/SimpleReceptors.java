@@ -5,10 +5,8 @@ import me.googas.api.client.Client;
 import me.googas.messaging.json.Receptor;
 import me.googas.messaging.json.client.JsonClient;
 
-/** Receptors for the implementation */
 public class SimpleReceptors {
 
-  /** The client using the receptors */
   @NonNull private final Client client;
 
   /**

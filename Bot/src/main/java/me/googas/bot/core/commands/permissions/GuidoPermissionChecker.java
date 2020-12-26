@@ -9,9 +9,9 @@ import com.starfishst.jda.result.Result;
 import com.starfishst.jda.result.ResultType;
 import java.util.Set;
 import lombok.NonNull;
-import me.googas.bot.api.loader.BotDataLoader;
-import me.googas.bot.api.types.BotLinkable;
-import me.googas.bot.api.types.BotRole;
+import me.googas.bot.api.types.discord.BotRole;
+import me.googas.bot.api.types.links.BotLinkable;
+import me.googas.bot.api.types.loader.BotDataLoader;
 import me.googas.commons.Lots;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Guild;
@@ -27,10 +27,7 @@ public class GuidoPermissionChecker implements PermissionChecker {
    */
   @NonNull private final Set<Long> developers = Lots.set(86321059636203520L);
 
-  /** The messages provider in case that it has to remove a result */
   @NonNull private final MessagesProvider messagesProvider;
-
-  /** The data loader to get the permissions */
   @NonNull private final BotDataLoader dataLoader;
 
   /**

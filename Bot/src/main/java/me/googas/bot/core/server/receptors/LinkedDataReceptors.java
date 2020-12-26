@@ -4,15 +4,15 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
+import me.googas.api.SortedStats;
 import me.googas.api.links.Linkable;
 import me.googas.api.links.LinkableInfo;
 import me.googas.api.links.LinkableType;
 import me.googas.api.permissions.Permission;
 import me.googas.api.permissions.PermissionStack;
 import me.googas.api.user.UserData;
-import me.googas.api.utility.SortedStats;
-import me.googas.bot.core.Guido;
-import me.googas.bot.core.types.permissions.GuidoPermissionStack;
+import me.googas.bot.Guido;
+import me.googas.bot.core.permissions.GuidoPermissionStack;
 import me.googas.messaging.json.ParamName;
 import me.googas.messaging.json.Receptor;
 
@@ -192,10 +192,11 @@ public class LinkedDataReceptors {
   public boolean addPermission(
       @ParamName("info") LinkableInfo info,
       @ParamName("context") String context,
-      @ParamName("permission") Permission permission) {
+      @ParamName("permission") Permission permission,
+      @ParamName("expires") long expires) {
     Linkable data = info.getLink();
     if (data != null) {
-      return data.addPermission(context, permission.getNode(), permission.isEnabled());
+      return data.addPermission(context, permission.getNode(), permission.isEnabled(), expires);
     }
     return false;
   }
@@ -228,6 +229,6 @@ public class LinkedDataReceptors {
    */
   @Receptor("get-link")
   public Linkable getLink(@ParamName("info") LinkableInfo info) {
-    return Guido.getDataLoader().getLinkedData(info.getType(), info.getIdentification());
+    return Guido.getDataLoader().getLink(info.getType(), info.getIdentification());
   }
 }

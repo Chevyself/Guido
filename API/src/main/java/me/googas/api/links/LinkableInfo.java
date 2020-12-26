@@ -1,8 +1,8 @@
 package me.googas.api.links;
 
 import lombok.NonNull;
-import me.googas.api.matches.Queueable;
-import me.googas.api.utility.ValuesMap;
+import me.googas.api.ValuesMap;
+import me.googas.api.matches.queue.Queueable;
 
 /**
  * LinkedInf represents the linked data as an object to get it. This means that this contains the
@@ -19,28 +19,7 @@ public interface LinkableInfo extends Queueable {
    */
   default boolean compare(@NonNull LinkableType type, @NonNull ValuesMap identification) {
     if (this.getType() != type) return false;
-    switch (type) {
-      case DISCORD_GUILD:
-        return this.getIdentification()
-                .getOr("id", Long.class, -1L)
-                .equals(identification.get("id", Long.class))
-            && this.getIdentification()
-                .getOr("guild", Long.class, -1L)
-                .equals(identification.get("guild", Long.class));
-      case DISCORD:
-        return this.getIdentification()
-            .getOr("id", Long.class, -1L)
-            .equals(identification.get("id", Long.class));
-      case MINECRAFT:
-        return this.getIdentification()
-                .getOr("uuid", String.class, "")
-                .equals(identification.get("uuid", String.class))
-            || this.getIdentification()
-                .getOr("nickname", String.class, "")
-                .equalsIgnoreCase(identification.get("nickname", String.class));
-      default:
-        throw new IllegalArgumentException(type + " is not valid to be compared");
-    }
+    return this.getIdentification().isSimilar(identification.getMap());
   }
 
   /**

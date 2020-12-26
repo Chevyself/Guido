@@ -5,10 +5,10 @@ import java.util.HashSet;
 import java.util.UUID;
 import me.googas.api.links.LinkableInfo;
 import me.googas.api.links.LinkableType;
-import me.googas.bot.api.types.BotLinkable;
-import me.googas.bot.core.Guido;
-import me.googas.bot.core.types.GuidoLinkable;
-import me.googas.bot.core.types.maps.GuidoValuesMap;
+import me.googas.bot.Guido;
+import me.googas.bot.api.types.links.BotLinkable;
+import me.googas.bot.core.GuidoValuesMap;
+import me.googas.bot.core.links.GuidoLinkable;
 import me.googas.commons.UUIDUtils;
 import me.googas.messaging.json.ParamName;
 import me.googas.messaging.json.Receptor;
@@ -28,7 +28,7 @@ public class MinecraftDataReceptors {
     String trimmed = UUIDUtils.trim(uuid);
     BotLinkable data =
         Guido.getDataLoader()
-            .getLinkedData(
+            .getLink(
                 LinkableType.MINECRAFT,
                 new GuidoValuesMap("uuid", trimmed).put("nickname", nickname));
     if (data != null) {
@@ -36,8 +36,9 @@ public class MinecraftDataReceptors {
     } else {
       new GuidoLinkable(
               LinkableType.MINECRAFT,
+              new GuidoValuesMap("nickname", nickname),
               null,
-              new GuidoValuesMap("uuid", trimmed).put("nickname", nickname),
+              new GuidoValuesMap("uuid", trimmed),
               new GuidoValuesMap(),
               new HashMap<>(),
               new HashSet<>())
@@ -58,13 +59,10 @@ public class MinecraftDataReceptors {
       @ParamName("uuid") UUID uuid, @ParamName("nickname") String nickname) {
     BotLinkable data =
         Guido.getDataLoader()
-            .getLinkedData(
-                LinkableType.MINECRAFT, new GuidoValuesMap("uuid", UUIDUtils.trim(uuid)));
+            .getLink(LinkableType.MINECRAFT, new GuidoValuesMap("uuid", UUIDUtils.trim(uuid)));
     if (data != null) {
-      if (!data.getIdentification()
-          .getOr("nickname", String.class, "")
-          .equalsIgnoreCase(nickname)) {
-        data.getIdentification().put("nickname", nickname);
+      if (!data.getRecognition().getOr("nickname", String.class, "").equalsIgnoreCase(nickname)) {
+        data.getRecognition().put("nickname", nickname);
       }
       return true;
     }
@@ -81,7 +79,7 @@ public class MinecraftDataReceptors {
   public LinkableInfo getInfo(@ParamName("nickname") String nick) {
     BotLinkable data =
         Guido.getDataLoader()
-            .getLinkedData(LinkableType.MINECRAFT, new GuidoValuesMap("nickname", nick));
+            .getLinkByRecognition(LinkableType.MINECRAFT, new GuidoValuesMap("nickname", nick));
     if (data != null) {
       return data.getInfo();
     }

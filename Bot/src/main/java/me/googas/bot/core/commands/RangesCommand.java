@@ -6,10 +6,11 @@ import com.starfishst.jda.annotations.Command;
 import com.starfishst.jda.result.Result;
 import com.starfishst.jda.result.ResultType;
 import me.googas.api.lang.LocaleFile;
-import me.googas.api.matches.Ladder;
+import me.googas.api.matches.ladder.Ladder;
 import me.googas.api.ranks.RankRange;
-import me.googas.bot.api.types.BotGuild;
-import me.googas.bot.core.types.GuidoRankRange;
+import me.googas.bot.api.types.discord.BotGuild;
+import me.googas.bot.core.GuidoValuesMap;
+import me.googas.bot.core.ranks.GuidoRankRange;
 import me.googas.commons.maps.Maps;
 import net.dv8tion.jda.api.entities.Role;
 
@@ -65,7 +66,7 @@ public class RangesCommand {
       @Required(name = "range.set.ladder", description = "range.set.ladder.desc") Ladder ladder,
       @Required(name = "range.set.min", description = "range.set.min.desc") int min,
       @Required(name = "range.set.max", description = "range.set.max.desc") int max) {
-    GuidoRankRange range = new GuidoRankRange(ladder.getName(), min, max);
+    GuidoRankRange range = new GuidoRankRange(ladder.getName(), min, max, new GuidoValuesMap());
     guild.getRanges().put(role.getIdLong(), range);
     return new Result(
         locale.get(

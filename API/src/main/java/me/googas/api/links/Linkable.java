@@ -2,19 +2,17 @@ package me.googas.api.links;
 
 import java.util.Collection;
 import lombok.NonNull;
-import me.googas.api.client.data.SimpleValuesMap;
+import me.googas.api.GuidoCatchable;
+import me.googas.api.Stateable;
+import me.googas.api.ValuesMap;
 import me.googas.api.lang.LocaleFile;
 import me.googas.api.lang.Localized;
-import me.googas.api.matches.TeamData;
+import me.googas.api.matches.team.Team;
 import me.googas.api.permissions.Permissible;
 import me.googas.api.user.UserData;
-import me.googas.api.utility.Stateable;
-import me.googas.api.utility.ValuesMap;
-import me.googas.commons.cache.Catchable;
-import me.googas.commons.maps.Maps;
 
 /** This object represents data that can been linked to an user */
-public interface Linkable extends Permissible, Stateable, Catchable, Localized {
+public interface Linkable extends Permissible, Stateable, GuidoCatchable, Localized {
 
   /**
    * This method is used to compare this linkable data with a type and provided information
@@ -25,6 +23,23 @@ public interface Linkable extends Permissible, Stateable, Catchable, Localized {
    */
   default boolean compare(@NonNull LinkableType type, @NonNull ValuesMap identification) {
     return this.getInfo().compare(type, identification);
+  }
+
+  /**
+   * This method is used to compare this linkable data with a type and provided information
+   *
+   * @param type the type to compare
+   * @param identification the identification to compare
+   * @param recognition the recognition map to match
+   * @return true if it is the same type and the identification matches
+   */
+  default boolean compare(
+      @NonNull LinkableType type,
+      @NonNull ValuesMap identification,
+      @NonNull ValuesMap recognition) {
+    if (this.getType() != type) return false;
+    return this.getIdentification().isSimilar(identification.getMap())
+        || this.getRecognition().matches(recognition.getMap());
   }
 
   /**
@@ -79,25 +94,9 @@ public interface Linkable extends Permissible, Stateable, Catchable, Localized {
    * @return the identification map
    */
   @NonNull
+  @Deprecated
   default ValuesMap getIdentificationMap() {
-    switch (this.getType()) {
-      case MINECRAFT:
-        return new SimpleValuesMap(Maps.singleton("uuid", this.getTrimmedUniqueId()));
-      case DISCORD:
-      case DISCORD_GUILD:
-        return this.getIdentification();
-      default:
-        throw new IllegalStateException(this.getType() + " does not have an identification map");
-    }
-  }
-
-  /**
-   * Get the trimmed uuid of the {@link LinkableType#MINECRAFT}
-   *
-   * @return the trimmed uuid
-   */
-  default String getTrimmedUniqueId() {
-    return this.getIdentification().get("uuid", String.class);
+    return this.getIdentification();
   }
 
   /**
@@ -163,6 +162,15 @@ public interface Linkable extends Permissible, Stateable, Catchable, Localized {
   ValuesMap getIdentification();
 
   /**
+   * This is a map that contains more ways to identify a link which can be different such as a tag
+   * in discord or a name in minecraft even the ip of minecraft
+   *
+   * @return the recognition map
+   */
+  @NonNull
+  ValuesMap getRecognition();
+
+  /**
    * Get the type of linked data
    *
    * @return the type of linked data
@@ -191,5 +199,16 @@ public interface Linkable extends Permissible, Stateable, Catchable, Localized {
    *
    * @return the team in which it is on
    */
-  TeamData getTeam();
+  Team getTeam();
+
+  @Override
+  @NonNull
+  default String getLang() {
+    return this.getPreferences().getOr("lang", String.class, "en");
+  }
+
+  @Override
+  default void setLang(@NonNull String lang) {
+    this.getPreferences().put("lang", lang);
+  }
 }

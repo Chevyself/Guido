@@ -9,7 +9,6 @@ import com.google.gson.JsonSerializationContext;
 import java.lang.reflect.Type;
 import me.googas.commons.gson.adapters.JsonAdapter;
 
-/** The adapter for mongo longs */
 public class LongMongoAdapter implements JsonAdapter<Long> {
 
   @Override

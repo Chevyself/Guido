@@ -10,18 +10,18 @@ import com.starfishst.jda.utils.embeds.EmbedFactory;
 import com.starfishst.jda.utils.embeds.EmbedQuery;
 import java.util.Collection;
 import lombok.NonNull;
-import me.googas.api.discord.GuildData;
+import me.googas.api.SortedStats;
 import me.googas.api.lang.LocaleFile;
 import me.googas.api.links.Linkable;
 import me.googas.api.links.LinkableInfo;
 import me.googas.api.links.LinkableType;
 import me.googas.api.user.UserData;
-import me.googas.api.utility.SortedStats;
-import me.googas.bot.api.loader.BotDataLoader;
-import me.googas.bot.api.types.BotLinkable;
-import me.googas.bot.core.Guido;
+import me.googas.bot.Guido;
+import me.googas.bot.api.types.discord.BotGuild;
+import me.googas.bot.api.types.links.BotLinkable;
+import me.googas.bot.api.types.loader.BotDataLoader;
+import me.googas.bot.core.GuidoValuesMap;
 import me.googas.bot.core.handlers.link.LinkHandler;
-import me.googas.bot.core.types.maps.GuidoValuesMap;
 import me.googas.commons.Strings;
 import me.googas.commons.maps.Maps;
 
@@ -83,8 +83,7 @@ public class UserCommands {
             locale.get(
                 "link.only-one", Maps.singleton("type", info.getType().toString().toLowerCase())));
       } else {
-        BotLinkable data =
-            Guido.getDataLoader().getLinkedData(info.getType(), info.getIdentification());
+        BotLinkable data = Guido.getDataLoader().getLink(info.getType(), info.getIdentification());
         if (data != null) {
           data.setLinkedUser(user);
           return new Result(
@@ -101,7 +100,7 @@ public class UserCommands {
   @Command(aliases = "stats", description = "guido.stats.desc")
   public Result stats(
       CommandContext context,
-      GuildData guild,
+      BotGuild guild,
       LocaleFile locale,
       UserData data,
       @Optional(name = "stats.name", description = "stats.name.desc") String nickname) {
@@ -109,7 +108,7 @@ public class UserCommands {
     if (nickname != null) {
       BotLinkable link =
           Guido.getDataLoader()
-              .getLinkedData(LinkableType.MINECRAFT, new GuidoValuesMap("nickname", nickname));
+              .getLink(LinkableType.MINECRAFT, new GuidoValuesMap("nickname", nickname));
       if (link != null) {
         return new Result(this.buildStats(guild, locale, context, link));
       } else {
@@ -128,7 +127,7 @@ public class UserCommands {
   }
 
   private EmbedQuery buildStats(
-      GuildData guild,
+      BotGuild guild,
       @NonNull LocaleFile locale,
       @NonNull CommandContext context,
       @NonNull Linkable linkable) {
@@ -140,7 +139,7 @@ public class UserCommands {
             context);
     query.setTitle(locale.get(locale.get("stats.title", Maps.singleton("nick", nickname))));
     query.setThumbnail("https://minotar.net/helm/" + nickname + "/100.png");
-    SortedStats organized = linkable.getOrganized(guild);
+    SortedStats organized = linkable.getOrganized(guild.getLadders());
     organized
         .getMap()
         .forEach(

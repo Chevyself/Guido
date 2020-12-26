@@ -1,7 +1,7 @@
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoCursor;
 import lombok.NonNull;
-import me.googas.bot.core.handlers.loader.JsongoDataLoader;
+import me.googas.bot.core.loader.JsongoDataLoader;
 import org.bson.Document;
 
 public class SeeDuplicates {

@@ -2,11 +2,11 @@ package me.googas.bot.core.server.receptors;
 
 import me.googas.api.matches.Match;
 import me.googas.api.matches.MatchStatus;
-import me.googas.api.matches.Team;
-import me.googas.bot.api.types.BotMatch;
-import me.googas.bot.core.Guido;
+import me.googas.api.matches.MatchTeam;
+import me.googas.bot.Guido;
+import me.googas.bot.api.types.match.BotMatch;
 import me.googas.bot.core.handlers.matches.MatchMakingHandler;
-import me.googas.bot.core.types.GuidoTeam;
+import me.googas.bot.core.matches.GuidoMatchTeam;
 import me.googas.messaging.json.JsonMessenger;
 import me.googas.messaging.json.ParamName;
 import me.googas.messaging.json.Receptor;
@@ -44,24 +44,25 @@ public class MatchReceptors {
   }
 
   /**
-   * Adds a team to the match
+   * Adds a matchTeam to the match
    *
-   * @param id the id of the match to add a team to
-   * @param team the team to add to ethe match
-   * @return whether the team has been set
+   * @param id the id of the match to add a matchTeam to
+   * @param matchTeam the matchTeam to add to ethe match
+   * @return whether the matchTeam has been set
    */
-  @Receptor("match-add-team")
-  public int addTeam(@ParamName("id") String id, @ParamName("team") Team team) {
+  @Receptor("match-add-matchTeam")
+  public int addTeam(@ParamName("id") String id, @ParamName("matchTeam") MatchTeam matchTeam) {
     BotMatch match = Guido.getDataLoader().getMatch(id);
     if (match != null) {
-      if (team.getId() == -3) {
-        GuidoTeam guidoTeam = new GuidoTeam(match.nextTeamId(), team.getMembers(), team.getName());
+      if (matchTeam.getId() == -3) {
+        GuidoMatchTeam guidoTeam =
+            new GuidoMatchTeam(match.nextTeamId(), matchTeam.getMembers(), matchTeam.getName());
         if (match.addTeam(guidoTeam)) {
           return guidoTeam.getId();
         }
       } else {
-        if (match.addTeam(team)) {
-          return team.getId();
+        if (match.addTeam(matchTeam)) {
+          return matchTeam.getId();
         }
       }
     }
@@ -79,9 +80,9 @@ public class MatchReceptors {
   public boolean removeTeam(@ParamName("id") String id, @ParamName("team") String teamName) {
     BotMatch match = Guido.getDataLoader().getMatch(id);
     if (match != null) {
-      Team team = match.getTeam(teamName);
-      if (team != null) {
-        return match.removeTeam(team);
+      MatchTeam matchTeam = match.getTeam(teamName);
+      if (matchTeam != null) {
+        return match.removeTeam(matchTeam);
       }
     }
     return false;
@@ -98,9 +99,9 @@ public class MatchReceptors {
   public boolean removeTeam(@ParamName("id") String id, @ParamName("team") int teamId) {
     BotMatch match = Guido.getDataLoader().getMatch(id);
     if (match != null) {
-      Team team = match.getTeam(teamId);
-      if (team != null) {
-        return match.removeTeam(team);
+      MatchTeam matchTeam = match.getTeam(teamId);
+      if (matchTeam != null) {
+        return match.removeTeam(matchTeam);
       }
     }
     return false;
@@ -118,9 +119,9 @@ public class MatchReceptors {
     BotMatch match = Guido.getDataLoader().getMatch(id);
     if (match != null) {
       if (winners != null) {
-        Team team = match.getTeam(winners);
-        if (team != null) {
-          match.finish(team);
+        MatchTeam matchTeam = match.getTeam(winners);
+        if (matchTeam != null) {
+          match.finish(matchTeam);
           return true;
         } else {
           return false;
@@ -145,9 +146,9 @@ public class MatchReceptors {
     BotMatch match = Guido.getDataLoader().getMatch(id);
     if (match != null) {
       if (winners != -1) {
-        Team team = match.getTeam(winners);
-        if (team != null) {
-          match.finish(team);
+        MatchTeam matchTeam = match.getTeam(winners);
+        if (matchTeam != null) {
+          match.finish(matchTeam);
           return true;
         } else {
           return false;

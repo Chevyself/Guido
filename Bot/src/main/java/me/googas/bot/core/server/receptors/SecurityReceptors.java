@@ -2,7 +2,7 @@ package me.googas.bot.core.server.receptors;
 
 import java.util.UUID;
 import java.util.logging.Level;
-import me.googas.bot.core.Guido;
+import me.googas.bot.Guido;
 import me.googas.bot.core.server.request.BooleanGuidoRequest;
 import me.googas.commons.maps.Maps;
 import me.googas.messaging.api.MessengerListenFailException;

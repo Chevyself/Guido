@@ -1,9 +1,9 @@
 import java.util.HashMap;
 import java.util.HashSet;
 import me.googas.api.links.LinkableType;
-import me.googas.bot.core.types.GuidoLinkable;
-import me.googas.bot.core.types.maps.GuidoLinkedValuesMap;
-import me.googas.bot.core.types.maps.GuidoValuesMap;
+import me.googas.bot.core.GuidoLinkedValuesMap;
+import me.googas.bot.core.GuidoValuesMap;
+import me.googas.bot.core.links.GuidoLinkable;
 
 public class MapHashCode {
 
@@ -18,6 +18,7 @@ public class MapHashCode {
     GuidoLinkable link1 =
         new GuidoLinkable(
             LinkableType.MINECRAFT,
+            new GuidoValuesMap(),
             "a",
             map1,
             new GuidoValuesMap(),
@@ -26,6 +27,7 @@ public class MapHashCode {
     GuidoLinkable link2 =
         new GuidoLinkable(
             LinkableType.MINECRAFT,
+            new GuidoValuesMap(),
             "a",
             map2,
             new GuidoLinkedValuesMap(),

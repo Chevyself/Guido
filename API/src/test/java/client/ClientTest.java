@@ -1,35 +1,11 @@
 package client;
 
-import com.google.gson.internal.LinkedTreeMap;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Scanner;
-import java.util.UUID;
-import me.googas.api.client.Client;
-import me.googas.api.client.data.SimpleLinkableInfo;
-import me.googas.api.client.data.SimplePermissionStack;
-import me.googas.api.client.data.SimpleTeam;
-import me.googas.api.client.data.SimpleTeamMember;
-import me.googas.api.client.data.SimpleValuesMap;
-import me.googas.api.links.LinkableInfo;
-import me.googas.api.links.LinkableType;
-import me.googas.api.matches.Ladder;
-import me.googas.api.matches.TeamData;
-import me.googas.api.matches.TeamRole;
-import me.googas.api.permissions.Group;
-import me.googas.commons.Lots;
-import me.googas.commons.UUIDUtils;
-import me.googas.commons.maps.Maps;
-import me.googas.messaging.Request;
-import me.googas.messaging.api.MessengerListenFailException;
-import me.googas.messaging.json.client.JsonClient;
-
 /** A test for the client */
 public class ClientTest {
 
-  private static String groupId = "kI9w6F";
+  private static final String groupId = "kI9w6F";
 
+  /*
   public static void main(String[] args) throws IOException, MessengerListenFailException {
     String debug = "45.43.24.28";
     // 5Eh8QKdS7GmrE0Gs
@@ -142,7 +118,7 @@ public class ClientTest {
                   Maps.objects("id", "surHaun5TJ7CEHLo")
                       .append(
                           "team",
-                          new SimpleTeam(
+                          new SimpleMatchTeam(
                               -3,
                               "2 teanm",
                               Lots.set(
@@ -162,7 +138,7 @@ public class ClientTest {
                   "match-remove-team-by-id",
                   Maps.objects("id", "qu7XzgW73hW1gDDY").append("team", -2).build()),
               bol -> {
-                System.out.println("Team removed? " + bol);
+                System.out.println("MatchTeam removed? " + bol);
               });
         } else if (line.equalsIgnoreCase("links")) {
           System.out.println("Seding links request");
@@ -197,7 +173,7 @@ public class ClientTest {
               });
         } else if (line.equalsIgnoreCase("team")) {
           conn.sendRequest(
-              new Request<>(TeamData.class, "team-by-name", Maps.singleton("name", "Googas")),
+              new Request<>(Team.class, "team-by-name", Maps.singleton("name", "Googas")),
               team -> {
                 System.out.println(team);
               });
@@ -205,4 +181,5 @@ public class ClientTest {
       }
     }
   }
+   */
 }

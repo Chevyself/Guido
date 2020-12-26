@@ -2,7 +2,7 @@ package stats;
 
 import java.util.Map;
 import lombok.NonNull;
-import me.googas.api.utility.Stateable;
+import me.googas.api.Stateable;
 import me.googas.commons.maps.Maps;
 
 public class StatsTest {

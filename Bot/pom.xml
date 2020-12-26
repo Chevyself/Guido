@@ -12,7 +12,7 @@
 
     <groupId>me.googas.bot</groupId>
     <artifactId>Bot</artifactId>
-    <version>1.1.0-PRE-2</version>
+    <version>1.1.0-PRE-3</version>
 
     <build>
         <plugins>
@@ -25,7 +25,7 @@
                     <archive>
                         <manifest>
                             <addClasspath>true</addClasspath>
-                            <mainClass>me.googas.bot.core.Guido</mainClass>
+                            <mainClass>me.googas.bot.Guido</mainClass>
                         </manifest>
                     </archive>
                 </configuration>
@@ -78,13 +78,13 @@
         <dependency>
             <groupId>com.starfishst.jda</groupId>
             <artifactId>JDA</artifactId>
-            <version>1.0.10-SNAPSHOT</version>
+            <version>1.0.11-SNAPSHOT</version>
         </dependency>
         <!-- Dependency to the API -->
         <dependency>
             <groupId>me.googas.api</groupId>
             <artifactId>API</artifactId>
-            <version>1.0.0-PRE-6</version>
+            <version>1.0.0-PRE-7</version>
         </dependency>
         <!-- Mongo dependency -->
         <dependency>

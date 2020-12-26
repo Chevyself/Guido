@@ -3,14 +3,14 @@ package me.googas.bot.core.handlers.matches;
 import java.util.logging.Level;
 import lombok.NonNull;
 import me.googas.api.links.Linkable;
-import me.googas.api.matches.Ladder;
 import me.googas.api.matches.Match;
 import me.googas.api.matches.MatchStatus;
-import me.googas.api.matches.Team;
-import me.googas.api.matches.TeamMember;
+import me.googas.api.matches.MatchTeam;
+import me.googas.api.matches.ladder.Ladder;
+import me.googas.api.matches.team.TeamMember;
+import me.googas.bot.Guido;
 import me.googas.bot.api.events.match.MatchStatusUpdatedEvent;
-import me.googas.bot.api.types.BotGuild;
-import me.googas.bot.core.Guido;
+import me.googas.bot.api.types.discord.BotGuild;
 import me.googas.bot.core.handlers.GuidoEventHandler;
 import me.googas.bot.core.util.GuidoLogBuilder;
 import me.googas.commons.events.ListenPriority;
@@ -31,7 +31,7 @@ public class MatchCalculator implements GuidoEventHandler {
   public void onMatchStatusUpdatedEvent(@NonNull MatchStatusUpdatedEvent event) {
     GuidoLogBuilder builder = new GuidoLogBuilder(Level.INFO);
     Match match = event.getMatch();
-    Team winners = match.getWinners();
+    MatchTeam winners = match.getWinners();
     String ladderName = match.getDetails().get("ladder", String.class);
     long guildId = match.getGuildId();
     builder.append("Checking if event is FINISHED and match");
@@ -74,13 +74,13 @@ public class MatchCalculator implements GuidoEventHandler {
    */
   public void setElo(
       @NonNull Match match, Ladder ladder, float winnersDifference, int losersDifference) {
-    Team winners = match.getWinners();
+    MatchTeam winners = match.getWinners();
     String ladderName = ladder.getName();
-    for (Team team : match.getTeams()) {
-      for (TeamMember member : team.getMembers()) {
+    for (MatchTeam matchTeam : match.getTeams()) {
+      for (TeamMember member : matchTeam.getMembers()) {
         Linkable data = member.getLinkInfo().getLink();
         if (data != null) {
-          if (team == winners) {
+          if (matchTeam == winners) {
             data.increaseElo(ladder, winnersDifference);
             data.increaseStat(ladderName + "-wins", 1);
           } else {
@@ -99,18 +99,18 @@ public class MatchCalculator implements GuidoEventHandler {
    * @param match the match to void
    */
   public void voidMatch(@NonNull Match match) {
-    Team winners = match.getWinners();
+    MatchTeam winners = match.getWinners();
     Ladder ladder = match.getLadder();
     if (winners == null || ladder == null) return;
-    for (Team team : match.getTeams()) {
-      if (team.equals(winners)) {
-        for (TeamMember member : team.getMembers()) {
+    for (MatchTeam matchTeam : match.getTeams()) {
+      if (matchTeam.equals(winners)) {
+        for (TeamMember member : matchTeam.getMembers()) {
           member
               .getLinkInfo()
               .decreaseElo(ladder, match.getDetails().getOr("", Number.class, 16).floatValue());
         }
       } else {
-        for (TeamMember member : team.getMembers()) {
+        for (TeamMember member : matchTeam.getMembers()) {
           member
               .getLinkInfo()
               .increaseElo(ladder, match.getDetails().getOr("", Number.class, 16).floatValue());
@@ -142,10 +142,10 @@ public class MatchCalculator implements GuidoEventHandler {
   public float getLosersElo(Match match, Ladder ladder) {
     float losersElo = 0;
     int total = 0;
-    Team winners = match.getWinners();
-    for (Team team : match.getTeams()) {
-      if (team != winners) {
-        losersElo += team.getElo(ladder);
+    MatchTeam winners = match.getWinners();
+    for (MatchTeam matchTeam : match.getTeams()) {
+      if (matchTeam != winners) {
+        losersElo += matchTeam.getElo(ladder);
         total++;
       }
     }

@@ -1,7 +1,7 @@
 package me.googas.bot.core.server.receptors;
 
 import me.googas.api.links.LinkableInfo;
-import me.googas.bot.core.Guido;
+import me.googas.bot.Guido;
 import me.googas.bot.core.handlers.link.LinkHandler;
 import me.googas.messaging.json.ParamName;
 import me.googas.messaging.json.Receptor;

@@ -2,7 +2,7 @@ package me.googas.bot.core.util;
 
 import java.util.logging.Level;
 import lombok.NonNull;
-import me.googas.bot.core.Guido;
+import me.googas.bot.Guido;
 import me.googas.commons.builder.LogBuilder;
 
 public class GuidoLogBuilder extends LogBuilder {

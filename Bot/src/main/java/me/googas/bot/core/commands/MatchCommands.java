@@ -1,5 +1,6 @@
 package me.googas.bot.core.commands;
 
+import com.starfishst.core.annotations.Multiple;
 import com.starfishst.core.annotations.Optional;
 import com.starfishst.core.annotations.Required;
 import com.starfishst.core.objects.JoinedStrings;
@@ -15,27 +16,27 @@ import java.util.Map;
 import java.util.Set;
 import lombok.NonNull;
 import me.googas.api.lang.LocaleFile;
-import me.googas.api.matches.Ladder;
+import me.googas.api.links.Linkable;
 import me.googas.api.matches.Match;
 import me.googas.api.matches.MatchStatus;
-import me.googas.api.matches.Team;
-import me.googas.api.matches.TeamMember;
-import me.googas.api.matches.TeamRole;
+import me.googas.api.matches.MatchTeam;
+import me.googas.api.matches.ladder.Ladder;
+import me.googas.api.matches.team.TeamMember;
+import me.googas.api.matches.team.TeamRole;
 import me.googas.api.user.UserData;
-import me.googas.bot.api.types.BotGuild;
-import me.googas.bot.api.types.BotLinkable;
-import me.googas.bot.api.types.BotMatch;
-import me.googas.bot.core.Guido;
+import me.googas.bot.Guido;
+import me.googas.bot.api.types.discord.BotGuild;
+import me.googas.bot.api.types.links.BotLinkable;
+import me.googas.bot.api.types.match.BotMatch;
+import me.googas.bot.core.GuidoLinkedValuesMap;
 import me.googas.bot.core.handlers.matches.MatchMakingHandler;
 import me.googas.bot.core.handlers.matches.PGMMatchHandler;
-import me.googas.bot.core.types.GuidoMatch;
-import me.googas.bot.core.types.GuidoTeam;
-import me.googas.bot.core.types.GuidoTeamMember;
-import me.googas.bot.core.types.maps.GuidoLinkedValuesMap;
+import me.googas.bot.core.matches.GuidoMatch;
+import me.googas.bot.core.matches.GuidoMatchTeam;
+import me.googas.bot.core.matches.team.GuidoTeamMember;
 import me.googas.commons.Lots;
 import me.googas.commons.maps.Maps;
 import net.dv8tion.jda.api.entities.Member;
-import net.dv8tion.jda.api.entities.Message;
 
 /** Commands related to matches */
 public class MatchCommands {
@@ -45,7 +46,6 @@ public class MatchCommands {
    *
    * @param context the context of the command
    * @param locale the locale of the person reading the result
-   * @param message the message to get the mentioned users
    * @param guild the guild where the command is being executed
    * @param ladder the ladder in which this match happened
    * @return the result of the command execution
@@ -54,34 +54,32 @@ public class MatchCommands {
   public Result match(
       CommandContext context,
       LocaleFile locale,
-      Message message,
       BotGuild guild,
-      @Required(name = "match.ladder", description = "match.ladder.desc") Ladder ladder) {
-    if (message.getMentionedMembers().isEmpty()) {
+      @Required(name = "match.ladder", description = "match.ladder.desc") Ladder ladder,
+      @Required(name = "match.participants", description = "match.participants.desc")
+          Linkable[] participants) {
+    if (participants.length == 0) {
       return new Result(ResultType.USAGE, locale.get("match.mention-one"));
-    } else if (ladder.playersPerTeam() != message.getMentionedMembers().size() / 2) {
+    } else if (ladder.playersPerTeam() != participants.length / 2) {
       return new Result(
           ResultType.USAGE,
           locale.get(
               "match.different-than-required",
-              Maps.builder("given", String.valueOf(message.getMentionedMembers().size()))
+              Maps.builder("given", String.valueOf(participants.length))
                   .append("expected", String.valueOf(ladder.baseValue() * 2))));
     }
     Set<TeamMember> members1 = new HashSet<>();
     Set<TeamMember> members2 = new HashSet<>();
-    for (int i = 0; i < message.getMentionedMembers().size(); i++) {
-      Member mentioned = message.getMentionedMembers().get(i);
-      BotLinkable member =
-          Guido.getDataLoader()
-              .getMemberData(mentioned.getIdLong(), mentioned.getGuild().getIdLong());
+    for (int i = 0; i < participants.length; i++) {
+      Linkable participant = participants[i];
       if (i > ladder.playersPerTeam() - 1) {
-        members2.add(new GuidoTeamMember(member.getInfo(), TeamRole.NORMAL));
+        members2.add(new GuidoTeamMember(participant.getInfo(), TeamRole.NORMAL));
       } else {
-        members1.add(new GuidoTeamMember(member.getInfo(), TeamRole.NORMAL));
+        members1.add(new GuidoTeamMember(participant.getInfo(), TeamRole.NORMAL));
       }
     }
-    GuidoTeam team1 = new GuidoTeam(1, members1, "Team 1");
-    GuidoTeam team2 = new GuidoTeam(2, members2, "Team 2");
+    GuidoMatchTeam team1 = new GuidoMatchTeam(1, members1, "Team 1");
+    GuidoMatchTeam team2 = new GuidoMatchTeam(2, members2, "Team 2");
     GuidoMatch match =
         new GuidoMatch(
                 guild.getId(),
@@ -132,19 +130,20 @@ public class MatchCommands {
       LocaleFile locale,
       BotGuild guild,
       @Required(name = "finish.match", description = "finish.match.desc") Match match,
-      @Optional(name = "finish.winners", description = "finish.winners.desc") JoinedStrings name) {
+      @Multiple @Optional(name = "finish.winners", description = "finish.winners.desc")
+          JoinedStrings name) {
     Map<String, @NonNull String> placeholders = Maps.singleton("id", match.getId());
     if (match.getGuildId() == guild.getId()) {
       if (match.getStatus() == MatchStatus.FINISHED) {
         return new Result(ResultType.USAGE, locale.get("finish.already", placeholders));
       } else {
         if (name != null) {
-          Team team = match.getTeam(name.getString());
-          if (team != null) {
-            match.finish(team);
+          MatchTeam matchTeam = match.getTeam(name.getString());
+          if (matchTeam != null) {
+            match.finish(matchTeam);
             return new Result(locale.get("finish.finished", placeholders));
           } else {
-            placeholders.put("team", name.getString());
+            placeholders.put("matchTeam", name.getString());
             return new Result(locale.get("finish.invalid-team", placeholders));
           }
         } else {
@@ -199,7 +198,6 @@ public class MatchCommands {
     }
   }
 
-  /** Makes all the PGM matches look for servers */
   @Command(
       aliases = "look",
       description = "Makes the active PGM matches look for servers",

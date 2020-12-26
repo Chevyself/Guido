@@ -39,4 +39,21 @@ public interface Localized {
       @NonNull String key, @NonNull MapBuilder<String, String> placeholders) {
     this.sendLocalized(key, placeholders.build());
   }
+
+  /**
+   * Set the lang that this localized prefers
+   *
+   * @param lang the language
+   */
+  void setLang(@NonNull String lang);
+
+  // TODO set a lang
+
+  /**
+   * Get the language of this localized entity
+   *
+   * @return the language as a string
+   */
+  @NonNull
+  String getLang();
 }

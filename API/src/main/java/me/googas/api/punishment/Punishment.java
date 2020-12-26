@@ -1,12 +1,21 @@
 package me.googas.api.punishment;
 
 import lombok.NonNull;
+import me.googas.api.Expirable;
+import me.googas.api.GuidoCatchable;
+import me.googas.api.ValuesMap;
 import me.googas.api.links.LinkableInfo;
-import me.googas.api.utility.ValuesMap;
-import me.googas.commons.cache.Catchable;
 
 /** This class represents a punishment which can be done to any kind of data */
-public interface Punishment extends Catchable {
+public interface Punishment extends GuidoCatchable, Expirable {
+
+  /**
+   * Get the id of the punishment
+   *
+   * @return the id of punishment
+   */
+  @NonNull
+  String getId();
 
   /**
    * Get the type of punishment
@@ -36,7 +45,6 @@ public interface Punishment extends Catchable {
    *
    * @return the info of the punished
    */
-  @NonNull
   LinkableInfo getPunished();
 
   /**

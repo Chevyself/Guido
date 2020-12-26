@@ -1,6 +1,6 @@
 package me.googas.bot.api.events;
 
-import me.googas.bot.core.Guido;
+import me.googas.bot.Guido;
 import me.googas.commons.events.Cancellable;
 import me.googas.commons.events.Event;
 

@@ -5,8 +5,8 @@ import java.util.Set;
 import java.util.TimerTask;
 import lombok.NonNull;
 import me.googas.api.links.LinkableInfo;
-import me.googas.bot.api.types.BotLinkable;
-import me.googas.bot.core.Guido;
+import me.googas.bot.Guido;
+import me.googas.bot.api.types.links.BotLinkable;
 import me.googas.bot.core.handlers.GuidoHandler;
 import me.googas.commons.RandomUtils;
 import me.googas.commons.time.Time;
@@ -39,8 +39,7 @@ public class LinkHandler implements GuidoHandler {
    * @return the created code if the data is found and it is linked
    */
   public String createCode(@NonNull LinkableInfo info) {
-    BotLinkable data =
-        Guido.getDataLoader().getLinkedData(info.getType(), info.getIdentification());
+    BotLinkable data = Guido.getDataLoader().getLink(info.getType(), info.getIdentification());
     if (data != null && !data.isLinked()) {
       String code = this.nextCode();
       this.queries.add(

@@ -4,14 +4,12 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 import lombok.NonNull;
-import me.googas.api.utility.ValuesMap;
+import me.googas.api.ValuesMap;
 import me.googas.commons.builder.ToStringBuilder;
 import me.googas.commons.maps.Maps;
 
-/** An implementation for values map */
 public class SimpleValuesMap implements ValuesMap {
 
-  /** The map to get values */
   @NonNull private final Map<String, Object> map;
 
   /**

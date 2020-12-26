@@ -1,14 +1,16 @@
 package me.googas.bot.api.events.server;
 
+import lombok.Getter;
 import lombok.NonNull;
 import me.googas.bot.core.server.GuidoServer;
+import me.googas.commons.builder.ToStringBuilder;
 import me.googas.messaging.json.server.JsonClientThread;
 
 /** An event called when a connection to the server is made */
 public class GuidoServerConnectionEvent extends GuidoServerEvent {
 
   /** The client that connected to the server */
-  @NonNull private final JsonClientThread client;
+  @NonNull @Getter private final JsonClientThread client;
 
   /**
    * Create the event
@@ -21,18 +23,8 @@ public class GuidoServerConnectionEvent extends GuidoServerEvent {
     this.client = client;
   }
 
-  /**
-   * Get the client that connected to the server
-   *
-   * @return the client
-   */
-  @NonNull
-  public JsonClientThread getClient() {
-    return this.client;
-  }
-
   @Override
   public String toString() {
-    return "GuidoServerConnectionEvent{" + "client=" + this.client + "} " + super.toString();
+    return new ToStringBuilder(this).append("client", this.client).build();
   }
 }

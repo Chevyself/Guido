@@ -17,7 +17,9 @@ public interface PermissionStack {
    */
   default boolean hasPermission(@NonNull String node) {
     for (Permission permission : this.getPermissions()) {
-      if (permission.getNode().equalsIgnoreCase(node) && permission.isEnabled()) {
+      if (permission.getNode().equalsIgnoreCase(node)
+          && permission.isEnabled()
+          && !permission.isExpired()) {
         return true;
       }
     }

@@ -1,8 +1,8 @@
 package me.googas.bot.core.handlers;
 
 import lombok.NonNull;
+import me.googas.bot.Guido;
 import me.googas.bot.api.events.GuidoEvent;
-import me.googas.bot.core.Guido;
 import net.dv8tion.jda.api.JDA;
 
 /** This listens to {@link GuidoEvent} and jda events */

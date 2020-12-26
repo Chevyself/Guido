@@ -1,9 +1,10 @@
 package me.googas.api.permissions;
 
 import lombok.NonNull;
+import me.googas.api.Expirable;
 
 /** This object represents a permission. A permission contains a node and whether it is enabled */
-public interface Permission {
+public interface Permission extends Expirable {
 
   /**
    * Get the node of the permission. This node is the representation of the permission as a string

@@ -5,13 +5,13 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import lombok.NonNull;
-import me.googas.bot.api.types.BotResponsiveMessage;
+import me.googas.bot.api.types.messages.ResponsiveMesage;
 import me.googas.bot.core.util.Discord;
 import net.dv8tion.jda.api.entities.Emote;
 import net.dv8tion.jda.api.entities.Message;
 
 /** This responsive message gives roles to the user that reacts to the message */
-public class GiveRoleResponsiveMessage implements BotResponsiveMessage {
+public class GiveRoleResponsiveMessage implements ResponsiveMesage {
 
   /** The id of the message */
   private final long id;

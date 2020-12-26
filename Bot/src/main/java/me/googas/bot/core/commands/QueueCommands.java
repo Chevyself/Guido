@@ -6,13 +6,13 @@ import com.starfishst.jda.annotations.Command;
 import com.starfishst.jda.result.Result;
 import com.starfishst.jda.result.ResultType;
 import java.util.Collection;
-import me.googas.api.discord.GuildData;
 import me.googas.api.lang.LocaleFile;
-import me.googas.api.matches.Ladder;
-import me.googas.api.matches.Queueable;
+import me.googas.api.matches.ladder.Ladder;
+import me.googas.api.matches.queue.QueueResult;
+import me.googas.api.matches.queue.Queueable;
 import me.googas.api.user.UserData;
-import me.googas.bot.api.types.BotGuild;
-import me.googas.bot.core.Guido;
+import me.googas.bot.Guido;
+import me.googas.bot.api.types.discord.BotGuild;
 import me.googas.bot.core.handlers.matches.MatchMakingHandler;
 import me.googas.bot.core.handlers.matches.QueueHandler;
 import me.googas.bot.core.handlers.responsive.queue.JoinQueueReactionResponse;
@@ -55,10 +55,10 @@ public class QueueCommands {
         QueueHandler queues = Guido.getHandler(QueueHandler.class);
         if (queues.isWaiting(guild, member, ladder)) {
           return new Result(ResultType.USAGE, locale.get("queue.already"));
-        } else if (queues.joinQueue(guild, member, ladder)) {
-          return new Result(locale.get("queue.success"));
         } else {
-          return new Result(ResultType.ERROR, locale.get("queue.failed"));
+          QueueResult join = queues.joinQueue(guild, member, ladder);
+          if (join.isCancelled()) return new Result(ResultType.ERROR, join.getReason());
+          return new Result(locale.get("queue.success"));
         }
       }
     }
@@ -105,7 +105,7 @@ public class QueueCommands {
       description = "Create a message to easily join a queue",
       node = "guido.queue-msg")
   public Result queueMsg(
-      GuildData guild,
+      BotGuild guild,
       Message message,
       @Required(name = "ladder", description = "The ladder to create the queue join message for")
           Ladder ladder,
@@ -131,15 +131,13 @@ public class QueueCommands {
               new JoinQueueReactionResponse(unicodeToUse, ladder.getName());
           JoinQueueResponsiveMessage responsiveMessage =
               new JoinQueueResponsiveMessage(msg, Lots.set(reactionResponse));
-          if (guild instanceof BotGuild) {
-            ((BotGuild) guild).getMessages().add(responsiveMessage);
-            msg.editMessage(
-                    reactionResponse
-                        .buildMessage(((BotGuild) guild).getDiscord())
-                        .getAsMessageQuery()
-                        .build())
-                .queue();
-          }
+          guild.getMessages().add(responsiveMessage);
+          msg.editMessage(
+                  reactionResponse
+                      .buildMessage(guild.getDiscord())
+                      .getAsMessageQuery()
+                      .build())
+              .queue();
         });
   }
 }

@@ -9,10 +9,10 @@ import lombok.NonNull;
 import me.googas.api.links.LinkableInfo;
 import me.googas.api.matches.Match;
 import me.googas.api.matches.MatchStatus;
+import me.googas.bot.Guido;
 import me.googas.bot.api.events.match.MatchLoadedEvent;
 import me.googas.bot.api.events.match.MatchStatusUpdatedEvent;
 import me.googas.bot.api.server.BotServer;
-import me.googas.bot.core.Guido;
 import me.googas.commons.UUIDUtils;
 import me.googas.commons.Validate;
 import me.googas.commons.events.ListenPriority;
@@ -78,7 +78,10 @@ public class PGMMatchHandler implements MatchHandler {
       server.sendRequest(
           new Request<>(Boolean.class, "can-host", Maps.singleton("match", match)),
           ((messenger, canHost) -> {
-            if (this.waitingForServer.contains(match) && canHost != null && canHost) {
+            if (this.waitingForServer.contains(match)
+                && canHost != null
+                && canHost.isPresent()
+                && canHost.get()) {
               this.waitingForServer.remove(match);
               this.pleaseHost(match, bungee, messenger);
             }
@@ -103,8 +106,8 @@ public class PGMMatchHandler implements MatchHandler {
     messenger.sendRequest(
         new Request<>(String.class, "host", Maps.singleton("match", match)),
         serverIp -> {
-          if (serverIp != null) {
-            this.sendParticipantsToServer(bungee, serverIp, participants);
+          if (serverIp.isPresent()) {
+            this.sendParticipantsToServer(bungee, serverIp.get(), participants);
           }
         });
   }

@@ -5,12 +5,12 @@ import com.starfishst.jda.context.CommandContext;
 import com.starfishst.jda.context.GuildCommandContext;
 import com.starfishst.jda.providers.type.JdaArgumentProvider;
 import lombok.NonNull;
-import me.googas.api.matches.Ladder;
-import me.googas.bot.api.types.BotGuild;
-import me.googas.bot.core.Guido;
+import me.googas.api.matches.ladder.Ladder;
+import me.googas.bot.Guido;
+import me.googas.bot.api.types.discord.BotGuild;
+import me.googas.bot.core.util.Lang;
 import me.googas.commons.maps.Maps;
 
-/** Provides ladders for command */
 public class LadderProvider implements JdaArgumentProvider<Ladder> {
 
   @Override
@@ -30,10 +30,7 @@ public class LadderProvider implements JdaArgumentProvider<Ladder> {
       if (ladder != null) {
         return ladder;
       } else {
-        throw new ArgumentProviderException(
-            Guido.getLanguageHandler()
-                .getFile(context)
-                .get("invalid.ladder", Maps.singleton("string", s)));
+        throw Lang.getException("invalid.ladder", Maps.singleton("string", s), context);
       }
     }
     throw new ArgumentProviderException(context.getMessagesProvider().guildOnly(context));

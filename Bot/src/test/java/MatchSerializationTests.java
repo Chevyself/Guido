@@ -2,33 +2,34 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import java.util.HashSet;
 import java.util.Set;
-import me.googas.api.client.adapters.GroupAdapter;
-import me.googas.api.client.adapters.LadderAdapter;
-import me.googas.api.client.adapters.LinkedInfoAdapter;
-import me.googas.api.client.adapters.MatchAdapter;
-import me.googas.api.client.adapters.PermissionStackAdapter;
-import me.googas.api.client.adapters.TeamAdapter;
-import me.googas.api.client.adapters.TeamMemberAdapter;
+import me.googas.api.ValuesMap;
+import me.googas.api.client.adapters.link.LinkableInfoAdapter;
+import me.googas.api.client.adapters.matches.MatchAdapter;
+import me.googas.api.client.adapters.matches.MatchTeamAdapter;
+import me.googas.api.client.adapters.matches.ladder.LadderAdapter;
+import me.googas.api.client.adapters.matches.team.TeamMemberAdapter;
+import me.googas.api.client.adapters.permissions.GroupAdapter;
+import me.googas.api.client.adapters.permissions.PermissionStackAdapter;
 import me.googas.api.client.data.SimpleValuesMap;
 import me.googas.api.links.LinkableInfo;
 import me.googas.api.links.LinkableType;
-import me.googas.api.matches.Ladder;
 import me.googas.api.matches.Match;
-import me.googas.api.matches.Team;
-import me.googas.api.matches.TeamMember;
-import me.googas.api.matches.TeamRole;
+import me.googas.api.matches.MatchTeam;
+import me.googas.api.matches.ladder.Ladder;
+import me.googas.api.matches.team.TeamMember;
+import me.googas.api.matches.team.TeamRole;
 import me.googas.api.permissions.Group;
 import me.googas.api.permissions.Permission;
 import me.googas.api.permissions.PermissionStack;
-import me.googas.api.utility.ValuesMap;
-import me.googas.bot.adapters.PermissionAdapter;
 import me.googas.bot.adapters.ValuesMapAdapter;
-import me.googas.bot.core.types.GuidoLinkableInfo;
-import me.googas.bot.core.types.GuidoMatch;
-import me.googas.bot.core.types.GuidoTeam;
-import me.googas.bot.core.types.GuidoTeamMember;
-import me.googas.bot.core.types.maps.GuidoLinkedValuesMap;
-import me.googas.bot.core.types.maps.GuidoValuesMap;
+import me.googas.bot.adapters.links.LinkedInfoAdapter;
+import me.googas.bot.adapters.permissions.PermissionAdapter;
+import me.googas.bot.core.GuidoLinkedValuesMap;
+import me.googas.bot.core.GuidoValuesMap;
+import me.googas.bot.core.links.GuidoLinkableInfo;
+import me.googas.bot.core.matches.GuidoMatch;
+import me.googas.bot.core.matches.GuidoMatchTeam;
+import me.googas.bot.core.matches.team.GuidoTeamMember;
 import me.googas.commons.Lots;
 import me.googas.messaging.api.Message;
 import me.googas.messaging.json.adapters.MessageDeserializer;
@@ -41,11 +42,12 @@ public class MatchSerializationTests {
             // Required by Commons-Communication
             .registerTypeAdapter(Message.class, new MessageDeserializer())
             // For custom receptors
-            .registerTypeAdapter(LinkableInfo.class, new me.googas.bot.adapters.LinkedInfoAdapter())
+            .registerTypeAdapter(LinkableInfo.class, new LinkedInfoAdapter())
             .registerTypeAdapter(Permission.class, new PermissionAdapter())
             .registerTypeAdapter(ValuesMap.class, new ValuesMapAdapter())
-            .registerTypeAdapter(Team.class, new TeamAdapter())
-            .registerTypeAdapter(TeamMember.class, new me.googas.bot.adapters.TeamMemberAdapter())
+            .registerTypeAdapter(MatchTeam.class, new MatchTeamAdapter())
+            .registerTypeAdapter(
+                TeamMember.class, new me.googas.bot.adapters.matches.team.TeamMemberAdapter())
             .registerTypeAdapter(GuidoValuesMap.class, new ValuesMapAdapter())
             .registerTypeAdapter(GuidoLinkedValuesMap.class, new ValuesMapAdapter())
             .serializeNulls()
@@ -55,12 +57,12 @@ public class MatchSerializationTests {
         new GsonBuilder()
             .registerTypeAdapter(Group.class, new GroupAdapter())
             .registerTypeAdapter(Ladder.class, new LadderAdapter())
-            .registerTypeAdapter(LinkableInfo.class, new LinkedInfoAdapter())
+            .registerTypeAdapter(LinkableInfo.class, new LinkableInfoAdapter())
             .registerTypeAdapter(Match.class, new MatchAdapter())
             .registerTypeAdapter(
-                Permission.class, new me.googas.api.client.adapters.PermissionAdapter())
+                Permission.class, new me.googas.api.client.adapters.permissions.PermissionAdapter())
             .registerTypeAdapter(PermissionStack.class, new PermissionStackAdapter())
-            .registerTypeAdapter(Team.class, new TeamAdapter())
+            .registerTypeAdapter(MatchTeam.class, new MatchTeamAdapter())
             .registerTypeAdapter(TeamMember.class, new TeamMemberAdapter())
             .registerTypeAdapter(
                 ValuesMap.class, new me.googas.api.client.adapters.ValuesMapAdapter())
@@ -81,7 +83,7 @@ public class MatchSerializationTests {
             new GuidoMatch(
                 "asdasd",
                 20,
-                Lots.set(new GuidoTeam(1, members, "asd")),
+                Lots.set(new GuidoMatchTeam(1, members, "asd")),
                 new GuidoLinkedValuesMap("asd", "asc").put("type", "pgm").put("pito", 30)));
     Match match = client.fromJson(json, Match.class);
     System.out.println(match.getDetails());

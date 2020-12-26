@@ -12,10 +12,10 @@ import java.util.List;
 import java.util.Map;
 import lombok.NonNull;
 import me.googas.api.lang.LocaleFile;
-import me.googas.api.matches.Ladder;
-import me.googas.bot.api.types.BotGuild;
-import me.googas.bot.core.types.GuidoLadder;
-import me.googas.bot.core.types.maps.GuidoValuesMap;
+import me.googas.api.matches.ladder.Ladder;
+import me.googas.bot.api.types.discord.BotGuild;
+import me.googas.bot.core.GuidoValuesMap;
+import me.googas.bot.core.matches.ladder.GuidoLadder;
 import me.googas.commons.Lots;
 import me.googas.commons.Pagination;
 import me.googas.commons.Strings;
@@ -36,8 +36,7 @@ public class LadderCommands {
   @Parent
   @Command(
       aliases = {"ladders", "ladder"},
-      description = "ladders.desc",
-      node = "guido.ladders")
+      description = "ladders.desc")
   public Result ladders(
       LocaleFile locale,
       BotGuild guild,

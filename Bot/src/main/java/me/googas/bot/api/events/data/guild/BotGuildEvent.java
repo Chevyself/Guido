@@ -1,14 +1,15 @@
 package me.googas.bot.api.events.data.guild;
 
+import lombok.Getter;
 import lombok.NonNull;
 import me.googas.bot.api.events.GuidoEvent;
-import me.googas.bot.api.types.BotGuild;
+import me.googas.bot.api.types.discord.BotGuild;
+import me.googas.commons.builder.ToStringBuilder;
 
 /** This object represents an event which has {@link BotGuild} involved */
 public class BotGuildEvent implements GuidoEvent {
 
-  /** The guild data that was involved in the event */
-  @NonNull private final BotGuild data;
+  @NonNull @Getter private final BotGuild data;
 
   /**
    * Create the event
@@ -19,18 +20,8 @@ public class BotGuildEvent implements GuidoEvent {
     this.data = data;
   }
 
-  /**
-   * Get the guild data that was involved in the event
-   *
-   * @return the data that was involved in the event
-   */
-  @NonNull
-  public BotGuild getData() {
-    return this.data;
-  }
-
   @Override
   public String toString() {
-    return "BotGuildEvent{" + "data=" + this.data + '}';
+    return new ToStringBuilder(this).append("data", this.data).build();
   }
 }

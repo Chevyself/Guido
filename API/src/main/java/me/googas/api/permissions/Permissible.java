@@ -1,7 +1,11 @@
 package me.googas.api.permissions;
 
 import java.util.Collection;
+import java.util.HashSet;
+
 import lombok.NonNull;
+import me.googas.api.client.data.permissions.SimplePermission;
+import me.googas.api.client.data.permissions.SimplePermissionStack;
 
 /** This is an entity which may posses node permissions */
 public interface Permissible {
@@ -55,9 +59,22 @@ public interface Permissible {
    * @param context the context of the permission
    * @param node the node of the permission
    * @param enabled whether the permission is enabled
+   * @param expires when does the permission expire
    * @return whether the permission was added
    */
-  boolean addPermission(@NonNull String context, @NonNull String node, boolean enabled);
+  default boolean addPermission(
+      @NonNull String context, @NonNull String node, boolean enabled, long expires) {
+    PermissionStack stack = this.getPermissions(context);
+    if (stack == null) {
+      stack = new SimplePermissionStack(context, new HashSet<>());
+      this.getPermissions().add(stack);
+    }
+    if (!stack.containsPermission(node)) {
+      SimplePermission permission = new SimplePermission(node, enabled, expires);
+      return stack.add(permission);
+    }
+    return false;
+  }
 
   /**
    * Removes the permission from this permissible
@@ -66,7 +83,16 @@ public interface Permissible {
    * @param node the node of the permission
    * @return whether the permission was removed. True if it was removed false otherwise
    */
-  boolean removePermission(@NonNull String context, @NonNull String node);
+  default boolean removePermission(@NonNull String context, @NonNull String node) {
+    PermissionStack stack = this.getPermissions(context);
+    if (stack != null) {
+      if (stack.containsPermission(node)) {
+        stack.getPermissions().removeIf(permission -> permission.getNode().equalsIgnoreCase(node));
+        return true;
+      }
+    }
+    return false;
+  }
 
   /**
    * Get the set of permission stack. This are all the permissions that this entity posses

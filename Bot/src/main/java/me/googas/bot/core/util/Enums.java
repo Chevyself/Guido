@@ -1,0 +1,27 @@
+package me.googas.bot.core.util;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+
+/** Static utilities for enums */
+public class Enums {
+
+  public static <T extends Enum<?>> List<String> getNames(Collection<T> enums) {
+    List<String> names = new ArrayList<>();
+    if (enums.isEmpty()) return names;
+    for (T anEnum : enums) {
+      names.add(anEnum.name());
+    }
+    return names;
+  }
+
+  public static <T extends Enum<?>> List<String> getNames(T[] enums) {
+    List<String> names = new ArrayList<>();
+    if (enums.length == 0) return names;
+    for (T anEnum : enums) {
+      names.add(anEnum.name());
+    }
+    return names;
+  }
+}

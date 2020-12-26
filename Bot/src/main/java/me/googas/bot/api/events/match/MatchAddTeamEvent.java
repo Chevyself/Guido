@@ -1,33 +1,24 @@
 package me.googas.bot.api.events.match;
 
+import lombok.Getter;
 import lombok.NonNull;
 import me.googas.api.matches.Match;
-import me.googas.api.matches.Team;
+import me.googas.api.matches.MatchTeam;
 
-/** Called when a team has been added to a match */
+/** Called when a matchTeam has been added to a match */
 public class MatchAddTeamEvent extends MatchEvent {
 
-  /** The team that has been added to the match */
-  @NonNull private final Team team;
+  /** The matchTeam that has been added to the match */
+  @NonNull @Getter private final MatchTeam matchTeam;
 
   /**
    * Create the match event
    *
    * @param match the match involved
-   * @param team the team that has been added to the match
+   * @param matchTeam the matchTeam that has been added to the match
    */
-  public MatchAddTeamEvent(@NonNull Match match, @NonNull Team team) {
+  public MatchAddTeamEvent(@NonNull Match match, @NonNull MatchTeam matchTeam) {
     super(match);
-    this.team = team;
-  }
-
-  /**
-   * Get the team that has been added to the match
-   *
-   * @return the team that is has been added
-   */
-  @NonNull
-  public Team getTeam() {
-    return this.team;
+    this.matchTeam = matchTeam;
   }
 }

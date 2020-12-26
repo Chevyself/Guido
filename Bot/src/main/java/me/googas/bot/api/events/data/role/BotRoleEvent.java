@@ -1,14 +1,15 @@
 package me.googas.bot.api.events.data.role;
 
+import lombok.Getter;
 import lombok.NonNull;
 import me.googas.bot.api.events.GuidoEvent;
-import me.googas.bot.api.types.BotRole;
+import me.googas.bot.api.types.discord.BotRole;
 
 /** An event where the data of a role is involved */
 public class BotRoleEvent implements GuidoEvent {
 
   /** The data involved in the event */
-  @NonNull private final BotRole data;
+  @NonNull @Getter private final BotRole data;
 
   /**
    * Create the event
@@ -17,16 +18,6 @@ public class BotRoleEvent implements GuidoEvent {
    */
   public BotRoleEvent(@NonNull BotRole data) {
     this.data = data;
-  }
-
-  /**
-   * Get the role data involved in the event
-   *
-   * @return the role data involved in the event
-   */
-  @NonNull
-  public BotRole getData() {
-    return this.data;
   }
 
   @Override

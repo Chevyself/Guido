@@ -1,6 +1,7 @@
 package com.starfishst.bukkit.dependencies.events;
 
 import com.starfishst.bukkit.client.BukkitRequest;
+import dev.pgm.events.Tournament;
 import dev.pgm.events.team.TeamParser;
 import dev.pgm.events.team.TournamentTeam;
 import java.util.ArrayList;
@@ -10,6 +11,11 @@ import me.googas.commons.maps.Maps;
 import me.googas.messaging.api.MessengerListenFailException;
 
 public class GuidoTeamParser implements TeamParser {
+
+  /** Enables the team parser to be used in the event plugin */
+  public static void enable() {
+    Tournament.get().setTeamParser(new GuidoTeamParser());
+  }
 
   @Override
   public TournamentTeam getTeam(String s) {

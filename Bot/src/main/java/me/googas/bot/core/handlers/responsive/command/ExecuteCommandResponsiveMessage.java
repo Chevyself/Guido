@@ -5,11 +5,11 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 import lombok.NonNull;
-import me.googas.bot.api.types.BotResponsiveMessage;
+import me.googas.bot.api.types.messages.ResponsiveMesage;
 import net.dv8tion.jda.api.entities.Message;
 
 /** A responsive message that its reactions execute commands */
-public class ExecuteCommandResponsiveMessage implements BotResponsiveMessage {
+public class ExecuteCommandResponsiveMessage implements ResponsiveMesage {
 
   /** The id of the message */
   private final long id;

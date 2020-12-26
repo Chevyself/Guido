@@ -1,14 +1,15 @@
 package me.googas.api.messaging;
 
 import lombok.NonNull;
+import me.googas.api.ValuesMap;
 import me.googas.api.links.Linkable;
 import me.googas.api.links.LinkableInfo;
-import me.googas.api.utility.ValuesMap;
+import me.googas.api.matches.team.Team;
 import me.googas.commons.cache.Catchable;
 
 /**
  * A message is a notification a chat message and more. It can be, for example, an invitation for a
- * {@link Linkable} to participate in a {@link me.googas.api.matches.TeamData}
+ * {@link Linkable} to participate in a {@link Team}
  */
 public interface Message extends Catchable {
 
@@ -25,7 +26,6 @@ public interface Message extends Catchable {
    *
    * @return the sender of the message
    */
-  @NonNull
   LinkableInfo getSender();
 
   /**

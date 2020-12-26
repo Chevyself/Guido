@@ -10,7 +10,7 @@ import com.starfishst.jda.utils.responsive.ReactionResponse;
 import gnu.trove.set.hash.TLongHashSet;
 import java.util.concurrent.TimeUnit;
 import lombok.NonNull;
-import me.googas.bot.core.Guido;
+import me.googas.bot.Guido;
 import me.googas.commons.Strings;
 import me.googas.commons.Validate;
 import net.dv8tion.jda.api.entities.Message;

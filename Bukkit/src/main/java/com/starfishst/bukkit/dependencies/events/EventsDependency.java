@@ -5,7 +5,6 @@ import com.starfishst.bukkit.api.dependencies.Dependency;
 import com.starfishst.bukkit.api.events.GuidoListener;
 import com.starfishst.bukkit.context.CommandContext;
 import com.starfishst.core.providers.type.IContextualProvider;
-import dev.pgm.events.Tournament;
 import java.util.ArrayList;
 import java.util.Collection;
 import lombok.NonNull;
@@ -29,7 +28,7 @@ public class EventsDependency implements Dependency {
   public void setEnabled(boolean bol) {
     this.enabled = bol;
     if (bol) {
-      Tournament.get().setTeamParser(new GuidoTeamParser());
+      GuidoTeamParser.enable();
     }
   }
 

@@ -1,5 +1,6 @@
 package me.googas.bot.api.events.match;
 
+import lombok.Getter;
 import lombok.NonNull;
 import me.googas.api.matches.Match;
 import me.googas.api.matches.MatchStatus;
@@ -9,7 +10,7 @@ import me.googas.bot.api.events.GuidoCancellable;
 public class MatchStatusUpdatedEvent extends MatchEvent implements GuidoCancellable {
 
   /** The new status of the match */
-  @NonNull private final MatchStatus status;
+  @NonNull @Getter private final MatchStatus status;
 
   /** Whether the event is cancelled */
   private boolean cancelled;
@@ -33,15 +34,5 @@ public class MatchStatusUpdatedEvent extends MatchEvent implements GuidoCancella
   @Override
   public boolean isCancelled() {
     return this.cancelled;
-  }
-
-  /**
-   * Get the new status of the match
-   *
-   * @return the new status of the match
-   */
-  @NonNull
-  public MatchStatus getStatus() {
-    return this.status;
   }
 }

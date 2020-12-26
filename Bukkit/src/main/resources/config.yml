@@ -81,6 +81,7 @@ listener-settings:
   ## Handler for giving permissions to players
   permission:
     ## Whether the server is connected thru bungeecord
+    ## Todo this setting must be check from the spigot configuration
     bungee: false
   ## A listener that aims to improve minecraft velocity
   better-velocity:

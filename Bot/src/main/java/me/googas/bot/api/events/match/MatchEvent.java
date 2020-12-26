@@ -1,5 +1,6 @@
 package me.googas.bot.api.events.match;
 
+import lombok.Getter;
 import lombok.NonNull;
 import me.googas.api.matches.Match;
 import me.googas.bot.api.events.GuidoEvent;
@@ -8,7 +9,7 @@ import me.googas.bot.api.events.GuidoEvent;
 public class MatchEvent implements GuidoEvent {
 
   /** The match involved */
-  @NonNull private final Match match;
+  @NonNull @Getter private final Match match;
 
   /**
    * Create the match event
@@ -17,16 +18,6 @@ public class MatchEvent implements GuidoEvent {
    */
   public MatchEvent(@NonNull Match match) {
     this.match = match;
-  }
-
-  /**
-   * Get the match involved
-   *
-   * @return the match involved
-   */
-  @NonNull
-  public Match getMatch() {
-    return this.match;
   }
 
   @Override

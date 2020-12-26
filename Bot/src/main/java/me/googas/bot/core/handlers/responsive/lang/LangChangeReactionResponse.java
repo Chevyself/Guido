@@ -3,8 +3,8 @@ package me.googas.bot.core.handlers.responsive.lang;
 import com.starfishst.jda.utils.responsive.ReactionResponse;
 import com.starfishst.jda.utils.responsive.ResponsiveMessage;
 import lombok.NonNull;
-import me.googas.bot.api.types.BotLinkable;
-import me.googas.bot.core.Guido;
+import me.googas.bot.Guido;
+import me.googas.bot.api.types.links.BotLinkable;
 import me.googas.bot.core.handlers.responsive.GuidoMessagesController;
 import net.dv8tion.jda.api.events.message.react.MessageReactionAddEvent;
 

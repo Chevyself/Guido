@@ -1,14 +1,16 @@
 package me.googas.bot.api.events.data.user;
 
+import lombok.Getter;
 import lombok.NonNull;
 import me.googas.api.user.UserData;
 import me.googas.bot.api.events.GuidoEvent;
+import me.googas.commons.builder.ToStringBuilder;
 
 /** An event that involves user data */
 public class UserDataEvent implements GuidoEvent {
 
   /** The data involved in the event */
-  @NonNull private final UserData data;
+  @NonNull @Getter private final UserData data;
 
   /**
    * Create the event
@@ -19,18 +21,8 @@ public class UserDataEvent implements GuidoEvent {
     this.data = data;
   }
 
-  /**
-   * Get the user data involved in the event
-   *
-   * @return the user data involved in the event
-   */
-  @NonNull
-  public UserData getData() {
-    return this.data;
-  }
-
   @Override
   public String toString() {
-    return "UserDataEvent{" + "data=" + this.data + '}';
+    return new ToStringBuilder(this).append("data", this.data).build();
   }
 }

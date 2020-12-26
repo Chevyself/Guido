@@ -4,11 +4,11 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import me.googas.api.permissions.Group;
+import me.googas.api.permissions.GroupInfo;
 import me.googas.api.permissions.Permission;
-import me.googas.bot.api.types.BotGroup;
-import me.googas.bot.core.Guido;
-import me.googas.bot.core.types.GuidoGroup;
-import me.googas.bot.core.types.maps.GuidoValuesMap;
+import me.googas.bot.Guido;
+import me.googas.bot.core.GuidoValuesMap;
+import me.googas.bot.core.permissions.GuidoGroup;
 import me.googas.messaging.json.ParamName;
 import me.googas.messaging.json.Receptor;
 
@@ -22,7 +22,7 @@ public class GroupReceptors {
    * @return the group if found or null
    */
   @Receptor("group")
-  public BotGroup group(@ParamName("id") String id) {
+  public Group group(@ParamName("id") String id) {
     return Guido.getDataLoader().getGroup(id);
   }
 
@@ -32,7 +32,7 @@ public class GroupReceptors {
    * @return the existing groups
    */
   @Receptor("groups")
-  public Collection<Group> groups() {
+  public Collection<GroupInfo> groups() {
     return Guido.getDataLoader().getGroups();
   }
 
@@ -72,7 +72,7 @@ public class GroupReceptors {
   @Receptor("group-update")
   public boolean update(
       @ParamName("id") String id, @ParamName("name") String name, @ParamName("weight") int weight) {
-    BotGroup group = Guido.getDataLoader().getGroup(id);
+    Group group = Guido.getDataLoader().getGroup(id);
     if (group != null) {
       group.setName(name);
       group.setWeight(weight);
@@ -94,7 +94,7 @@ public class GroupReceptors {
       @ParamName("id") String groupId,
       @ParamName("key") String key,
       @ParamName("value") Object value) {
-    BotGroup group = Guido.getDataLoader().getGroup(groupId);
+    Group group = Guido.getDataLoader().getGroup(groupId);
     if (group != null) {
       group.getPreferences().put(key, value);
       return true;
@@ -111,7 +111,7 @@ public class GroupReceptors {
    */
   @Receptor("group-remove-preference")
   public boolean setPreference(@ParamName("id") String groupId, @ParamName("key") String key) {
-    BotGroup group = Guido.getDataLoader().getGroup(groupId);
+    Group group = Guido.getDataLoader().getGroup(groupId);
     if (group != null) {
       group.getPreferences().remove(key);
       return true;
@@ -131,10 +131,11 @@ public class GroupReceptors {
   public boolean addPermission(
       @ParamName("id") String id,
       @ParamName("context") String context,
-      @ParamName("permission") Permission permission) {
-    BotGroup group = Guido.getDataLoader().getGroup(id);
+      @ParamName("permission") Permission permission,
+      @ParamName("expires") long expires) {
+    Group group = Guido.getDataLoader().getGroup(id);
     if (group != null) {
-      return group.addPermission(context, permission.getNode(), permission.isEnabled());
+      return group.addPermission(context, permission.getNode(), permission.isEnabled(), expires);
     }
     return false;
   }
@@ -148,7 +149,7 @@ public class GroupReceptors {
    */
   @Receptor("group-add-parent")
   public boolean addParent(@ParamName("id") String id, @ParamName("parent") String parentId) {
-    BotGroup group = Guido.getDataLoader().getGroup(id);
+    Group group = Guido.getDataLoader().getGroup(id);
     if (group == null) return false;
     return group.getParents().add(parentId);
   }
@@ -162,7 +163,7 @@ public class GroupReceptors {
    */
   @Receptor("group-remove-parent")
   public boolean removeParent(@ParamName("id") String id, @ParamName("parent") String parentId) {
-    BotGroup group = Guido.getDataLoader().getGroup(id);
+    Group group = Guido.getDataLoader().getGroup(id);
     if (group == null) return false;
     return group.getParents().remove(parentId);
   }
@@ -180,7 +181,7 @@ public class GroupReceptors {
       @ParamName("id") String id,
       @ParamName("context") String context,
       @ParamName("permission") Permission permission) {
-    BotGroup group = Guido.getDataLoader().getGroup(id);
+    Group group = Guido.getDataLoader().getGroup(id);
     if (group != null) {
       return group.removePermission(context, permission.getNode());
     }

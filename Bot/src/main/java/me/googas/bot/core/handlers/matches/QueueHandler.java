@@ -7,15 +7,17 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import lombok.NonNull;
-import me.googas.api.discord.GuildData;
 import me.googas.api.links.Linkable;
 import me.googas.api.links.LinkableInfo;
-import me.googas.api.matches.Ladder;
-import me.googas.api.matches.Queue;
+import me.googas.api.matches.ladder.Ladder;
+import me.googas.api.matches.queue.Queue;
+import me.googas.api.matches.queue.QueueResult;
+import me.googas.api.matches.queue.Queueable;
+import me.googas.bot.Guido;
 import me.googas.bot.api.events.queue.QueueLeaveEvent;
-import me.googas.bot.api.types.BotGuild;
-import me.googas.bot.api.types.BotLinkable;
-import me.googas.bot.core.Guido;
+import me.googas.bot.api.types.discord.BotGuild;
+import me.googas.bot.api.types.links.BotLinkable;
+import me.googas.bot.api.types.links.BotLinkableInfo;
 import me.googas.bot.core.handlers.GuidoEventHandler;
 import me.googas.commons.events.ListenPriority;
 import me.googas.commons.events.Listener;
@@ -113,9 +115,11 @@ public class QueueHandler implements GuidoEventHandler {
    */
   @Listener(priority = ListenPriority.HIGHEST)
   public void onQueueLeave(QueueLeaveEvent event) {
-    Linkable link = event.getData().getLink();
-    if (link instanceof BotLinkable) {
-      Member member = ((BotLinkable) link).getDiscordMember(event.getQueue().getGuildId());
+    Queueable data = event.getData();
+    if (!(data instanceof BotLinkableInfo)) return;
+    BotLinkable link = ((BotLinkableInfo) data).getLink();
+    if (link != null) {
+      Member member = link.getDiscordMember(event.getQueue().getGuildId());
       if (member != null) {
         GuildVoiceState voiceState = member.getVoiceState();
         if (voiceState != null) {
@@ -199,7 +203,7 @@ public class QueueHandler implements GuidoEventHandler {
    * @param guild the guild to get the queue from
    * @param ladder the ladder that needs the queue
    * @return the queue if exists else a new one will be created from {@link
-   *     Ladder#createQueue(GuildData)})}
+   *     Ladder#createQueue(long)})}
    */
   @NonNull
   public Queue getQueue(@NonNull BotGuild guild, @NonNull Ladder ladder) {
@@ -209,7 +213,7 @@ public class QueueHandler implements GuidoEventHandler {
         return queue;
       }
     }
-    Queue queue = ladder.createQueue(guild);
+    Queue queue = ladder.createQueue(guild.getId());
     this.queues.add(queue);
     return queue;
   }
@@ -222,15 +226,15 @@ public class QueueHandler implements GuidoEventHandler {
    * @param ladder the ladder to get the queue of it
    * @return whether the member joined the queue
    */
-  public boolean joinQueue(
+  public QueueResult joinQueue(
       @NonNull BotGuild guild, @NonNull Member member, @NonNull Ladder ladder) {
     Queue queue = this.getQueue(guild, ladder);
-    if (queue.join(
-        Guido.getDataLoader().getMemberData(member.getIdLong(), guild.getId()).getInfo())) {
-      guild.getDiscord().moveVoiceMember(member, this.getWaitingChannel(guild)).queue();
-      return true;
-    }
-    return false;
+    QueueResult join =
+        queue.join(
+            Guido.getDataLoader().getMemberData(member.getIdLong(), guild.getId()).getInfo());
+    if (join.isCancelled()) return join;
+    guild.getDiscord().moveVoiceMember(member, this.getWaitingChannel(guild)).queue();
+    return new QueueResult(QueueResult.ActionType.JOIN);
   }
 
   /**

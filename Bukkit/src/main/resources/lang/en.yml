@@ -14,6 +14,7 @@ not-allowed: "&cYou are not allowed to use this command"
 captain-only: "&cThis command may be used by a captain only!"
 participant-only: "&cYou must be participating in the match to execute this command"
 # Help topic of the plugin
+# TODO the help topic of the plugin needs to be done
 help-topic:
   plugin:
     short: "Get help for %name%-%version%"

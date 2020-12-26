@@ -2,6 +2,7 @@ package me.googas.bot.core.server;
 
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Optional;
 import java.util.Set;
 import java.util.function.BiConsumer;
 import lombok.NonNull;
@@ -9,6 +10,7 @@ import me.googas.bot.api.server.BotServer;
 import me.googas.messaging.Request;
 import me.googas.messaging.api.Messenger;
 import me.googas.messaging.json.JsonMessenger;
+import org.jetbrains.annotations.NotNull;
 
 /** A fallback server in case {@link GuidoServer does not work} */
 public class GuidoFallbackServer implements BotServer {
@@ -25,7 +27,7 @@ public class GuidoFallbackServer implements BotServer {
 
   @Override
   public <T> void sendRequest(
-      @NonNull Request<T> request, BiConsumer<JsonMessenger, T> biConsumer) {}
+      @NotNull Request<T> request, BiConsumer<JsonMessenger, Optional<T>> biConsumer) {}
 
   @Override
   public @NonNull <T> HashMap<JsonMessenger, T> sendRequest(@NonNull Request<T> request) {

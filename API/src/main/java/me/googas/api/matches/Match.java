@@ -5,10 +5,11 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 import lombok.NonNull;
-import me.googas.api.discord.GuildData;
+import me.googas.api.ValuesMap;
 import me.googas.api.links.LinkableInfo;
 import me.googas.api.links.LinkableType;
-import me.googas.api.utility.ValuesMap;
+import me.googas.api.matches.ladder.Ladder;
+import me.googas.api.matches.team.TeamMember;
 import me.googas.commons.RandomUtils;
 import me.googas.commons.cache.Catchable;
 
@@ -23,9 +24,9 @@ public interface Match extends Catchable {
    * @return true if it matches a member from a team
    */
   default boolean isParticipating(@NonNull LinkableType type, @NonNull ValuesMap identification) {
-    Collection<Team> teams = this.getTeams();
-    for (Team team : teams) {
-      for (TeamMember member : team.getMembers()) {
+    Collection<MatchTeam> matchTeams = this.getTeams();
+    for (MatchTeam matchTeam : matchTeams) {
+      for (TeamMember member : matchTeam.getMembers()) {
         if (member.getLinkInfo().compare(type, identification)) return true;
       }
     }
@@ -37,7 +38,7 @@ public interface Match extends Catchable {
    *
    * @param winners the winners of the match
    */
-  default void finish(Team winners) {
+  default void finish(MatchTeam winners) {
     this.setWinners(winners);
     this.setStatus(MatchStatus.FINISHED);
   }
@@ -48,10 +49,10 @@ public interface Match extends Catchable {
    * @param name the name of the team to get
    * @return the team if the name matches else null
    */
-  default Team getTeam(@NonNull String name) {
-    for (Team team : this.getTeams()) {
-      if (team.getName().equalsIgnoreCase(name)) {
-        return team;
+  default MatchTeam getTeam(@NonNull String name) {
+    for (MatchTeam matchTeam : this.getTeams()) {
+      if (matchTeam.getName().equalsIgnoreCase(name)) {
+        return matchTeam;
       }
     }
     return null;
@@ -65,28 +66,20 @@ public interface Match extends Catchable {
   long getGuildId();
 
   /**
-   * Add a team to this match
+   * Add a matchTeam to this match
    *
-   * @param team the team to add
-   * @return whether the team was added
+   * @param matchTeam the matchTeam to add
+   * @return whether the matchTeam was added
    */
-  boolean addTeam(@NonNull Team team);
+  boolean addTeam(@NonNull MatchTeam matchTeam);
 
   /**
-   * Removes a team from this match
+   * Removes a matchTeam from this match
    *
-   * @param team the team to remove
-   * @return whether the team was removed
+   * @param matchTeam the matchTeam to remove
+   * @return whether the matchTeam was removed
    */
-  boolean removeTeam(@NonNull Team team);
-
-  /**
-   * Get the team that won the match
-   *
-   * @return the team that won the match. This can return null in case that the match has not
-   *     finished yet
-   */
-  Team getWinners();
+  boolean removeTeam(@NonNull MatchTeam matchTeam);
 
   /**
    * Get the next unused id for a team
@@ -95,7 +88,7 @@ public interface Match extends Catchable {
    */
   default int nextTeamId() {
     int i = RandomUtils.getRandom().nextInt();
-    Team given = this.getTeam(i);
+    MatchTeam given = this.getTeam(i);
     if (given == null) {
       return i;
     } else {
@@ -104,11 +97,26 @@ public interface Match extends Catchable {
   }
 
   /**
+   * Get a team that is playing this match by its id
+   *
+   * @param id the id of the team to get
+   * @return the team if the id matches else null
+   */
+  default MatchTeam getTeam(int id) {
+    for (MatchTeam matchTeam : this.getTeams()) {
+      if (matchTeam.getId() == id) {
+        return matchTeam;
+      }
+    }
+    return null;
+  }
+
+  /**
    * Set the winners of the match
    *
    * @param winners the winners of the match
    */
-  void setWinners(Team winners);
+  void setWinners(MatchTeam winners);
 
   /**
    * Set the status of the match
@@ -133,27 +141,20 @@ public interface Match extends Catchable {
   String getId();
 
   /**
+   * Get the team that won the match
+   *
+   * @return the team that won the match. This can return null in case that the match has not
+   *     finished yet
+   */
+  MatchTeam getWinners();
+
+  /**
    * Get the teams that are participating in the match
    *
    * @return collection of teams
    */
   @NonNull
-  Collection<Team> getTeams();
-
-  /**
-   * Get a team that is playing this match by its id
-   *
-   * @param id the id of the team to get
-   * @return the team if the id matches else null
-   */
-  default Team getTeam(int id) {
-    for (Team team : this.getTeams()) {
-      if (team.getId() == id) {
-        return team;
-      }
-    }
-    return null;
-  }
+  Collection<MatchTeam> getTeams();
 
   /**
    * Get the details of the match
@@ -179,18 +180,11 @@ public interface Match extends Catchable {
   @NonNull
   default Collection<LinkableInfo> getParticipants() {
     Set<LinkableInfo> participants = new HashSet<>();
-    for (Team team : this.getTeams()) {
-      for (TeamMember member : team.getMembers()) {
+    for (MatchTeam matchTeam : this.getTeams()) {
+      for (TeamMember member : matchTeam.getMembers()) {
         participants.add(member.getLinkInfo());
       }
     }
     return Collections.unmodifiableSet(participants);
   }
-
-  /**
-   * Get the data of the guild in which this match is being played
-   *
-   * @return the guild data of the guild of this match
-   */
-  GuildData getGuild();
 }

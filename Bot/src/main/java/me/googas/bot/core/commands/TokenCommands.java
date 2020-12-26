@@ -9,8 +9,8 @@ import me.googas.api.lang.LocaleFile;
 import me.googas.api.token.AuthLevel;
 import me.googas.api.token.AuthToken;
 import me.googas.api.user.UserData;
-import me.googas.bot.core.Guido;
-import me.googas.bot.core.types.GuidoAuthToken;
+import me.googas.bot.Guido;
+import me.googas.bot.core.token.GuidoAuthToken;
 import me.googas.commons.Strings;
 import me.googas.commons.maps.Maps;
 

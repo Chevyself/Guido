@@ -12,7 +12,7 @@
 
     <groupId>com.starfishst.guido.bukkit</groupId>
     <artifactId>Bukkit</artifactId>
-    <version>1.2.0-PRE-4</version>
+    <version>1.2.0-PRE-6</version>
     <description>Implementations for bukkit</description>
     <packaging>jar</packaging>
 
@@ -43,9 +43,7 @@
                                 </excludes>
                                 <includes>
                                     <include>me.googas.api:API</include>
-                                    <include>com.starfishst.bukkit:Bukkit</include>
                                     <include>me.googas.messaging:Commons-Messaging</include>
-                                    <include>me.googas.commons:Commons</include>
                                 </includes>
                             </artifactSet>
                         </configuration>

@@ -2,12 +2,13 @@ package me.googas.bot.core.server.request;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.logging.Level;
 import lombok.NonNull;
-import me.googas.bot.core.Guido;
+import me.googas.bot.Guido;
 import me.googas.messaging.Request;
 import me.googas.messaging.api.MessengerListenFailException;
 import me.googas.messaging.json.JsonMessenger;
@@ -82,7 +83,7 @@ public class GuidoRequest<T> extends Request<T> {
    * @param biConsumer the consumer to handle the received objects
    * @return the returned object by bungee
    */
-  public void broadcast(@NonNull BiConsumer<JsonMessenger, T> biConsumer) {
+  public void broadcast(@NonNull BiConsumer<JsonMessenger, Optional<T>> biConsumer) {
     Guido.getServer().sendRequest(this, biConsumer);
   }
 
@@ -92,7 +93,8 @@ public class GuidoRequest<T> extends Request<T> {
    * @param consumer the consumer to process the received object
    * @param exception the consumer in case of an exception
    */
-  public void send(@NonNull Consumer<T> consumer, @NonNull Consumer<Throwable> exception) {
+  public void send(
+      @NonNull Consumer<Optional<T>> consumer, @NonNull Consumer<Throwable> exception) {
     JsonClientThread bungee = Guido.getServer().getAuthenticator().getBungee();
     if (bungee != null) {
       bungee.sendRequest(this, consumer, exception);
@@ -104,7 +106,7 @@ public class GuidoRequest<T> extends Request<T> {
    *
    * @param consumer the consumer to process the received object
    */
-  public void send(@NonNull Consumer<T> consumer) {
+  public void send(@NonNull Consumer<Optional<T>> consumer) {
     JsonClientThread bungee = Guido.getServer().getAuthenticator().getBungee();
     if (bungee != null) {
       bungee.sendRequest(

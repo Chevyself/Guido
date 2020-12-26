@@ -4,7 +4,7 @@ import com.starfishst.jda.context.CommandContext;
 import com.starfishst.jda.providers.type.JdaExtraArgumentProvider;
 import lombok.NonNull;
 import me.googas.api.lang.LocaleFile;
-import me.googas.bot.core.Guido;
+import me.googas.bot.Guido;
 
 /** Provide the locale files for the commands */
 public class LocaleFileProvider implements JdaExtraArgumentProvider<LocaleFile> {

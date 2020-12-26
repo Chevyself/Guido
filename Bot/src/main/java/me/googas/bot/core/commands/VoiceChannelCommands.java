@@ -7,7 +7,7 @@ import com.starfishst.jda.result.Result;
 import com.starfishst.jda.result.ResultType;
 import java.util.Map;
 import me.googas.api.lang.LocaleFile;
-import me.googas.bot.api.types.BotGuild;
+import me.googas.bot.api.types.discord.BotGuild;
 import me.googas.commons.Strings;
 import me.googas.commons.maps.Maps;
 import net.dv8tion.jda.api.entities.Guild;

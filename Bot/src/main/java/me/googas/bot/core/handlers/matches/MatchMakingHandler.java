@@ -7,26 +7,26 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import lombok.NonNull;
-import me.googas.api.discord.GuildData;
 import me.googas.api.lang.LocaleFile;
 import me.googas.api.links.Linkable;
 import me.googas.api.links.LinkableInfo;
 import me.googas.api.matches.Match;
 import me.googas.api.matches.MatchStatus;
-import me.googas.api.matches.Team;
-import me.googas.api.matches.TeamMember;
+import me.googas.api.matches.MatchTeam;
+import me.googas.api.matches.team.TeamMember;
 import me.googas.api.user.UserData;
+import me.googas.bot.Guido;
 import me.googas.bot.api.events.match.MatchAddTeamEvent;
 import me.googas.bot.api.events.match.MatchLoadedEvent;
 import me.googas.bot.api.events.match.MatchStatusUpdatedEvent;
 import me.googas.bot.api.events.queue.QueueJoinEvent;
-import me.googas.bot.api.loader.BotDataLoader;
-import me.googas.bot.api.types.BotGuild;
-import me.googas.bot.api.types.BotLinkable;
-import me.googas.bot.api.types.BotMatch;
-import me.googas.bot.core.Guido;
+import me.googas.bot.api.types.discord.BotGuild;
+import me.googas.bot.api.types.links.BotLinkable;
+import me.googas.bot.api.types.loader.BotDataLoader;
+import me.googas.bot.api.types.match.BotMatch;
 import me.googas.bot.core.handlers.GuidoEventHandler;
 import me.googas.bot.core.util.Discord;
+import me.googas.bot.core.util.Matches;
 import me.googas.commons.events.ListenPriority;
 import me.googas.commons.events.Listener;
 import me.googas.commons.maps.Maps;
@@ -103,9 +103,9 @@ public class MatchMakingHandler implements GuidoEventHandler {
   @Listener(priority = ListenPriority.HIGHEST)
   public void onMatchLoaded(MatchLoadedEvent event) {
     Match match = event.getMatch();
-    GuildData guild = match.getGuild();
-    if (!(guild instanceof BotGuild)) return;
-    ((BotGuild) guild)
+    BotGuild guild = Matches.getGuild(match);
+    if (guild == null) return;
+    guild
         .getCategory("matches")
         .createVoiceChannel("Pre-Game " + match.getId())
         .queue(
@@ -130,7 +130,7 @@ public class MatchMakingHandler implements GuidoEventHandler {
                         GuildVoiceState state = member.getVoiceState();
                         if (state != null) {
                           if (state.getChannel() != null) {
-                            ((BotGuild) guild)
+                            guild
                                 .getDiscord()
                                 .moveVoiceMember(member, channel)
                                 .queueAfter(500, TimeUnit.MILLISECONDS);
@@ -151,17 +151,16 @@ public class MatchMakingHandler implements GuidoEventHandler {
   @Listener(priority = ListenPriority.HIGHEST)
   public void onTeamAddTeamEvent(@NonNull MatchAddTeamEvent event) {
     Match match = event.getMatch();
-    Team team = event.getTeam();
-    GuildData data = match.getGuild();
-    if (data instanceof BotGuild) {
-      ((BotGuild) data)
-          .getCategory("matches")
-          .createVoiceChannel(team.getName())
+    MatchTeam matchTeam = event.getMatchTeam();
+    BotGuild data = Matches.getGuild(match);
+    if (data != null) {
+      data.getCategory("matches")
+          .createVoiceChannel(matchTeam.getName())
           .queue(
               channel -> {
-                this.getVoices(match.getId()).put(team.getId(), channel.getIdLong());
+                this.getVoices(match.getId()).put(matchTeam.getId(), channel.getIdLong());
                 Discord.removeAllPermission(channel, Permission.VIEW_CHANNEL);
-                for (TeamMember member : team.getMembers()) {
+                for (TeamMember member : matchTeam.getMembers()) {
                   Linkable link = member.getLinkInfo().getLink();
                   if (link instanceof BotLinkable) {
                     Member discordMember = ((BotLinkable) link).getDiscordMember(data.getId());
@@ -174,8 +173,7 @@ public class MatchMakingHandler implements GuidoEventHandler {
                             GuildVoiceState state = discordMember.getVoiceState();
                             if (state != null) {
                               if (state.getChannel() != null) {
-                                ((BotGuild) data)
-                                    .getDiscord()
+                                data.getDiscord()
                                     .moveVoiceMember(discordMember, channel)
                                     .queueAfter(500, TimeUnit.MILLISECONDS);
                               }
@@ -196,16 +194,15 @@ public class MatchMakingHandler implements GuidoEventHandler {
   @Listener(priority = ListenPriority.HIGHEST)
   public void onTeamRemoveEvent(@NonNull MatchAddTeamEvent event) {
     Match match = event.getMatch();
-    GuildData data = match.getGuild();
-    if (data instanceof BotGuild) {
-      BotGuild botGuild = (BotGuild) data;
+    BotGuild data = Matches.getGuild(match);
+    if (data != null) {
       Map<Integer, Long> voices = this.getVoices(match.getId());
       VoiceChannel channel =
           Guido.getConnection()
               .validatedJda()
-              .getVoiceChannelById(voices.getOrDefault(event.getTeam().getId(), -1L));
-      this.deleteAndMove(botGuild, channel);
-      voices.remove(event.getTeam().getId());
+              .getVoiceChannelById(voices.getOrDefault(event.getMatchTeam().getId(), -1L));
+      this.deleteAndMove(data, channel);
+      voices.remove(event.getMatchTeam().getId());
     }
   }
 

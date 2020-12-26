@@ -2,28 +2,20 @@ package me.googas.bot.api.types;
 
 import java.util.logging.Level;
 import lombok.NonNull;
-import me.googas.bot.core.Guido;
-import me.googas.commons.cache.Catchable;
+import me.googas.api.GuidoCatchable;
+import me.googas.bot.Guido;
 
 /** An extension for catchable to use in the bot */
-public interface BotCatchable extends Catchable {
+public interface BotCatchable extends GuidoCatchable {
 
-  /**
-   * Adds this catchable in cache
-   *
-   * @return this same object instance
-   */
+  @Override
   @NonNull
   default BotCatchable cache() {
     Guido.getCache().add(this);
     return this;
   }
 
-  /**
-   * Unloads this object from cache
-   *
-   * @param onRemove whether to call the method on remove
-   */
+  @Override
   default void unload(boolean onRemove) {
     if (onRemove) {
       try {

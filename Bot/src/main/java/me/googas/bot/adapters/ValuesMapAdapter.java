@@ -9,12 +9,11 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Map;
 import lombok.NonNull;
-import me.googas.api.utility.ValuesMap;
-import me.googas.bot.core.types.maps.GuidoValuesMap;
+import me.googas.api.ValuesMap;
+import me.googas.bot.core.GuidoValuesMap;
 import me.googas.commons.gson.adapters.JsonAdapter;
 import me.googas.commons.maps.Maps;
 
-/** Adapts values map */
 public class ValuesMapAdapter implements JsonAdapter<ValuesMap> {
 
   /**

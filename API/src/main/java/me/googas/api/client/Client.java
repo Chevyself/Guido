@@ -1,56 +1,36 @@
 package me.googas.api.client;
 
-import com.google.gson.GsonBuilder;
 import java.io.IOException;
 import java.net.Socket;
 import java.util.Arrays;
 import java.util.Set;
+import lombok.Getter;
 import lombok.NonNull;
-import me.googas.api.client.adapters.GroupAdapter;
-import me.googas.api.client.adapters.LadderAdapter;
-import me.googas.api.client.adapters.LinkedInfoAdapter;
-import me.googas.api.client.adapters.MatchAdapter;
-import me.googas.api.client.adapters.PermissionAdapter;
-import me.googas.api.client.adapters.PermissionStackAdapter;
-import me.googas.api.client.adapters.TeamAdapter;
-import me.googas.api.client.adapters.TeamDataAdapter;
-import me.googas.api.client.adapters.TeamMemberAdapter;
-import me.googas.api.client.adapters.ValuesMapAdapter;
-import me.googas.api.client.data.SimpleValuesMap;
+import lombok.Setter;
+import me.googas.api.Adapters;
 import me.googas.api.client.receptors.SimpleReceptors;
-import me.googas.api.links.LinkableInfo;
-import me.googas.api.matches.Ladder;
-import me.googas.api.matches.Match;
-import me.googas.api.matches.Team;
-import me.googas.api.matches.TeamData;
-import me.googas.api.matches.TeamMember;
-import me.googas.api.permissions.Group;
-import me.googas.api.permissions.Permission;
-import me.googas.api.permissions.PermissionStack;
-import me.googas.api.utility.ValuesMap;
 import me.googas.commons.Lots;
 import me.googas.commons.maps.Maps;
 import me.googas.messaging.Request;
-import me.googas.messaging.api.Message;
-import me.googas.messaging.json.adapters.MessageDeserializer;
 import me.googas.messaging.json.client.JsonClient;
 
 /** The client used by implementation to connect with Guido */
 public class Client {
 
   /** The ip of the server of the bot */
-  @NonNull private final String ip;
+  @NonNull @Getter @Setter private String ip;
   /** The receptors that the client is using */
-  @NonNull private final Set<Object> receptors = Lots.set(new SimpleReceptors(this));
+  @NonNull @Getter @Setter private Set<Object> receptors = Lots.set(new SimpleReceptors(this));
 
   /** The port of the server ofo the bot */
-  private final int port;
+  @Getter @Setter private int port;
   /** The handler for throwable */
-  @NonNull private final SimpleThrowableHandler handler = new SimpleThrowableHandler(this);
+  @NonNull @Getter @Setter
+  private SimpleThrowableHandler handler = new SimpleThrowableHandler(this);
   /** The token that will give access to read or writing */
-  @NonNull private String token;
+  @NonNull @Getter @Setter private String token;
   /** The client to connect with the bot */
-  private JsonClient connection;
+  @Getter @Setter private JsonClient connection;
 
   /**
    * Create the client
@@ -74,32 +54,18 @@ public class Client {
   @NonNull
   public JsonClient startConnection() throws IOException {
     this.connection =
-        new JsonClient(
-            new Socket(this.ip, this.port),
-            this.handler,
-            new GsonBuilder()
-                // Required by messengers
-                .registerTypeAdapter(Message.class, new MessageDeserializer())
-                // Required for requests
-                .registerTypeAdapter(Group.class, new GroupAdapter())
-                .registerTypeAdapter(Ladder.class, new LadderAdapter())
-                .registerTypeAdapter(LinkableInfo.class, new LinkedInfoAdapter())
-                .registerTypeAdapter(Match.class, new MatchAdapter())
-                .registerTypeAdapter(Permission.class, new PermissionAdapter())
-                .registerTypeAdapter(PermissionStack.class, new PermissionStackAdapter())
-                .registerTypeAdapter(Team.class, new TeamAdapter())
-                .registerTypeAdapter(TeamData.class, new TeamDataAdapter())
-                .registerTypeAdapter(TeamMember.class, new TeamMemberAdapter())
-                .registerTypeAdapter(ValuesMap.class, new ValuesMapAdapter())
-                .registerTypeAdapter(SimpleValuesMap.class, new ValuesMapAdapter())
-                .setPrettyPrinting()
-                .create(),
-            5000);
+        new JsonClient(new Socket(this.ip, this.port), this.handler, Adapters.buildClient(), 5000);
     this.connection.addReceptors(this.receptors.toArray());
     this.connection.start();
     this.connection.sendRequest(
         new Request<>(Boolean.class, "auth", Maps.objects("token", this.token).build()),
-        this::onAuthentication);
+        bol -> {
+          if (bol.isPresent()) {
+            this.onAuthentication(bol.get());
+          } else {
+            this.onAuthentication(false);
+          }
+        });
     return this.connection;
   }
 
@@ -153,52 +119,5 @@ public class Client {
         new Request<>(Boolean.class, "disconnect"),
         disconnected -> this.onDisconnection(),
         this.handler::handle);
-  }
-
-  /**
-   * Set the token that the client should use
-   *
-   * @param token the new token
-   */
-  public void setToken(@NonNull String token) {
-    this.token = token;
-  }
-
-  /**
-   * Set the json client
-   *
-   * @param client the new value of json client
-   */
-  public void setConnection(JsonClient client) {
-    this.connection = client;
-  }
-
-  /**
-   * Get the json client for messaging
-   *
-   * @return the json client
-   */
-  public JsonClient getConnection() {
-    return this.connection;
-  }
-
-  /**
-   * Get the token that the client is using
-   *
-   * @return the token
-   */
-  @NonNull
-  public String getToken() {
-    return this.token;
-  }
-
-  /**
-   * Get the receptors which the client is using
-   *
-   * @return the receptors
-   */
-  @NonNull
-  public Set<Object> getReceptors() {
-    return this.receptors;
   }
 }

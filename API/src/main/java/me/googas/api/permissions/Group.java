@@ -2,11 +2,11 @@ package me.googas.api.permissions;
 
 import java.util.Collection;
 import lombok.NonNull;
-import me.googas.api.utility.ValuesMap;
-import me.googas.commons.cache.Catchable;
+import me.googas.api.GuidoCatchable;
+import me.googas.api.ValuesMap;
 
 /** This class represents a group which can be used to have multiple permissions in one */
-public interface Group extends Permissible, Catchable {
+public interface Group extends Permissible, GuidoCatchable {
 
   /**
    * Set the weight of the group
