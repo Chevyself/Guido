@@ -5,6 +5,7 @@ import lombok.NonNull;
 import me.googas.api.ValuesMap;
 import me.googas.api.lang.Localized;
 import me.googas.api.links.Linkable;
+import me.googas.api.links.LinkableType;
 import me.googas.commons.cache.Catchable;
 
 /** The data of a discord user not required to be in a guild */
@@ -27,10 +28,19 @@ public interface UserData extends Catchable, Localized {
   ValuesMap getPreferences();
 
   /**
+   * Get a link to this user from the given type
+   *
+   * @param type the type of the link to get
+   * @return the link if found else null
+   */
+  Linkable getLink(@NonNull LinkableType type);
+
+  /**
    * Get the linkable data that is linked to this user
    *
    * @return the linkable data as a collection
    */
+  @NonNull
   Collection<Linkable> getLinks();
 
   @Override

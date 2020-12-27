@@ -1,6 +1,7 @@
 package me.googas.api.links;
 
 import lombok.NonNull;
+import me.googas.annotations.Nullable;
 import me.googas.api.ValuesMap;
 import me.googas.api.matches.queue.Queueable;
 
@@ -49,6 +50,7 @@ public interface LinkableInfo extends Queueable {
    *
    * @return the data
    */
+  @Nullable
   Linkable getLink();
 
   /**

@@ -2,11 +2,14 @@ package me.googas.api.links;
 
 import java.util.Collection;
 import lombok.NonNull;
+import me.googas.annotations.Nullable;
 import me.googas.api.GuidoCatchable;
 import me.googas.api.Stateable;
 import me.googas.api.ValuesMap;
 import me.googas.api.lang.LocaleFile;
 import me.googas.api.lang.Localized;
+import me.googas.api.links.ref.DiscordLinkable;
+import me.googas.api.links.ref.MinecraftLinkable;
 import me.googas.api.matches.team.Team;
 import me.googas.api.permissions.Permissible;
 import me.googas.api.user.UserData;
@@ -62,14 +65,6 @@ public interface Linkable extends Permissible, Stateable, GuidoCatchable, Locali
   String getReadable(LocaleFile locale);
 
   /**
-   * @see #getLinks() this will get only the links of certain type
-   * @param types the types of links to get
-   * @return the links
-   */
-  @NonNull
-  Collection<Linkable> getLinks(@NonNull LinkableType... types);
-
-  /**
    * @see #compare(LinkableType, ValuesMap)
    * @param data the other data comparing
    * @return true if it is the same type and the identification matches
@@ -115,12 +110,18 @@ public interface Linkable extends Permissible, Stateable, GuidoCatchable, Locali
    */
   String getLinkedUserId();
 
-  /**
-   * Get the user that is linked to this data
-   *
-   * @return the user that is linked to this data
-   */
-  UserData getLinkedUser();
+  @Nullable
+  default DiscordLinkable toDiscordRef() {
+    if (this.getType() != LinkableType.DISCORD) {
+      UserData user = this.getLinkedUser();
+      if (user != null) {
+        Linkable link = user.getLink(LinkableType.DISCORD);
+        if (link != null) return link.toDiscordRef();
+      }
+      return null;
+    }
+    return new DiscordLinkable(this);
+  }
 
   /**
    * Get the preferences of a linked data
@@ -211,4 +212,25 @@ public interface Linkable extends Permissible, Stateable, GuidoCatchable, Locali
   default void setLang(@NonNull String lang) {
     this.getPreferences().put("lang", lang);
   }
+
+  @Nullable
+  default MinecraftLinkable toMinecraftRef() {
+    if (this.getType() != LinkableType.MINECRAFT) {
+      UserData user = this.getLinkedUser();
+      if (user != null) {
+        Linkable link = user.getLink(LinkableType.MINECRAFT);
+        if (link != null) return link.toMinecraftRef();
+      }
+      return null;
+    }
+    return new MinecraftLinkable(this);
+  }
+
+  /**
+   * Get the user that is linked to this data
+   *
+   * @return the user that is linked to this data
+   */
+  @Nullable
+  UserData getLinkedUser();
 }

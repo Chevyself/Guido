@@ -48,14 +48,13 @@ public interface DataLoader {
   Collection<Linkable> getLinks(@NonNull UserData user);
 
   /**
-   * Get the links from an user in a certain type
+   * Get the link from an user in a certain type
    *
    * @param user the user to get the links from
-   * @param types the types to get the team from
+   * @param type the type of link to get
    * @return the links
    */
-  @NonNull
-  Collection<Linkable> getLinks(@NonNull UserData user, @NonNull LinkableType... types);
+  Linkable getLink(@NonNull UserData user, @NonNull LinkableType type);
 
   /**
    * Get all the links that exist in the bot
@@ -247,7 +246,7 @@ public interface DataLoader {
    *
    * @return the amount of groups that there is
    */
-  long countGroups();
+  long maxPageGroups(int size);
 
   /**
    * Get the leaderboard for certain stat
@@ -312,4 +311,22 @@ public interface DataLoader {
    */
   @NonNull
   Collection<GroupInfo> getGroups();
+
+  /**
+   * Get the max page of the leaderboard in a ladder
+   *
+   * @param ladder the ladder to see the max page
+   * @param size the size of documents per page
+   * @return the maximum page of the leaderboard
+   */
+  long maxPageLeaderboard(@NonNull Ladder ladder, int size);
+
+  /**
+   * Get the max page of the leaderboard in a stat
+   *
+   * @param stat the stat to see the max page
+   * @param size the size of documents per page
+   * @return the maximum page of the leaderboard
+   */
+  long maxPageLeaderboard(@NonNull String stat, int size);
 }

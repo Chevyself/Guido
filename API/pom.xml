@@ -12,10 +12,26 @@
 
     <groupId>me.googas.api</groupId>
     <artifactId>API</artifactId>
-    <version>1.0.0-PRE-7</version>
+    <version>1.0.0</version>
     <description>The API for implementations and the bot</description>
 
+    <repositories>
+        <!-- JDA Repository -->
+        <repository>
+            <id>jcenter</id>
+            <name>jcenter-bintray</name>
+            <url>https://jcenter.bintray.com/ </url>
+        </repository>
+    </repositories>
+
     <dependencies>
+        <!-- JDA dependency -->
+        <dependency>
+            <groupId>net.dv8tion</groupId>
+            <artifactId>JDA</artifactId>
+            <version>4.1.1_137</version>
+            <scope>compile</scope>
+        </dependency>
         <!-- Commons dependency -->
         <dependency>
             <groupId>me.googas.commons</groupId>
@@ -35,13 +51,6 @@
             <groupId>com.google.code.gson</groupId>
             <artifactId>gson</artifactId>
             <version>2.8.6</version>
-            <scope>compile</scope>
-        </dependency>
-        <!-- JDA dependency -->
-        <dependency>
-            <groupId>net.dv8tion</groupId>
-            <artifactId>JDA</artifactId>
-            <version>4.1.1_137</version>
             <scope>compile</scope>
         </dependency>
     </dependencies>

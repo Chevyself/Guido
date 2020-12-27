@@ -26,7 +26,7 @@ public class GlobalLadder implements Ladder {
   }
 
   @Override
-  public @NonNull Queue createQueue(@NonNull long guildId) {
+  public @NonNull Queue createQueue(long guildId) {
     throw new UnsupportedOperationException("Global ladder cannot create queues");
   }
 

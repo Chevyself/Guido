@@ -2,7 +2,6 @@ package me.googas.api.permissions;
 
 import java.util.Collection;
 import java.util.HashSet;
-
 import lombok.NonNull;
 import me.googas.api.client.data.permissions.SimplePermission;
 import me.googas.api.client.data.permissions.SimplePermissionStack;
