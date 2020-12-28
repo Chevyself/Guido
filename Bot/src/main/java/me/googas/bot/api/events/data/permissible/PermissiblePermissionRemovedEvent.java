@@ -13,12 +13,13 @@ public class PermissiblePermissionRemovedEvent extends PermissibleEvent {
 
   /**
    * Create the event
-   *  @param permissible the permissible involved in the event
+   *
+   * @param permissible the permissible involved in the event
    * @param context the context where the permission was removed
    * @param node the node of the permission that was removed
    */
   public PermissiblePermissionRemovedEvent(
-          @NonNull Permissible permissible, @NonNull String context, @NonNull String node) {
+      @NonNull Permissible permissible, @NonNull String context, @NonNull String node) {
     super(permissible);
     this.context = context;
     this.node = node;

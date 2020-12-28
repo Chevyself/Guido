@@ -18,7 +18,6 @@ import me.googas.api.links.LinkableType;
 import me.googas.api.user.UserData;
 import me.googas.bot.Guido;
 import me.googas.bot.api.types.discord.BotGuild;
-import me.googas.bot.api.types.links.BotLinkable;
 import me.googas.bot.api.types.loader.BotDataLoader;
 import me.googas.bot.core.GuidoValuesMap;
 import me.googas.bot.core.handlers.link.LinkHandler;
@@ -76,14 +75,14 @@ public class UserCommands {
       @Required(name = "link.code", description = "link.code.desc") String code) {
     LinkableInfo info = Guido.getHandler(LinkHandler.class).getInfo(code);
     if (info != null) {
-      Collection<Linkable> links = Guido.getDataLoader().getLinks(user, info.getType());
-      if (links.size() >= 1) {
+      Linkable link = Guido.getDataLoader().getLink(user, info.getType());
+      if (link != null) {
         return new Result(
             ResultType.ERROR,
             locale.get(
                 "link.only-one", Maps.singleton("type", info.getType().toString().toLowerCase())));
       } else {
-        BotLinkable data = Guido.getDataLoader().getLink(info.getType(), info.getIdentification());
+        Linkable data = Guido.getDataLoader().getLink(info.getType(), info.getIdentification());
         if (data != null) {
           data.setLinkedUser(user);
           return new Result(
@@ -104,9 +103,9 @@ public class UserCommands {
       LocaleFile locale,
       UserData data,
       @Optional(name = "stats.name", description = "stats.name.desc") String nickname) {
-    Collection<Linkable> links = Guido.getDataLoader().getLinks(data, LinkableType.MINECRAFT);
+    Linkable link = Guido.getDataLoader().getLink(data, LinkableType.MINECRAFT);
     if (nickname != null) {
-      BotLinkable link =
+      link =
           Guido.getDataLoader()
               .getLink(LinkableType.MINECRAFT, new GuidoValuesMap("nickname", nickname));
       if (link != null) {
@@ -115,11 +114,8 @@ public class UserCommands {
         return new Result(locale.get("stats.player-not-found", Maps.singleton("nick", nickname)));
       }
     } else {
-      if (!links.isEmpty()) {
-        for (Linkable link : links) {
-          return new Result(this.buildStats(guild, locale, context, link));
-        }
-        return new Result(locale.get("stats.not-linked"));
+      if (link != null) {
+        return new Result(this.buildStats(guild, locale, context, link));
       } else {
         return new Result(locale.get("stats.not-linked"));
       }

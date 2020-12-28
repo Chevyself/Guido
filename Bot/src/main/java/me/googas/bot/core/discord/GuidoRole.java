@@ -4,6 +4,8 @@ import java.util.HashSet;
 import java.util.Set;
 import lombok.NonNull;
 import me.googas.api.permissions.PermissionStack;
+import me.googas.bot.api.events.data.permissible.PermissiblePermissionAddedEvent;
+import me.googas.bot.api.events.data.permissible.PermissiblePermissionRemovedEvent;
 import me.googas.bot.api.events.data.role.BotRoleUnloadedEvent;
 import me.googas.bot.api.types.discord.BotRole;
 import me.googas.commons.time.Time;
@@ -65,5 +67,20 @@ public class GuidoRole implements BotRole {
   @Override
   public @NonNull GuidoRole cache() {
     return (GuidoRole) BotRole.super.cache();
+  }
+
+  @Override
+  public boolean addPermission(
+      @NonNull String context, @NonNull String node, boolean enabled, long expires) {
+    boolean added = BotRole.super.addPermission(context, node, enabled, expires);
+    if (added) new PermissiblePermissionAddedEvent(this, context, node, enabled, expires).call();
+    return added;
+  }
+
+  @Override
+  public boolean removePermission(@NonNull String context, @NonNull String node) {
+    boolean removed = BotRole.super.removePermission(context, node);
+    if (removed) new PermissiblePermissionRemovedEvent(this, context, node).call();
+    return removed;
   }
 }

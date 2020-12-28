@@ -35,6 +35,18 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-shade-plugin</artifactId>
                 <version>3.2.1</version>
+                <configuration>
+                    <createDependencyReducedPom>false</createDependencyReducedPom>
+                    <filters>
+                        <filter>
+                            <artifact>*:*</artifact>
+                            <excludes>
+                                <exclude>module-info.class</exclude>
+                                <exclude>org.projectlombok:lombok</exclude>
+                            </excludes>
+                        </filter>
+                    </filters>
+                </configuration>
                 <executions>
                     <execution>
                         <phase>package</phase>
@@ -73,18 +85,38 @@
             <groupId>net.dv8tion</groupId>
             <artifactId>JDA</artifactId>
             <version>4.1.1_137</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>net.sf.trove4j</groupId>
+                    <artifactId>trove4j</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <!-- Command framework -->
         <dependency>
             <groupId>com.starfishst.jda</groupId>
             <artifactId>JDA</artifactId>
             <version>1.0.11-SNAPSHOT</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>me.googas.commons</groupId>
+                    <artifactId>Commons</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>net.dv8tion</groupId>
+                    <artifactId>JDA</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>com.starfishst.core</groupId>
+                    <artifactId>core</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <!-- Dependency to the API -->
         <dependency>
             <groupId>me.googas.api</groupId>
             <artifactId>API</artifactId>
-            <version>1.0.0-PRE-7</version>
+            <version>1.0.0</version>
         </dependency>
         <!-- Mongo dependency -->
         <dependency>

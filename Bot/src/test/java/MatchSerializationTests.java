@@ -42,7 +42,7 @@ public class MatchSerializationTests {
             // Required by Commons-Communication
             .registerTypeAdapter(Message.class, new MessageDeserializer())
             // For custom receptors
-            .registerTypeAdapter(LinkableInfo.class, new LinkedInfoAdapter())
+            .registerTypeAdapter(LinkableInfo.class, new LinkedInfoAdapter(true))
             .registerTypeAdapter(Permission.class, new PermissionAdapter())
             .registerTypeAdapter(ValuesMap.class, new ValuesMapAdapter())
             .registerTypeAdapter(MatchTeam.class, new MatchTeamAdapter())

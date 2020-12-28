@@ -13,7 +13,12 @@ public class PermissiblePermissionAddedEvent extends PermissibleEvent {
   @Getter private final boolean enabled;
   @Getter private final long expires;
 
-  public PermissiblePermissionAddedEvent(@NonNull Permissible permissible, @NonNull String context, @NonNull String node, boolean enabled, long expires) {
+  public PermissiblePermissionAddedEvent(
+      @NonNull Permissible permissible,
+      @NonNull String context,
+      @NonNull String node,
+      boolean enabled,
+      long expires) {
     super(permissible);
     this.context = context;
     this.node = node;
@@ -24,10 +29,10 @@ public class PermissiblePermissionAddedEvent extends PermissibleEvent {
   @Override
   public String toString() {
     return new ToStringBuilder(this)
-            .append("context", this.context)
-            .append("node", this.node)
-            .append("enabled", this.enabled)
-            .append("expires", this.expires)
-            .build();
+        .append("context", this.context)
+        .append("node", this.node)
+        .append("enabled", this.enabled)
+        .append("expires", this.expires)
+        .build();
   }
 }

@@ -147,7 +147,8 @@ public class GuidoGroup implements Group, BotCatchable {
   }
 
   @Override
-  public boolean addPermission(@NonNull String context, @NonNull String node, boolean enabled, long expires) {
+  public boolean addPermission(
+      @NonNull String context, @NonNull String node, boolean enabled, long expires) {
     boolean added = Group.super.addPermission(context, node, enabled, expires);
     if (added) new PermissiblePermissionAddedEvent(this, context, node, enabled, expires).call();
     return added;

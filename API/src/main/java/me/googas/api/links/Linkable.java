@@ -13,6 +13,7 @@ import me.googas.api.links.ref.MinecraftLinkable;
 import me.googas.api.matches.team.Team;
 import me.googas.api.permissions.Permissible;
 import me.googas.api.user.UserData;
+import me.googas.commons.Validate;
 
 /** This object represents data that can been linked to an user */
 public interface Linkable extends Permissible, Stateable, GuidoCatchable, Localized {
@@ -121,6 +122,16 @@ public interface Linkable extends Permissible, Stateable, GuidoCatchable, Locali
       return null;
     }
     return new DiscordLinkable(this);
+  }
+
+  @NonNull
+  default DiscordLinkable requireDiscordRef() {
+    return Validate.notNull(this.toDiscordRef(), "Could not get discord ref");
+  }
+
+  @NonNull
+  default MinecraftLinkable requireMinecraftRef() {
+    return Validate.notNull(this.toMinecraftRef(), "Could not get minecraft ref");
   }
 
   /**

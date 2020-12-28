@@ -5,9 +5,9 @@ import com.starfishst.jda.context.CommandContext;
 import com.starfishst.jda.result.Result;
 import lombok.NonNull;
 import me.googas.bot.Guido;
-import me.googas.bot.core.lang.GuidoLanguageHandler;
 import me.googas.bot.core.handlers.responsive.GuidoMessagesController;
 import me.googas.bot.core.handlers.responsive.lang.LangChangeResponsiveMessage;
+import me.googas.bot.core.lang.GuidoLanguageHandler;
 import net.dv8tion.jda.api.entities.User;
 
 /** Commands to change the language for a user */

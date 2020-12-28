@@ -9,6 +9,7 @@ import java.util.Set;
 import lombok.NonNull;
 import me.googas.api.links.Linkable;
 import me.googas.api.links.LinkableInfo;
+import me.googas.api.links.LinkableType;
 import me.googas.api.matches.ladder.Ladder;
 import me.googas.api.matches.queue.Queue;
 import me.googas.api.matches.queue.QueueResult;
@@ -16,8 +17,7 @@ import me.googas.api.matches.queue.Queueable;
 import me.googas.bot.Guido;
 import me.googas.bot.api.events.queue.QueueLeaveEvent;
 import me.googas.bot.api.types.discord.BotGuild;
-import me.googas.bot.api.types.links.BotLinkable;
-import me.googas.bot.api.types.links.BotLinkableInfo;
+import me.googas.bot.core.GuidoValuesMap;
 import me.googas.bot.core.handlers.GuidoEventHandler;
 import me.googas.commons.events.ListenPriority;
 import me.googas.commons.events.Listener;
@@ -100,7 +100,9 @@ public class QueueHandler implements GuidoEventHandler {
     long guildId = guild.getIdLong();
     long channelId = this.waitingChannels.getOrDefault(guildId, -1L);
     if (channelId == channelLeft.getIdLong()) {
-      BotLinkable member = Guido.getDataLoader().getMemberData(disc.getIdLong(), guildId);
+      Linkable member =
+          Guido.getDataLoader()
+              .getLink(LinkableType.DISCORD, new GuidoValuesMap("id", disc.getIdLong()));
       for (Linkable data : member.getLinks()) {
         this.leaveQueue(data.getInfo());
       }
@@ -116,10 +118,12 @@ public class QueueHandler implements GuidoEventHandler {
   @Listener(priority = ListenPriority.HIGHEST)
   public void onQueueLeave(QueueLeaveEvent event) {
     Queueable data = event.getData();
-    if (!(data instanceof BotLinkableInfo)) return;
-    BotLinkable link = ((BotLinkableInfo) data).getLink();
+    if (!(data instanceof LinkableInfo)) return;
+    Linkable link = ((LinkableInfo) data).getLink();
     if (link != null) {
-      Member member = link.getDiscordMember(event.getQueue().getGuildId());
+      Member member =
+          link.toDiscordRef()
+              .getMember(event.getQueue().getGuildId(), Guido.getConnection().validatedJda());
       if (member != null) {
         GuildVoiceState voiceState = member.getVoiceState();
         if (voiceState != null) {
@@ -231,10 +235,12 @@ public class QueueHandler implements GuidoEventHandler {
     Queue queue = this.getQueue(guild, ladder);
     QueueResult join =
         queue.join(
-            Guido.getDataLoader().getMemberData(member.getIdLong(), guild.getId()).getInfo());
+            Guido.getDataLoader()
+                .getLink(LinkableType.DISCORD, new GuidoValuesMap("id", member.getIdLong()))
+                .getInfo());
     if (join.isCancelled()) return join;
     guild.getDiscord().moveVoiceMember(member, this.getWaitingChannel(guild)).queue();
-    return new QueueResult(QueueResult.ActionType.JOIN);
+    return new QueueResult();
   }
 
   /**
@@ -263,7 +269,9 @@ public class QueueHandler implements GuidoEventHandler {
    */
   public boolean isWaiting(
       @NonNull BotGuild guild, @NonNull Member member, @NonNull Ladder ladder) {
-    BotLinkable memberData = Guido.getDataLoader().getMemberData(member.getIdLong(), guild.getId());
+    Linkable memberData =
+        Guido.getDataLoader()
+            .getLink(LinkableType.DISCORD, new GuidoValuesMap("id", member.getIdLong()));
     Queue queue = this.getQueue(guild, ladder);
     for (Linkable link : memberData.getLinks()) {
       if (queue.isWaiting(link.getInfo())) {

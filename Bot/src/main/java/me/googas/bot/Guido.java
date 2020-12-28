@@ -9,12 +9,12 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Timer;
-import java.util.TimerTask;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.logging.SimpleFormatter;
 import lombok.Getter;
 import lombok.NonNull;
+import lombok.Setter;
 import me.googas.api.loader.DataLoader;
 import me.googas.bot.api.events.GuidoCancellable;
 import me.googas.bot.api.server.BotServer;
@@ -40,15 +40,15 @@ import me.googas.bot.core.commands.administrative.DeveloperCommands;
 import me.googas.bot.core.commands.permissions.GuidoPermissionChecker;
 import me.googas.bot.core.commands.providers.registry.GuidoProvidersRegistry;
 import me.googas.bot.core.handlers.GuidoHandler;
-import me.googas.bot.core.handlers.decorations.DecorationsHandler;
-import me.googas.bot.core.lang.GuidoLanguageHandler;
 import me.googas.bot.core.handlers.link.LinkHandler;
-import me.googas.bot.core.handlers.matches.MatchCalculator;
+import me.googas.bot.core.handlers.matches.MatchEloCalculator;
 import me.googas.bot.core.handlers.matches.MatchMakingHandler;
 import me.googas.bot.core.handlers.matches.PGMMatchHandler;
 import me.googas.bot.core.handlers.matches.QueueHandler;
+import me.googas.bot.core.handlers.ranks.RanksHandler;
 import me.googas.bot.core.handlers.responsive.GuidoMessagesController;
 import me.googas.bot.core.handlers.test.TestHandler;
+import me.googas.bot.core.lang.GuidoLanguageHandler;
 import me.googas.bot.core.loader.GuidoFileLoader;
 import me.googas.bot.core.loader.JsongoDataLoader;
 import me.googas.bot.core.server.GuidoFallbackServer;
@@ -64,6 +64,10 @@ import me.googas.commons.fallback.SimpleFallback;
 import me.googas.commons.log.LoggerFactory;
 import me.googas.commons.log.formatters.CustomFormatter;
 import me.googas.commons.maps.Maps;
+import me.googas.commons.scheduler.Scheduler;
+import me.googas.commons.scheduler.TimerScheduler;
+import me.googas.commons.time.Time;
+import me.googas.commons.time.Unit;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.OnlineStatus;
 import net.dv8tion.jda.api.entities.Activity;
@@ -89,8 +93,20 @@ public class Guido {
 
   @NonNull @Getter private static final Fallback fallback = new SimpleFallback();
 
-  /** The timer which can be used in other instances of the bot */
-  @NonNull private static final Timer timer = new Timer(Guido.class.getName());
+  /** The list of handlers that the bot is using */
+  @NonNull
+  private static final List<GuidoHandler> handlers =
+      Lots.list(
+          new RanksHandler(),
+          Guido.languageHandler,
+          new LinkHandler(),
+          new MatchEloCalculator(),
+          new MatchMakingHandler(),
+          new PGMMatchHandler(),
+          new QueueHandler(),
+          new GuidoMessagesController(),
+          new TestHandler(),
+          Guido.dataLoader);
   /** The connection of guido with discord */
   @NonNull private static final GuidoJdaConnection connection = new GuidoJdaConnection();
   /** The listener manager for calling events */
@@ -106,21 +122,8 @@ public class Guido {
   @NonNull
   private static final GuidoLanguageHandler languageHandler =
       new GuidoLanguageHandler(Guido.dataLoader);
-
-  /** The list of handlers that the bot is using */
-  @NonNull
-  private static final List<GuidoHandler> handlers =
-      Lots.list(
-          new DecorationsHandler(),
-          Guido.languageHandler,
-          new LinkHandler(),
-          new MatchCalculator(),
-          new MatchMakingHandler(),
-          new PGMMatchHandler(),
-          new QueueHandler(),
-          new GuidoMessagesController(),
-          new TestHandler(),
-          Guido.dataLoader);
+  @NonNull @Getter @Setter
+  private static Scheduler scheduler = new TimerScheduler(new Timer(Guido.class.getName()));
 
   /** The command manager of the bot */
   private static CommandManager commandManager;
@@ -153,15 +156,8 @@ public class Guido {
    */
   public static void main(String[] args) {
     HashMap<String, String> argsMaps = Maps.fromStringArray("=", args);
-    Guido.timer.schedule(
-        new TimerTask() {
-          @Override
-          public void run() {
-            Guido.cache.run();
-          }
-        },
-        0L,
-        1000L);
+    Time time = new Time(1, Unit.SECONDS);
+    Guido.scheduler.repeat(time, time, Guido.cache);
     Thread.setDefaultUncaughtExceptionHandler(
         (thread, exception) -> Guido.logger.log(Level.SEVERE, exception, null));
     JDA jda = Guido.setupJda(argsMaps);
@@ -439,16 +435,6 @@ public class Guido {
   @NonNull
   public static CommandManager getCommandManager() {
     return Validate.notNull(Guido.commandManager, "Command manager has not been initialized");
-  }
-
-  /**
-   * Get the timer used in other instances of the bot
-   *
-   * @return the timer
-   */
-  @NonNull
-  public static Timer getTimer() {
-    return Guido.timer;
   }
 
   /**

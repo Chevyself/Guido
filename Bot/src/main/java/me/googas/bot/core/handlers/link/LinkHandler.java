@@ -2,35 +2,21 @@ package me.googas.bot.core.handlers.link;
 
 import java.util.HashSet;
 import java.util.Set;
-import java.util.TimerTask;
+import lombok.Getter;
 import lombok.NonNull;
+import me.googas.api.links.Linkable;
 import me.googas.api.links.LinkableInfo;
 import me.googas.bot.Guido;
-import me.googas.bot.api.types.links.BotLinkable;
 import me.googas.bot.core.handlers.GuidoHandler;
 import me.googas.commons.RandomUtils;
 import me.googas.commons.time.Time;
+import me.googas.commons.time.Unit;
 
 /** Handles linking for accounts */
 public class LinkHandler implements GuidoHandler {
 
   /** The set of queries created */
   @NonNull private final Set<LinkQuery> queries = new HashSet<>();
-
-  /** Create the link handler */
-  public LinkHandler() {
-    Guido.getTimer()
-        .schedule(
-            new TimerTask() {
-              @Override
-              public void run() {
-                LinkHandler.this.queries.removeIf(
-                    query -> query.getToRemove() <= System.currentTimeMillis());
-              }
-            },
-            1000L,
-            1000L);
-  }
 
   /**
    * Create the code for the given linked info
@@ -39,11 +25,13 @@ public class LinkHandler implements GuidoHandler {
    * @return the created code if the data is found and it is linked
    */
   public String createCode(@NonNull LinkableInfo info) {
-    BotLinkable data = Guido.getDataLoader().getLink(info.getType(), info.getIdentification());
+    Linkable data = Guido.getDataLoader().getLink(info.getType(), info.getIdentification());
     if (data != null && !data.isLinked()) {
       String code = this.nextCode();
-      this.queries.add(
-          new LinkQuery(code, info, System.currentTimeMillis(), Time.fromString("3m")));
+      LinkQuery linkQuery = new LinkQuery(code, info);
+      this.queries.add(linkQuery);
+      Guido.getScheduler()
+          .countdown(new Time(3, Unit.MINUTES), second -> {}, () -> this.queries.remove(linkQuery));
       return code;
     } else {
       return null;
@@ -104,59 +92,20 @@ public class LinkHandler implements GuidoHandler {
   static class LinkQuery {
 
     /** The code that is used to identify the data */
-    @NonNull private final String code;
+    @NonNull @Getter private final String code;
 
     /** The information that will get the link data from the database */
-    @NonNull private final LinkableInfo info;
-
-    /** When this link will expire */
-    private final long toRemove;
+    @NonNull @Getter private final LinkableInfo info;
 
     /**
      * Create the link query
      *
      * @param code the link used to link the linked data
      * @param info the info to get the linked data
-     * @param timeCreated when was the link query created
-     * @param toRemove how long until it gets unloaded
      */
-    LinkQuery(
-        @NonNull String code,
-        @NonNull LinkableInfo info,
-        long timeCreated,
-        @NonNull Time toRemove) {
+    LinkQuery(@NonNull String code, @NonNull LinkableInfo info) {
       this.code = code;
       this.info = info;
-      this.toRemove = timeCreated + toRemove.millis();
-    }
-
-    /**
-     * Get the code used to link
-     *
-     * @return the code as a string
-     */
-    @NonNull
-    public String getCode() {
-      return this.code;
-    }
-
-    /**
-     * Get the information of the data waiting to be linked
-     *
-     * @return the info
-     */
-    @NonNull
-    public LinkableInfo getInfo() {
-      return this.info;
-    }
-
-    /**
-     * Get when the link should be removed in millis
-     *
-     * @return when the link should be removed in millis
-     */
-    public long getToRemove() {
-      return this.toRemove;
     }
   }
 }

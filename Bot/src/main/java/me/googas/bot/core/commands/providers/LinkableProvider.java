@@ -5,7 +5,6 @@ import com.starfishst.jda.context.CommandContext;
 import com.starfishst.jda.providers.type.JdaArgumentProvider;
 import lombok.NonNull;
 import me.googas.api.links.Linkable;
-import me.googas.api.links.ref.DiscordGuildLinkable;
 import me.googas.api.links.ref.DiscordLinkable;
 import me.googas.api.links.ref.MinecraftLinkable;
 import me.googas.bot.core.util.Lang;
@@ -23,13 +22,15 @@ public class LinkableProvider implements JdaArgumentProvider<Linkable> {
     try {
       MinecraftLinkable minecraft = commandContext.get(s, MinecraftLinkable.class, commandContext);
       if (minecraft != null) return minecraft.validated();
-      DiscordGuildLinkable discordGuildLinkable =
-          commandContext.get(s, DiscordGuildLinkable.class, commandContext);
-      if (discordGuildLinkable != null) return discordGuildLinkable.validated();
+
+    } catch (ArgumentProviderException ignored) {
+    }
+    try {
       DiscordLinkable discordLinkable =
           commandContext.get(s, DiscordLinkable.class, commandContext);
       if (discordLinkable != null) return discordLinkable.validated();
     } catch (ArgumentProviderException ignored) {
+
     }
     throw Lang.getException("invalid.link", Maps.singleton("string", s), commandContext);
   }

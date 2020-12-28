@@ -9,12 +9,12 @@ import com.starfishst.jda.result.Result;
 import com.starfishst.jda.result.ResultType;
 import java.util.HashSet;
 import java.util.Set;
+import me.googas.api.links.Linkable;
 import me.googas.api.links.LinkableType;
 import me.googas.api.matches.team.Team;
 import me.googas.api.matches.team.TeamMember;
 import me.googas.api.matches.team.TeamRole;
 import me.googas.bot.Guido;
-import me.googas.bot.api.types.links.BotLinkable;
 import me.googas.bot.core.GuidoValuesMap;
 import me.googas.bot.core.matches.team.GuidoTeam;
 import me.googas.bot.core.matches.team.GuidoTeamMember;
@@ -60,7 +60,7 @@ public class ProvisionalTeamCommands {
     Set<String> notJoined = new HashSet<>();
     Set<String> hasTeam = new HashSet<>();
     for (String trimmed : players.getStrings()) {
-      BotLinkable player =
+      Linkable player =
           Guido.getDataLoader()
               .getLink(LinkableType.MINECRAFT, new GuidoValuesMap("uuid", trimmed));
       if (player != null) {
@@ -92,7 +92,7 @@ public class ProvisionalTeamCommands {
   public Result add(
       @Required(name = "team", description = "The team to add the player") Team team,
       @Required(name = "uuid", description = "The trimmed uuid of the player") String trimmed) {
-    BotLinkable player =
+    Linkable player =
         Guido.getDataLoader().getLink(LinkableType.MINECRAFT, new GuidoValuesMap("uuid", trimmed));
     if (player == null) return new Result(ResultType.ERROR, trimmed + " hasn't joined googas yet");
     if (player.getTeam() != null)
@@ -108,7 +108,7 @@ public class ProvisionalTeamCommands {
   public Result remove(
       @Required(name = "team", description = "The team to remove the player") Team team,
       @Required(name = "uuid", description = "The trimmed uuid of the player") String trimmed) {
-    BotLinkable player =
+    Linkable player =
         Guido.getDataLoader().getLink(LinkableType.MINECRAFT, new GuidoValuesMap("uuid", trimmed));
     if (player == null) return new Result(ResultType.ERROR, trimmed + " hasn't joined googas yet");
     if (player.getTeam() == null)

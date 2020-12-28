@@ -10,6 +10,8 @@ public enum MatchStatus {
   STARTING,
   /** When the match is playing */
   PLAYING,
+  /** Means that the match should be forgot */
+  VOIDED,
   /** When the match is finished */
   FINISHED,
 }

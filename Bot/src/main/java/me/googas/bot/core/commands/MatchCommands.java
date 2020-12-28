@@ -17,6 +17,7 @@ import java.util.Set;
 import lombok.NonNull;
 import me.googas.api.lang.LocaleFile;
 import me.googas.api.links.Linkable;
+import me.googas.api.links.LinkableType;
 import me.googas.api.matches.Match;
 import me.googas.api.matches.MatchStatus;
 import me.googas.api.matches.MatchTeam;
@@ -26,14 +27,14 @@ import me.googas.api.matches.team.TeamRole;
 import me.googas.api.user.UserData;
 import me.googas.bot.Guido;
 import me.googas.bot.api.types.discord.BotGuild;
-import me.googas.bot.api.types.links.BotLinkable;
-import me.googas.bot.api.types.match.BotMatch;
 import me.googas.bot.core.GuidoLinkedValuesMap;
+import me.googas.bot.core.GuidoValuesMap;
 import me.googas.bot.core.handlers.matches.MatchMakingHandler;
 import me.googas.bot.core.handlers.matches.PGMMatchHandler;
 import me.googas.bot.core.matches.GuidoMatch;
 import me.googas.bot.core.matches.GuidoMatchTeam;
 import me.googas.bot.core.matches.team.GuidoTeamMember;
+import me.googas.bot.core.util.Matches;
 import me.googas.commons.Lots;
 import me.googas.commons.maps.Maps;
 import net.dv8tion.jda.api.entities.Member;
@@ -56,7 +57,7 @@ public class MatchCommands {
       LocaleFile locale,
       BotGuild guild,
       @Required(name = "match.ladder", description = "match.ladder.desc") Ladder ladder,
-      @Required(name = "match.participants", description = "match.participants.desc")
+      @Multiple @Required(name = "match.participants", description = "match.participants.desc")
           Linkable[] participants) {
     if (participants.length == 0) {
       return new Result(ResultType.USAGE, locale.get("match.mention-one"));
@@ -108,9 +109,9 @@ public class MatchCommands {
       description = "game.desc")
   public Result game(
       LocaleFile locale, @Required(name = "game.id", description = "game.id.desc") String id) {
-    BotMatch match = Guido.getDataLoader().getMatch(id);
+    Match match = Guido.getDataLoader().getMatch(id);
     if (match != null) {
-      return new Result(match.getInformation(locale));
+      return new Result(Matches.getInformation(match, locale));
     } else {
       return new Result(locale.get("game.not-found", Maps.singleton("id", id)));
     }
@@ -173,8 +174,10 @@ public class MatchCommands {
     Collection<Match> playing;
     List<String> matchesId = new ArrayList<>();
     if (member != null) {
-      BotLinkable link =
-          Guido.getDataLoader().getMemberData(member.getIdLong(), member.getGuild().getIdLong());
+      // member.getIdLong(), member.getGuild().getIdLong()
+      Linkable link =
+          Guido.getDataLoader()
+              .getLink(LinkableType.DISCORD, new GuidoValuesMap("id", member.getIdLong()));
       UserData linkedUser = link.getLinkedUser();
       if (linkedUser != null) {
         playing = handler.getPlaying(linkedUser);

@@ -3,8 +3,8 @@ package me.googas.bot.core.handlers.responsive.lang;
 import com.starfishst.jda.utils.responsive.ReactionResponse;
 import com.starfishst.jda.utils.responsive.ResponsiveMessage;
 import lombok.NonNull;
+import me.googas.api.links.Linkable;
 import me.googas.bot.Guido;
-import me.googas.bot.api.types.links.BotLinkable;
 import me.googas.bot.core.handlers.responsive.GuidoMessagesController;
 import net.dv8tion.jda.api.events.message.react.MessageReactionAddEvent;
 
@@ -37,7 +37,7 @@ public class LangChangeReactionResponse implements ReactionResponse {
   public boolean onReaction(@NonNull MessageReactionAddEvent event) {
     if (event.getUserIdLong() == this.userId) {
       String lang = Guido.getLanguageHandler().getFileFromUnicode(this.unicode).getLang();
-      BotLinkable userData = Guido.getDataLoader().getDiscordUserData(event.getUserIdLong());
+      Linkable userData = Guido.getDataLoader().getDiscordUserData(event.getUserIdLong());
       userData.getPreferences().put("lang", lang);
       ResponsiveMessage responsiveMessage =
           Guido.getHandler(GuidoMessagesController.class)

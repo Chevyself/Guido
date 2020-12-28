@@ -105,11 +105,8 @@ public class PGMMatchHandler implements MatchHandler {
     }
     messenger.sendRequest(
         new Request<>(String.class, "host", Maps.singleton("match", match)),
-        serverIp -> {
-          if (serverIp.isPresent()) {
-            this.sendParticipantsToServer(bungee, serverIp.get(), participants);
-          }
-        });
+        serverIp ->
+            serverIp.ifPresent(s -> this.sendParticipantsToServer(bungee, s, participants)));
   }
 
   /**
@@ -120,7 +117,9 @@ public class PGMMatchHandler implements MatchHandler {
    * @param participants list of uuid of the participants
    */
   public void sendParticipantsToServer(
-      JsonClientThread bungee, String serverIp, List<UUID> participants) {
+      @NonNull JsonClientThread bungee,
+      @NonNull String serverIp,
+      @NonNull List<UUID> participants) {
     bungee.sendRequest(
         new Request<>(
             Boolean.class,

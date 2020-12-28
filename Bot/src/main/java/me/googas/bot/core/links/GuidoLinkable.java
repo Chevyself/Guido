@@ -1,22 +1,28 @@
 package me.googas.bot.core.links;
 
 import com.google.gson.annotations.SerializedName;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
+import lombok.Getter;
 import lombok.NonNull;
 import me.googas.api.ValuesMap;
+import me.googas.api.lang.LocaleFile;
+import me.googas.api.links.Linkable;
 import me.googas.api.links.LinkableType;
 import me.googas.api.links.ref.MinecraftLinkable;
 import me.googas.api.matches.team.Team;
+import me.googas.api.permissions.Permissible;
 import me.googas.api.permissions.PermissionStack;
 import me.googas.api.user.UserData;
 import me.googas.bot.Guido;
-import me.googas.bot.api.events.data.links.LinkedDataUnloadedEvent;
-import me.googas.bot.api.types.links.BotLinkable;
-import me.googas.bot.api.types.permissions.BotPermissible;
+import me.googas.bot.api.events.data.links.LinkableUnloadedEvent;
+import me.googas.bot.api.events.data.permissible.PermissiblePermissionAddedEvent;
+import me.googas.bot.api.events.data.permissible.PermissiblePermissionRemovedEvent;
+import me.googas.bot.api.types.BotCatchable;
 import me.googas.bot.core.GuidoValuesMap;
 import me.googas.commons.builder.ToStringBuilder;
 import me.googas.commons.maps.Maps;
@@ -27,7 +33,10 @@ import me.googas.messaging.json.server.JsonClientThread;
 import net.dv8tion.jda.api.entities.User;
 
 /** The implementation of bot linked ata */
-public class GuidoLinkable implements BotLinkable, BotPermissible {
+public class GuidoLinkable implements Permissible, Linkable, BotCatchable {
+
+  /** The version of serialization for the scheme */
+  @NonNull @Getter private final String version = "PRE-3";
 
   @NonNull private final LinkableType type;
   @NonNull private final GuidoValuesMap identification;
@@ -88,7 +97,7 @@ public class GuidoLinkable implements BotLinkable, BotPermissible {
 
   @Override
   public void onRemove() {
-    new LinkedDataUnloadedEvent(this).call();
+    new LinkableUnloadedEvent(this).call();
   }
 
   @Override
@@ -143,9 +152,8 @@ public class GuidoLinkable implements BotLinkable, BotPermissible {
   public void sendMessage(@NonNull String message) {
     switch (this.getType()) {
       default:
-      case DISCORD_GUILD:
       case DISCORD:
-        User user = this.getDiscordUser();
+        User user = this.toDiscordRef().getUser(Guido.getConnection().validatedJda());
         if (user != null) {
           user.openPrivateChannel()
               .queue(
@@ -231,6 +239,73 @@ public class GuidoLinkable implements BotLinkable, BotPermissible {
 
   @Override
   public @NonNull GuidoLinkable cache() {
-    return (GuidoLinkable) BotLinkable.super.cache();
+    return (GuidoLinkable) BotCatchable.super.cache();
+  }
+
+  @Override
+  public boolean addPermission(
+      @NonNull String context, @NonNull String node, boolean enabled, long expires) {
+    boolean added = Linkable.super.addPermission(context, node, enabled, expires);
+    if (added) new PermissiblePermissionAddedEvent(this, context, node, enabled, expires).call();
+    return added;
+  }
+
+  @Override
+  public boolean removePermission(@NonNull String context, @NonNull String node) {
+    boolean removed = Linkable.super.removePermission(context, node);
+    if (removed) new PermissiblePermissionRemovedEvent(this, context, node).call();
+    return removed;
+  }
+
+  @NonNull
+  @Override
+  public Collection<Linkable> getLinks() {
+    UserData user = this.getLinkedUser();
+    if (user != null) {
+      return Guido.getDataLoader().getLinks(user);
+    }
+    return new HashSet<>();
+  }
+
+  @NonNull
+  @Override
+  public String getSingle() {
+    switch (this.getType()) {
+      case DISCORD:
+        User user = this.toDiscordRef().getUser(Guido.getConnection().validatedJda());
+        return user != null ? user.getAsMention() : "invalid";
+      case MINECRAFT:
+        return this.getIdentification().getOr("nickname", String.class, "invalid");
+      default:
+        throw new IllegalArgumentException(this.getType() + " is not a valid type");
+    }
+  }
+
+  @NonNull
+  @Override
+  public String getReadable(@NonNull LocaleFile locale) {
+    switch (this.getType()) {
+      case DISCORD:
+        User user = this.toDiscordRef().getUser(Guido.getConnection().validatedJda());
+        if (user != null) {
+          return locale.get("link.discord", Maps.builder("mention", user.getAsMention()));
+        } else {
+          return locale.get("link.invalid");
+        }
+      case MINECRAFT:
+        String nickname = this.getIdentification().get("nickname", String.class);
+        if (nickname != null) {
+          return locale.get("link.minecraft", Maps.singleton("nickname", nickname));
+        } else {
+          return locale.get("link.invalid");
+        }
+      default:
+        throw new IllegalArgumentException(this.getType() + " is not a valid type");
+    }
+  }
+
+  @Override
+  public UserData getLinkedUser() {
+    return Guido.getDataLoader().getUserData(this.getLinkedUserId());
   }
 }

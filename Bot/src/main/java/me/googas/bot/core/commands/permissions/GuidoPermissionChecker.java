@@ -9,9 +9,11 @@ import com.starfishst.jda.result.Result;
 import com.starfishst.jda.result.ResultType;
 import java.util.Set;
 import lombok.NonNull;
+import me.googas.api.links.Linkable;
+import me.googas.api.links.LinkableType;
 import me.googas.bot.api.types.discord.BotRole;
-import me.googas.bot.api.types.links.BotLinkable;
 import me.googas.bot.api.types.loader.BotDataLoader;
+import me.googas.bot.core.GuidoValuesMap;
 import me.googas.commons.Lots;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Guild;
@@ -54,8 +56,10 @@ public class GuidoPermissionChecker implements PermissionChecker {
       @NonNull GuildCommandContext context, @NonNull JdaPermission perm) {
     Member discordMember = context.getMember();
     Guild guild = context.getGuild();
-    BotLinkable member =
-        this.dataLoader.getMemberData(discordMember.getIdLong(), guild.getIdLong());
+    // discordMember.getIdLong(), guild.getIdLong()
+    Linkable member =
+        this.dataLoader.getLink(
+            LinkableType.DISCORD, new GuidoValuesMap("id", discordMember.getIdLong()));
     if (member.hasPermission(perm.getNode(), "discord")
         || discordMember.hasPermission(Permission.ADMINISTRATOR)
         || (perm.getPermission() != Permission.UNKNOWN
@@ -85,7 +89,7 @@ public class GuidoPermissionChecker implements PermissionChecker {
       } else {
         String node =
             perm.getNode().startsWith("user:") ? perm.getNode().substring(5) : perm.getNode();
-        BotLinkable userData = this.dataLoader.getDiscordUserData(context.getSender().getIdLong());
+        Linkable userData = this.dataLoader.getDiscordUserData(context.getSender().getIdLong());
         if (userData.hasPermission(node, "discord")) {
           return null;
         }

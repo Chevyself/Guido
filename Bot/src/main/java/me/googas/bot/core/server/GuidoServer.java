@@ -1,38 +1,23 @@
 package me.googas.bot.core.server;
 
-import com.google.gson.GsonBuilder;
 import java.io.IOException;
 import java.util.logging.Level;
 import lombok.NonNull;
-import me.googas.api.ValuesMap;
-import me.googas.api.links.LinkableInfo;
-import me.googas.api.matches.MatchTeam;
-import me.googas.api.matches.team.TeamMember;
-import me.googas.api.permissions.Permission;
 import me.googas.bot.Guido;
-import me.googas.bot.adapters.LinkedValuesMapAdapter;
-import me.googas.bot.adapters.ValuesMapAdapter;
-import me.googas.bot.adapters.links.LinkedInfoAdapter;
-import me.googas.bot.adapters.matches.team.MatchTeamAdapter;
-import me.googas.bot.adapters.matches.team.TeamMemberAdapter;
-import me.googas.bot.adapters.permissions.PermissionAdapter;
 import me.googas.bot.api.events.server.GuidoServerConnectionEvent;
 import me.googas.bot.api.events.server.GuidoServerDisconnectionEvent;
 import me.googas.bot.api.server.BotServer;
-import me.googas.bot.core.GuidoLinkedValuesMap;
-import me.googas.bot.core.GuidoValuesMap;
 import me.googas.bot.core.server.receptors.GroupReceptors;
 import me.googas.bot.core.server.receptors.LadderReceptors;
-import me.googas.bot.core.server.receptors.LinkReceptors;
 import me.googas.bot.core.server.receptors.LinkedDataReceptors;
 import me.googas.bot.core.server.receptors.MatchReceptors;
 import me.googas.bot.core.server.receptors.MinecraftDataReceptors;
 import me.googas.bot.core.server.receptors.QueueReceptors;
 import me.googas.bot.core.server.receptors.SecurityReceptors;
 import me.googas.bot.core.server.receptors.TeamDataReceptors;
+import me.googas.bot.core.server.receptors.handlers.LinkReceptors;
+import me.googas.bot.core.util.Mongo;
 import me.googas.messaging.Request;
-import me.googas.messaging.api.Message;
-import me.googas.messaging.json.adapters.MessageDeserializer;
 import me.googas.messaging.json.server.JsonClientThread;
 import me.googas.messaging.json.server.JsonSocketServer;
 
@@ -56,19 +41,7 @@ public class GuidoServer extends JsonSocketServer implements BotServer {
             Guido.getLogger()
                 .log(Level.SEVERE, throwable, () -> "An exception was cached in the socket server"),
         null,
-        new GsonBuilder()
-            // Required by Commons-Communication
-            .registerTypeAdapter(Message.class, new MessageDeserializer())
-            // For custom receptors
-            .registerTypeAdapter(LinkableInfo.class, new LinkedInfoAdapter())
-            .registerTypeAdapter(GuidoLinkedValuesMap.class, new LinkedValuesMapAdapter())
-            .registerTypeAdapter(Permission.class, new PermissionAdapter())
-            .registerTypeAdapter(ValuesMap.class, new ValuesMapAdapter())
-            .registerTypeAdapter(GuidoValuesMap.class, new ValuesMapAdapter())
-            .registerTypeAdapter(MatchTeam.class, new MatchTeamAdapter())
-            .registerTypeAdapter(TeamMember.class, new TeamMemberAdapter())
-            .setPrettyPrinting()
-            .create(),
+        Mongo.constructGson(false),
         timeout);
     this.setAuthenticator(this.authenticator);
     this.addReceptors(

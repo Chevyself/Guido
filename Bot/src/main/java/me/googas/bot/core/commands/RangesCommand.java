@@ -31,7 +31,7 @@ public class RangesCommand {
       LocaleFile locale,
       BotGuild guild,
       @Required(name = "range.role", description = "range.role.desc") Role role) {
-    RankRange range = guild.getRanges().get(role.getIdLong());
+    RankRange range = guild.getRange(role.getIdLong());
     if (range != null) {
       return new Result(
           locale.get(
@@ -66,8 +66,9 @@ public class RangesCommand {
       @Required(name = "range.set.ladder", description = "range.set.ladder.desc") Ladder ladder,
       @Required(name = "range.set.min", description = "range.set.min.desc") int min,
       @Required(name = "range.set.max", description = "range.set.max.desc") int max) {
-    GuidoRankRange range = new GuidoRankRange(ladder.getName(), min, max, new GuidoValuesMap());
-    guild.getRanges().put(role.getIdLong(), range);
+    GuidoRankRange range =
+        new GuidoRankRange(ladder.getName(), min, max, new GuidoValuesMap("id", role.getIdLong()));
+    guild.getRanges().add(range);
     return new Result(
         locale.get(
             "range.set.success",
@@ -93,8 +94,9 @@ public class RangesCommand {
       LocaleFile locale,
       BotGuild guild,
       @Required(name = "range.del.role", description = "range.del.role.desc") Role role) {
-    if (guild.getRanges().containsKey(role.getIdLong())) {
-      guild.getRanges().remove(role.getIdLong());
+    RankRange range = guild.getRange(role.getIdLong());
+    if (range != null) {
+      guild.getRanges().remove(range);
       return new Result(
           locale.get("range.del.success", Maps.singleton("mention", role.getAsMention())));
     } else {

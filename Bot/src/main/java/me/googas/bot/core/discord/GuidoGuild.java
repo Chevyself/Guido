@@ -6,6 +6,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import lombok.Getter;
 import lombok.NonNull;
 import me.googas.api.matches.ladder.Ladder;
 import me.googas.api.ranks.RankRange;
@@ -19,9 +20,12 @@ import me.googas.commons.time.Unit;
 /** This object represents the data for a guild that is using this bot */
 public class GuidoGuild implements BotGuild {
 
+  /** The version of serialization for the scheme */
+  @NonNull @Getter private final String version = "PRE-3";
+
   private final long id;
   @NonNull private final Set<Ladder> ladders;
-  @NonNull private final Map<Long, RankRange> ranges;
+  @NonNull private final Set<RankRange> ranges;
   @NonNull private final Map<String, Long> channels;
   @NonNull private final Map<String, Long> voiceChannels;
   @NonNull private final Map<String, Long> categories;
@@ -41,10 +45,10 @@ public class GuidoGuild implements BotGuild {
   public GuidoGuild(
       long id,
       @NonNull Set<Ladder> ladders,
-      @NonNull Map<Long, RankRange> ranges,
+      @NonNull Set<RankRange> ranges,
       @NonNull Map<String, Long> channels,
       @NonNull Map<String, Long> voiceChannels,
-      @NonNull HashMap<String, Long> categories,
+      @NonNull Map<String, Long> categories,
       @NonNull Set<ResponsiveMesage> messages) {
     this.id = id;
     this.ladders = ladders;
@@ -60,7 +64,7 @@ public class GuidoGuild implements BotGuild {
     this(
         0,
         new HashSet<>(),
-        new HashMap<>(),
+        new HashSet<>(),
         new HashMap<>(),
         new HashMap<>(),
         new HashMap<>(),
@@ -93,7 +97,7 @@ public class GuidoGuild implements BotGuild {
 
   @NonNull
   @Override
-  public Map<Long, RankRange> getRanges() {
+  public Set<RankRange> getRanges() {
     return this.ranges;
   }
 

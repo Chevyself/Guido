@@ -5,6 +5,7 @@ import java.util.Map;
 import lombok.NonNull;
 import me.googas.api.ValuesMap;
 import me.googas.api.links.Linkable;
+import me.googas.api.links.LinkableType;
 import me.googas.api.user.UserData;
 import me.googas.bot.Guido;
 import me.googas.bot.api.events.data.user.UserUnloadedDataEvent;
@@ -82,8 +83,13 @@ public class GuidoUser implements UserData, BotCatchable {
   }
 
   @Override
-  public Collection<Linkable> getLinks() {
+  public @NonNull Collection<Linkable> getLinks() {
     return Guido.getDataLoader().getLinks(this);
+  }
+
+  @Override
+  public Linkable getLink(@NonNull LinkableType type) {
+    return Guido.getDataLoader().getLink(this, type);
   }
 
   @Override

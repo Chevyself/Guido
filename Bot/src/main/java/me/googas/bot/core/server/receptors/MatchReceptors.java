@@ -4,7 +4,6 @@ import me.googas.api.matches.Match;
 import me.googas.api.matches.MatchStatus;
 import me.googas.api.matches.MatchTeam;
 import me.googas.bot.Guido;
-import me.googas.bot.api.types.match.BotMatch;
 import me.googas.bot.core.handlers.matches.MatchMakingHandler;
 import me.googas.bot.core.matches.GuidoMatchTeam;
 import me.googas.messaging.json.JsonMessenger;
@@ -35,7 +34,7 @@ public class MatchReceptors {
    */
   @Receptor("match-status")
   public boolean status(@ParamName("id") String id, @ParamName("status") MatchStatus status) {
-    BotMatch match = Guido.getDataLoader().getMatch(id);
+    Match match = Guido.getDataLoader().getMatch(id);
     if (match != null) {
       match.setStatus(status);
       return true;
@@ -52,7 +51,7 @@ public class MatchReceptors {
    */
   @Receptor("match-add-matchTeam")
   public int addTeam(@ParamName("id") String id, @ParamName("matchTeam") MatchTeam matchTeam) {
-    BotMatch match = Guido.getDataLoader().getMatch(id);
+    Match match = Guido.getDataLoader().getMatch(id);
     if (match != null) {
       if (matchTeam.getId() == -3) {
         GuidoMatchTeam guidoTeam =
@@ -78,7 +77,7 @@ public class MatchReceptors {
    */
   @Receptor("match-remove-team")
   public boolean removeTeam(@ParamName("id") String id, @ParamName("team") String teamName) {
-    BotMatch match = Guido.getDataLoader().getMatch(id);
+    Match match = Guido.getDataLoader().getMatch(id);
     if (match != null) {
       MatchTeam matchTeam = match.getTeam(teamName);
       if (matchTeam != null) {
@@ -97,7 +96,7 @@ public class MatchReceptors {
    */
   @Receptor("match-remove-team-by-id")
   public boolean removeTeam(@ParamName("id") String id, @ParamName("team") int teamId) {
-    BotMatch match = Guido.getDataLoader().getMatch(id);
+    Match match = Guido.getDataLoader().getMatch(id);
     if (match != null) {
       MatchTeam matchTeam = match.getTeam(teamId);
       if (matchTeam != null) {
@@ -116,7 +115,7 @@ public class MatchReceptors {
    */
   @Receptor("match-finish")
   public boolean finish(@ParamName("id") String id, @ParamName("winners") String winners) {
-    BotMatch match = Guido.getDataLoader().getMatch(id);
+    Match match = Guido.getDataLoader().getMatch(id);
     if (match != null) {
       if (winners != null) {
         MatchTeam matchTeam = match.getTeam(winners);
@@ -143,7 +142,7 @@ public class MatchReceptors {
    */
   @Receptor("match-finish-id")
   public boolean finish(@ParamName("id") String id, @ParamName("winners") int winners) {
-    BotMatch match = Guido.getDataLoader().getMatch(id);
+    Match match = Guido.getDataLoader().getMatch(id);
     if (match != null) {
       if (winners != -1) {
         MatchTeam matchTeam = match.getTeam(winners);

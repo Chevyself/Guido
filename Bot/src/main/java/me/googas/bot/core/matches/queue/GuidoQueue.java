@@ -60,21 +60,21 @@ public class GuidoQueue implements Queue {
     if (!this.isWaiting(data) && new QueuePreJoinEvent(this, data).callAndGet()) {
       this.getWaiting().add(data);
       new QueueJoinEvent(this, data).call();
-      return new QueueResult(QueueResult.ActionType.JOIN);
+      return new QueueResult();
     }
-    return new QueueResult(QueueResult.ActionType.JOIN, "You're already waiting in this queue");
+    return new QueueResult("You're already waiting in this queue");
   }
 
   @Override
   public QueueResult leave(@NonNull Queueable data) {
     if (this.isWaiting(data)) {
       if (this.getWaiting().remove(data)) {
-        return new QueueResult(QueueResult.ActionType.LEAVE);
+        return new QueueResult();
       } else {
-        return new QueueResult(QueueResult.ActionType.LEAVE, "Could not leave the queue");
+        return new QueueResult("Could not leave the queue");
       }
     }
-    return new QueueResult(QueueResult.ActionType.LEAVE, "You are not waiting in this queue");
+    return new QueueResult("You are not waiting in this queue");
   }
 
   @Override

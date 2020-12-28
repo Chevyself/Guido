@@ -3,10 +3,10 @@ package me.googas.bot.core.server.receptors;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.UUID;
+import me.googas.api.links.Linkable;
 import me.googas.api.links.LinkableInfo;
 import me.googas.api.links.LinkableType;
 import me.googas.bot.Guido;
-import me.googas.bot.api.types.links.BotLinkable;
 import me.googas.bot.core.GuidoValuesMap;
 import me.googas.bot.core.links.GuidoLinkable;
 import me.googas.commons.UUIDUtils;
@@ -26,7 +26,7 @@ public class MinecraftDataReceptors {
   @Receptor("create-minecraft")
   public boolean create(@ParamName("uuid") UUID uuid, @ParamName("nickname") String nickname) {
     String trimmed = UUIDUtils.trim(uuid);
-    BotLinkable data =
+    Linkable data =
         Guido.getDataLoader()
             .getLink(
                 LinkableType.MINECRAFT,
@@ -57,7 +57,7 @@ public class MinecraftDataReceptors {
   @Receptor("update-minecraft-nickname")
   public boolean updateNickname(
       @ParamName("uuid") UUID uuid, @ParamName("nickname") String nickname) {
-    BotLinkable data =
+    Linkable data =
         Guido.getDataLoader()
             .getLink(LinkableType.MINECRAFT, new GuidoValuesMap("uuid", UUIDUtils.trim(uuid)));
     if (data != null) {
@@ -77,7 +77,7 @@ public class MinecraftDataReceptors {
    */
   @Receptor("get-mc-by-name")
   public LinkableInfo getInfo(@ParamName("nickname") String nick) {
-    BotLinkable data =
+    Linkable data =
         Guido.getDataLoader()
             .getLinkByRecognition(LinkableType.MINECRAFT, new GuidoValuesMap("nickname", nick));
     if (data != null) {

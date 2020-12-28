@@ -1,4 +1,4 @@
-package me.googas.bot.core.server.receptors;
+package me.googas.bot.core.server.receptors.handlers;
 
 import me.googas.api.links.LinkableInfo;
 import me.googas.bot.Guido;

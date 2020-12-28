@@ -1,16 +1,16 @@
 package me.googas.bot.api.events.data.links;
 
 import lombok.NonNull;
-import me.googas.bot.api.types.links.BotLinkable;
+import me.googas.api.links.Linkable;
 
 /** Called when linked data gets unloaded */
-public class LinkedDataUnloadedEvent extends LinkedDataEvent {
+public class LinkableUnloadedEvent extends LinkableEvent {
   /**
    * Create the event
    *
    * @param data the data involved in the event
    */
-  public LinkedDataUnloadedEvent(@NonNull BotLinkable data) {
+  public LinkableUnloadedEvent(@NonNull Linkable data) {
     super(data);
   }
 }

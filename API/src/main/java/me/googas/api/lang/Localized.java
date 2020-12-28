@@ -47,8 +47,6 @@ public interface Localized {
    */
   void setLang(@NonNull String lang);
 
-  // TODO set a lang
-
   /**
    * Get the language of this localized entity
    *

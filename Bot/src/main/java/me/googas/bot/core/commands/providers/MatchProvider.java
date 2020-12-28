@@ -6,7 +6,6 @@ import com.starfishst.jda.providers.type.JdaArgumentProvider;
 import lombok.NonNull;
 import me.googas.api.matches.Match;
 import me.googas.bot.Guido;
-import me.googas.bot.api.types.match.BotMatch;
 import me.googas.bot.core.util.Lang;
 import me.googas.commons.maps.Maps;
 
@@ -22,7 +21,7 @@ public class MatchProvider implements JdaArgumentProvider<Match> {
   @Override
   public Match fromString(@NonNull String s, @NonNull CommandContext commandContext)
       throws ArgumentProviderException {
-    BotMatch match = Guido.getDataLoader().getMatch(s);
+    Match match = Guido.getDataLoader().getMatch(s);
     if (match != null) {
       return match;
     } else {

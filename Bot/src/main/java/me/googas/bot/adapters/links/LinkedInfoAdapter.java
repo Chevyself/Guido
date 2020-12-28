@@ -1,24 +1,36 @@
 package me.googas.bot.adapters.links;
 
-import com.google.gson.JsonDeserializationContext;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonParseException;
-import com.google.gson.JsonSerializationContext;
-import java.lang.reflect.Type;
+import java.util.HashMap;
+import java.util.Map;
+import lombok.Getter;
+import lombok.NonNull;
+import lombok.Setter;
 import me.googas.api.links.LinkableInfo;
-import me.googas.bot.core.links.GuidoLinkableInfo;
-import me.googas.commons.gson.adapters.JsonAdapter;
+import me.googas.bot.adapters.SchemeAdapter;
+import me.googas.bot.adapters.schemes.Scheme;
+import me.googas.bot.adapters.schemes.links.LatestLinkableInfoScheme;
+import me.googas.bot.adapters.schemes.links.LegacyLinkableInfoScheme;
 
-public class LinkedInfoAdapter implements JsonAdapter<LinkableInfo> {
-  @Override
-  public JsonElement serialize(LinkableInfo src, Type typeOfSrc, JsonSerializationContext context) {
-    return context.serialize(src);
+public class LinkedInfoAdapter implements SchemeAdapter<LinkableInfo> {
+
+  @NonNull
+  private final Map<String, Class<? extends Scheme<LinkableInfo>>> schemes = new HashMap<>();
+
+  @Getter @Setter private boolean emptyAsLatest;
+
+  public LinkedInfoAdapter(boolean emptyAsLatest) {
+    this.schemes.put("legacy", LegacyLinkableInfoScheme.class);
+    this.schemes.put("PRE-3", LatestLinkableInfoScheme.class);
+    this.emptyAsLatest = emptyAsLatest;
   }
 
   @Override
-  public LinkableInfo deserialize(
-      JsonElement json, Type typeOfT, JsonDeserializationContext context)
-      throws JsonParseException {
-    return context.deserialize(json, GuidoLinkableInfo.class);
+  public @NonNull Map<String, Class<? extends Scheme<LinkableInfo>>> getSchemes() {
+    return this.schemes;
+  }
+
+  @Override
+  public @NonNull String getLatest() {
+    return "PRE-3";
   }
 }

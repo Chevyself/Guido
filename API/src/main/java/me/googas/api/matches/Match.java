@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 import lombok.NonNull;
+import me.googas.annotations.Nullable;
 import me.googas.api.ValuesMap;
 import me.googas.api.links.LinkableInfo;
 import me.googas.api.links.LinkableType;
@@ -130,6 +131,7 @@ public interface Match extends Catchable {
    *
    * @return the ladder where the match was played
    */
+  @Nullable
   Ladder getLadder();
 
   /**

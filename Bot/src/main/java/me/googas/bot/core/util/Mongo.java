@@ -2,6 +2,7 @@ package me.googas.bot.core.util;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.JsonSyntaxException;
 import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoCursor;
@@ -14,6 +15,8 @@ import lombok.NonNull;
 import me.googas.annotations.Nullable;
 import me.googas.api.GuidoCatchable;
 import me.googas.api.ValuesMap;
+import me.googas.api.client.adapters.link.LinkableInfoAdapter;
+import me.googas.api.links.Linkable;
 import me.googas.api.links.LinkableInfo;
 import me.googas.api.links.LinkableType;
 import me.googas.api.matches.MatchTeam;
@@ -26,7 +29,8 @@ import me.googas.bot.Guido;
 import me.googas.bot.adapters.LinkedValuesMapAdapter;
 import me.googas.bot.adapters.LongMongoAdapter;
 import me.googas.bot.adapters.ValuesMapAdapter;
-import me.googas.bot.adapters.links.LinkedInfoAdapter;
+import me.googas.bot.adapters.discord.BotGuildAdapter;
+import me.googas.bot.adapters.links.LinkableAdapter;
 import me.googas.bot.adapters.matches.ladder.LadderAdapter;
 import me.googas.bot.adapters.matches.team.MatchTeamAdapter;
 import me.googas.bot.adapters.matches.team.TeamMemberAdapter;
@@ -34,32 +38,48 @@ import me.googas.bot.adapters.messages.ResponsiveMessageAdapter;
 import me.googas.bot.adapters.permissions.PermissionAdapter;
 import me.googas.bot.adapters.permissions.PermissionStackDeserializer;
 import me.googas.bot.adapters.ranks.RankRangeAdapter;
+import me.googas.bot.api.types.discord.BotGuild;
 import me.googas.bot.api.types.messages.ResponsiveMesage;
 import me.googas.bot.core.GuidoLinkedValuesMap;
 import me.googas.bot.core.GuidoValuesMap;
+import me.googas.bot.core.discord.GuidoGuild;
+import me.googas.bot.core.links.GuidoLinkable;
+import me.googas.bot.core.links.GuidoLinkableInfo;
+import me.googas.bot.core.permissions.GuidoPermission;
+import me.googas.bot.core.permissions.GuidoPermissionStack;
 import me.googas.commons.cache.MemoryCache;
 import org.bson.Document;
 
 /** Static utilities for mongo */
 public class Mongo {
 
-  private static final Gson GSON =
-      new GsonBuilder()
-          .setPrettyPrinting()
-          .registerTypeAdapter(ResponsiveMesage.class, new ResponsiveMessageAdapter())
-          .registerTypeAdapter(Ladder.class, new LadderAdapter())
-          .registerTypeAdapter(LinkableInfo.class, new LinkedInfoAdapter())
-          .registerTypeAdapter(GuidoLinkedValuesMap.class, new LinkedValuesMapAdapter())
-          .registerTypeAdapter(long.class, new LongMongoAdapter())
-          .registerTypeAdapter(Long.class, new LongMongoAdapter())
-          .registerTypeAdapter(Permission.class, new PermissionAdapter())
-          .registerTypeAdapter(PermissionStack.class, new PermissionStackDeserializer())
-          .registerTypeAdapter(RankRange.class, new RankRangeAdapter())
-          .registerTypeAdapter(MatchTeam.class, new MatchTeamAdapter())
-          .registerTypeAdapter(TeamMember.class, new TeamMemberAdapter())
-          .registerTypeAdapter(ValuesMap.class, new ValuesMapAdapter())
-          .registerTypeAdapter(GuidoValuesMap.class, new ValuesMapAdapter())
-          .create();
+  private static final Gson GSON = Mongo.constructGson(true);
+
+  public static Gson constructGson(boolean emptyAsLatest) {
+    return new GsonBuilder()
+        .setPrettyPrinting()
+        .registerTypeAdapter(GuidoGuild.class, new BotGuildAdapter())
+        .registerTypeAdapter(BotGuild.class, new BotGuildAdapter())
+        .registerTypeAdapter(Linkable.class, new LinkableAdapter(emptyAsLatest))
+        .registerTypeAdapter(GuidoLinkable.class, new LinkableAdapter(emptyAsLatest))
+        .registerTypeAdapter(LinkableInfo.class, new LinkableInfoAdapter())
+        .registerTypeAdapter(GuidoLinkableInfo.class, new LinkableInfoAdapter())
+        .registerTypeAdapter(Ladder.class, new LadderAdapter())
+        .registerTypeAdapter(MatchTeam.class, new MatchTeamAdapter())
+        .registerTypeAdapter(TeamMember.class, new TeamMemberAdapter())
+        .registerTypeAdapter(ResponsiveMesage.class, new ResponsiveMessageAdapter())
+        .registerTypeAdapter(Permission.class, new PermissionAdapter())
+        .registerTypeAdapter(PermissionStack.class, new PermissionStackDeserializer())
+        .registerTypeAdapter(GuidoPermission.class, new PermissionAdapter())
+        .registerTypeAdapter(GuidoPermissionStack.class, new PermissionStackDeserializer())
+        .registerTypeAdapter(RankRange.class, new RankRangeAdapter())
+        .registerTypeAdapter(GuidoLinkedValuesMap.class, new LinkedValuesMapAdapter())
+        .registerTypeAdapter(long.class, new LongMongoAdapter())
+        .registerTypeAdapter(Long.class, new LongMongoAdapter())
+        .registerTypeAdapter(ValuesMap.class, new ValuesMapAdapter())
+        .registerTypeAdapter(GuidoValuesMap.class, new ValuesMapAdapter())
+        .create();
+  }
 
   public static void save(
       @NonNull MongoCollection<Document> collection,
@@ -108,7 +128,11 @@ public class Mongo {
    */
   @Nullable
   public static <T> T getObject(@NonNull Type typeOfT, @NonNull Document document) {
-    return Mongo.GSON.fromJson(document.toJson(), typeOfT);
+    try {
+      return Mongo.GSON.fromJson(document.toJson(), typeOfT);
+    } catch (JsonSyntaxException e) {
+      return null;
+    }
   }
 
   @NonNull

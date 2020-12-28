@@ -2,15 +2,20 @@ package me.googas.bot.core.links;
 
 import java.util.HashMap;
 import java.util.Map;
+import lombok.Getter;
 import lombok.NonNull;
+import me.googas.api.links.Linkable;
+import me.googas.api.links.LinkableInfo;
 import me.googas.api.links.LinkableType;
-import me.googas.bot.api.types.links.BotLinkable;
-import me.googas.bot.api.types.links.BotLinkableInfo;
+import me.googas.bot.Guido;
 import me.googas.bot.core.GuidoValuesMap;
 import me.googas.commons.builder.ToStringBuilder;
 
 /** The uncompleted data from a linked data */
-public class GuidoLinkableInfo implements BotLinkableInfo {
+public class GuidoLinkableInfo implements LinkableInfo {
+
+  /** The version of serialization for the scheme */
+  @NonNull @Getter private final String version = "PRE-3";
 
   @NonNull private final LinkableType type;
   @NonNull private final GuidoValuesMap identification;
@@ -33,14 +38,19 @@ public class GuidoLinkableInfo implements BotLinkableInfo {
 
   @Override
   public @NonNull Map<String, Float> getStats() {
-    BotLinkable link = this.getLink();
+    Linkable link = this.getLink();
     return link == null ? new HashMap<>() : link.getStats();
   }
 
   @Override
   public @NonNull String getSingle() {
-    BotLinkable link = this.getLink();
+    Linkable link = this.getLink();
     return link == null ? "invalid" : link.getSingle();
+  }
+
+  @Override
+  public Linkable getLink() {
+    return Guido.getDataLoader().getLink(this.getType(), this.getIdentification());
   }
 
   @Override

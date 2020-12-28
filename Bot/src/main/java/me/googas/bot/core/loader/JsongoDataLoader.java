@@ -32,7 +32,7 @@ import me.googas.api.token.AuthToken;
 import me.googas.api.user.UserData;
 import me.googas.bot.api.events.data.group.GroupUnloadedEvent;
 import me.googas.bot.api.events.data.guild.BotGuildUnloadedEvent;
-import me.googas.bot.api.events.data.links.LinkedDataUnloadedEvent;
+import me.googas.bot.api.events.data.links.LinkableUnloadedEvent;
 import me.googas.bot.api.events.data.role.BotRoleUnloadedEvent;
 import me.googas.bot.api.events.data.token.AuthTokenUnloadedEvent;
 import me.googas.bot.api.events.data.user.UserUnloadedDataEvent;
@@ -41,9 +41,7 @@ import me.googas.bot.api.events.match.team.TeamDataUnloadedEvent;
 import me.googas.bot.api.events.punishment.PunishmentUnloadedEvent;
 import me.googas.bot.api.types.discord.BotGuild;
 import me.googas.bot.api.types.discord.BotRole;
-import me.googas.bot.api.types.links.BotLinkable;
 import me.googas.bot.api.types.loader.BotDataLoader;
-import me.googas.bot.api.types.match.BotMatch;
 import me.googas.bot.core.GuidoValuesMap;
 import me.googas.bot.core.discord.GuidoGuild;
 import me.googas.bot.core.discord.GuidoRole;
@@ -139,8 +137,8 @@ public class JsongoDataLoader implements BotDataLoader {
   }
 
   @Listener(priority = ListenPriority.HIGHEST)
-  public void onLinkedDataUnloaded(@NonNull LinkedDataUnloadedEvent event) {
-    BotLinkable data = event.getData();
+  public void onLinkedDataUnloaded(@NonNull LinkableUnloadedEvent event) {
+    Linkable data = event.getData();
     Mongo.save(this.links, Mongo.getQuery(data.getType(), data.getIdentification()), data);
   }
 
@@ -152,8 +150,8 @@ public class JsongoDataLoader implements BotDataLoader {
 
   @NonNull
   private UserData getAllDiscordUserData(long discordId) {
-    Collection<BotLinkable> discordData = this.getDiscordData(discordId);
-    for (BotLinkable link : discordData) {
+    Collection<Linkable> discordData = this.getDiscordData(discordId);
+    for (Linkable link : discordData) {
       if (link.getLinkedUser() != null) {
         return link.getLinkedUser();
       }
@@ -167,7 +165,7 @@ public class JsongoDataLoader implements BotDataLoader {
   }
 
   @Override
-  public BotLinkable getLink(@NonNull LinkableType type, @NonNull ValuesMap identification) {
+  public Linkable getLink(@NonNull LinkableType type, @NonNull ValuesMap identification) {
     return Mongo.get(
         GuidoLinkable.class,
         this.links,
@@ -176,22 +174,23 @@ public class JsongoDataLoader implements BotDataLoader {
   }
 
   @Override
-  public @NonNull BotLinkable getDiscordUserData(long userId) {
+  public @NonNull Linkable getDiscordUserData(long userId) {
     return Validate.notNullOrGet(
         this.getLink(LinkableType.DISCORD, new GuidoValuesMap("id", userId)),
         () ->
             new GuidoLinkable(
-                LinkableType.DISCORD,
-                new GuidoValuesMap(),
-                this.getAllDiscordUserData(userId).getId(),
-                new GuidoValuesMap("id", userId),
-                new GuidoValuesMap(),
-                new HashMap<>(),
-                new HashSet<>()));
+                    LinkableType.DISCORD,
+                    new GuidoValuesMap(),
+                    this.getAllDiscordUserData(userId).getId(),
+                    new GuidoValuesMap("id", userId),
+                    new GuidoValuesMap(),
+                    new HashMap<>(),
+                    new HashSet<>())
+                .cache());
   }
 
   @Override
-  public @NonNull Collection<BotLinkable> getDiscordData(long userId) {
+  public @NonNull Collection<Linkable> getDiscordData(long userId) {
     return new ArrayList<>(
         Mongo.getMany(
             GuidoLinkable.class,
@@ -210,7 +209,7 @@ public class JsongoDataLoader implements BotDataLoader {
             new GuidoGuild(
                     id,
                     new HashSet<>(),
-                    new HashMap<>(),
+                    new HashSet<>(),
                     new HashMap<>(),
                     new HashMap<>(),
                     new HashMap<>(),
@@ -225,7 +224,7 @@ public class JsongoDataLoader implements BotDataLoader {
   }
 
   @Override
-  public BotLinkable getLink(
+  public Linkable getLink(
       @NonNull LinkableType type,
       @NonNull ValuesMap identification,
       @NonNull ValuesMap recognition) {
@@ -237,8 +236,7 @@ public class JsongoDataLoader implements BotDataLoader {
   }
 
   @Override
-  public BotLinkable getLinkByRecognition(
-      @NonNull LinkableType type, @NonNull ValuesMap recognition) {
+  public Linkable getLinkByRecognition(@NonNull LinkableType type, @NonNull ValuesMap recognition) {
     return Mongo.get(
         GuidoLinkable.class,
         this.links,
@@ -280,22 +278,6 @@ public class JsongoDataLoader implements BotDataLoader {
   }
 
   @Override
-  public @NonNull BotLinkable getMemberData(long userId, long guildId) {
-    return Validate.notNullOrGet(
-        this.getLink(
-            LinkableType.DISCORD_GUILD, new GuidoValuesMap("id", userId).put("guild", guildId)),
-        () ->
-            new GuidoLinkable(
-                LinkableType.DISCORD_GUILD,
-                new GuidoValuesMap(),
-                this.getAllDiscordUserData(userId).getId(),
-                new GuidoValuesMap("id", userId).put("guild", guildId),
-                new GuidoValuesMap(),
-                new HashMap<>(),
-                new HashSet<>()));
-  }
-
-  @Override
   public long maxPageLeaderboard(@NonNull Ladder ladder, int size) {
     return this.maxPageLeaderboard(ladder.getName() + "-elo", size);
   }
@@ -306,7 +288,7 @@ public class JsongoDataLoader implements BotDataLoader {
   }
 
   @Override
-  public BotMatch getMatch(@NonNull String id) {
+  public Match getMatch(@NonNull String id) {
     return Mongo.get(
         GuidoMatch.class, this.matches, new Document("id", id), match -> match.getId().equals(id));
   }
@@ -408,8 +390,8 @@ public class JsongoDataLoader implements BotDataLoader {
   }
 
   @Override
-  public long countGroups() {
-    return Mongo.count(this.groups, new Document());
+  public long maxPageGroups(int size) {
+    return Mongo.count(this.groups, new Document()) / size;
   }
 
   @Override
@@ -477,22 +459,24 @@ public class JsongoDataLoader implements BotDataLoader {
 
   @Override
   public @NonNull Collection<Linkable> getLinks(@NonNull UserData user) {
-    return this.getLinks(user, LinkableType.values());
-  }
-
-  @Override
-  public @NonNull Collection<Linkable> getLinks(
-      @NonNull UserData user, @NonNull LinkableType... types) {
     return new ArrayList<>(
         Mongo.getMany(
             GuidoLinkable.class,
             this.links,
-            new Document("linked-id", user.getId())
-                .append("type", new Document("$in", Enums.getNames(types))),
+            new Document("linked-id", user.getId()),
             null,
             -1,
             -1,
             linkable -> user.equals(linkable.getLinkedUser())));
+  }
+
+  @Override
+  public Linkable getLink(@NonNull UserData user, @NonNull LinkableType type) {
+    return Mongo.get(
+        GuidoLinkable.class,
+        this.links,
+        new Document("linked-id", user.getId()).append("type", type.name()),
+        linkable -> linkable.getType() == type && user.equals(linkable.getLinkedUser()));
   }
 
   @Override

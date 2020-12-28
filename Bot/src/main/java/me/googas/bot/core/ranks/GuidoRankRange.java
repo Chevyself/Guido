@@ -1,5 +1,6 @@
 package me.googas.bot.core.ranks;
 
+import java.util.Objects;
 import lombok.NonNull;
 import me.googas.api.ValuesMap;
 import me.googas.api.ranks.RankRange;
@@ -15,7 +16,8 @@ public class GuidoRankRange implements RankRange {
 
   /**
    * Create the range
-   *  @param ladder the ladder that will use this range
+   *
+   * @param ladder the ladder that will use this range
    * @param min the minimum value of the range
    * @param max the maximum value of the range
    * @param preferences the preferences of the rank range
@@ -50,5 +52,18 @@ public class GuidoRankRange implements RankRange {
   @Override
   public @NonNull ValuesMap getPreferences() {
     return this.preferences;
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) return true;
+    if (o == null || this.getClass() != o.getClass()) return false;
+    GuidoRankRange that = (GuidoRankRange) o;
+    return this.min == that.min && this.max == that.max && this.ladder.equals(that.ladder);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(this.ladder, this.min, this.max);
   }
 }
