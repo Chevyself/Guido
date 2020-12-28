@@ -92,21 +92,6 @@ public class Guido {
   }
 
   @NonNull @Getter private static final Fallback fallback = new SimpleFallback();
-
-  /** The list of handlers that the bot is using */
-  @NonNull
-  private static final List<GuidoHandler> handlers =
-      Lots.list(
-          new RanksHandler(),
-          Guido.languageHandler,
-          new LinkHandler(),
-          new MatchEloCalculator(),
-          new MatchMakingHandler(),
-          new PGMMatchHandler(),
-          new QueueHandler(),
-          new GuidoMessagesController(),
-          new TestHandler(),
-          Guido.dataLoader);
   /** The connection of guido with discord */
   @NonNull private static final GuidoJdaConnection connection = new GuidoJdaConnection();
   /** The listener manager for calling events */
@@ -122,6 +107,21 @@ public class Guido {
   @NonNull
   private static final GuidoLanguageHandler languageHandler =
       new GuidoLanguageHandler(Guido.dataLoader);
+  /** The list of handlers that the bot is using */
+  @NonNull
+  private static final List<GuidoHandler> handlers =
+      Lots.list(
+          new RanksHandler(),
+          Guido.languageHandler,
+          new LinkHandler(),
+          new MatchEloCalculator(),
+          new MatchMakingHandler(),
+          new PGMMatchHandler(),
+          new QueueHandler(),
+          new GuidoMessagesController(),
+          new TestHandler(),
+          Guido.dataLoader);
+
   @NonNull @Getter @Setter
   private static Scheduler scheduler = new TimerScheduler(new Timer(Guido.class.getName()));
 

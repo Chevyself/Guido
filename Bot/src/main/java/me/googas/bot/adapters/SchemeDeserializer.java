@@ -1,18 +1,17 @@
 package me.googas.bot.adapters;
 
 import com.google.gson.JsonDeserializationContext;
+import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
-import com.google.gson.JsonSerializationContext;
 import java.lang.reflect.Type;
 import java.util.Map;
 import lombok.NonNull;
 import me.googas.annotations.Nullable;
 import me.googas.bot.adapters.schemes.Scheme;
-import me.googas.commons.gson.adapters.JsonAdapter;
 
-public interface SchemeAdapter<T> extends JsonAdapter<T> {
+public interface SchemeDeserializer<T> extends JsonDeserializer<T> {
 
   default @NonNull Class<? extends Scheme<T>> getScheme(@Nullable String version) {
     if (version == null || version.isEmpty()) {
@@ -61,10 +60,5 @@ public interface SchemeAdapter<T> extends JsonAdapter<T> {
       return scheme.build();
     }
     return null;
-  }
-
-  @Override
-  default JsonElement serialize(T src, Type typeOfSrc, JsonSerializationContext context) {
-    return context.serialize(src);
   }
 }

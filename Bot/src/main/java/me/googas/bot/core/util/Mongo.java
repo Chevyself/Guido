@@ -29,8 +29,8 @@ import me.googas.bot.Guido;
 import me.googas.bot.adapters.LinkedValuesMapAdapter;
 import me.googas.bot.adapters.LongMongoAdapter;
 import me.googas.bot.adapters.ValuesMapAdapter;
-import me.googas.bot.adapters.discord.BotGuildAdapter;
-import me.googas.bot.adapters.links.LinkableAdapter;
+import me.googas.bot.adapters.discord.BotGuildDeserializer;
+import me.googas.bot.adapters.links.LinkableDeserializer;
 import me.googas.bot.adapters.matches.ladder.LadderAdapter;
 import me.googas.bot.adapters.matches.team.MatchTeamAdapter;
 import me.googas.bot.adapters.matches.team.TeamMemberAdapter;
@@ -58,10 +58,10 @@ public class Mongo {
   public static Gson constructGson(boolean emptyAsLatest) {
     return new GsonBuilder()
         .setPrettyPrinting()
-        .registerTypeAdapter(GuidoGuild.class, new BotGuildAdapter())
-        .registerTypeAdapter(BotGuild.class, new BotGuildAdapter())
-        .registerTypeAdapter(Linkable.class, new LinkableAdapter(emptyAsLatest))
-        .registerTypeAdapter(GuidoLinkable.class, new LinkableAdapter(emptyAsLatest))
+        .registerTypeAdapter(GuidoGuild.class, new BotGuildDeserializer())
+        .registerTypeAdapter(BotGuild.class, new BotGuildDeserializer())
+        .registerTypeAdapter(Linkable.class, new LinkableDeserializer(emptyAsLatest))
+        .registerTypeAdapter(GuidoLinkable.class, new LinkableDeserializer(emptyAsLatest))
         .registerTypeAdapter(LinkableInfo.class, new LinkableInfoAdapter())
         .registerTypeAdapter(GuidoLinkableInfo.class, new LinkableInfoAdapter())
         .registerTypeAdapter(Ladder.class, new LadderAdapter())

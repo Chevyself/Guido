@@ -18,7 +18,7 @@ import me.googas.bot.Guido;
 import me.googas.bot.api.events.queue.QueueLeaveEvent;
 import me.googas.bot.api.types.discord.BotGuild;
 import me.googas.bot.core.GuidoValuesMap;
-import me.googas.bot.core.handlers.GuidoEventHandler;
+import me.googas.bot.core.handlers.GuidoHandler;
 import me.googas.commons.events.ListenPriority;
 import me.googas.commons.events.Listener;
 import net.dv8tion.jda.api.entities.Guild;
@@ -31,7 +31,7 @@ import net.dv8tion.jda.api.events.guild.voice.GuildVoiceMoveEvent;
 import net.dv8tion.jda.api.hooks.SubscribeEvent;
 
 /** Handles the queue */
-public class QueueHandler implements GuidoEventHandler {
+public class QueueHandler implements GuidoHandler {
 
   /** The queues that are working right now in the handler */
   @NonNull private final Set<Queue> queues = new HashSet<>();

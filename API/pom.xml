@@ -36,7 +36,7 @@
         <dependency>
             <groupId>me.googas.commons</groupId>
             <artifactId>Commons</artifactId>
-            <version>1.1.5-SNAPSHOT</version>
+            <version>1.1.6-SNAPSHOT</version>
             <scope>compile</scope>
         </dependency>
         <!-- Dependency to Commons-Messaging -->

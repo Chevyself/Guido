@@ -10,7 +10,7 @@ import me.googas.api.matches.ladder.Ladder;
 import me.googas.api.matches.team.TeamMember;
 import me.googas.bot.api.events.data.links.LinkableEloUpdatedEvent;
 import me.googas.bot.api.events.match.MatchStatusUpdatedEvent;
-import me.googas.bot.core.handlers.GuidoEventHandler;
+import me.googas.bot.core.handlers.GuidoHandler;
 import me.googas.commons.events.ListenPriority;
 import me.googas.commons.events.Listener;
 
@@ -18,7 +18,7 @@ import me.googas.commons.events.Listener;
  * This handler listens to the end of a match and gives the winners the respective elo also gives
  * the ranks that were set in the server
  */
-public class MatchEloCalculator implements GuidoEventHandler {
+public class MatchEloCalculator implements GuidoHandler {
 
   /**
    * Listen to when a match ends
@@ -99,7 +99,7 @@ public class MatchEloCalculator implements GuidoEventHandler {
                 - this.newElo(
                     oldElo,
                     expected,
-                    ladder.getOptions().getOr("win-multiplier", Double.class, 1.0)));
+                    ladder.getOptions().getOr("lose-multiplier", Double.class, 0.0)));
     this.setElo(stateable, winner, ladder, winnersDifference, losersDifference);
   }
 
@@ -167,7 +167,7 @@ public class MatchEloCalculator implements GuidoEventHandler {
    * @return the new elo
    */
   public float newElo(float oldElo, double expected, double multiplier) {
-    return (float) Math.floor(oldElo + 32 * (multiplier - expected));
+    return (float) (oldElo + 32 * (multiplier - expected));
   }
 
   /**
@@ -211,8 +211,8 @@ public class MatchEloCalculator implements GuidoEventHandler {
               losersElo,
               this.calculateExpected(losersElo, winnersElo, ladder.baseValue()),
               ladder.getOptions().getOr("lose-multiplier", Double.class, 0.0));
-      int winnersDifference = Math.round(newWinners - winnersElo);
-      int losersDifference = Math.round(losersElo - newLosers);
+      int winnersDifference = (int) (newWinners - winnersElo);
+      int losersDifference = (int) (losersElo - newLosers);
       match.getDetails().put("winners-difference", winnersDifference);
       match.getDetails().put("losers-difference", losersDifference);
       this.setElo(match, ladder, winnersDifference, losersDifference);

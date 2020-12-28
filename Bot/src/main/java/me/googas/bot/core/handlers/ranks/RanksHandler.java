@@ -21,7 +21,7 @@ import me.googas.bot.Guido;
 import me.googas.bot.api.events.data.links.LinkableRankUpdatedEvent;
 import me.googas.bot.api.events.match.MatchStatusUpdatedEvent;
 import me.googas.bot.api.types.discord.BotGuild;
-import me.googas.bot.core.handlers.GuidoEventHandler;
+import me.googas.bot.core.handlers.GuidoHandler;
 import me.googas.bot.core.util.Stats;
 import me.googas.commons.events.ListenPriority;
 import me.googas.commons.events.Listener;
@@ -30,7 +30,7 @@ import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Role;
 
 /** Handles decorations for linked data */
-public class RanksHandler implements GuidoEventHandler {
+public class RanksHandler implements GuidoHandler {
 
   /**
    * Get the ladders to apply an update of decorations

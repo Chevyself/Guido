@@ -1,7 +1,6 @@
 package me.googas.bot.core.handlers.matches;
 
 import com.starfishst.jda.utils.embeds.EmbedQuery;
-import java.awt.*;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -23,7 +22,7 @@ import me.googas.bot.api.events.match.MatchStatusUpdatedEvent;
 import me.googas.bot.api.events.queue.QueueJoinEvent;
 import me.googas.bot.api.types.discord.BotGuild;
 import me.googas.bot.api.types.loader.BotDataLoader;
-import me.googas.bot.core.handlers.GuidoEventHandler;
+import me.googas.bot.core.handlers.GuidoHandler;
 import me.googas.bot.core.util.Discord;
 import me.googas.bot.core.util.Matches;
 import me.googas.commons.events.ListenPriority;
@@ -39,7 +38,7 @@ import net.dv8tion.jda.api.events.guild.voice.GuildVoiceMoveEvent;
 import net.dv8tion.jda.api.hooks.SubscribeEvent;
 
 /** This handles the match-making process for ranked matches */
-public class MatchMakingHandler implements GuidoEventHandler {
+public class MatchMakingHandler implements GuidoHandler {
 
   /**
    * A map that contains the team voice channels in a match First element in the map is the id of

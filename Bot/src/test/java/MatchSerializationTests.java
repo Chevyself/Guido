@@ -22,7 +22,7 @@ import me.googas.api.permissions.Group;
 import me.googas.api.permissions.Permission;
 import me.googas.api.permissions.PermissionStack;
 import me.googas.bot.adapters.ValuesMapAdapter;
-import me.googas.bot.adapters.links.LinkedInfoAdapter;
+import me.googas.bot.adapters.links.LinkedInfoDeserializer;
 import me.googas.bot.adapters.permissions.PermissionAdapter;
 import me.googas.bot.core.GuidoLinkedValuesMap;
 import me.googas.bot.core.GuidoValuesMap;
@@ -42,7 +42,7 @@ public class MatchSerializationTests {
             // Required by Commons-Communication
             .registerTypeAdapter(Message.class, new MessageDeserializer())
             // For custom receptors
-            .registerTypeAdapter(LinkableInfo.class, new LinkedInfoAdapter(true))
+            .registerTypeAdapter(LinkableInfo.class, new LinkedInfoDeserializer(true))
             .registerTypeAdapter(Permission.class, new PermissionAdapter())
             .registerTypeAdapter(ValuesMap.class, new ValuesMapAdapter())
             .registerTypeAdapter(MatchTeam.class, new MatchTeamAdapter())

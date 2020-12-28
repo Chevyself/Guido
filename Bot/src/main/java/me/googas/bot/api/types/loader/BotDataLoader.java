@@ -6,10 +6,10 @@ import me.googas.api.links.Linkable;
 import me.googas.api.loader.DataLoader;
 import me.googas.bot.api.types.discord.BotGuild;
 import me.googas.bot.api.types.discord.BotRole;
-import me.googas.bot.core.handlers.GuidoEventHandler;
+import me.googas.bot.core.handlers.GuidoHandler;
 
 /** Loads the data for the bot */
-public interface BotDataLoader extends DataLoader, GuidoEventHandler {
+public interface BotDataLoader extends DataLoader, GuidoHandler {
 
   /**
    * Get the discord data for an user

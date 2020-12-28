@@ -41,6 +41,7 @@ public class JoinListener implements GuidoListener {
    *
    * @param event the event of a player pre login
    */
+  @EventHandler
   public void onPreJoinEvent(PreLoginEvent event) {
     this.joining.add(event.getConnection().getUniqueId());
   }

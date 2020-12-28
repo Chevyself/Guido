@@ -13,14 +13,14 @@ import me.googas.api.matches.MatchTeam;
 import me.googas.bot.Guido;
 import me.googas.bot.api.types.discord.BotGuild;
 import me.googas.commons.Lots;
-import me.googas.commons.Strings;
 import me.googas.commons.maps.Maps;
 import net.dv8tion.jda.api.EmbedBuilder;
 
 public class Matches {
 
   /** The keys to ignore from the details of the match when making the information */
-  public static final Set<String> toIgnore = Lots.set("thumbnail", "guild", "type");
+  public static final Set<String> toIgnore =
+      Lots.set("thumbnail", "guild", "type", "winners-difference", "losers-difference");
 
   @NonNull
   private static final Map<MatchStatus, Color> colors =
@@ -55,40 +55,39 @@ public class Matches {
     builder.setTitle(locale.get("match.title", Maps.singleton("id", match.getId())));
     builder.setFooter(locale.get("footer"));
     builder.setColor(Matches.getColor(match.getStatus()));
-    builder.setDescription(locale.get("match.description"));
+    builder.setDescription(locale.get("match.description", Maps.singleton("id", match.getId())));
     if (thumbnail != null) {
       builder.setThumbnail(thumbnail);
     }
     Matches.appendDetails(match, locale, builder);
-    Matches.appendTeams(match, locale, builder);
-    Matches.appendWinners(match, locale, builder);
+    Matches.appendTeams(match, builder);
     return new EmbedQuery(builder);
   }
 
-  public static void appendWinners(
-      @NonNull Match match, @NonNull LocaleFile locale, EmbedBuilder builder) {
-    if (match.getWinners() != null) {
+  public static void appendTeams(@NonNull Match match, @NonNull EmbedBuilder builder) {
+    for (MatchTeam matchTeam : match.getTeams()) {
       builder.addField(
-          "winners",
-          locale.get(
-              "match.team",
-              Maps.builder("name", match.getWinners().getName())
-                  .append("members", Lots.pretty(match.getWinners().getMemberSingles()))),
+          Matches.getTitle(matchTeam, match),
+          Lots.pretty(matchTeam.getMemberSingles(), "[]"),
           false);
     }
   }
 
-  public static void appendTeams(
-      @NonNull Match match, @NonNull LocaleFile locale, @NonNull EmbedBuilder builder) {
-    StringBuilder stringBuilder = Strings.getBuilder();
-    for (MatchTeam matchTeam : match.getTeams()) {
-      stringBuilder.append(
-          locale.get(
-              "match.team",
-              Maps.builder("name", matchTeam.getName())
-                  .append("members", Lots.pretty(matchTeam.getMemberSingles()))));
+  public static String getTitle(@NonNull MatchTeam team, @NonNull Match match) {
+    if (match.getWinners() == null) {
+      return team.getName() + " (+0)";
     }
-    builder.addField("teams", stringBuilder.toString(), false);
+    if (team.equals(match.getWinners())) {
+      return team.getName()
+          + " (+"
+          + match.getDetails().getOr("winners-difference", Number.class, 0).intValue()
+          + ")";
+    } else {
+      return team.getName()
+          + " (-"
+          + match.getDetails().getOr("losers-difference", Number.class, 0).intValue()
+          + ")";
+    }
   }
 
   public static void appendDetails(

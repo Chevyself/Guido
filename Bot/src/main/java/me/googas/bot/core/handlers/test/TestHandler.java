@@ -2,11 +2,11 @@ package me.googas.bot.core.handlers.test;
 
 import lombok.NonNull;
 import me.googas.bot.api.events.GuidoEvent;
-import me.googas.bot.core.handlers.GuidoEventHandler;
+import me.googas.bot.core.handlers.GuidoHandler;
 import me.googas.commons.events.Listener;
 
 /** A handler for testing purposes */
-public class TestHandler implements GuidoEventHandler {
+public class TestHandler implements GuidoHandler {
 
   /**
    * Listen to guido events and print then
