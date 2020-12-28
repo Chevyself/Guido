@@ -153,7 +153,7 @@ public class GuidoLinkable implements Permissible, Linkable, BotCatchable {
     switch (this.getType()) {
       default:
       case DISCORD:
-        User user = this.toDiscordRef().getUser(Guido.getConnection().validatedJda());
+        User user = this.requireDiscordRef().getUser(Guido.getConnection().validatedJda());
         if (user != null) {
           user.openPrivateChannel()
               .queue(
@@ -172,7 +172,7 @@ public class GuidoLinkable implements Permissible, Linkable, BotCatchable {
           bungee.sendRequest(
               new Request<>(
                   Boolean.class,
-                  "send-message",
+                  "bungee/send-message",
                   Maps.objects("uuid", uniqueId).append("message", message).build()),
               bol -> {});
         }
@@ -180,15 +180,34 @@ public class GuidoLinkable implements Permissible, Linkable, BotCatchable {
     }
   }
 
-  // TODO make that the user is localized and not each different link
   @Override
   public void sendLocalized(@NonNull String key) {
-    this.sendMessage(Guido.getLanguageHandler().getDefault().get(key));
+    if (this.type == LinkableType.MINECRAFT) {
+      MinecraftLinkable minecraft = this.requireMinecraftRef();
+      JsonClientThread bungee = Guido.getServer().getAuthenticator().getBungee();
+      if (bungee != null) {
+        bungee.sendRequest(new Request<>(Boolean.class, "bungee/send-message-localized`", Maps.objects("uuid", minecraft.getUuid()).append("key", key).append("placeholders", new HashMap<>()).build()), bol -> {
+          // TODO maybe log it?
+        });
+      }
+    } else {
+      this.sendMessage(Guido.getLanguageHandler().getFile(this).get(key));
+    }
   }
 
   @Override
   public void sendLocalized(@NonNull String key, @NonNull Map<String, String> placeholders) {
-    this.sendMessage(Guido.getLanguageHandler().getDefault().get(key, placeholders));
+    if (this.type == LinkableType.MINECRAFT) {
+      MinecraftLinkable minecraft = this.requireMinecraftRef();
+      JsonClientThread bungee = Guido.getServer().getAuthenticator().getBungee();
+      if (bungee != null) {
+        bungee.sendRequest(new Request<>(Boolean.class, "bungee/send-message-localized", Maps.objects("uuid", minecraft.getUuid()).append("key", key).append("placeholders", placeholders).build()), bol -> {
+          // TODO maybe log it?
+        });
+      }
+    } else {
+      this.sendMessage(Guido.getLanguageHandler().getFile(this).get(key));
+    }
   }
 
   @Override
@@ -272,7 +291,7 @@ public class GuidoLinkable implements Permissible, Linkable, BotCatchable {
   public String getSingle() {
     switch (this.getType()) {
       case DISCORD:
-        User user = this.toDiscordRef().getUser(Guido.getConnection().validatedJda());
+        User user = this.requireDiscordRef().getUser(Guido.getConnection().validatedJda());
         return user != null ? user.getAsMention() : "invalid";
       case MINECRAFT:
         return this.getIdentification().getOr("nickname", String.class, "invalid");
@@ -286,7 +305,7 @@ public class GuidoLinkable implements Permissible, Linkable, BotCatchable {
   public String getReadable(@NonNull LocaleFile locale) {
     switch (this.getType()) {
       case DISCORD:
-        User user = this.toDiscordRef().getUser(Guido.getConnection().validatedJda());
+        User user = this.requireDiscordRef().getUser(Guido.getConnection().validatedJda());
         if (user != null) {
           return locale.get("link.discord", Maps.builder("mention", user.getAsMention()));
         } else {
