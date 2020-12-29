@@ -310,6 +310,7 @@ public interface DataLoader {
    * @return the created groups
    */
   @NonNull
+  @Deprecated
   Collection<GroupInfo> getGroups();
 
   /**

@@ -1,4 +1,4 @@
-package me.googas.bot.core.server.receptors;
+package me.googas.bot.core.server.receptors.matches;
 
 import me.googas.api.matches.ladder.Ladder;
 import me.googas.bot.Guido;
@@ -6,16 +6,8 @@ import me.googas.bot.api.types.discord.BotGuild;
 import me.googas.messaging.json.ParamName;
 import me.googas.messaging.json.Receptor;
 
-/** Receptors for ladders */
 public class LadderReceptors {
 
-  /**
-   * Get a ladder using the name of it and the guild
-   *
-   * @param name the name of the ladder
-   * @param guildId the guild of the ladder
-   * @return the ladder
-   */
   @Receptor("ladder")
   public Ladder ladder(@ParamName("name") String name, @ParamName("guild") long guildId) {
     BotGuild data = Guido.getDataLoader().getGuildData(guildId);

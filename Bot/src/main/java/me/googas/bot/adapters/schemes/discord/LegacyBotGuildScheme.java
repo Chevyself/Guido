@@ -59,11 +59,13 @@ public class LegacyBotGuildScheme implements Scheme<BotGuild> {
   public Set<RankRange> convert() {
     Set<RankRange> ranges = new HashSet<>();
     this.ranges.forEach(
-        (id, range) -> {
-          ranges.add(
-              new GuidoRankRange(
-                  range.getLadder(), range.getMin(), range.getMax(), new GuidoValuesMap("id", id)));
-        });
+        (id, range) ->
+            ranges.add(
+                new GuidoRankRange(
+                    range.getLadder(),
+                    range.getMin(),
+                    range.getMax(),
+                    new GuidoValuesMap("id", id))));
     return ranges;
   }
 

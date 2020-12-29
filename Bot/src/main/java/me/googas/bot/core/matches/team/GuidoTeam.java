@@ -9,6 +9,7 @@ import lombok.NonNull;
 import lombok.Setter;
 import me.googas.api.matches.team.Team;
 import me.googas.api.matches.team.TeamMember;
+import me.googas.bot.Guido;
 import me.googas.bot.api.events.match.team.TeamDataUnloadedEvent;
 import me.googas.bot.api.types.BotCatchable;
 import me.googas.commons.builder.ToStringBuilder;
@@ -26,6 +27,10 @@ public class GuidoTeam implements Team, BotCatchable {
     this.id = id;
     this.name = name;
     this.members = members;
+  }
+
+  public GuidoTeam(@NonNull String name, @NonNull Set<TeamMember> members) {
+    this(Guido.getDataLoader().nextTeamId(), name, members);
   }
 
   @Override

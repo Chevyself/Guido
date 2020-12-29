@@ -40,6 +40,7 @@ import me.googas.bot.core.commands.administrative.DeveloperCommands;
 import me.googas.bot.core.commands.permissions.GuidoPermissionChecker;
 import me.googas.bot.core.commands.providers.registry.GuidoProvidersRegistry;
 import me.googas.bot.core.handlers.GuidoHandler;
+import me.googas.bot.core.handlers.deploy.DeployHandler;
 import me.googas.bot.core.handlers.link.LinkHandler;
 import me.googas.bot.core.handlers.matches.MatchEloCalculator;
 import me.googas.bot.core.handlers.matches.MatchMakingHandler;
@@ -113,6 +114,7 @@ public class Guido {
       Lots.list(
           new RanksHandler(),
           Guido.languageHandler,
+          new DeployHandler(),
           new LinkHandler(),
           new MatchEloCalculator(),
           new MatchMakingHandler(),

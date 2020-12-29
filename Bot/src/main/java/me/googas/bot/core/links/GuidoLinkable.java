@@ -186,9 +186,17 @@ public class GuidoLinkable implements Permissible, Linkable, BotCatchable {
       MinecraftLinkable minecraft = this.requireMinecraftRef();
       JsonClientThread bungee = Guido.getServer().getAuthenticator().getBungee();
       if (bungee != null) {
-        bungee.sendRequest(new Request<>(Boolean.class, "bungee/send-message-localized`", Maps.objects("uuid", minecraft.getUuid()).append("key", key).append("placeholders", new HashMap<>()).build()), bol -> {
-          // TODO maybe log it?
-        });
+        bungee.sendRequest(
+            new Request<>(
+                Boolean.class,
+                "bungee/send-message-localized`",
+                Maps.objects("uuid", minecraft.getUuid())
+                    .append("key", key)
+                    .append("placeholders", new HashMap<>())
+                    .build()),
+            bol -> {
+              // TODO maybe log it?
+            });
       }
     } else {
       this.sendMessage(Guido.getLanguageHandler().getFile(this).get(key));
@@ -201,9 +209,17 @@ public class GuidoLinkable implements Permissible, Linkable, BotCatchable {
       MinecraftLinkable minecraft = this.requireMinecraftRef();
       JsonClientThread bungee = Guido.getServer().getAuthenticator().getBungee();
       if (bungee != null) {
-        bungee.sendRequest(new Request<>(Boolean.class, "bungee/send-message-localized", Maps.objects("uuid", minecraft.getUuid()).append("key", key).append("placeholders", placeholders).build()), bol -> {
-          // TODO maybe log it?
-        });
+        bungee.sendRequest(
+            new Request<>(
+                Boolean.class,
+                "bungee/send-message-localized",
+                Maps.objects("uuid", minecraft.getUuid())
+                    .append("key", key)
+                    .append("placeholders", placeholders)
+                    .build()),
+            bol -> {
+              // TODO maybe log it?
+            });
       }
     } else {
       this.sendMessage(Guido.getLanguageHandler().getFile(this).get(key));
@@ -302,6 +318,7 @@ public class GuidoLinkable implements Permissible, Linkable, BotCatchable {
 
   @NonNull
   @Override
+  @Deprecated
   public String getReadable(@NonNull LocaleFile locale) {
     switch (this.getType()) {
       case DISCORD:

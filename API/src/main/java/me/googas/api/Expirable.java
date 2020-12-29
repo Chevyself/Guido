@@ -14,6 +14,14 @@ public interface Expirable {
   long expires();
 
   /**
+   * Set when does this expire
+   *
+   * @param expires the new expire date
+   * @return whether the expire date was updated
+   */
+  boolean setExpires(long expires);
+
+  /**
    * Checks whether it has expired
    *
    * @return true if the permission expired

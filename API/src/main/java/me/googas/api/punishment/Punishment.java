@@ -10,6 +10,14 @@ import me.googas.api.links.LinkableInfo;
 public interface Punishment extends GuidoCatchable, Expirable {
 
   /**
+   * Set the status of the punishment
+   *
+   * @param status the new status of the punishment
+   * @return whether the status of the punishment was set
+   */
+  boolean setStatus(@NonNull PunishmentStatus status);
+
+  /**
    * Get the id of the punishment
    *
    * @return the id of punishment

@@ -44,6 +44,11 @@ public class SimplePermission implements Permission {
   }
 
   @Override
+  public boolean setExpires(long expires) {
+    return false;
+  }
+
+  @Override
   public String toString() {
     return "Permission{" + "node='" + this.node + '\'' + ", enabled=" + this.enabled + '}';
   }

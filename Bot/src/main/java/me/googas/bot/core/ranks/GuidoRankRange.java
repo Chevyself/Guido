@@ -5,6 +5,7 @@ import lombok.NonNull;
 import me.googas.api.ValuesMap;
 import me.googas.api.ranks.RankRange;
 import me.googas.bot.core.GuidoValuesMap;
+import me.googas.commons.builder.ToStringBuilder;
 
 /** Rank range implementation for the guido bot */
 public class GuidoRankRange implements RankRange {
@@ -65,5 +66,15 @@ public class GuidoRankRange implements RankRange {
   @Override
   public int hashCode() {
     return Objects.hash(this.ladder, this.min, this.max);
+  }
+
+  @Override
+  public String toString() {
+    return new ToStringBuilder(this)
+        .append("ladder", this.ladder)
+        .append("min", this.min)
+        .append("max", this.max)
+        .append("preferences", this.preferences)
+        .build();
   }
 }

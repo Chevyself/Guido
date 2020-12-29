@@ -1,4 +1,4 @@
-package me.googas.api.client.adapters;
+package me.googas.api.adapters;
 
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonElement;

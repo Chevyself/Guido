@@ -7,15 +7,15 @@ import me.googas.bot.Guido;
 import me.googas.bot.api.events.server.GuidoServerConnectionEvent;
 import me.googas.bot.api.events.server.GuidoServerDisconnectionEvent;
 import me.googas.bot.api.server.BotServer;
-import me.googas.bot.core.server.receptors.GroupReceptors;
-import me.googas.bot.core.server.receptors.LadderReceptors;
-import me.googas.bot.core.server.receptors.LinkedDataReceptors;
-import me.googas.bot.core.server.receptors.MatchReceptors;
-import me.googas.bot.core.server.receptors.MinecraftDataReceptors;
-import me.googas.bot.core.server.receptors.QueueReceptors;
-import me.googas.bot.core.server.receptors.SecurityReceptors;
-import me.googas.bot.core.server.receptors.TeamDataReceptors;
 import me.googas.bot.core.server.receptors.handlers.LinkReceptors;
+import me.googas.bot.core.server.receptors.handlers.QueueReceptors;
+import me.googas.bot.core.server.receptors.links.MinecraftReceptor;
+import me.googas.bot.core.server.receptors.loader.DataLoaderReceptors;
+import me.googas.bot.core.server.receptors.matches.LadderReceptors;
+import me.googas.bot.core.server.receptors.matches.MatchReceptors;
+import me.googas.bot.core.server.receptors.matches.TeamReceptors;
+import me.googas.bot.core.server.receptors.permissions.GroupReceptors;
+import me.googas.bot.core.server.receptors.punishment.PunishmentReceptors;
 import me.googas.bot.core.util.Mongo;
 import me.googas.messaging.Request;
 import me.googas.messaging.json.server.JsonClientThread;
@@ -45,15 +45,16 @@ public class GuidoServer extends JsonSocketServer implements BotServer {
         timeout);
     this.setAuthenticator(this.authenticator);
     this.addReceptors(
-        new GroupReceptors(),
-        new LadderReceptors(),
-        new LinkedDataReceptors(),
         new LinkReceptors(),
-        new MatchReceptors(),
-        new MinecraftDataReceptors(),
         new QueueReceptors(),
-        new SecurityReceptors(),
-        new TeamDataReceptors(),
+        new LinkReceptors(),
+        new MinecraftReceptor(),
+        new DataLoaderReceptors(),
+        new LadderReceptors(),
+        new MatchReceptors(),
+        new TeamReceptors(),
+        new GroupReceptors(),
+        new PunishmentReceptors(),
         this.authenticator);
   }
 

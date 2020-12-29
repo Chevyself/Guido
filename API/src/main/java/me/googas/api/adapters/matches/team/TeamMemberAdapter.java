@@ -1,4 +1,4 @@
-package me.googas.api.client.adapters.matches.team;
+package me.googas.api.adapters.matches.team;
 
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonElement;

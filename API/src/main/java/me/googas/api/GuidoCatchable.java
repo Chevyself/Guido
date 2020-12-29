@@ -18,5 +18,5 @@ public interface GuidoCatchable extends Catchable {
    *
    * @param onRemove whether to call the method on remove
    */
-  void unload(boolean onRemove);
+  default void unload(boolean onRemove) {}
 }

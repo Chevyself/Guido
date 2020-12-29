@@ -3,13 +3,13 @@ import com.google.gson.GsonBuilder;
 import java.util.HashSet;
 import java.util.Set;
 import me.googas.api.ValuesMap;
-import me.googas.api.client.adapters.link.LinkableInfoAdapter;
-import me.googas.api.client.adapters.matches.MatchAdapter;
-import me.googas.api.client.adapters.matches.MatchTeamAdapter;
-import me.googas.api.client.adapters.matches.ladder.LadderAdapter;
-import me.googas.api.client.adapters.matches.team.TeamMemberAdapter;
-import me.googas.api.client.adapters.permissions.GroupAdapter;
-import me.googas.api.client.adapters.permissions.PermissionStackAdapter;
+import me.googas.api.adapters.link.LinkableInfoAdapter;
+import me.googas.api.adapters.matches.MatchAdapter;
+import me.googas.api.adapters.matches.MatchTeamAdapter;
+import me.googas.api.adapters.matches.ladder.LadderAdapter;
+import me.googas.api.adapters.matches.team.TeamMemberAdapter;
+import me.googas.api.adapters.permissions.GroupAdapter;
+import me.googas.api.adapters.permissions.PermissionStackAdapter;
 import me.googas.api.client.data.SimpleValuesMap;
 import me.googas.api.links.LinkableInfo;
 import me.googas.api.links.LinkableType;
@@ -60,14 +60,13 @@ public class MatchSerializationTests {
             .registerTypeAdapter(LinkableInfo.class, new LinkableInfoAdapter())
             .registerTypeAdapter(Match.class, new MatchAdapter())
             .registerTypeAdapter(
-                Permission.class, new me.googas.api.client.adapters.permissions.PermissionAdapter())
+                Permission.class, new me.googas.api.adapters.permissions.PermissionAdapter())
             .registerTypeAdapter(PermissionStack.class, new PermissionStackAdapter())
             .registerTypeAdapter(MatchTeam.class, new MatchTeamAdapter())
             .registerTypeAdapter(TeamMember.class, new TeamMemberAdapter())
+            .registerTypeAdapter(ValuesMap.class, new me.googas.api.adapters.ValuesMapAdapter())
             .registerTypeAdapter(
-                ValuesMap.class, new me.googas.api.client.adapters.ValuesMapAdapter())
-            .registerTypeAdapter(
-                SimpleValuesMap.class, new me.googas.api.client.adapters.ValuesMapAdapter())
+                SimpleValuesMap.class, new me.googas.api.adapters.ValuesMapAdapter())
             .registerTypeAdapter(Message.class, new MessageDeserializer())
             .setPrettyPrinting()
             .create();

@@ -15,7 +15,7 @@ import lombok.NonNull;
 import me.googas.annotations.Nullable;
 import me.googas.api.GuidoCatchable;
 import me.googas.api.ValuesMap;
-import me.googas.api.client.adapters.link.LinkableInfoAdapter;
+import me.googas.api.adapters.link.LinkableInfoAdapter;
 import me.googas.api.links.Linkable;
 import me.googas.api.links.LinkableInfo;
 import me.googas.api.links.LinkableType;

@@ -16,11 +16,11 @@ public class SimplePunishment implements Punishment {
 
   @NonNull private final String id;
   @NonNull private final PunishmentType type;
-  @NonNull private final PunishmentStatus status;
+  @NonNull private PunishmentStatus status;
   private final LinkableInfo punisher;
   private final LinkableInfo punished;
   @NonNull private final ValuesMap details;
-  private final long expires;
+  private long expires;
 
   /**
    * Create the simple punishment
@@ -62,9 +62,6 @@ public class SimplePunishment implements Punishment {
   }
 
   @Override
-  public void unload(boolean onRemove) {}
-
-  @Override
   public void onRemove() {}
 
   @Override
@@ -75,6 +72,18 @@ public class SimplePunishment implements Punishment {
   @Override
   public long expires() {
     return this.expires;
+  }
+
+  @Override
+  public boolean setExpires(long expires) {
+    this.expires = expires;
+    return true;
+  }
+
+  @Override
+  public boolean setStatus(@NonNull PunishmentStatus status) {
+    this.status = status;
+    return true;
   }
 
   @Override

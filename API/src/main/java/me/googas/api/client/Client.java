@@ -7,6 +7,7 @@ import java.util.Set;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.Setter;
+import me.googas.annotations.Nullable;
 import me.googas.api.Adapters;
 import me.googas.api.client.receptors.SimpleReceptors;
 import me.googas.commons.Lots;
@@ -16,6 +17,13 @@ import me.googas.messaging.json.client.JsonClient;
 
 /** The client used by implementation to connect with Guido */
 public class Client {
+
+  /** An static instance of client to use */
+  @Nullable @Getter @Setter private static Client instance;
+
+  public interface ClientMethods {
+    void addReceptors(Object... receptors);
+  }
 
   /** The ip of the server of the bot */
   @NonNull @Getter @Setter private String ip;

@@ -155,6 +155,7 @@ public interface Linkable extends Permissible, Stateable, GuidoCatchable, Locali
    *
    * @param value the new value of credits
    */
+  // TODO this must be a different class
   void setCredits(float value);
 
   /**

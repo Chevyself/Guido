@@ -1,4 +1,4 @@
-package me.googas.api.client.adapters.matches.ladder;
+package me.googas.api.adapters.matches.ladder;
 
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonElement;

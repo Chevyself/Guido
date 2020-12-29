@@ -36,6 +36,11 @@ public class GuidoPermission implements Permission {
   }
 
   @Override
+  public boolean setExpires(long expires) {
+    return false;
+  }
+
+  @Override
   public @NonNull String getNode() {
     return this.node;
   }

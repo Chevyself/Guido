@@ -1,4 +1,4 @@
-package me.googas.api.client.adapters.punishment;
+package me.googas.api.adapters.punishment;
 
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonElement;

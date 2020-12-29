@@ -122,7 +122,7 @@ public class QueueHandler implements GuidoHandler {
     Linkable link = ((LinkableInfo) data).getLink();
     if (link != null) {
       Member member =
-          link.toDiscordRef()
+          link.requireDiscordRef()
               .getMember(event.getQueue().getGuildId(), Guido.getConnection().validatedJda());
       if (member != null) {
         GuildVoiceState voiceState = member.getVoiceState();
