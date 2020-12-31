@@ -33,6 +33,11 @@ public class MinecraftLinkable {
     return Validate.notNull(this.reference.get(), "Reference is no longer in memory");
   }
 
+  public String getNickname() {
+    return Validate.notNull(
+        this.getRecognition().get("nickname", String.class), "Illegal link does not have nickname");
+  }
+
   /**
    * Get the trimmed uuid of the {@link LinkableType#MINECRAFT}
    *
@@ -42,7 +47,7 @@ public class MinecraftLinkable {
   @NonNull
   public String getTrimmedUniqueId() {
     return Validate.notNull(
-        this.validated().getIdentification().get("uuid", String.class),
+        this.getIdentification().get("uuid", String.class),
         "Illegal link does not have trimmed uuid!");
   }
 

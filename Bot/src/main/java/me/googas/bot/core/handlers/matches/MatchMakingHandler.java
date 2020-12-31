@@ -38,6 +38,7 @@ import net.dv8tion.jda.api.events.guild.voice.GuildVoiceMoveEvent;
 import net.dv8tion.jda.api.hooks.SubscribeEvent;
 
 /** This handles the match-making process for ranked matches */
+// TODO this class and QueueHandler must separate its channel handlers to a different class
 public class MatchMakingHandler implements GuidoHandler {
 
   /**

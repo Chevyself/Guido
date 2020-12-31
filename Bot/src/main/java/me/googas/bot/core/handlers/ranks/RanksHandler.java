@@ -56,14 +56,17 @@ public class RanksHandler implements GuidoHandler {
    */
   @Listener(priority = ListenPriority.HIGHEST)
   public void onMatchStatusUpdatedEvent(@NonNull MatchStatusUpdatedEvent event) {
-    Match match = event.getMatch();
+    this.update(event.getMatch());
+  }
+
+  public void update(@NonNull Match match) {
     long guildId = match.getGuildId();
     String ladderName = match.getDetails().get("ladder", String.class);
     if (ladderName != null) {
       BotGuild guildData = Guido.getDataLoader().getGuildDataOrCreate(guildId);
       Ladder ladder = guildData.getLadder(ladderName);
       if (ladder != null) {
-        for (MatchTeam matchTeam : event.getMatch().getTeams()) {
+        for (MatchTeam matchTeam : match.getTeams()) {
           for (TeamMember teamMember : matchTeam.getMembers()) {
             Linkable data = teamMember.getLinkInfo().getLink();
             if (data == null) return;

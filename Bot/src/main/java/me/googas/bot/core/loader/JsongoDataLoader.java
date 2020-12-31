@@ -360,8 +360,10 @@ public class JsongoDataLoader implements BotDataLoader {
   }
 
   @Override
-  public @NonNull Collection<GroupInfo> getGroups() {
-    return this.getGroups(-1, -1);
+  public @NonNull Collection<Group> getGroups() {
+    return new ArrayList<>(
+        Mongo.getMany(
+            GuidoGroup.class, this.groups, new Document(), null, -1, -1, (group) -> true));
   }
 
   @Override

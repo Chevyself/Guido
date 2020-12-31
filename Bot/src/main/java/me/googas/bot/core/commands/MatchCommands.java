@@ -29,8 +29,10 @@ import me.googas.bot.Guido;
 import me.googas.bot.api.types.discord.BotGuild;
 import me.googas.bot.core.GuidoLinkedValuesMap;
 import me.googas.bot.core.GuidoValuesMap;
+import me.googas.bot.core.handlers.matches.MatchEloCalculator;
 import me.googas.bot.core.handlers.matches.MatchMakingHandler;
 import me.googas.bot.core.handlers.matches.PGMMatchHandler;
+import me.googas.bot.core.handlers.ranks.RanksHandler;
 import me.googas.bot.core.matches.GuidoMatch;
 import me.googas.bot.core.matches.GuidoMatchTeam;
 import me.googas.bot.core.matches.team.GuidoTeamMember;
@@ -42,15 +44,6 @@ import net.dv8tion.jda.api.entities.Member;
 /** Commands related to matches */
 public class MatchCommands {
 
-  /**
-   * Save a match
-   *
-   * @param context the context of the command
-   * @param locale the locale of the person reading the result
-   * @param guild the guild where the command is being executed
-   * @param ladder the ladder in which this match happened
-   * @return the result of the command execution
-   */
   @Command(aliases = "match", description = "match.desc", node = "guido.match")
   public Result match(
       CommandContext context,
@@ -95,6 +88,27 @@ public class MatchCommands {
       match.finish(team1);
     }
     return new Result(locale.get("match.saved", Maps.singleton("id", match.getId())));
+  }
+
+  // TODO localize
+  @Command(aliases = "void", description = "Voids a match", node = "guido.match.void")
+  public Result voidMatch(
+      @Required(name = "Match", description = "The match to void") Match match) {
+    if (match.getStatus() == MatchStatus.VOIDED)
+      return new Result(ResultType.ERROR, "Match has been voided already");
+    Guido.getHandler(MatchEloCalculator.class).voidMatch(match, true);
+    Guido.getHandler(RanksHandler.class).update(match);
+    return new Result("Match has been voided");
+  }
+
+  @Command(
+      aliases = "recount",
+      description = "Recount the elo of a match",
+      node = "guido.match.recount")
+  public Result recount(@Required(name = "Match", description = "The match to void") Match match) {
+    Guido.getHandler(MatchEloCalculator.class).recount(match);
+    Guido.getHandler(RanksHandler.class).update(match);
+    return new Result("Match has been recounted");
   }
 
   /**

@@ -72,7 +72,7 @@ public class MatchEloCalculator implements GuidoHandler {
     stateable.increaseStat(ladderName + "-played", 1);
     float elo = stateable.getElo(ladder);
     if (stateable instanceof Linkable)
-      new LinkableEloUpdatedEvent((Linkable) stateable, previous, elo, winner).call();
+      new LinkableEloUpdatedEvent((Linkable) stateable, ladder, previous, elo, winner).call();
   }
 
   /**
@@ -133,6 +133,8 @@ public class MatchEloCalculator implements GuidoHandler {
         }
       }
     }
+    match.getDetails().put("winners-difference", 0);
+    match.getDetails().put("losers-difference", 0);
   }
 
   /**

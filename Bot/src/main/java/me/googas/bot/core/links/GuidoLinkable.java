@@ -30,6 +30,7 @@ import me.googas.commons.time.Time;
 import me.googas.commons.time.Unit;
 import me.googas.messaging.Request;
 import me.googas.messaging.json.server.JsonClientThread;
+import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.User;
 
 /** The implementation of bot linked ata */
@@ -153,8 +154,9 @@ public class GuidoLinkable implements Permissible, Linkable, BotCatchable {
     switch (this.getType()) {
       default:
       case DISCORD:
-        User user = this.requireDiscordRef().getUser(Guido.getConnection().validatedJda());
-        if (user != null) {
+        JDA jda = Guido.getConnection().validatedJda();
+        User user = this.requireDiscordRef().getUser(jda);
+        if (user != null && user != jda.getSelfUser()) {
           user.openPrivateChannel()
               .queue(
                   channel -> {
@@ -222,7 +224,7 @@ public class GuidoLinkable implements Permissible, Linkable, BotCatchable {
             });
       }
     } else {
-      this.sendMessage(Guido.getLanguageHandler().getFile(this).get(key));
+      this.sendMessage(Guido.getLanguageHandler().getFile(this).get(key, placeholders));
     }
   }
 

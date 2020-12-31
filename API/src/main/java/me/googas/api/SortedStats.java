@@ -1,5 +1,6 @@
 package me.googas.api;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 import lombok.Getter;
@@ -19,6 +20,10 @@ public class SortedStats {
    */
   public SortedStats(@NonNull Map<String, Map<String, Float>> map) {
     this.map = map;
+  }
+
+  public SortedStats() {
+    this(new HashMap<>());
   }
 
   @Override

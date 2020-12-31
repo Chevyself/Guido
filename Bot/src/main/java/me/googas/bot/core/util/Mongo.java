@@ -15,7 +15,6 @@ import lombok.NonNull;
 import me.googas.annotations.Nullable;
 import me.googas.api.GuidoCatchable;
 import me.googas.api.ValuesMap;
-import me.googas.api.adapters.link.LinkableInfoAdapter;
 import me.googas.api.links.Linkable;
 import me.googas.api.links.LinkableInfo;
 import me.googas.api.links.LinkableType;
@@ -31,6 +30,7 @@ import me.googas.bot.adapters.LongMongoAdapter;
 import me.googas.bot.adapters.ValuesMapAdapter;
 import me.googas.bot.adapters.discord.BotGuildDeserializer;
 import me.googas.bot.adapters.links.LinkableDeserializer;
+import me.googas.bot.adapters.links.LinkedInfoDeserializer;
 import me.googas.bot.adapters.matches.ladder.LadderAdapter;
 import me.googas.bot.adapters.matches.team.MatchTeamAdapter;
 import me.googas.bot.adapters.matches.team.TeamMemberAdapter;
@@ -62,8 +62,8 @@ public class Mongo {
         .registerTypeAdapter(BotGuild.class, new BotGuildDeserializer())
         .registerTypeAdapter(Linkable.class, new LinkableDeserializer(emptyAsLatest))
         .registerTypeAdapter(GuidoLinkable.class, new LinkableDeserializer(emptyAsLatest))
-        .registerTypeAdapter(LinkableInfo.class, new LinkableInfoAdapter())
-        .registerTypeAdapter(GuidoLinkableInfo.class, new LinkableInfoAdapter())
+        .registerTypeAdapter(LinkableInfo.class, new LinkedInfoDeserializer(emptyAsLatest))
+        .registerTypeAdapter(GuidoLinkableInfo.class, new LinkedInfoDeserializer(emptyAsLatest))
         .registerTypeAdapter(Ladder.class, new LadderAdapter())
         .registerTypeAdapter(MatchTeam.class, new MatchTeamAdapter())
         .registerTypeAdapter(TeamMember.class, new TeamMemberAdapter())

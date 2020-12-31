@@ -23,20 +23,23 @@ public class DeployHandler implements GuidoHandler {
 
   @Listener(priority = ListenPriority.HIGHEST)
   public void onLinkableEloUpdated(LinkableEloUpdatedEvent event) {
+    // TODO include the ladder in the message
     if (event.isWinner()) {
       event
           .getData()
           .sendLocalized(
               "elo.updated.winner",
               Maps.builder("old", String.valueOf(event.getPrevious()))
-                  .append("new", String.valueOf(event.getNewElo())));
+                  .append("new", String.valueOf(event.getNewElo()))
+                  .append("ladder", event.getLadder().getName()));
     } else {
       event
           .getData()
           .sendLocalized(
               "elo.updated.loser",
               Maps.builder("old", String.valueOf(event.getPrevious()))
-                  .append("new", String.valueOf(event.getNewElo())));
+                  .append("new", String.valueOf(event.getNewElo()))
+                  .append("ladder", event.getLadder().getName()));
     }
   }
 

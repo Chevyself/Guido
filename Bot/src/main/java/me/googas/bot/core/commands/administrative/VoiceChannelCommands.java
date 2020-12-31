@@ -1,4 +1,4 @@
-package me.googas.bot.core.commands;
+package me.googas.bot.core.commands.administrative;
 
 import com.starfishst.core.annotations.Parent;
 import com.starfishst.core.annotations.Required;

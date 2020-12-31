@@ -2,6 +2,7 @@ package me.googas.api.permissions;
 
 import java.util.Collection;
 import lombok.NonNull;
+import me.googas.annotations.Nullable;
 
 /**
  * A permission stack contains permissions with certain context to use its permissions in different
@@ -59,6 +60,11 @@ public interface PermissionStack {
    */
   default boolean remove(@NonNull Permission perm) {
     return this.getPermissions().remove(perm);
+  }
+
+  default boolean addAll(@Nullable PermissionStack global) {
+    if (global == null) return false;
+    return this.getPermissions().addAll(global.getPermissions());
   }
 
   /**

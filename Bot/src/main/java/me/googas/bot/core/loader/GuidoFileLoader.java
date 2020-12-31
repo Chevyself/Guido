@@ -153,7 +153,7 @@ public class GuidoFileLoader implements BotDataLoader {
   }
 
   @Override
-  public @NonNull Collection<GroupInfo> getGroups() {
+  public @NonNull Collection<Group> getGroups() {
     throw new UnsupportedOperationException("There's no groups");
   }
 

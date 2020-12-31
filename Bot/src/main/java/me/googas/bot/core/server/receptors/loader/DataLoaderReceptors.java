@@ -108,6 +108,11 @@ public class DataLoaderReceptors {
     return DataLoaderReceptors.loader().getGroups(page, size);
   }
 
+  @Receptor("all-groups")
+  public Collection<Group> getGroups() {
+    return DataLoaderReceptors.loader().getGroups();
+  }
+
   @Receptor("leaderboard")
   public Map<Integer, LinkableInfo> getLeaderboard(
       @ParamName("stat") String stat,

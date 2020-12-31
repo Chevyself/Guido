@@ -31,6 +31,10 @@ public class GuidoPermissionStack implements PermissionStack {
     this("", new HashSet<>());
   }
 
+  public GuidoPermissionStack(@NonNull PermissionStack stack) {
+    this(stack.getContext(), new HashSet<>(stack.getPermissions()));
+  }
+
   @Override
   public @NonNull String getContext() {
     return this.context;

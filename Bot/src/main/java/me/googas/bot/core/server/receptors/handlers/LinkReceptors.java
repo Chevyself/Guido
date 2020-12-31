@@ -16,7 +16,7 @@ public class LinkReceptors {
    * @return the link
    */
   @Receptor("link-code")
-  public String linkCode(@ParamName("info") LinkableInfo info) {
+  public String linkCode(@ParamName("link") LinkableInfo info) {
     return Guido.getHandler(LinkHandler.class).createCode(info);
   }
 }

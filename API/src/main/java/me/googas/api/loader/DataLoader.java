@@ -310,8 +310,7 @@ public interface DataLoader {
    * @return the created groups
    */
   @NonNull
-  @Deprecated
-  Collection<GroupInfo> getGroups();
+  Collection<Group> getGroups();
 
   /**
    * Get the max page of the leaderboard in a ladder
