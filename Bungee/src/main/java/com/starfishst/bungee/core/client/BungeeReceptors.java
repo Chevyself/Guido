@@ -9,14 +9,15 @@ import com.starfishst.bungee.utils.BungeeUtils;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import lombok.NonNull;
-import me.googas.api.client.data.SimpleLinkableInfo;
 import me.googas.api.client.data.SimpleValuesMap;
+import me.googas.api.client.data.links.SimpleLinkableInfo;
 import me.googas.api.links.LinkableType;
 import me.googas.commons.maps.Maps;
 import me.googas.messaging.Request;
@@ -30,6 +31,7 @@ import net.md_5.bungee.api.event.PlayerDisconnectEvent;
 import net.md_5.bungee.event.EventHandler;
 
 /** Receptors made for bungee */
+// TODO receptors should be separated to different classes
 public class BungeeReceptors implements GuidoListener {
 
   /** The uuids of the player in queue */
@@ -41,7 +43,7 @@ public class BungeeReceptors implements GuidoListener {
    * @param uuid the uuid of the player to check
    * @return true if the player is inside the server
    */
-  @Receptor("is-online")
+  @Receptor("bungee/is-online")
   public boolean isOnline(@ParamName("uuid") UUID uuid) {
     for (ProxiedPlayer player : ProxyServer.getInstance().getPlayers()) {
       if (player.getUniqueId().equals(uuid)) {
@@ -58,7 +60,7 @@ public class BungeeReceptors implements GuidoListener {
    * @param uuid the uuid of the player to add to the queue
    * @return true if the player was added in the queue e
    */
-  @Receptor("add-queue")
+  @Receptor("bungee/add-queue")
   public boolean addQueue(@ParamName("uuid") UUID uuid) {
     Guido.getLogger().info("Adding to queue " + uuid);
     return this.inQueue.add(uuid);
@@ -71,12 +73,26 @@ public class BungeeReceptors implements GuidoListener {
    * @param message the message to send
    * @return true if the message was sent
    */
-  @Receptor("send-message")
+  @Receptor("bungee/send-message")
   public boolean sendMessage(
       @ParamName("uuid") UUID uuid, @ParamName("message") @NonNull String message) {
     ProxiedPlayer player = ProxyServer.getInstance().getPlayer(uuid);
     if (player != null) {
       player.sendMessage(BungeeUtils.getComponent(message));
+      return true;
+    }
+    return false;
+  }
+
+  @Receptor("bungee/send-message-localized")
+  public boolean sendMessage(
+      @ParamName("uuid") UUID uuid,
+      @ParamName("key") String key,
+      @ParamName("placeholders") Map<String, String> placeholders) {
+    ProxiedPlayer player = ProxyServer.getInstance().getPlayer(uuid);
+    if (player != null) {
+      player.sendMessage(
+          Guido.getLanguageHandler().getFile(player).getComponent(key, placeholders));
       return true;
     }
     return false;
@@ -122,6 +138,7 @@ public class BungeeReceptors implements GuidoListener {
    * @return true if at least was player was sent to the server or was already in the server
    */
   @Receptor("send-to-server-by-ip")
+  // TODO This method is too large
   public boolean sendToServerByIp(
       @ParamName("uuids") List<String> uuidsStrings, @ParamName("server") String ip) {
     List<UUID> uuids = new ArrayList<>();

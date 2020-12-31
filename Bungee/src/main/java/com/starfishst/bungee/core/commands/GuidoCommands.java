@@ -7,20 +7,13 @@ import com.starfishst.bungee.core.lang.BungeeLocaleFile;
 import com.starfishst.bungee.core.listeners.GroupListener;
 import com.starfishst.bungee.result.Result;
 import com.starfishst.core.annotations.Parent;
-import com.starfishst.core.annotations.settings.Setting;
-import com.starfishst.core.annotations.settings.Settings;
+import com.starfishst.core.annotations.Settings;
 import me.googas.commons.maps.Maps;
 import net.md_5.bungee.api.CommandSender;
 
 /** Commands for reloading guido */
 public class GuidoCommands {
 
-  /**
-   * This command reloads everything in guido bungee
-   *
-   * @param context the context of the command
-   * @return a result saying that everything was reloaded
-   */
   @Parent
   @Command(aliases = "guido", permission = "guido.reload")
   public Result guido(CommandContext context) {
@@ -29,23 +22,12 @@ public class GuidoCommands {
     return new Result("&aEverything has been reloaded");
   }
 
-  /**
-   * This command reloads the config only
-   *
-   * @return a result saying that config was reloaded
-   */
   @Command(aliases = "config", permission = "guido.reload.config")
   public Result config() {
     Guido.validated().loadConfiguration();
     return new Result("&aConfiguration has been reloaded");
   }
 
-  /**
-   * This command reloads the server only
-   *
-   * @param context the context to get if the person used the flag '-c' to reload the config too
-   * @return a result to say that servers were reloaded
-   */
   @Command(aliases = "server", permission = "guido.reload.server")
   public Result servers(CommandContext context) {
     if (context.hasFlag("-c")) {
@@ -56,13 +38,7 @@ public class GuidoCommands {
     return new Result("&aServers have been reloaded");
   }
 
-  /**
-   * Reload the loaded groups
-   *
-   * @param locale the locale of the sender
-   * @param sender the sender of the command
-   */
-  @Settings(settings = @Setting(key = "async", value = "true"))
+  @Settings("async")
   @Command(
       aliases = {"groups"},
       permission = "guido.reload.groups")

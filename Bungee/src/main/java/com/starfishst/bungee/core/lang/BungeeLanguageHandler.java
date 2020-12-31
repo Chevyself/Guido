@@ -118,16 +118,6 @@ public class BungeeLanguageHandler implements GuidoListener, MessagesProvider {
   }
 
   @Override
-  public @NonNull String invalidNumber(@NonNull String s, @NonNull CommandContext context) {
-    return this.getFile(context).get("invalid.number", Maps.singleton("string", s));
-  }
-
-  @Override
-  public @NonNull String emptyDouble(@NonNull CommandContext context) {
-    return this.getFile(context).get("invalid.decimal-empty");
-  }
-
-  @Override
   public @NonNull String missingStrings(
       @NonNull String s,
       @NonNull String s1,

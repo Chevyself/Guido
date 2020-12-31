@@ -75,13 +75,13 @@
         <dependency>
             <groupId>com.starfishst.bungee</groupId>
             <artifactId>bungee</artifactId>
-            <version>1.0.8-SNAPSHOT</version>
+            <version>1.0.9-SNAPSHOT</version>
         </dependency>
         <!-- Dependency on the bot api -->
         <dependency>
             <groupId>me.googas.api</groupId>
             <artifactId>API</artifactId>
-            <version>1.0.0-PRE-6</version>
+            <version>1.0.0</version>
             <scope>compile</scope>
         </dependency>
     </dependencies>

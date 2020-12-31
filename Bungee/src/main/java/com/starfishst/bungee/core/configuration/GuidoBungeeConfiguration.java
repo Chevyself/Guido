@@ -45,8 +45,8 @@ public class GuidoBungeeConfiguration implements BungeeConfiguration {
     if (section.get("servers") != null) {
       Configuration serversSection = section.getSection("servers");
       for (String name : serversSection.getKeys()) {
-        GuidoServerImpl server =
-            new GuidoServerImpl(
+        SimpleGuidoServer server =
+            new SimpleGuidoServer(
                 name,
                 serversSection.get(name + ".address", "localhost"),
                 serversSection.getBoolean(name + ".restricted", false));

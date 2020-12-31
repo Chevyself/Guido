@@ -8,7 +8,7 @@ import net.md_5.bungee.api.config.ServerInfo;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 
 /** Commands for joining the lobby */
-public class LobbyCommands {
+public class ServerCommands {
 
   @Command(aliases = {"lobby", "hub"})
   public Result lobby(LocaleFile locale, ProxiedPlayer player) {
@@ -16,4 +16,7 @@ public class LobbyCommands {
     player.connect(lobby);
     return new Result(locale.get("lobby.success"));
   }
+
+  // TODO create /servers and /server
+
 }

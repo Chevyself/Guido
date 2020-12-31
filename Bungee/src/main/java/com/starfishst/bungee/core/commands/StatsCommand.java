@@ -8,12 +8,10 @@ import com.starfishst.bungee.result.Result;
 import com.starfishst.bungee.utils.BungeeUtils;
 import com.starfishst.core.annotations.Optional;
 import com.starfishst.core.annotations.Required;
-import com.starfishst.core.annotations.settings.Setting;
-import com.starfishst.core.annotations.settings.Settings;
+import com.starfishst.core.annotations.Settings;
 import java.util.Map;
 import me.googas.commons.Strings;
 import me.googas.commons.maps.Maps;
-import me.googas.messaging.api.MessengerListenFailException;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
@@ -28,15 +26,14 @@ public class StatsCommand {
    * @param player the player to see the stats
    * @return the stats of the command
    */
-  @Settings(settings = @Setting(key = "async", value = "true"))
+  @Settings("async")
   @Command(
       aliases = {"globalStats", "gStats"},
       permission = "guido.stats")
   public Result stats(
       CommandSender sender,
       @Optional(name = "player", description = "The player to see the stats from")
-          ProxiedOfflinePlayer player)
-      throws MessengerListenFailException {
+          ProxiedOfflinePlayer player) {
     final ProxiedOfflinePlayer toSee;
     if (sender.hasPermission("guido.stats.else") && player != null) {
       toSee = player;
@@ -87,13 +84,13 @@ public class StatsCommand {
    * @param player the player to reset the stats to
    * @return the result of the command
    */
-  @Settings(settings = @Setting(key = "async", value = "true"))
+  @Settings("async")
   @Command(aliases = "statsReset", permission = "guido.stats.reset")
   public void statsReset(
       CommandSender sender,
       @Required(name = "player", description = "The player reset the stats to")
           ProxiedOfflinePlayer player) {
-    new BungeeBooleanRequest("reset-stats", Maps.singleton("info", player.getLinkedInfo()))
+    new BungeeBooleanRequest("link/reset-stats", Maps.singleton("info", player.getLinkedInfo()))
         .send(
             bol -> {
               String message;

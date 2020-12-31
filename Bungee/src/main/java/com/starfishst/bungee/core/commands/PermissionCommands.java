@@ -8,38 +8,30 @@ import com.starfishst.bungee.utils.BungeeUtils;
 import com.starfishst.core.annotations.Optional;
 import com.starfishst.core.annotations.Parent;
 import com.starfishst.core.annotations.Required;
-import com.starfishst.core.annotations.settings.Setting;
-import com.starfishst.core.annotations.settings.Settings;
+import com.starfishst.core.annotations.Settings;
 import java.util.ArrayList;
-import me.googas.api.client.data.SimplePermission;
+import me.googas.api.client.data.permissions.SimplePermission;
 import me.googas.api.permissions.Permission;
 import me.googas.api.permissions.PermissionStack;
 import me.googas.commons.Pagination;
 import me.googas.commons.Strings;
 import me.googas.commons.maps.Maps;
+import me.googas.commons.time.Time;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.chat.TextComponent;
 
 /** Commands for permission */
+// TODO all the methods in this class are huge
 public class PermissionCommands {
 
-  /**
-   * Get the permissions from a player
-   *
-   * @param sender the sender of the command
-   * @param player the player to see the permission
-   * @param context the context to get the permissions on
-   * @param page the page to see
-   * @return the permissions
-   */
-  @Settings(settings = @Setting(key = "async", value = "true"))
+  @Settings("async")
   @Parent
   @Command(
       aliases = {"permissions", "perms", "perm"},
       permission = "guido.perms")
   public void perms(
       CommandSender sender,
-      @Required(name = "player", description = "The proxied player to add the permission to ")
+      @Required(name = "player", description = "The proxied player to add the permission to")
           ProxiedOfflinePlayer player,
       @Optional(
               name = "context",
@@ -47,14 +39,23 @@ public class PermissionCommands {
               suggestions = "bungee")
           String context,
       @Optional(name = "page", description = "The page to see the permissions", suggestions = "1")
-          int page) {
+          int page,
+      @Optional(
+              name = "global",
+              description = "Whether to see the permissions with the global permissions appended",
+              suggestions = {"true", "false"})
+          boolean global) {
     new BungeeRequest<>(
             PermissionStack.class,
-            "permission",
-            Maps.objects("info", player.getLinkedInfo()).append("context", context).build())
+            "link/permissions",
+            Maps.objects("link", player.getLinkedInfo())
+                .append("context", context)
+                .append("global", global)
+                .build())
         .send(
             stack -> {
-              if (stack != null && !stack.getPermissions().isEmpty()) {
+              // TODO method too large
+              if (stack.getPermissions().isEmpty()) {
                 Pagination<Permission> pagination =
                     new Pagination<>(new ArrayList<>(stack.getPermissions()), 20);
                 int finalPage = page;
@@ -103,7 +104,7 @@ public class PermissionCommands {
    * @param context the context which the permission will be given in
    * @return an empty result
    */
-  @Settings(settings = @Setting(key = "async", value = "true"))
+  @Settings("async")
   @Command(
       aliases = {"add", "give"},
       permission = "guido.perms.add")
@@ -117,14 +118,24 @@ public class PermissionCommands {
       @Optional(
               name = "context",
               description = "The context to add the permission on",
-              suggestions = "bungee")
-          String context) {
-
+              suggestions = "global")
+          String context,
+      @Optional(
+              name = "expires",
+              description = "When does the permission expire",
+              suggestions = "0s")
+          Time time) {
     new BungeeBooleanRequest(
-            "add-permission",
-            Maps.objects("info", player.getLinkedInfo())
+            "link/permission",
+            Maps.objects("link", player.getLinkedInfo())
                 .append("context", context)
-                .append("permission", new SimplePermission(node, enabled).getNodeAppended())
+                .append(
+                    "permission",
+                    new SimplePermission(
+                            node,
+                            enabled,
+                            time.millis() == 0 ? -1 : System.currentTimeMillis() + time.millis())
+                        .getNodeAppended())
                 .build())
         .send(
             bol -> {
@@ -148,15 +159,7 @@ public class PermissionCommands {
             });
   }
 
-  /**
-   * Remove a permission from a player
-   *
-   * @param sender the sender of the command
-   * @param player the player getting the permission removed
-   * @param node the node of the permission
-   * @param context the context which the permission will be removed from
-   */
-  @Settings(settings = @Setting(key = "async", value = "true"))
+  @Settings("async")
   @Command(
       aliases = {"remove", "revoke"},
       permission = "guido.perms.remove")
@@ -172,10 +175,10 @@ public class PermissionCommands {
           String context) {
 
     new BungeeBooleanRequest(
-            "remove-permission",
+            "link/remove-permission",
             Maps.objects("info", player.getLinkedInfo())
                 .append("context", context)
-                .append("permission", new SimplePermission(node, true).getNodeAppended())
+                .append("permission", new SimplePermission(node, true, -1).getNodeAppended())
                 .build())
         .send(
             bol -> {

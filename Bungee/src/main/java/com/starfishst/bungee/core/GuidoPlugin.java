@@ -8,8 +8,8 @@ import com.starfishst.bungee.api.events.GuidoListener;
 import com.starfishst.bungee.core.client.BungeeClient;
 import com.starfishst.bungee.core.commands.GuidoCommands;
 import com.starfishst.bungee.core.commands.LinkCommand;
-import com.starfishst.bungee.core.commands.LobbyCommands;
 import com.starfishst.bungee.core.commands.PermissionCommands;
+import com.starfishst.bungee.core.commands.ServerCommands;
 import com.starfishst.bungee.core.commands.StatsCommand;
 import com.starfishst.bungee.core.commands.providers.GuidoProvidersRegistry;
 import com.starfishst.bungee.core.configuration.GuidoBungeeConfiguration;
@@ -165,7 +165,7 @@ public class GuidoPlugin extends Plugin {
 
     this.manager.registerCommand(new GuidoCommands());
     this.manager.registerCommand(new LinkCommand());
-    this.manager.registerCommand(new LobbyCommands());
+    this.manager.registerCommand(new ServerCommands());
     this.manager.registerCommand(new PermissionCommands());
     this.manager.registerCommand(new StatsCommand());
     this.loadServers();

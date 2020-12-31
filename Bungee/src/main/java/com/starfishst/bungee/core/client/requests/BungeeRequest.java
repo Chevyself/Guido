@@ -60,9 +60,9 @@ public class BungeeRequest<T> extends Request<T> {
     JsonClient connection = Guido.getClient().getConnection();
     if (connection != null) {
       if (exception != null) {
-        connection.sendRequest(this, consumer, exception);
+        connection.sendRequest(this, obj -> obj.ifPresent(consumer), exception);
       } else {
-        connection.sendRequest(this, consumer);
+        connection.sendRequest(this, obj -> obj.ifPresent(consumer));
       }
     }
   }

@@ -8,9 +8,9 @@ import com.starfishst.core.exceptions.ArgumentProviderException;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.NonNull;
-import me.googas.api.links.LinkableInfo;
-import me.googas.api.utility.ValuesMap;
-import me.googas.commons.UUIDUtils;
+import me.googas.api.client.data.SimpleValuesMap;
+import me.googas.api.links.Linkable;
+import me.googas.api.links.LinkableType;
 import me.googas.commons.maps.Maps;
 import me.googas.messaging.api.MessengerListenFailException;
 import net.md_5.bungee.api.ProxyServer;
@@ -35,28 +35,26 @@ public class ProxiedOfflinePlayerProvider implements BungeeArgumentProvider<Prox
 
   @NonNull
   @Override
-  public ProxiedOfflinePlayer fromString(@NonNull String s, @NonNull CommandContext commandContext)
+  public ProxiedOfflinePlayer fromString(@NonNull String s, @NonNull CommandContext context)
       throws ArgumentProviderException {
-    for (ProxiedPlayer player : ProxyServer.getInstance().getPlayers()) {
-      if (player.getName().equalsIgnoreCase(s)) {
-        return new ProxiedOfflinePlayer(player.getUniqueId(), player.getName());
-      }
-    }
     try {
-      LinkableInfo playerInfo =
-          new BungeeRequest<>(LinkableInfo.class, "get-mc-by-name", Maps.singleton("nickname", s))
-              .send();
-      if (playerInfo != null) {
-        ValuesMap identification = playerInfo.getIdentification();
-        String uuid = identification.get("uuid", String.class);
-        String nickname = identification.get("nickname", String.class);
-        if (nickname != null && uuid != null) {
-          return new ProxiedOfflinePlayer(UUIDUtils.untrim(uuid), nickname);
+      return new ProxiedOfflinePlayer(context.get(s, ProxiedPlayer.class, context));
+    } catch (ArgumentProviderException e) {
+      try {
+        Linkable linkable =
+            new BungeeRequest<>(
+                    Linkable.class,
+                    "link-recognition",
+                    Maps.objects("type", LinkableType.MINECRAFT)
+                        .append("identification", new SimpleValuesMap("nickname", s)))
+                .send();
+        if (linkable != null) {
+          return new ProxiedOfflinePlayer(linkable.requireMinecraftRef());
         }
+      } catch (MessengerListenFailException ex) {
+        throw new ArgumentProviderException("&c" + ex.getMessage());
       }
-    } catch (MessengerListenFailException e) {
-      throw new ArgumentProviderException("&cRequest timed out");
     }
-    throw new ArgumentProviderException("&e" + s + "&c is not a valid player");
+    throw new ArgumentProviderException(context.getMessagesProvider().invalidPlayer(s, context));
   }
 }

@@ -3,13 +3,15 @@ package com.starfishst.bungee.core.data;
 import java.util.Map;
 import java.util.UUID;
 import lombok.NonNull;
-import me.googas.api.client.data.SimpleLinkableInfo;
 import me.googas.api.client.data.SimpleValuesMap;
+import me.googas.api.client.data.links.SimpleLinkableInfo;
 import me.googas.api.links.LinkableInfo;
 import me.googas.api.links.LinkableType;
+import me.googas.api.links.ref.MinecraftLinkable;
 import me.googas.commons.UUIDUtils;
 import me.googas.commons.maps.MapBuilder;
 import me.googas.commons.maps.Maps;
+import net.md_5.bungee.api.connection.ProxiedPlayer;
 
 /** An offline proxied player */
 public class ProxiedOfflinePlayer {
@@ -29,6 +31,14 @@ public class ProxiedOfflinePlayer {
   public ProxiedOfflinePlayer(@NonNull UUID uuid, @NonNull String nickname) {
     this.uuid = uuid;
     this.nickname = nickname;
+  }
+
+  public ProxiedOfflinePlayer(@NonNull ProxiedPlayer player) {
+    this(player.getUniqueId(), player.getName());
+  }
+
+  public ProxiedOfflinePlayer(@NonNull MinecraftLinkable ref) {
+    this(ref.getUuid(), ref.getNickname());
   }
 
   /**
@@ -84,9 +94,6 @@ public class ProxiedOfflinePlayer {
   public LinkableInfo getLinkedInfo() {
     return new SimpleLinkableInfo(
         LinkableType.MINECRAFT,
-        new SimpleValuesMap(
-            Maps.objects("uuid", UUIDUtils.trim(this.getUniqueId()))
-                .append("nickname", this.getNickname())
-                .build()));
+        new SimpleValuesMap(Maps.objects("uuid", UUIDUtils.trim(this.getUniqueId())).build()));
   }
 }

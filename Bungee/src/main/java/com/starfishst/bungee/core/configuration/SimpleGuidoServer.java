@@ -4,7 +4,7 @@ import com.starfishst.bungee.api.configuration.GuidoServer;
 import lombok.NonNull;
 
 /** An implementation for guido servers */
-public class GuidoServerImpl implements GuidoServer {
+public class SimpleGuidoServer implements GuidoServer {
 
   /** The name of the server */
   @NonNull private final String name;
@@ -22,7 +22,7 @@ public class GuidoServerImpl implements GuidoServer {
    * @param address the address
    * @param restricted whether it is restricted
    */
-  public GuidoServerImpl(@NonNull String name, @NonNull String address, boolean restricted) {
+  public SimpleGuidoServer(@NonNull String name, @NonNull String address, boolean restricted) {
     this.name = name;
     this.address = address;
     this.restricted = restricted;
@@ -45,7 +45,7 @@ public class GuidoServerImpl implements GuidoServer {
 
   @Override
   public String toString() {
-    return "GuidoServerImpl{"
+    return "SimpleGuidoServer{"
         + "name='"
         + this.name
         + '\''
