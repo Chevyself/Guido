@@ -14,7 +14,7 @@ import me.googas.api.user.UserData;
 import me.googas.bot.Guido;
 import me.googas.bot.api.types.discord.BotGuild;
 import me.googas.bot.core.handlers.matches.MatchMakingHandler;
-import me.googas.bot.core.handlers.matches.QueueHandler;
+import me.googas.bot.core.handlers.queue.QueueHandler;
 import me.googas.bot.core.handlers.responsive.queue.JoinQueueReactionResponse;
 import me.googas.bot.core.handlers.responsive.queue.JoinQueueResponsiveMessage;
 import me.googas.commons.Lots;

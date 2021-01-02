@@ -23,6 +23,7 @@ import me.googas.bot.api.events.queue.QueueJoinEvent;
 import me.googas.bot.api.types.discord.BotGuild;
 import me.googas.bot.api.types.loader.BotDataLoader;
 import me.googas.bot.core.handlers.GuidoHandler;
+import me.googas.bot.core.handlers.queue.QueueHandler;
 import me.googas.bot.core.util.Discord;
 import me.googas.bot.core.util.Matches;
 import me.googas.commons.events.ListenPriority;

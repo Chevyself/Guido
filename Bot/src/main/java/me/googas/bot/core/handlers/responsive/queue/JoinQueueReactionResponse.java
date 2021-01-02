@@ -12,7 +12,7 @@ import me.googas.api.matches.queue.Queue;
 import me.googas.api.matches.queue.Queueable;
 import me.googas.bot.Guido;
 import me.googas.bot.api.types.discord.BotGuild;
-import me.googas.bot.core.handlers.matches.QueueHandler;
+import me.googas.bot.core.handlers.queue.QueueHandler;
 import me.googas.bot.core.handlers.responsive.command.SimpleCommandReactionResponse;
 import me.googas.commons.Lots;
 import me.googas.commons.Strings;

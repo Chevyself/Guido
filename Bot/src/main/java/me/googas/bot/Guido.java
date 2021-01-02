@@ -45,7 +45,8 @@ import me.googas.bot.core.handlers.link.LinkHandler;
 import me.googas.bot.core.handlers.matches.MatchEloCalculator;
 import me.googas.bot.core.handlers.matches.MatchMakingHandler;
 import me.googas.bot.core.handlers.matches.PGMMatchHandler;
-import me.googas.bot.core.handlers.matches.QueueHandler;
+import me.googas.bot.core.handlers.queue.QueueChannelsHandler;
+import me.googas.bot.core.handlers.queue.QueueHandler;
 import me.googas.bot.core.handlers.ranks.RanksHandler;
 import me.googas.bot.core.handlers.responsive.GuidoMessagesController;
 import me.googas.bot.core.handlers.test.TestHandler;
@@ -119,6 +120,7 @@ public class Guido {
           new MatchEloCalculator(),
           new MatchMakingHandler(),
           new PGMMatchHandler(),
+          new QueueChannelsHandler(),
           new QueueHandler(),
           new GuidoMessagesController(),
           new TestHandler(),

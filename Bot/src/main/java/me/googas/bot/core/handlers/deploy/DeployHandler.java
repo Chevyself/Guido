@@ -23,7 +23,6 @@ public class DeployHandler implements GuidoHandler {
 
   @Listener(priority = ListenPriority.HIGHEST)
   public void onLinkableEloUpdated(LinkableEloUpdatedEvent event) {
-    // TODO include the ladder in the message
     if (event.isWinner()) {
       event
           .getData()
