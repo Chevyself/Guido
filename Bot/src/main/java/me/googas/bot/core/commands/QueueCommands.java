@@ -133,7 +133,7 @@ public class QueueCommands {
               new JoinQueueResponsiveMessage(msg, Lots.set(reactionResponse));
           guild.getMessages().add(responsiveMessage);
           msg.editMessage(
-                  reactionResponse.buildMessage(guild.getDiscord()).getAsMessageQuery().build())
+                  reactionResponse.buildMessage(guild.toDiscord()).getAsMessageQuery().build())
               .queue();
         });
   }

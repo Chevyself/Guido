@@ -56,10 +56,16 @@ public class RanksHandler implements GuidoHandler {
    */
   @Listener(priority = ListenPriority.HIGHEST)
   public void onMatchStatusUpdatedEvent(@NonNull MatchStatusUpdatedEvent event) {
-    this.update(event.getMatch());
+    this.update(event.getMatch(), false);
   }
 
-  public void update(@NonNull Match match) {
+  /**
+   * Update the ranks from a match
+   *
+   * @param match the match to update the ranks
+   * @param event whether to call the event of ranks updated
+   */
+  public void update(@NonNull Match match, boolean event) {
     long guildId = match.getGuildId();
     String ladderName = match.getDetails().get("ladder", String.class);
     if (ladderName != null) {
@@ -70,7 +76,8 @@ public class RanksHandler implements GuidoHandler {
           for (TeamMember teamMember : matchTeam.getMembers()) {
             Linkable data = teamMember.getLinkInfo().getLink();
             if (data == null) return;
-            new LinkableRankUpdatedEvent(data, this.update(data, guildData)).call();
+            UpdateResult update = this.update(data, guildData);
+            if (event) new LinkableRankUpdatedEvent(data, update).call();
           }
         }
       }
@@ -112,7 +119,7 @@ public class RanksHandler implements GuidoHandler {
       UpdateResult result,
       DiscordLinkable discord) {
     if (guild != null && discord != null) {
-      Guild guildDiscord = guild.getDiscord();
+      Guild guildDiscord = guild.toDiscord();
       Member member = discord.getMember(guildDiscord);
       result
           .getApplied()

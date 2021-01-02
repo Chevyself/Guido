@@ -2,6 +2,7 @@ package me.googas.bot.core.matches;
 
 import java.util.Objects;
 import lombok.NonNull;
+import me.googas.annotations.Nullable;
 import me.googas.api.matches.Match;
 import me.googas.api.matches.MatchInfo;
 import me.googas.bot.Guido;
@@ -22,6 +23,12 @@ public class GuidoMatchInfo implements MatchInfo {
   public GuidoMatchInfo(@NonNull String id, long guildId) {
     this.id = id;
     this.guildId = guildId;
+  }
+
+  @Nullable
+  @Override
+  public Match toMatch() {
+    return Guido.getDataLoader().getMatch(this.id);
   }
 
   /**

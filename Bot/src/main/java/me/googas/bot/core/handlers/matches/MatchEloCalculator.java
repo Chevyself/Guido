@@ -29,7 +29,7 @@ public class MatchEloCalculator implements GuidoHandler {
   public void onMatchStatusUpdatedEvent(@NonNull MatchStatusUpdatedEvent event) {
     Match match = event.getMatch();
     if (event.getStatus() == MatchStatus.FINISHED) {
-      this.setElo(match);
+      this.setElo(match, true);
     }
   }
 
@@ -40,15 +40,21 @@ public class MatchEloCalculator implements GuidoHandler {
    * @param ladder the ladder which was played in the match
    * @param winnersDifference the amount of elo that winners got
    * @param losersDifference the amount of elo that the other teams lost
+   * @param event whether to call the elo updated event
    */
   public void setElo(
-      @NonNull Match match, @NonNull Ladder ladder, float winnersDifference, int losersDifference) {
+      @NonNull Match match,
+      @NonNull Ladder ladder,
+      float winnersDifference,
+      int losersDifference,
+      boolean event) {
     MatchTeam winners = match.getWinners();
     for (MatchTeam matchTeam : match.getTeams()) {
       for (TeamMember member : matchTeam.getMembers()) {
         Linkable data = member.getLinkInfo().getLink();
         if (data != null) {
-          this.setElo(data, matchTeam.equals(winners), ladder, winnersDifference, losersDifference);
+          this.setElo(
+              data, matchTeam.equals(winners), ladder, winnersDifference, losersDifference, event);
         }
       }
     }
@@ -59,7 +65,8 @@ public class MatchEloCalculator implements GuidoHandler {
       boolean winner,
       @NonNull Ladder ladder,
       float winnersDifference,
-      int losersDifference) {
+      int losersDifference,
+      boolean event) {
     String ladderName = ladder.getName();
     float previous = stateable.getElo(ladder);
     if (winner) {
@@ -71,7 +78,7 @@ public class MatchEloCalculator implements GuidoHandler {
     }
     stateable.increaseStat(ladderName + "-played", 1);
     float elo = stateable.getElo(ladder);
-    if (stateable instanceof Linkable)
+    if (stateable instanceof Linkable && event)
       new LinkableEloUpdatedEvent((Linkable) stateable, ladder, previous, elo, winner).call();
   }
 
@@ -82,8 +89,10 @@ public class MatchEloCalculator implements GuidoHandler {
    * @param stateable the stateable to set the elo
    * @param winner whether to give it a win or a lose
    * @param ladder the ladder in which to set the elo
+   * @param event whether to call the event of elo updated
    */
-  public void setElo(@NonNull Stateable stateable, boolean winner, @NonNull Ladder ladder) {
+  public void setElo(
+      @NonNull Stateable stateable, boolean winner, @NonNull Ladder ladder, boolean event) {
     float oldElo = stateable.getElo(ladder);
     double expected = this.calculateExpected(oldElo, oldElo, ladder.baseValue());
     int winnersDifference =
@@ -100,7 +109,7 @@ public class MatchEloCalculator implements GuidoHandler {
                     oldElo,
                     expected,
                     ladder.getOptions().getOr("lose-multiplier", Double.class, 0.0)));
-    this.setElo(stateable, winner, ladder, winnersDifference, losersDifference);
+    this.setElo(stateable, winner, ladder, winnersDifference, losersDifference, event);
   }
 
   /**
@@ -141,10 +150,11 @@ public class MatchEloCalculator implements GuidoHandler {
    * Voids a match and recounts the elo of it
    *
    * @param match the match to recount
+   * @param callEvents whether to all the events related to elo updates
    */
-  public void recount(@NonNull Match match) {
+  public void recount(@NonNull Match match, boolean callEvents) {
     this.voidMatch(match, false);
-    this.setElo(match);
+    this.setElo(match, callEvents);
   }
 
   /**
@@ -196,8 +206,9 @@ public class MatchEloCalculator implements GuidoHandler {
    * Sets the elo for a match
    *
    * @param match the match to set the elo
+   * @param event whether to call the event of elo updated
    */
-  public void setElo(@NonNull Match match) {
+  public void setElo(@NonNull Match match, boolean event) {
     MatchTeam winners = match.getWinners();
     Ladder ladder = match.getLadder();
     if (ladder != null && winners != null) {
@@ -217,7 +228,7 @@ public class MatchEloCalculator implements GuidoHandler {
       int losersDifference = (int) (losersElo - newLosers);
       match.getDetails().put("winners-difference", winnersDifference);
       match.getDetails().put("losers-difference", losersDifference);
-      this.setElo(match, ladder, winnersDifference, losersDifference);
+      this.setElo(match, ladder, winnersDifference, losersDifference, event);
     }
   }
 

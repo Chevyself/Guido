@@ -208,7 +208,7 @@ public class UserCommands {
               description = "cmd.users.add.param.enabled.desc")
           boolean enabled) {
     user.addPermission(context, node, enabled);
-    User discord = user.getDiscord();
+    User discord = user.toDiscord();
     return new Result(
         handler
             .getFile(commandContext)
@@ -245,7 +245,7 @@ public class UserCommands {
               name = "cmd.users.remove.param.node.name",
               description = "cmd.users.remove.param.node.desc")
           String node) {
-    User discord = user.getDiscord();
+    User discord = user.toDiscord();
     if (user.removePermission(context, node)) {
       return new Result(
           handler

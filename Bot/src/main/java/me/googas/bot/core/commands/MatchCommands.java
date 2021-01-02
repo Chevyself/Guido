@@ -19,6 +19,7 @@ import me.googas.api.lang.LocaleFile;
 import me.googas.api.links.Linkable;
 import me.googas.api.links.LinkableType;
 import me.googas.api.matches.Match;
+import me.googas.api.matches.MatchInfo;
 import me.googas.api.matches.MatchStatus;
 import me.googas.api.matches.MatchTeam;
 import me.googas.api.matches.ladder.GlobalLadder;
@@ -91,36 +92,66 @@ public class MatchCommands {
     return new Result(locale.get("match.saved", Maps.singleton("id", match.getId())));
   }
 
-  // TODO localize
-  @Command(aliases = "void", description = "Voids a match", node = "guido.match.void")
+  @Command(aliases = "void", description = "void.desc", node = "guido.match.void")
   public Result voidMatch(
-      @Required(name = "Match", description = "The match to void") Match match) {
+      LocaleFile locale,
+      @Required(name = "void.match", description = "void.match.desc") Match match) {
     if (match.getStatus() == MatchStatus.VOIDED)
-      return new Result(ResultType.ERROR, "Match has been voided already");
+      return new Result(ResultType.ERROR, locale.get("void.already"));
     Guido.getHandler(MatchEloCalculator.class).voidMatch(match, true);
-    Guido.getHandler(RanksHandler.class).update(match);
-    return new Result("Match has been voided");
+    Guido.getHandler(RanksHandler.class).update(match, false);
+    return new Result(locale.get("void.voided"));
   }
 
+  @Command(aliases = "recountAll", description = "recountAll.desc", node = "guido.recountAll")
+  public Result recountAll() {
+    MatchEloCalculator calculator = Guido.getHandler(MatchEloCalculator.class);
+    Collection<MatchInfo> matches = Guido.getDataLoader().getMatches(-1, -1, MatchStatus.FINISHED);
+    for (MatchInfo matchInfo : matches) {
+      Match match = matchInfo.toMatch();
+      if (match == null) continue;
+      calculator.recount(match, false);
+    }
+    return new Result("All matches have been recounted");
+  }
+
+  // TODO probably must go on another class
+  @Command(
+      aliases = "updateRanks",
+      description = "Updates the ranks of all the members in a guild",
+      node = "guido.update-ranks")
+  public Result updateRanks(BotGuild guild) {
+    RanksHandler ranksHandler = Guido.getHandler(RanksHandler.class);
+    for (Member member : guild.toDiscord().getMembers()) {
+      Linkable linkable =
+          Guido.getDataLoader()
+              .getLink(LinkableType.DISCORD, new GuidoValuesMap("id", member.getIdLong()));
+      if (linkable == null) continue;
+      UserData user = linkable.getLinkedUser();
+      if (user != null) {
+        for (Linkable link : user.getLinks()) {
+          ranksHandler.update(link, guild);
+        }
+      } else {
+        ranksHandler.update(linkable, guild);
+      }
+    }
+    return new Result("Guild ranks have been updated");
+  }
+
+  // TODO localize
   @Command(
       aliases = "recount",
       description = "Recount the elo of a match",
       node = "guido.match.recount")
   public Result recount(@Required(name = "Match", description = "The match to void") Match match) {
-    Guido.getHandler(MatchEloCalculator.class).recount(match);
-    Guido.getHandler(RanksHandler.class).update(match);
+    Guido.getHandler(MatchEloCalculator.class).recount(match, false);
+    Guido.getHandler(RanksHandler.class).update(match, false);
     return new Result("Match has been recounted");
   }
 
-  /**
-   * See the information about a match
-   *
-   * @param locale the locale of the user that will see the match
-   * @param id the id of the match
-   * @return the result of the command
-   */
   @Command(
-      aliases = {"game", "gameinfo", "gi", "matchinfo", "mi"},
+      aliases = {"game", "gameInfo", "gi", "matchInfo", "mi"},
       description = "game.desc")
   public Result game(
       LocaleFile locale, @Required(name = "game.id", description = "game.id.desc") String id) {
@@ -132,15 +163,6 @@ public class MatchCommands {
     }
   }
 
-  /**
-   * Finishes the given match
-   *
-   * @param locale the locale of the command sender
-   * @param guild the guild where the match is being finished
-   * @param match the match being finished
-   * @param name the name of the team to select as winners
-   * @return whether the match was finished
-   */
   @Command(aliases = "finish", description = "finish.desc", node = "guido.finish")
   public Result finish(
       LocaleFile locale,
@@ -171,14 +193,6 @@ public class MatchCommands {
     return new Result(ResultType.USAGE, locale.get("finish.invalid-guild", placeholders));
   }
 
-  /**
-   * Get where someone is playing
-   *
-   * @param locale the locale of the sender
-   * @param sender the sender of the command
-   * @param member the member to check where it is playing
-   * @return the matches where the query is playing
-   */
   @Command(aliases = "currently", description = "currently.desc", node = "guido.currently")
   public Result currently(
       LocaleFile locale,
@@ -237,7 +251,7 @@ public class MatchCommands {
     MatchEloCalculator eloHandler = Guido.getHandler(MatchEloCalculator.class);
     RanksHandler ranksHandler = Guido.getHandler(RanksHandler.class);
     for (Linkable linkable : linkables) {
-      eloHandler.setElo(linkable, true, ladder);
+      eloHandler.setElo(linkable, true, ladder, true);
       ranksHandler.update(linkable, guild);
     }
     return new Result(locale.get("win.updated"));
@@ -256,7 +270,7 @@ public class MatchCommands {
     MatchEloCalculator handler = Guido.getHandler(MatchEloCalculator.class);
     RanksHandler ranksHandler = Guido.getHandler(RanksHandler.class);
     for (Linkable linkable : linkables) {
-      handler.setElo(linkable, false, ladder);
+      handler.setElo(linkable, false, ladder, true);
       ranksHandler.update(linkable, guild);
     }
     return new Result(locale.get("lose.updated"));

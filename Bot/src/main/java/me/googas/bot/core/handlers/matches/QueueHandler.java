@@ -176,7 +176,7 @@ public class QueueHandler implements GuidoHandler {
             guild.getId(),
             aLong ->
                 guild.getCategory("matches").createVoiceChannel("Queue").complete().getIdLong());
-    VoiceChannel channel = guild.getDiscord().getVoiceChannelById(id);
+    VoiceChannel channel = guild.toDiscord().getVoiceChannelById(id);
     if (channel == null) {
       this.waitingChannels.remove(guild.getId());
       return this.getWaitingChannel(guild);
@@ -239,7 +239,7 @@ public class QueueHandler implements GuidoHandler {
                 .getLink(LinkableType.DISCORD, new GuidoValuesMap("id", member.getIdLong()))
                 .getInfo());
     if (join.isCancelled()) return join;
-    guild.getDiscord().moveVoiceMember(member, this.getWaitingChannel(guild)).queue();
+    guild.toDiscord().moveVoiceMember(member, this.getWaitingChannel(guild)).queue();
     return new QueueResult();
   }
 

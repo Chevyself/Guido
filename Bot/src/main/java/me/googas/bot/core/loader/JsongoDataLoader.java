@@ -439,7 +439,7 @@ public class JsongoDataLoader implements BotDataLoader {
         Mongo.getMany(
             GuidoMatchInfo.class,
             this.matches,
-            new Document("type", new Document("$in", Enums.getNames(statuses))),
+            new Document("status", new Document("$in", Enums.getNames(statuses))),
             null,
             page,
             size));

@@ -1,9 +1,18 @@
 package me.googas.api.matches;
 
 import lombok.NonNull;
+import me.googas.annotations.Nullable;
 
 /** This object represents the information of a match */
 public interface MatchInfo {
+
+  /**
+   * Get the match information as a match
+   *
+   * @return the match
+   */
+  @Nullable
+  Match toMatch();
 
   /**
    * The unique id of the match

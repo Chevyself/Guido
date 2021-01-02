@@ -104,7 +104,7 @@ public interface BotGuild extends BotCatchable {
    */
   @NonNull
   default TextChannel getTextChannel(@NonNull String key) {
-    Guild guild = this.getDiscord();
+    Guild guild = this.toDiscord();
     TextChannel channel = guild.getTextChannelById(this.getChannels().getOrDefault(key, -1L));
     if (channel == null) {
       channel = guild.createTextChannel(key).complete();
@@ -121,7 +121,7 @@ public interface BotGuild extends BotCatchable {
    */
   @NonNull
   default VoiceChannel getVoiceChannel(@NonNull String key) {
-    Guild guild = this.getDiscord();
+    Guild guild = this.toDiscord();
     VoiceChannel channel =
         guild.getVoiceChannelById(this.getVoiceChannels().getOrDefault(key, -1L));
     if (channel == null) {
@@ -139,7 +139,7 @@ public interface BotGuild extends BotCatchable {
    */
   @NonNull
   default Category getCategory(@NonNull String key) {
-    Guild guild = this.getDiscord();
+    Guild guild = this.toDiscord();
     Category category = guild.getCategoryById(this.getCategories().getOrDefault(key, -1L));
     if (category == null) {
       category = guild.createCategory(key).complete();
@@ -186,7 +186,7 @@ public interface BotGuild extends BotCatchable {
    * @return the discord guild
    */
   @NonNull
-  default Guild getDiscord() {
+  default Guild toDiscord() {
     return Validate.notNull(
         Guido.getConnection().validatedJda().getGuildById(this.getId()),
         "Seems like the guild with the id " + this.getId() + " no longer exists");

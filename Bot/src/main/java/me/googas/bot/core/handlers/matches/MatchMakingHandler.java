@@ -115,7 +115,7 @@ public class MatchMakingHandler implements GuidoHandler {
               for (LinkableInfo participant : match.getParticipants()) {
                 Linkable link = participant.getLink();
                 if (link == null) continue;
-                Member member = link.requireDiscordRef().getMember(guild.getDiscord());
+                Member member = link.requireDiscordRef().getMember(guild.toDiscord());
                 if (member != null) {
                   Discord.addPermissions(
                       channel,
@@ -126,7 +126,7 @@ public class MatchMakingHandler implements GuidoHandler {
                         if (state != null) {
                           if (state.getChannel() != null) {
                             guild
-                                .getDiscord()
+                                .toDiscord()
                                 .moveVoiceMember(member, channel)
                                 .queueAfter(500, TimeUnit.MILLISECONDS);
                           }
@@ -163,7 +163,7 @@ public class MatchMakingHandler implements GuidoHandler {
                 for (TeamMember member : matchTeam.getMembers()) {
                   Linkable link = member.getLinkInfo().getLink();
                   if (link == null) continue;
-                  Member discordMember = link.requireDiscordRef().getMember(data.getDiscord());
+                  Member discordMember = link.requireDiscordRef().getMember(data.toDiscord());
                   if (discordMember != null) {
                     Discord.addPermissions(
                         channel,
@@ -173,7 +173,7 @@ public class MatchMakingHandler implements GuidoHandler {
                           GuildVoiceState state = discordMember.getVoiceState();
                           if (state != null) {
                             if (state.getChannel() != null) {
-                              data.getDiscord()
+                              data.toDiscord()
                                   .moveVoiceMember(discordMember, channel)
                                   .queueAfter(500, TimeUnit.MILLISECONDS);
                             }
@@ -251,7 +251,7 @@ public class MatchMakingHandler implements GuidoHandler {
       for (Member member : channel.getMembers()) {
         if (member.getVoiceState() != null && member.getVoiceState().getChannel() != null) {
           botGuild
-              .getDiscord()
+              .toDiscord()
               .moveVoiceMember(member, waiting)
               .queueAfter(
                   500,
