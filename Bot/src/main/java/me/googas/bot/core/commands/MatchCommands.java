@@ -21,6 +21,7 @@ import me.googas.api.links.LinkableType;
 import me.googas.api.matches.Match;
 import me.googas.api.matches.MatchStatus;
 import me.googas.api.matches.MatchTeam;
+import me.googas.api.matches.ladder.GlobalLadder;
 import me.googas.api.matches.ladder.Ladder;
 import me.googas.api.matches.team.TeamMember;
 import me.googas.api.matches.team.TeamRole;
@@ -221,5 +222,43 @@ public class MatchCommands {
       node = "user:guido.look")
   public void look() {
     Guido.getHandler(PGMMatchHandler.class).lookForServers();
+  }
+
+  @Command(aliases = "win", description = "win.desc", node = "guido.win")
+  public Result win(
+      LocaleFile locale,
+      BotGuild guild,
+      @Required(name = "win.ladder", description = "win.ladder.desc") Ladder ladder,
+      @Multiple @Required(name = "win.entities", description = "win.entities.desc")
+          Linkable[] linkables) {
+    if (ladder instanceof GlobalLadder)
+      return new Result(ResultType.ERROR, locale.get("win.cannot-global"));
+    if (linkables.length == 0) return new Result(ResultType.ERROR, locale.get("win.mention-one"));
+    MatchEloCalculator eloHandler = Guido.getHandler(MatchEloCalculator.class);
+    RanksHandler ranksHandler = Guido.getHandler(RanksHandler.class);
+    for (Linkable linkable : linkables) {
+      eloHandler.setElo(linkable, true, ladder);
+      ranksHandler.update(linkable, guild);
+    }
+    return new Result(locale.get("win.updated"));
+  }
+
+  @Command(aliases = "lose", description = "lose.desc", node = "guido.lose")
+  public Result lose(
+      LocaleFile locale,
+      BotGuild guild,
+      @Required(name = "lose.ladder", description = "lose.ladder.desc") Ladder ladder,
+      @Multiple @Required(name = "lose.entities", description = "lose.entities.desc")
+          Linkable[] linkables) {
+    if (ladder instanceof GlobalLadder)
+      return new Result(ResultType.ERROR, locale.get("lose.cannot-global"));
+    if (linkables.length == 0) return new Result(ResultType.ERROR, locale.get("lose.mention-one"));
+    MatchEloCalculator handler = Guido.getHandler(MatchEloCalculator.class);
+    RanksHandler ranksHandler = Guido.getHandler(RanksHandler.class);
+    for (Linkable linkable : linkables) {
+      handler.setElo(linkable, false, ladder);
+      ranksHandler.update(linkable, guild);
+    }
+    return new Result(locale.get("lose.updated"));
   }
 }
