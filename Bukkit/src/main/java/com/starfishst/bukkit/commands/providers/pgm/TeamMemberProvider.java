@@ -10,7 +10,7 @@ import com.starfishst.bukkit.lang.BukkitLocaleFile;
 import com.starfishst.bukkit.providers.type.BukkitExtraArgumentProvider;
 import com.starfishst.core.exceptions.ArgumentProviderException;
 import lombok.NonNull;
-import me.googas.api.matches.TeamMember;
+import me.googas.api.matches.team.TeamMember;
 import org.bukkit.entity.Player;
 
 /**

@@ -2,6 +2,7 @@ package com.starfishst.bukkit.client;
 
 import com.starfishst.bukkit.api.Guido;
 import java.util.Map;
+import java.util.Optional;
 import java.util.function.Consumer;
 import lombok.NonNull;
 import me.googas.commons.maps.MapBuilder;
@@ -56,7 +57,7 @@ public class BukkitRequest<T> extends Request<T> {
    * @param consumer the consumer for the given object
    * @param exception the consumer for the exception in case there's one
    */
-  public void send(@NonNull Consumer<T> consumer, Consumer<Throwable> exception) {
+  public void send(@NonNull Consumer<Optional<T>> consumer, Consumer<Throwable> exception) {
     JsonClient connection = Guido.getClient().getConnection();
     if (connection != null) {
       if (exception != null) {
@@ -67,12 +68,20 @@ public class BukkitRequest<T> extends Request<T> {
     }
   }
 
+  public void sendIfPresent(@NonNull Consumer<T> consumer) {
+    this.send(optional -> optional.ifPresent(consumer));
+  }
+
+  public void sendIfPresent(@NonNull Consumer<T> consumer, @NonNull Consumer<Throwable> exception) {
+    this.send(optional -> optional.ifPresent(consumer), exception);
+  }
+
   /**
    * Send a request and with the given consumer process the given object
    *
    * @param consumer the consumer for the given object
    */
-  public void send(@NonNull Consumer<T> consumer) {
+  public void send(@NonNull Consumer<Optional<T>> consumer) {
     this.send(consumer, null);
   }
 

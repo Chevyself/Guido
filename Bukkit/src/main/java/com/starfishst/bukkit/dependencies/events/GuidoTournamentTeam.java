@@ -7,8 +7,8 @@ import java.util.UUID;
 import lombok.NonNull;
 import me.googas.api.links.LinkableInfo;
 import me.googas.api.links.LinkableType;
-import me.googas.api.matches.TeamData;
-import me.googas.api.matches.TeamMember;
+import me.googas.api.matches.team.Team;
+import me.googas.api.matches.team.TeamMember;
 import me.googas.commons.UUIDUtils;
 
 public class GuidoTournamentTeam implements TournamentTeam {
@@ -23,7 +23,7 @@ public class GuidoTournamentTeam implements TournamentTeam {
   }
 
   @NonNull
-  public static GuidoTournamentTeam parse(@NonNull TeamData data) {
+  public static GuidoTournamentTeam parse(@NonNull Team data) {
     List<GuidoTournamentPlayer> players = new ArrayList<>();
     for (TeamMember member : data.getMembers()) {
       UUID uuid = GuidoTournamentTeam.getUuid(member.getLinkInfo());

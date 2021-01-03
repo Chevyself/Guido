@@ -11,9 +11,9 @@ import java.util.Set;
 import java.util.function.Consumer;
 import java.util.logging.Logger;
 import lombok.NonNull;
+import me.googas.api.ValuesMap;
 import me.googas.api.permissions.Group;
 import me.googas.api.permissions.PermissionStack;
-import me.googas.api.utility.ValuesMap;
 import me.googas.commons.Lots;
 import me.googas.messaging.Request;
 import me.googas.messaging.json.client.JsonClient;
@@ -40,7 +40,9 @@ public class GroupListener implements GuidoListener {
     if (connection != null) {
       connection.sendRequest(
           new Request<>(Group[].class, "groups"),
-          groups -> {
+          optional -> {
+            if (!optional.isPresent()) return;
+            Group[] groups = optional.get();
             List<Group> newGroups = Lots.list(groups);
             this.groups.addAll(newGroups);
             Guido.getLogger().info("Groups loaded " + newGroups);

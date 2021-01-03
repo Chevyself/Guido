@@ -12,7 +12,7 @@ import com.starfishst.bukkit.result.Result;
 import com.starfishst.core.annotations.Required;
 import lombok.NonNull;
 import me.googas.api.links.LinkableInfo;
-import me.googas.api.matches.TeamMember;
+import me.googas.api.matches.team.TeamMember;
 import me.googas.commons.maps.Maps;
 
 public class PickCommands implements GuidoCommand {

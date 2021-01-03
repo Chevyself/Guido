@@ -6,8 +6,7 @@ import com.starfishst.bukkit.api.commands.GuidoCommand;
 import com.starfishst.bukkit.lang.BukkitLocaleFile;
 import com.starfishst.bukkit.listeners.GroupListener;
 import com.starfishst.bukkit.result.Result;
-import com.starfishst.core.annotations.settings.Setting;
-import com.starfishst.core.annotations.settings.Settings;
+import com.starfishst.core.annotations.Settings;
 import lombok.NonNull;
 import me.googas.commons.maps.Maps;
 import org.bukkit.command.CommandSender;
@@ -22,7 +21,7 @@ public class ConfigurationCommands implements GuidoCommand {
    * @param sender the sender of the command
    * @return empty result
    */
-  @Settings(settings = @Setting(key = "async", value = "true"))
+  @Settings("async")
   @Command(aliases = "groups", description = "groups.desc", permission = "guido.config.groups")
   public Result groups(BukkitLocaleFile locale, CommandSender sender) {
     Guido.getListener(GroupListener.class)

@@ -16,11 +16,11 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.logging.Logger;
 import lombok.NonNull;
-import me.googas.api.client.data.SimpleTeam;
-import me.googas.api.client.data.SimpleTeamMember;
+import me.googas.api.client.data.matches.SimpleMatchTeam;
+import me.googas.api.client.data.matches.team.SimpleTeamMember;
 import me.googas.api.links.LinkableInfo;
-import me.googas.api.matches.TeamMember;
-import me.googas.api.matches.TeamRole;
+import me.googas.api.matches.team.TeamMember;
+import me.googas.api.matches.team.TeamRole;
 import me.googas.commons.Lots;
 import me.googas.commons.RandomUtils;
 import me.googas.commons.UUIDUtils;
@@ -240,7 +240,7 @@ public class PickTeamSelection implements TeamCreation {
             .forceStartCountdown(
                 Duration.ofSeconds(PGMMatchMakingListener.secondsToStart), Duration.ZERO);
         for (SelectingTeam selectingTeam : this.getTeams(matchId)) {
-          SimpleTeam construct = selectingTeam.construct();
+          SimpleMatchTeam construct = selectingTeam.construct();
           try {
             Integer id =
                 new BukkitIntRequest(
@@ -452,10 +452,10 @@ public class PickTeamSelection implements TeamCreation {
      *
      * @return the constructed team
      */
-    public SimpleTeam construct() {
+    public SimpleMatchTeam construct() {
       Set<TeamMember> copy = new HashSet<>(this.members);
       copy.add(this.leader);
-      return new SimpleTeam(-3, this.party.getNameLegacy(), copy);
+      return new SimpleMatchTeam(-3, this.party.getNameLegacy(), copy);
     }
 
     /**

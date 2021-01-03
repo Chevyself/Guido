@@ -11,11 +11,11 @@ import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 import lombok.NonNull;
-import me.googas.api.client.data.SimpleTeam;
-import me.googas.api.client.data.SimpleTeamMember;
+import me.googas.api.client.data.matches.SimpleMatchTeam;
+import me.googas.api.client.data.matches.team.SimpleTeamMember;
 import me.googas.api.links.LinkableInfo;
-import me.googas.api.matches.TeamMember;
-import me.googas.api.matches.TeamRole;
+import me.googas.api.matches.team.TeamMember;
+import me.googas.api.matches.team.TeamRole;
 import me.googas.commons.RandomUtils;
 import me.googas.commons.UUIDUtils;
 import me.googas.commons.maps.Maps;
@@ -84,7 +84,7 @@ public class RandomTeamCreation implements TeamCreation {
             new BukkitIntRequest(
                     "match-add-team",
                     Maps.objects("id", hostedMatch.getId())
-                        .append("team", new SimpleTeam(-3, name, members)))
+                        .append("team", new SimpleMatchTeam(-3, name, members)))
                 .send();
         if (id != null) {
           hostedMatch.getTeams().put(party.getId(), id);
