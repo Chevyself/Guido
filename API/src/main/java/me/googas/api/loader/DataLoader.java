@@ -15,6 +15,7 @@ import me.googas.api.matches.team.Team;
 import me.googas.api.permissions.Group;
 import me.googas.api.permissions.GroupInfo;
 import me.googas.api.punishment.Punishment;
+import me.googas.api.punishment.PunishmentStatus;
 import me.googas.api.token.AuthToken;
 import me.googas.api.user.UserData;
 import me.googas.commons.RandomUtils;
@@ -329,4 +330,14 @@ public interface DataLoader {
    * @return the maximum page of the leaderboard
    */
   long maxPageLeaderboard(@NonNull String stat, int size);
+
+  /**
+   * Get all the punishments in the given status of a link
+   *
+   * @param link the link to get the punishments
+   * @param statuses the statuses that the punishment may have to be included
+   * @return the collection of matching punishments
+   */
+  @NonNull
+  Collection<Punishment> getPunishments(@NonNull LinkableInfo link, @NonNull PunishmentStatus... statuses);
 }
