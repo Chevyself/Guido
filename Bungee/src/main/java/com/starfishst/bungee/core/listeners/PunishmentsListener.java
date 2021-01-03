@@ -29,12 +29,25 @@ public class PunishmentsListener implements GuidoListener {
       player.disconnect(locale.getComponent("server.under-maintenance"));
       return;
     }
-    new BungeeRequest<>(Punishment[].class, "link-punishments", Maps.objects("link", new ProxiedOfflinePlayer(event.getPlayer()).getLinkedInfo()).append("status", Lots.set(PunishmentStatus.ACTIVE))).send(punishments -> {
-      if (punishments.length == 0) return;
-      Punishment active = this.getActive(punishments);
-      if (active == null) return;
-      player.disconnect(locale.getComponent("server.banned", Maps.singleton("reason", active.getDetails().getOr("reason", String.class, "No reason provided"))));
-    });
+    new BungeeRequest<>(
+            Punishment[].class,
+            "link-punishments",
+            Maps.objects("link", new ProxiedOfflinePlayer(event.getPlayer()).getLinkedInfo())
+                .append("status", Lots.set(PunishmentStatus.ACTIVE)))
+        .send(
+            punishments -> {
+              if (punishments.length == 0) return;
+              Punishment active = this.getActive(punishments);
+              if (active == null) return;
+              player.disconnect(
+                  locale.getComponent(
+                      "server.banned",
+                      Maps.singleton(
+                          "reason",
+                          active
+                              .getDetails()
+                              .getOr("reason", String.class, "No reason provided"))));
+            });
   }
 
   @Nullable
@@ -46,9 +59,7 @@ public class PunishmentsListener implements GuidoListener {
   }
 
   @Override
-  public void onUnload() {
-
-  }
+  public void onUnload() {}
 
   @Override
   public @NonNull String getName() {

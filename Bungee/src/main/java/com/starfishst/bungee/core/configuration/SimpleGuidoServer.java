@@ -47,9 +47,9 @@ public class SimpleGuidoServer implements GuidoServer {
   @Override
   public String toString() {
     return new ToStringBuilder(this)
-            .append("name", this.name)
-            .append("address", this.address)
-            .append("restricted", this.restricted)
-            .build();
+        .append("name", this.name)
+        .append("address", this.address)
+        .append("restricted", this.restricted)
+        .build();
   }
 }

@@ -17,14 +17,12 @@ import com.starfishst.bungee.core.lang.BungeeLanguageHandler;
 import com.starfishst.bungee.core.listeners.GroupListener;
 import com.starfishst.bungee.core.listeners.MinecraftDataListener;
 import com.starfishst.bungee.core.listeners.MotdListener;
+import com.starfishst.bungee.core.listeners.PermissionsListener;
+import com.starfishst.bungee.core.listeners.PunishmentsListener;
 import java.io.File;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.util.List;
-import java.util.Set;
-
-import com.starfishst.bungee.core.listeners.PermissionsListener;
-import com.starfishst.bungee.core.listeners.PunishmentsListener;
 import lombok.NonNull;
 import me.googas.api.client.Client;
 import me.googas.commons.CoreFiles;
@@ -51,7 +49,13 @@ public class GuidoPlugin extends Plugin {
   /** The listeners being used by the plugin */
   @NonNull
   private final List<GuidoListener> listeners =
-      Lots.list(this.languageHandler, new GroupListener(), new MinecraftDataListener(), new MotdListener(), new PermissionsListener(), new PunishmentsListener());
+      Lots.list(
+          this.languageHandler,
+          new GroupListener(),
+          new MinecraftDataListener(),
+          new MotdListener(),
+          new PermissionsListener(),
+          new PunishmentsListener());
   /** The client connected with the bot */
   @NonNull private final BungeeClient client = new BungeeClient("0");
   /** The bungeeConfiguration that the plugin will use */

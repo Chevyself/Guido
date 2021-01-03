@@ -1,6 +1,5 @@
 package com.starfishst.bungee.core.data;
 
-import java.util.Map;
 import java.util.UUID;
 import lombok.NonNull;
 import me.googas.api.client.data.SimpleValuesMap;
@@ -9,7 +8,6 @@ import me.googas.api.links.LinkableInfo;
 import me.googas.api.links.LinkableType;
 import me.googas.api.links.ref.MinecraftLinkable;
 import me.googas.commons.UUIDUtils;
-import me.googas.commons.maps.MapBuilder;
 import me.googas.commons.maps.Maps;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 

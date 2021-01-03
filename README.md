@@ -1,3 +1,12 @@
+### Contributing
+
+1. Format the code following Google format. It will be done automatically in build time
+or using the command line:
+
+```
+mvn com.coveo:fmt-maven-plugin:format
+```
+
 ### TO-DO
 
 ##### API

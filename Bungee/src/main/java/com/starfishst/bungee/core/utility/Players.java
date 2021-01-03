@@ -1,9 +1,4 @@
 package com.starfishst.bungee.core.utility;
 
-/**
- * Static utilities for players
- */
-public class Players {
-
-
-}
+/** Static utilities for players */
+public class Players {}

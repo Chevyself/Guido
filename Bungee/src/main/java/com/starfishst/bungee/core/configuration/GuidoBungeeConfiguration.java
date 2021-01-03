@@ -3,8 +3,8 @@ package com.starfishst.bungee.core.configuration;
 import com.starfishst.bungee.api.configuration.BungeeConfiguration;
 import com.starfishst.bungee.api.configuration.GuidoListenerSettings;
 import com.starfishst.bungee.api.configuration.GuidoServer;
+import com.starfishst.bungee.core.utility.Config;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import lombok.NonNull;
 import me.googas.commons.builder.ToStringBuilder;
@@ -42,41 +42,8 @@ public class GuidoBungeeConfiguration implements BungeeConfiguration {
     this.settings = new ArrayList<>();
     this.token = section.getString("token", "0");
     this.guildId = section.getLong("guild", 0L);
-    this.servers = new ArrayList<>();
-    if (section.get("servers") != null) {
-      Configuration serversSection = section.getSection("servers");
-      for (String name : serversSection.getKeys()) {
-        SimpleGuidoServer server =
-            new SimpleGuidoServer(
-                name,
-                serversSection.get(name + ".address", "localhost"),
-                serversSection.getBoolean(name + ".restricted", false));
-        this.servers.add(server);
-      }
-    }
-    if (section.get("listeners") != null) {
-      Configuration settingsSection = section.getSection("listeners");
-      for (String name : settingsSection.getKeys()) {
-        // TODO a proper class for this
-        HashMap<String, Object> settings = new HashMap<>();
-        Configuration nameSection = settingsSection.getSection(name);
-        for (String key : nameSection.getKeys()) {
-          settings.put(key, nameSection.get(key));
-        }
-        this.settings.add(
-            new GuidoListenerSettings() {
-              @Override
-              public @NonNull String getName() {
-                return name;
-              }
-
-              @Override
-              public @NonNull HashMap<String, Object> getSettings() {
-                return settings;
-              }
-            });
-      }
-    }
+    this.servers = Config.parseServers(section.getSection("servers"));
+    this.settings.addAll(Config.parseSettings(section.getSection("listeners")));
   }
 
   @NonNull
@@ -98,10 +65,10 @@ public class GuidoBungeeConfiguration implements BungeeConfiguration {
   @Override
   public String toString() {
     return new ToStringBuilder(this)
-            .append("token", this.token)
-            .append("guildId", this.guildId)
-            .append("servers", this.servers)
-            .append("settings", this.settings)
-            .build();
+        .append("token", this.token)
+        .append("guildId", this.guildId)
+        .append("servers", this.servers)
+        .append("settings", this.settings)
+        .build();
   }
 }

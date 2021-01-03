@@ -1,8 +1,8 @@
 package com.starfishst.bungee.api.configuration;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import lombok.NonNull;
 import me.googas.commons.Validate;
 
@@ -70,5 +70,5 @@ public interface GuidoListenerSettings {
    * @return the settings of this listener
    */
   @NonNull
-  HashMap<String, Object> getSettings();
+  Map<String, Object> getSettings();
 }
