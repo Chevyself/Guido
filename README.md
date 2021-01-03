@@ -30,4 +30,5 @@ the match has ended
 
 - [ ] Must be on its own repository as project is getting
 larger
+- [ ] Add a placeholder and localized support in UI and Tab
 
