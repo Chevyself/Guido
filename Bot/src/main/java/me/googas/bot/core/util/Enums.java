@@ -1,5 +1,7 @@
 package me.googas.bot.core.util;
 
+import lombok.NonNull;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -23,5 +25,12 @@ public class Enums {
       names.add(anEnum.name());
     }
     return names;
+  }
+
+  public static <T extends Enum<?>> boolean contains(@NonNull T[] arr, @NonNull T t) {
+    for (T t1 : arr) {
+      if (t.equals(t1)) return true;
+    }
+    return false;
   }
 }

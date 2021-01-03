@@ -28,6 +28,7 @@ import me.googas.api.matches.team.Team;
 import me.googas.api.permissions.Group;
 import me.googas.api.permissions.GroupInfo;
 import me.googas.api.punishment.Punishment;
+import me.googas.api.punishment.PunishmentStatus;
 import me.googas.api.token.AuthToken;
 import me.googas.api.user.UserData;
 import me.googas.bot.api.events.data.group.GroupUnloadedEvent;
@@ -285,6 +286,13 @@ public class JsongoDataLoader implements BotDataLoader {
   @Override
   public long maxPageLeaderboard(@NonNull String stat, int size) {
     return Mongo.count(this.links, new Document("stats." + stat, new Document("$type", 1))) / size;
+  }
+
+  @Override
+  public @NonNull Collection<Punishment> getPunishments(@NonNull LinkableInfo link, @NonNull PunishmentStatus... statuses) {
+    PunishmentStatus[] finalStatuses = statuses.length == 0 ? PunishmentStatus.values() : statuses;
+    Document query = new Document("punished", Mongo.getQuery(link.getType(), link.getIdentification()).append("status", new Document("$in", Enums.getNames(statuses))));
+    return new ArrayList<>(Mongo.getMany(GuidoPunishment.class, this.punishments, query, null, -1, -1, punishment -> Enums.contains(finalStatuses, punishment.getStatus()) && punishment.getPunished().compare(link)));
   }
 
   @Override

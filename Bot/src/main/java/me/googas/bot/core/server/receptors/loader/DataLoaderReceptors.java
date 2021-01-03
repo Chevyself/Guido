@@ -16,6 +16,7 @@ import me.googas.api.matches.team.Team;
 import me.googas.api.permissions.Group;
 import me.googas.api.permissions.GroupInfo;
 import me.googas.api.punishment.Punishment;
+import me.googas.api.punishment.PunishmentStatus;
 import me.googas.api.token.AuthToken;
 import me.googas.api.user.UserData;
 import me.googas.bot.Guido;
@@ -158,5 +159,10 @@ public class DataLoaderReceptors {
   @Receptor("page-groups")
   public long getMaxPageGroups(@ParamName("size") int size) {
     return DataLoaderReceptors.loader().maxPageGroups(size);
+  }
+
+  @Receptor("link-punishments")
+  public Collection<Punishment> getPunishments(@ParamName("link") LinkableInfo link, @ParamName("status")PunishmentStatus[] statuses) {
+    return DataLoaderReceptors.loader().getPunishments(link, statuses);
   }
 }
