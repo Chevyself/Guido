@@ -108,9 +108,6 @@ public class SimpleLinkable implements Linkable {
 
   @Override
   public @NonNull String getSingle() {
-    if (this.type == LinkableType.MINECRAFT) {
-      return this.getIdentification().getOr("nickname", String.class, "invalid");
-    }
     throw new UnsupportedOperationException("Operation must be done using request");
   }
 

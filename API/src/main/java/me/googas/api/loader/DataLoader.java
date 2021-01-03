@@ -21,6 +21,7 @@ import me.googas.api.user.UserData;
 import me.googas.commons.RandomUtils;
 
 /** Loads the data. */
+// TODO as the data loader is getting huge in the future divide methods in some kind of sub-modules?
 public interface DataLoader {
 
   /**
@@ -339,5 +340,6 @@ public interface DataLoader {
    * @return the collection of matching punishments
    */
   @NonNull
-  Collection<Punishment> getPunishments(@NonNull LinkableInfo link, @NonNull PunishmentStatus... statuses);
+  Collection<Punishment> getPunishments(
+      @NonNull LinkableInfo link, @NonNull PunishmentStatus... statuses);
 }
