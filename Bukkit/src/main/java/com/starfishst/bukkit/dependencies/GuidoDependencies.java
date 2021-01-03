@@ -5,6 +5,7 @@ import com.starfishst.bukkit.api.dependencies.DependencyManager;
 import com.starfishst.bukkit.dependencies.events.EventsDependency;
 import com.starfishst.bukkit.dependencies.papi.PAPIDependency;
 import com.starfishst.bukkit.dependencies.pgm.PGMDependency;
+import com.starfishst.bukkit.dependencies.protocol.ProtocolLibDependency;
 import java.util.Collection;
 import java.util.Set;
 import lombok.NonNull;

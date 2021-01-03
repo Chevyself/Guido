@@ -1,4 +1,4 @@
-package com.starfishst.bukkit.listeners.anticheat;
+package com.starfishst.bukkit.dependencies.protocol.anticheat;
 
 import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.events.PacketAdapter;

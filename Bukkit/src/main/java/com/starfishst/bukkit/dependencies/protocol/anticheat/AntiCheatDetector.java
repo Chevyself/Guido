@@ -1,4 +1,4 @@
-package com.starfishst.bukkit.listeners.anticheat;
+package com.starfishst.bukkit.dependencies.protocol.anticheat;
 
 import com.starfishst.bukkit.api.Guido;
 import com.starfishst.bukkit.api.events.GuidoPacketListener;

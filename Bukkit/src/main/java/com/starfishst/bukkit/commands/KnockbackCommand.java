@@ -3,7 +3,7 @@ package com.starfishst.bukkit.commands;
 import com.starfishst.bukkit.annotations.Command;
 import com.starfishst.bukkit.api.Guido;
 import com.starfishst.bukkit.api.commands.GuidoCommand;
-import com.starfishst.bukkit.listeners.VelocityImprovement;
+import com.starfishst.bukkit.dependencies.protocol.VelocityImprovement;
 import com.starfishst.core.annotations.Required;
 import lombok.NonNull;
 

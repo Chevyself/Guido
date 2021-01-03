@@ -136,6 +136,7 @@ public class GuidoScoreboard {
     return Bukkit.getPlayer(this.player);
   }
 
+  @NonNull
   private OfflinePlayer bukkitOfflinePlayer() {
     return Bukkit.getOfflinePlayer(this.player);
   }

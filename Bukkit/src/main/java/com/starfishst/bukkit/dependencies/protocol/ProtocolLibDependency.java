@@ -1,13 +1,13 @@
-package com.starfishst.bukkit.dependencies;
+package com.starfishst.bukkit.dependencies.protocol;
 
 import com.starfishst.bukkit.api.commands.GuidoCommand;
 import com.starfishst.bukkit.api.dependencies.Dependency;
 import com.starfishst.bukkit.api.events.GuidoListener;
 import com.starfishst.bukkit.context.CommandContext;
+import com.starfishst.bukkit.dependencies.protocol.anticheat.AutoClickDetector;
+import com.starfishst.bukkit.dependencies.protocol.anticheat.ReachDetector;
+import com.starfishst.bukkit.dependencies.protocol.tab.TabListListener;
 import com.starfishst.bukkit.listeners.AntiCheatListener;
-import com.starfishst.bukkit.listeners.VelocityImprovement;
-import com.starfishst.bukkit.listeners.anticheat.AutoClickDetector;
-import com.starfishst.bukkit.listeners.anticheat.ReachDetector;
 import com.starfishst.core.providers.type.IContextualProvider;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -41,6 +41,7 @@ public class ProtocolLibDependency implements Dependency {
         new AntiCheatListener(),
         new AutoClickDetector(plugin),
         new ReachDetector(plugin),
+        new TabListListener(plugin),
         new VelocityImprovement());
   }
 

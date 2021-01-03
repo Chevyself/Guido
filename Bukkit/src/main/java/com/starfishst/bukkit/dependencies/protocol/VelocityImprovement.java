@@ -1,4 +1,4 @@
-package com.starfishst.bukkit.listeners;
+package com.starfishst.bukkit.dependencies.protocol;
 
 import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.ProtocolLibrary;
