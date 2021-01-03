@@ -12,3 +12,6 @@ listeners:
       - Minecraft
     players:
       - ["Welcome to", "Googas", "LMAO"]
+  tips:
+    messages:
+      - "This is a tip!"

@@ -8,6 +8,7 @@ import java.util.logging.Logger;
 import lombok.NonNull;
 import me.googas.api.client.Client;
 import me.googas.commons.Validate;
+import me.googas.commons.scheduler.Scheduler;
 
 /** Static utilities for the guido bungee plugin */
 public class Guido {
@@ -48,43 +49,27 @@ public class Guido {
     Guido.plugin = plugin;
   }
 
-  /**
-   * Get the configuration that the guido plugin is using
-   *
-   * @return the configuration that the plugin is using
-   */
   @NonNull
   public static BungeeConfiguration getConfiguration() {
     return Guido.validated().getConfiguration();
   }
 
-  /**
-   * Get the client used to connect with the bot
-   *
-   * @return the client used in the bot
-   */
   @NonNull
   public static Client getClient() {
     return Guido.validated().getClient();
   }
 
-  /**
-   * Get the language handler that the plugin is using
-   *
-   * @return the language handler
-   */
   @NonNull
   public static BungeeLanguageHandler getLanguageHandler() {
     return Guido.validated().getLanguageHandler();
   }
 
-  /**
-   * Get the logger of guido
-   *
-   * @return the logger of the plugin
-   */
   @NonNull
   public static Logger getLogger() {
     return Guido.validated().getLogger();
+  }
+
+  public static @NonNull Scheduler getScheduler() {
+    return Guido.validated().getScheduler();
   }
 }

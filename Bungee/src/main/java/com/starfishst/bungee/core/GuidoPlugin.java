@@ -20,6 +20,8 @@ import com.starfishst.bungee.core.listeners.MinecraftDataListener;
 import com.starfishst.bungee.core.listeners.MotdListener;
 import com.starfishst.bungee.core.listeners.PermissionsListener;
 import com.starfishst.bungee.core.listeners.PunishmentsListener;
+import com.starfishst.bungee.core.listeners.TipsListener;
+import com.starfishst.bungee.core.scheduler.BungeeScheduler;
 import com.starfishst.bungee.core.utility.Proxy;
 import java.io.File;
 import java.io.IOException;
@@ -29,6 +31,7 @@ import lombok.Getter;
 import lombok.NonNull;
 import me.googas.commons.CoreFiles;
 import me.googas.commons.Lots;
+import me.googas.commons.scheduler.Scheduler;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.config.ServerInfo;
 import net.md_5.bungee.api.plugin.Plugin;
@@ -38,6 +41,8 @@ import net.md_5.bungee.config.YamlConfiguration;
 /** The guido plugin for Bungee */
 public class GuidoPlugin extends Plugin {
 
+  @NonNull @Getter
+  private final Scheduler scheduler = new BungeeScheduler(this);
   /** The bungee language handler */
   @NonNull @Getter
   private final BungeeLanguageHandler languageHandler =
@@ -127,7 +132,7 @@ public class GuidoPlugin extends Plugin {
     }
     for (GuidoListener listener : this.listeners) {
       listener.register(this);
-      this.getLogger().info(listener.getName() + " has been registered");
+      listener.onEnable();
     }
 
     this.manager.registerCommand(new GuidoCommands());
@@ -136,6 +141,7 @@ public class GuidoPlugin extends Plugin {
     this.manager.registerCommand(new PunishmentCommands());
     this.manager.registerCommand(new ServerCommands());
     this.manager.registerCommand(new StatsCommand());
+    this.manager.registerCommand(new TipsListener());
     this.loadServers();
     super.onEnable();
   }
