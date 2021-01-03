@@ -59,7 +59,7 @@ public class GuidoPlugin extends Plugin {
           new PermissionsListener(),
           new PunishmentsListener());
   /** The client connected with the bot */
-  @NonNull @Getter private final BungeeClient client = new BungeeClient("0");
+  @NonNull @Getter private final BungeeClient client = new BungeeClient("0", this);
   /** The bungeeConfiguration that the plugin will use */
   @NonNull @Getter private BungeeConfiguration configuration = new GuidoBungeeConfiguration();
 

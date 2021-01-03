@@ -1,15 +1,18 @@
 package com.starfishst.bungee.core.client;
 
 import com.starfishst.bungee.api.Guido;
+import com.starfishst.bungee.api.events.GuidoListener;
 import com.starfishst.bungee.core.listeners.GroupListener;
 import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 import lombok.NonNull;
 import me.googas.api.client.Client;
+import me.googas.commons.Lots;
 import me.googas.commons.maps.Maps;
 import me.googas.messaging.Request;
 import me.googas.messaging.json.client.JsonClient;
 import net.md_5.bungee.api.ProxyServer;
+import net.md_5.bungee.api.plugin.Plugin;
 
 /** An extension for client */
 public class BungeeClient extends Client {
@@ -19,9 +22,12 @@ public class BungeeClient extends Client {
    *
    * @param token the token
    */
-  public BungeeClient(@NonNull String token) {
+  public BungeeClient(@NonNull String token, @NonNull Plugin plugin) {
     super(token, "167.114.49.251", 3000);
-    this.addReceptors(new BungeeReceptors());
+    for (GuidoListener receptor : Lots.set(new BungeeReceptors())) {
+      this.addReceptors(new BungeeReceptors());
+      plugin.getProxy().getPluginManager().registerListener(plugin, receptor);
+    }
   }
 
   @Override
