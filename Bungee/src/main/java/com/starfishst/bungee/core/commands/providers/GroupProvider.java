@@ -3,6 +3,7 @@ package com.starfishst.bungee.core.commands.providers;
 import com.starfishst.bungee.api.Guido;
 import com.starfishst.bungee.context.CommandContext;
 import com.starfishst.bungee.core.listeners.GroupListener;
+import com.starfishst.bungee.core.utility.Chat;
 import com.starfishst.bungee.providers.type.BungeeArgumentProvider;
 import com.starfishst.core.exceptions.ArgumentProviderException;
 import java.util.ArrayList;
@@ -29,10 +30,7 @@ public class GroupProvider implements BungeeArgumentProvider<Group> {
         return group;
       }
     }
-    throw new ArgumentProviderException(
-        Guido.getLanguageHandler()
-            .getFile(commandContext)
-            .get("invalid.group", Maps.singleton("string", s)));
+    throw Chat.exception("invalid.group", Maps.singleton("string", s), commandContext);
   }
 
   @Override

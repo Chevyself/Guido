@@ -14,24 +14,17 @@ import net.md_5.bungee.api.connection.ProxiedPlayer;
 /** Commands for linking minecraft accounts */
 public class LinkCommand {
 
-  /**
-   * Get a link code
-   *
-   * @param player the player to get a link code
-   * @param locale the locale of the sender
-   * @return an empty result everything is async
-   */
   @Settings("async")
   @Command(aliases = "link")
   public void link(ProxiedPlayer player, BungeeLocaleFile locale) {
     ProxiedOfflinePlayer offline = new ProxiedOfflinePlayer(player.getUniqueId(), player.getName());
     Map<String, LinkableInfo> params = Maps.singleton("link", offline.getLinkedInfo());
     new BungeeBooleanRequest("link/is-linked", params)
-        .send(
+        .sendIfPresent(
             linked -> {
               if (!linked) {
                 new BungeeStringRequest("link-code", params)
-                    .send(
+                    .sendIfPresent(
                         code ->
                             player.sendMessage(
                                 locale.getComponent("link.code", Maps.singleton("code", code))));

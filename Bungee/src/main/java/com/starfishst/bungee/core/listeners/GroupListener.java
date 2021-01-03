@@ -27,12 +27,15 @@ public class GroupListener implements GuidoListener {
   public void loadGroups(Consumer<List<Group>> consumer) {
     new BungeeRequest<>(Group[].class, "groups")
         .send(
-            groups -> {
-              List<Group> newGroups = Lots.list(groups);
-              this.groups.addAll(newGroups);
-              if (consumer != null) {
-                consumer.accept(newGroups);
-              }
+            optional -> {
+              optional.ifPresent(
+                  groups -> {
+                    List<Group> newGroups = Lots.list(groups);
+                    this.groups.addAll(newGroups);
+                    if (consumer != null) {
+                      consumer.accept(newGroups);
+                    }
+                  });
             });
   }
 

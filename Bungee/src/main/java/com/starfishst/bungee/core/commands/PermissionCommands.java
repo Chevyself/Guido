@@ -21,7 +21,6 @@ import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.chat.TextComponent;
 
 /** Commands for permission */
-// TODO all the methods in this class are huge
 public class PermissionCommands {
 
   @Settings("async")
@@ -52,9 +51,8 @@ public class PermissionCommands {
                 .append("context", context)
                 .append("global", global)
                 .build())
-        .send(
+        .sendIfPresent(
             stack -> {
-              // TODO method too large
               if (stack.getPermissions().isEmpty()) {
                 Pagination<Permission> pagination =
                     new Pagination<>(new ArrayList<>(stack.getPermissions()), 20);
@@ -94,16 +92,6 @@ public class PermissionCommands {
             });
   }
 
-  /**
-   * Give a permission to a player
-   *
-   * @param sender the sender of the command
-   * @param player the player getting the permission
-   * @param node the node of the permission
-   * @param enabled whether the permission is enabled
-   * @param context the context which the permission will be given in
-   * @return an empty result
-   */
   @Settings("async")
   @Command(
       aliases = {"add", "give"},
@@ -137,7 +125,7 @@ public class PermissionCommands {
                             time.millis() == 0 ? -1 : System.currentTimeMillis() + time.millis())
                         .getNodeAppended())
                 .build())
-        .send(
+        .sendIfPresent(
             bol -> {
               TextComponent message;
               if (bol) {
@@ -180,7 +168,7 @@ public class PermissionCommands {
                 .append("context", context)
                 .append("permission", new SimplePermission(node, true, -1).getNodeAppended())
                 .build())
-        .send(
+        .sendIfPresent(
             bol -> {
               TextComponent message;
               if (bol) {
@@ -197,11 +185,6 @@ public class PermissionCommands {
                 message = new TextComponent(BungeeUtils.build("&cPermission could not be revoked"));
               }
               sender.sendMessage(message);
-            },
-            exception -> {
-              exception.printStackTrace();
-              sender.sendMessage(
-                  new TextComponent(BungeeUtils.build("&cPermission could not be revoked")));
             });
   }
 }

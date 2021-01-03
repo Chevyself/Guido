@@ -2,6 +2,7 @@ package com.starfishst.bungee.core.client.requests;
 
 import com.starfishst.bungee.api.Guido;
 import java.util.Map;
+import java.util.Optional;
 import java.util.function.Consumer;
 import lombok.NonNull;
 import me.googas.commons.maps.MapBuilder;
@@ -56,13 +57,13 @@ public class BungeeRequest<T> extends Request<T> {
    * @param consumer the consumer for the given object
    * @param exception the consumer for the exception in case there's one
    */
-  public void send(@NonNull Consumer<T> consumer, Consumer<Throwable> exception) {
+  public void send(@NonNull Consumer<Optional<T>> consumer, Consumer<Throwable> exception) {
     JsonClient connection = Guido.getClient().getConnection();
     if (connection != null) {
       if (exception != null) {
-        connection.sendRequest(this, obj -> obj.ifPresent(consumer), exception);
+        connection.sendRequest(this, consumer, exception);
       } else {
-        connection.sendRequest(this, obj -> obj.ifPresent(consumer));
+        connection.sendRequest(this, consumer);
       }
     }
   }
@@ -72,8 +73,17 @@ public class BungeeRequest<T> extends Request<T> {
    *
    * @param consumer the consumer for the given object
    */
-  public void send(@NonNull Consumer<T> consumer) {
+  public void send(@NonNull Consumer<Optional<T>> consumer) {
     this.send(consumer, null);
+  }
+
+  /**
+   * Send a request and with the given consumer process the given object
+   *
+   * @param consumer the consumer for the given object
+   */
+  public void sendIfPresent(@NonNull Consumer<T> consumer) {
+    this.send(optional -> optional.ifPresent(consumer), null);
   }
 
   /**

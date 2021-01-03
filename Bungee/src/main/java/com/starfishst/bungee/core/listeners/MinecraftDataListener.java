@@ -31,7 +31,7 @@ public class MinecraftDataListener implements GuidoListener {
         new SimpleLinkableInfo(LinkableType.MINECRAFT, new SimpleValuesMap("uuid", trim));
     MapBuilder<String, Object> builder = Maps.objects("link", link);
     new BungeeBooleanRequest("link/exists", builder)
-        .send(
+        .sendIfPresent(
             exists -> {
               if (exists) {
                 new BungeeBooleanRequest(

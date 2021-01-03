@@ -46,44 +46,34 @@ public class StatsCommand {
     } else {
       return new Result("&cYou are not allowed to see someone else's stats");
     }
+    // TODO this is currently broken as method returns SortedStats
     new BungeeRequest<>(Map.class, "stats", Maps.singleton("info", toSee.getLinkedInfo()))
-        .send(
+        .sendIfPresent(
             map -> {
               StringBuilder builder = Strings.getBuilder();
-              if (map != null) {
-                if (map.keySet().isEmpty()) {
-                  sender.sendMessage(
-                      new TextComponent(
-                          BungeeUtils.build(
-                              "&e" + toSee.getNickname() + "&a does not have stats yet")));
-                } else {
-                  builder.append("&7Seeing stats for &a").append(toSee.getNickname()).append("\n");
-                  for (Object obj : map.keySet()) {
-                    if (obj instanceof String) {
-                      builder
-                          .append("&8- &a")
-                          .append(obj)
-                          .append(": &e")
-                          .append(map.get(obj))
-                          .append("\n");
-                    }
-                  }
-                  sender.sendMessage(new TextComponent(BungeeUtils.build(builder.toString())));
-                }
+              if (map.keySet().isEmpty()) {
+                sender.sendMessage(
+                    new TextComponent(
+                        BungeeUtils.build(
+                            "&e" + toSee.getNickname() + "&a does not have stats yet")));
               } else {
-                sender.sendMessage(new TextComponent(BungeeUtils.build("&cStats not found!")));
+                builder.append("&7Seeing stats for &a").append(toSee.getNickname()).append("\n");
+                for (Object obj : map.keySet()) {
+                  if (obj instanceof String) {
+                    builder
+                        .append("&8- &a")
+                        .append(obj)
+                        .append(": &e")
+                        .append(map.get(obj))
+                        .append("\n");
+                  }
+                }
+                sender.sendMessage(new TextComponent(BungeeUtils.build(builder.toString())));
               }
             });
     return new Result();
   }
 
-  /**
-   * Reset the stats for a player
-   *
-   * @param sender the sender of the command
-   * @param player the player to reset the stats to
-   * @return the result of the command
-   */
   @Settings("async")
   @Command(aliases = "statsReset", permission = "guido.stats.reset")
   public void statsReset(
@@ -91,13 +81,11 @@ public class StatsCommand {
       @Required(name = "player", description = "The player reset the stats to")
           ProxiedOfflinePlayer player) {
     new BungeeBooleanRequest("link/reset-stats", Maps.singleton("info", player.getLinkedInfo()))
-        .send(
+        .sendIfPresent(
             bol -> {
-              String message;
+              String message = "&cStats for &e" + player.getNickname() + "&c could not be reset";
               if (bol) {
                 message = "&aStats for &e" + player.getNickname() + "&a have been reset";
-              } else {
-                message = "&cStats for &e" + player.getNickname() + "&c could not be reset";
               }
               sender.sendMessage(new TextComponent(BungeeUtils.build(message)));
             });

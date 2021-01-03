@@ -38,7 +38,7 @@ public class PermissionsListener implements GuidoListener {
             PermissionStack.class,
             "link/permission",
             Maps.objects("link", link).append("context", "bungee").append("global", true))
-        .send(
+        .sendIfPresent(
             stack -> {
               this.add(player, stack.getPermissions());
               List<Group> groups = this.groups().getGroups(player, true);

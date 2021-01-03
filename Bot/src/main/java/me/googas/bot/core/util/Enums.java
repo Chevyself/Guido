@@ -1,10 +1,9 @@
 package me.googas.bot.core.util;
 
-import lombok.NonNull;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import lombok.NonNull;
 
 /** Static utilities for enums */
 public class Enums {

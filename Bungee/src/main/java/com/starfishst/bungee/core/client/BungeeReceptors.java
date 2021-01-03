@@ -49,8 +49,7 @@ public class BungeeReceptors implements GuidoListener {
         return true;
       }
     }
-    JoinListener listener = Guido.getListener(JoinListener.class);
-    return listener.isJoining(uuid);
+    return false;
   }
 
   /**

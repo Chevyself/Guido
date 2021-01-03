@@ -162,7 +162,8 @@ public class DataLoaderReceptors {
   }
 
   @Receptor("link-punishments")
-  public Collection<Punishment> getPunishments(@ParamName("link") LinkableInfo link, @ParamName("status")PunishmentStatus[] statuses) {
+  public Collection<Punishment> getPunishments(
+      @ParamName("link") LinkableInfo link, @ParamName("status") PunishmentStatus[] statuses) {
     return DataLoaderReceptors.loader().getPunishments(link, statuses);
   }
 }

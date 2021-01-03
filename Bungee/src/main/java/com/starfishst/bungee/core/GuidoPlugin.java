@@ -9,6 +9,7 @@ import com.starfishst.bungee.core.client.BungeeClient;
 import com.starfishst.bungee.core.commands.GuidoCommands;
 import com.starfishst.bungee.core.commands.LinkCommand;
 import com.starfishst.bungee.core.commands.PermissionCommands;
+import com.starfishst.bungee.core.commands.PunishmentCommands;
 import com.starfishst.bungee.core.commands.ServerCommands;
 import com.starfishst.bungee.core.commands.StatsCommand;
 import com.starfishst.bungee.core.commands.providers.GuidoProvidersRegistry;
@@ -19,17 +20,13 @@ import com.starfishst.bungee.core.listeners.MinecraftDataListener;
 import com.starfishst.bungee.core.listeners.MotdListener;
 import com.starfishst.bungee.core.listeners.PermissionsListener;
 import com.starfishst.bungee.core.listeners.PunishmentsListener;
+import com.starfishst.bungee.core.utility.Proxy;
 import java.io.File;
 import java.io.IOException;
 import java.net.InetSocketAddress;
-import java.util.ArrayList;
 import java.util.List;
-
-import com.starfishst.bungee.core.utility.Config;
-import com.starfishst.bungee.core.utility.Proxy;
 import lombok.Getter;
 import lombok.NonNull;
-import me.googas.api.client.Client;
 import me.googas.commons.CoreFiles;
 import me.googas.commons.Lots;
 import net.md_5.bungee.api.ProxyServer;
@@ -64,8 +61,7 @@ public class GuidoPlugin extends Plugin {
   /** The client connected with the bot */
   @NonNull @Getter private final BungeeClient client = new BungeeClient("0");
   /** The bungeeConfiguration that the plugin will use */
-  @NonNull @Getter
-  private BungeeConfiguration configuration = new GuidoBungeeConfiguration();
+  @NonNull @Getter private BungeeConfiguration configuration = new GuidoBungeeConfiguration();
 
   /** Loads the configuration */
   public void loadConfiguration() {
@@ -91,7 +87,7 @@ public class GuidoPlugin extends Plugin {
   public void loadServers() {
     ProxyServer proxy = this.getProxy();
     List<GuidoServer> servers = this.configuration.getServers();
-    Proxy.unloadServers( servers);
+    Proxy.unloadServers(servers);
     for (GuidoServer server : servers) {
       if (proxy.getServerInfo(server.getName()) == null) {
         InetSocketAddress address = server.constructAddress();
@@ -136,8 +132,9 @@ public class GuidoPlugin extends Plugin {
 
     this.manager.registerCommand(new GuidoCommands());
     this.manager.registerCommand(new LinkCommand());
-    this.manager.registerCommand(new ServerCommands());
     this.manager.registerCommand(new PermissionCommands());
+    this.manager.registerCommand(new PunishmentCommands());
+    this.manager.registerCommand(new ServerCommands());
     this.manager.registerCommand(new StatsCommand());
     this.loadServers();
     super.onEnable();

@@ -289,10 +289,25 @@ public class JsongoDataLoader implements BotDataLoader {
   }
 
   @Override
-  public @NonNull Collection<Punishment> getPunishments(@NonNull LinkableInfo link, @NonNull PunishmentStatus... statuses) {
+  public @NonNull Collection<Punishment> getPunishments(
+      @NonNull LinkableInfo link, @NonNull PunishmentStatus... statuses) {
     PunishmentStatus[] finalStatuses = statuses.length == 0 ? PunishmentStatus.values() : statuses;
-    Document query = new Document("punished", Mongo.getQuery(link.getType(), link.getIdentification()).append("status", new Document("$in", Enums.getNames(statuses))));
-    return new ArrayList<>(Mongo.getMany(GuidoPunishment.class, this.punishments, query, null, -1, -1, punishment -> Enums.contains(finalStatuses, punishment.getStatus()) && punishment.getPunished().compare(link)));
+    Document query =
+        new Document(
+            "punished",
+            Mongo.getQuery(link.getType(), link.getIdentification())
+                .append("status", new Document("$in", Enums.getNames(statuses))));
+    return new ArrayList<>(
+        Mongo.getMany(
+            GuidoPunishment.class,
+            this.punishments,
+            query,
+            null,
+            -1,
+            -1,
+            punishment ->
+                Enums.contains(finalStatuses, punishment.getStatus())
+                    && punishment.getPunished().compare(link)));
   }
 
   @Override

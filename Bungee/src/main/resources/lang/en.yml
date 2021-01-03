@@ -4,27 +4,30 @@
 locale: "en"
 ## This is needed for the framework
 invalid:
-  number: "&e%string% &cis not a valid number!"
-  decimal: "&e%string% &cis not a valid decimal!"
-  decimal-empty: "&cDecimals cannot be empty"
-  boolean: "&e%string% &cis not a valid boolean!"
-  time: "&e%string% &cis not valid time!"
-  player: "&e%string% &cis not online!"
-  group: "&e%string% &cis not a valid group!"
-missing-argument: "&cYou are missing &e%name% &cin the position &e%position% &cit is &e%description%"
-not-allowed: "&cYou are not allowed to use this command"
+  number: "&6⚠ &e%string% &cis not a valid number!"
+  decimal: "&6⚠ &e%string% &cis not a valid decimal!"
+  decimal-empty: "&6⚠ &cDecimals cannot be empty"
+  boolean: "&6⚠ &e%string% &cis not a valid boolean!"
+  time: "&6⚠ &e%string% &cis not valid time!"
+  player: "&6⚠ &e%string% &cis not online!"
+  group: "&6⚠ &e%string% &cis not a valid group!"
+missing-argument: "&6⚠ &cYou are missing &e%name% &cin the position &e%position% &cit is &e%description%"
+not-allowed: "&6⚠ &cYou are not allowed to use this command"
 ## Punishments
 server:
-  under-maintenance: "&cThe server is currently under maintenance and the access is restricted"
+  under-maintenance: "&6⚠ &cThe server is currently under maintenance and the access is restricted &6⚠"
+  banned: "&6⚠ &cYou are currently banned from Googas &6⚠ \n &6--- &c%reason% &6---"
+  warn:   "&m-------------------- &b&4WARNING &R&m-------------------- \n &8» &6%reason \n&r&m-------------------- &b&4WARNING &R&m--------------------"
+  kicked: "&6⚠ &cYou have been kicked from Googas &6⚠ \n &6--- &c%reason% &6---"
 ## Link command
 link:
-  linked: "&cYour account is already linked"
+  linked: "&6⚠ &cYour account is already linked"
   code: "[\"\",{\"text\":\"&aYour code is &e\"},{\"text\":\"%code%\",\"hoverEvent\":{\"action\":\"show_text\",\"value\":\"&7Send the command &3.link %code%\"}},{\"text\":\" &asend it in the &e\"},{\"text\":\"discord server\",\"clickEvent\":{\"action\":\"open_url\",\"value\":\"https://discord.io/GOOGAS\"},\"hoverEvent\":{\"action\":\"show_text\",\"value\":\"&6Click here to join!\"}},{\"text\":\" &aor directly to the guido bot!\"}]"
-  internal: "&cThere's been an internal error"
+  internal: "&6⚠ &cThere's been an internal error"
 ## For receptors
 receptors:
   being-connected: "&aYou are being connected to &e%server%"
-  connected-error: "&cThere's been an error while trying to connect you to &e%server%"
+  connected-error: "&6⚠ &cThere's been an error while trying to connect you to &e%server%"
   receptors-conneted: "&aYou've been connected"
 
 ## Lobby command
@@ -34,11 +37,18 @@ lobby:
 groups:
   create:
     success: "&aThe group has been created and it received the id &e%id%"
-    fail: "&cThe group could not be created"
+    fail: "&6⚠ &cThe group could not be created"
   add:
     success: "&aThe permission &e%node% &ain the state &e%enabled% &ahas been added to the group &e%name% &ain the context &e%context%"
-    fail: "&cThe permission &e%node%&c could not be given to the group &e%name% &cin the context &e%context%"
+    fail: "&6⚠ &cThe permission &e%node%&c could not be given to the group &e%name% &cin the context &e%context%"
   remove:
     success: "&aThe permission &e%node% &ahas been removed from the group &e%name% &ain the context &e%context%"
-    fail: "&cThe permission &e%node%&c could not be removed from the group &e%name% &cin the context &e%context%"
+    fail: "&6⚠ &cThe permission &e%node%&c could not be removed from the group &e%name% &cin the context &e%context%"
   reload: "&e%amount% &a groups have been reloaded"
+# Ban command
+ban:
+  success: "&6%nickname% &7has been banned"
+warn:
+  success: "&6%nickname% &7has been warned"
+kick:
+  success: "&6%nickname% &7has been kicked"

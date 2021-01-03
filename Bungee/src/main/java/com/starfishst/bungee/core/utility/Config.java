@@ -47,11 +47,11 @@ public class Config {
     return parsedSettings;
   }
 
-  public static boolean isSafeToDelete(@NonNull String serverName, @NonNull Collection<GuidoServer> servers) {
+  public static boolean isSafeToDelete(
+      @NonNull String serverName, @NonNull Collection<GuidoServer> servers) {
     for (GuidoServer server : servers) {
       if (server.getName().equalsIgnoreCase(serverName)) return false;
     }
     return true;
   }
-
 }

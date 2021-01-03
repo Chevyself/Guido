@@ -34,7 +34,7 @@ public class PunishmentsListener implements GuidoListener {
             "link-punishments",
             Maps.objects("link", new ProxiedOfflinePlayer(event.getPlayer()).getLinkedInfo())
                 .append("status", Lots.set(PunishmentStatus.ACTIVE)))
-        .send(
+        .sendIfPresent(
             punishments -> {
               if (punishments.length == 0) return;
               Punishment active = this.getActive(punishments);
