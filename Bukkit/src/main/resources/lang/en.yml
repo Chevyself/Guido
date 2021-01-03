@@ -67,3 +67,6 @@ unready:
   not-starting: "&cYou cannot be unready at this point"
   now-unready: "%team% &cis unready"
   success: "&cYour team is now unready"
+scoreboard:
+  title: "&6&lGOOGAS"
+  ping: "&7Your ping: &6%ping%"

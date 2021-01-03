@@ -369,7 +369,10 @@ public class PickTeamSelection implements TeamCreation {
   public List<String> getParticipantsNames(@NonNull String matchId) {
     List<String> names = new ArrayList<>();
     for (LinkableInfo linkableInfo : this.getPlayersLeft(matchId)) {
-      String nickname = linkableInfo.getIdentification().get("nickname", String.class);
+      String nickname =
+          linkableInfo
+              .getIdentification()
+              .get("nickname", String.class); // Nickname is no longer supplied
       if (nickname != null) {
         names.add(nickname);
       }

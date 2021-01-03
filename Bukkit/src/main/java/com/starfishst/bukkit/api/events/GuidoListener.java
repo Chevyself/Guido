@@ -26,7 +26,10 @@ public interface GuidoListener extends Listener {
   }
 
   /** Called on {@link #unregister()} */
-  void onUnload();
+  default void onUnload() {}
+
+  /** Called after {@link #register(Plugin)} */
+  default void onEnable() {}
 
   /**
    * Get the name of this listener

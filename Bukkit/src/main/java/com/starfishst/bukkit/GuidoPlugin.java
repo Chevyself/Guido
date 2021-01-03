@@ -145,6 +145,7 @@ public class GuidoPlugin extends JavaPlugin {
       if (listener.isEnabled()) {
         this.getLogger().info(listener.getName() + " has been registered");
         listener.register(this);
+        listener.onEnable();
       } else {
         this.getLogger().info(listener.getName() + " was not enabled");
       }

@@ -58,6 +58,15 @@ public class Guido {
   }
 
   /**
+   * Get whether PAPI is connected with the plugin
+   *
+   * @return true if pgm is connected
+   */
+  public static boolean isPAPIConnected() {
+    return Guido.validated().getDependencies().getDependency("PlaceholderAPI").isEnabled();
+  }
+
+  /**
    * Sets the plugin that this util is using
    *
    * @param plugin the plugin to set

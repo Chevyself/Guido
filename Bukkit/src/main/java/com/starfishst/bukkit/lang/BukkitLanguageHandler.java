@@ -17,6 +17,7 @@ import me.googas.commons.Lots;
 import me.googas.commons.maps.MapBuilder;
 import me.googas.commons.maps.Maps;
 import org.bukkit.Bukkit;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -126,8 +127,20 @@ public class BukkitLanguageHandler implements GuidoListener, MessagesProvider {
    */
   public void broadcast(@NonNull String key, @NonNull Map<String, String> placeholders) {
     for (Player player : Bukkit.getOnlinePlayers()) {
-      player.sendMessage(this.getFile(player).get(key, placeholders));
+      player.sendMessage(this.getFile((CommandSender) player).get(key, placeholders));
     }
+  }
+
+  @NonNull
+  public BukkitLocaleFile getFile(@NonNull Player player) {
+    return this.getFile(player.spigot().getLocale().split("_")[0]);
+  }
+
+  @NonNull
+  public BukkitLocaleFile getFile(@NonNull OfflinePlayer player) {
+    Player onlinePlayer = player.getPlayer();
+    if (onlinePlayer != null) return this.getFile((CommandSender) onlinePlayer);
+    return this.getDefault();
   }
 
   /**

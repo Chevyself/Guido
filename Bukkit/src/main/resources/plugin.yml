@@ -23,3 +23,5 @@ softdepend:
   # ProtocolLib is a library to easily use minecraft packets this is the latest version of
   # the plugin, no fork needed.
   - ProtocolLib
+  # This is to have richer placeholders as many plugins already use this api
+  - PlaceholderAPI

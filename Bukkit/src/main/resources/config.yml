@@ -91,3 +91,13 @@ listener-settings:
     multiplier-vertical-air: 0.4
     multiplier-sprint: 0.8
     multiplier-walk: 0.4
+  ## A custom scoreboard that supports PAPI placeholders
+  ## Localized lines are supported just add a `localized:` prefix and the line will be looked in language files!
+  scoreboard:
+    ## Whether to have a custom scoreboard
+    enabled: true
+    title: "localized:scoreboard.title"
+    ## This is the layout of the scoreboard
+    layout:
+      - "localized:scoreboard.ping"
+      - "&egoogas.me"
