@@ -90,4 +90,9 @@ public class BungeeRequest<T> extends Request<T> {
     }
     throw new MessengerListenFailException("There's not connection with the bot");
   }
+
+  /** Send the request and don't mind the result */
+  public void queue() {
+    this.send(t -> {});
+  }
 }

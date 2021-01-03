@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import lombok.NonNull;
+import me.googas.commons.builder.ToStringBuilder;
 import net.md_5.bungee.config.Configuration;
 
 /** The default yaml configuration for the bot */
@@ -96,16 +97,11 @@ public class GuidoBungeeConfiguration implements BungeeConfiguration {
 
   @Override
   public String toString() {
-    return "GuidoBungeeConfiguration{"
-        + "token='"
-        + this.token
-        + '\''
-        + ", guildId="
-        + this.guildId
-        + ", servers="
-        + this.servers
-        + ", settings="
-        + this.settings
-        + '}';
+    return new ToStringBuilder(this)
+            .append("token", this.token)
+            .append("guildId", this.guildId)
+            .append("servers", this.servers)
+            .append("settings", this.settings)
+            .build();
   }
 }

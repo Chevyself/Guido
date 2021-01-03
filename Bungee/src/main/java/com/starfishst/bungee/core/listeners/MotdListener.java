@@ -15,6 +15,7 @@ import net.md_5.bungee.api.ServerPing;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.event.ProxyPingEvent;
 import net.md_5.bungee.event.EventHandler;
+import net.md_5.bungee.event.EventPriority;
 
 /** Changes the motd when a player pings the server */
 public class MotdListener implements GuidoListener {
@@ -51,7 +52,7 @@ public class MotdListener implements GuidoListener {
    *
    * @param event the event of a proxy
    */
-  @EventHandler(priority = 5)
+  @EventHandler(priority = EventPriority.NORMAL)
   public void onProxyPing(ProxyPingEvent event) {
     event.setResponse(this.getPing(event));
   }

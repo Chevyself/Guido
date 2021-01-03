@@ -13,6 +13,9 @@ invalid:
   group: "&e%string% &cis not a valid group!"
 missing-argument: "&cYou are missing &e%name% &cin the position &e%position% &cit is &e%description%"
 not-allowed: "&cYou are not allowed to use this command"
+## Punishments
+server:
+  under-maintenance: "&cThe server is currently under maintenance and the access is restricted"
 ## Link command
 link:
   linked: "&cYour account is already linked"

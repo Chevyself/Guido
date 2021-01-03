@@ -2,6 +2,7 @@ package com.starfishst.bungee.core.configuration;
 
 import com.starfishst.bungee.api.configuration.GuidoServer;
 import lombok.NonNull;
+import me.googas.commons.builder.ToStringBuilder;
 
 /** An implementation for guido servers */
 public class SimpleGuidoServer implements GuidoServer {
@@ -45,15 +46,10 @@ public class SimpleGuidoServer implements GuidoServer {
 
   @Override
   public String toString() {
-    return "SimpleGuidoServer{"
-        + "name='"
-        + this.name
-        + '\''
-        + ", address='"
-        + this.address
-        + '\''
-        + ", restricted="
-        + this.restricted
-        + '}';
+    return new ToStringBuilder(this)
+            .append("name", this.name)
+            .append("address", this.address)
+            .append("restricted", this.restricted)
+            .build();
   }
 }

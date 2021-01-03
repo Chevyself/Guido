@@ -44,7 +44,6 @@ public class ProxiedOfflinePlayer {
   /**
    * Get the unique id of the player.
    *
-   * @deprecated use {@link #getParams()} when allowed
    * @return the unique id
    */
   @NonNull
@@ -55,34 +54,11 @@ public class ProxiedOfflinePlayer {
   /**
    * Get the nickname of the offline user
    *
-   * @deprecated use {@link #getParams()} when allowed
    * @return the nickname
    */
   @NonNull
   public String getNickname() {
     return this.nickname;
-  }
-
-  /**
-   * Get the map of parameters for the player
-   *
-   * @deprecated use {@link #getLinkedInfo()}
-   * @return the parameters of the player
-   */
-  public Map<String, Object> getParams() {
-    return this.getBuilder().build();
-  }
-
-  /**
-   * Get the map of parameters builder for the player
-   *
-   * @deprecated use {@link #getLinkedInfo()}
-   * @return the parameters of the player
-   */
-  public MapBuilder<String, Object> getBuilder() {
-    return Maps.objects(
-            "identification", Maps.singleton("uuid", UUIDUtils.trim(this.getUniqueId())))
-        .append("type", LinkableType.MINECRAFT);
   }
 
   /**

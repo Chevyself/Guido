@@ -4,11 +4,14 @@ import com.starfishst.bungee.api.events.GuidoListener;
 import com.starfishst.bungee.core.client.requests.BungeeRequest;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.function.Consumer;
 import lombok.NonNull;
 import me.googas.api.permissions.Group;
 import me.googas.commons.Lots;
+import net.md_5.bungee.api.connection.ProxiedPlayer;
 
 /** Handles groups used for permissions */
 public class GroupListener implements GuidoListener {
@@ -53,6 +56,7 @@ public class GroupListener implements GuidoListener {
    *
    * @param permission the permission to match
    * @return the group if matches null otherwise
+   * @deprecated since BETA-4 no longer used
    */
   public Group getGroupByPermission(@NonNull String permission) {
     for (Group group : this.groups) {
@@ -98,6 +102,28 @@ public class GroupListener implements GuidoListener {
       if (group.getId().equals(id)) return group;
     }
     return null;
+  }
+
+  @NonNull
+  public List<Group> getGroups(@NonNull ProxiedPlayer player, boolean sorted) {
+    List<Group> groups = new ArrayList<>();
+    for (Group group : this.groups) {
+      if (player.hasPermission(this.toPermission(group))) groups.add(group);
+    }
+    if (sorted) {
+      groups.sort(Comparator.comparingInt(Group::getWeight));
+      Collections.reverse(groups);
+    }
+    return groups;
+  }
+
+  public List<Group> getParents(@NonNull List<Group> groups) {
+    List<Group> parents = new ArrayList<>();
+    if (groups.isEmpty()) return parents;
+    for (Group group : groups) {
+      parents.addAll(this.getParents(group));
+    }
+    return parents;
   }
 
   /**

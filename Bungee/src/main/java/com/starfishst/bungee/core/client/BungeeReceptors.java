@@ -4,7 +4,6 @@ import com.starfishst.bungee.api.Guido;
 import com.starfishst.bungee.api.configuration.GuidoServer;
 import com.starfishst.bungee.api.events.GuidoListener;
 import com.starfishst.bungee.core.lang.BungeeLocaleFile;
-import com.starfishst.bungee.core.listeners.JoinListener;
 import com.starfishst.bungee.utils.BungeeUtils;
 import java.util.ArrayList;
 import java.util.HashSet;
