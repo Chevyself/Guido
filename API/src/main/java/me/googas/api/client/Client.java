@@ -7,6 +7,7 @@ import java.util.Set;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.Setter;
+import lombok.experimental.Delegate;
 import me.googas.annotations.Nullable;
 import me.googas.api.Adapters;
 import me.googas.api.client.receptors.SimpleReceptors;
@@ -21,14 +22,28 @@ public class Client {
   /** An static instance of client to use */
   @Nullable @Getter @Setter private static Client instance;
 
-  public interface ClientMethods {
-    void addReceptors(Object... receptors);
-  }
+  /** The receptors that the client is using */
+  @NonNull @Setter private Set<Object> receptors = Lots.set(new SimpleReceptors(this));
 
   /** The ip of the server of the bot */
   @NonNull @Getter @Setter private String ip;
-  /** The receptors that the client is using */
-  @NonNull @Getter @Setter private Set<Object> receptors = Lots.set(new SimpleReceptors(this));
+
+  /**
+   * Get the validated connection from {@link #validatedConnection()} but if it throws the
+   * IOException it will throw a null pointer
+   *
+   * @return the validated connection
+   * @throws NullPointerException if there's no connection and no connection could be stabilised
+   */
+  @NonNull
+  @Delegate(excludes = ClientMethods.class)
+  public JsonClient validated() {
+    try {
+      return this.validatedConnection();
+    } catch (IOException e) {
+      throw new NullPointerException("Could not validate connection with Guido-Bot!");
+    }
+  }
 
   /** The port of the server ofo the bot */
   @Getter @Setter private int port;
@@ -106,6 +121,11 @@ public class Client {
     } else {
       return this.startConnection();
     }
+  }
+
+  @SuppressWarnings("unused")
+  public interface ClientMethods {
+    void addReceptors(Object... receptors);
   }
 
   /**
