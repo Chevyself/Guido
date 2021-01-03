@@ -22,7 +22,12 @@ import com.starfishst.bungee.core.listeners.PunishmentsListener;
 import java.io.File;
 import java.io.IOException;
 import java.net.InetSocketAddress;
+import java.util.ArrayList;
 import java.util.List;
+
+import com.starfishst.bungee.core.utility.Config;
+import com.starfishst.bungee.core.utility.Proxy;
+import lombok.Getter;
 import lombok.NonNull;
 import me.googas.api.client.Client;
 import me.googas.commons.CoreFiles;
@@ -37,17 +42,17 @@ import net.md_5.bungee.config.YamlConfiguration;
 public class GuidoPlugin extends Plugin {
 
   /** The bungee language handler */
-  @NonNull
+  @NonNull @Getter
   private final BungeeLanguageHandler languageHandler =
       new BungeeLanguageHandler().loadResources(this, "en");
 
   /** The command manager */
-  @NonNull
+  @NonNull @Getter
   private final CommandManager manager =
       new CommandManager(
           this, this.languageHandler, new GuidoProvidersRegistry(this.languageHandler));
   /** The listeners being used by the plugin */
-  @NonNull
+  @NonNull @Getter
   private final List<GuidoListener> listeners =
       Lots.list(
           this.languageHandler,
@@ -57,9 +62,10 @@ public class GuidoPlugin extends Plugin {
           new PermissionsListener(),
           new PunishmentsListener());
   /** The client connected with the bot */
-  @NonNull private final BungeeClient client = new BungeeClient("0");
+  @NonNull @Getter private final BungeeClient client = new BungeeClient("0");
   /** The bungeeConfiguration that the plugin will use */
-  @NonNull private BungeeConfiguration bungeeConfiguration = new GuidoBungeeConfiguration();
+  @NonNull @Getter
+  private BungeeConfiguration configuration = new GuidoBungeeConfiguration();
 
   /** Loads the configuration */
   public void loadConfiguration() {
@@ -72,7 +78,7 @@ public class GuidoPlugin extends Plugin {
       File file =
           CoreFiles.getFileOrResource(
               dataFolder.getPath() + "/config.yml", this.getResourceAsStream("config.yml"));
-      this.bungeeConfiguration =
+      this.configuration =
           new GuidoBungeeConfiguration(
               ConfigurationProvider.getProvider(YamlConfiguration.class).load(file));
     } catch (IOException e) {
@@ -84,13 +90,13 @@ public class GuidoPlugin extends Plugin {
   /** Loads the servers that can be connected */
   public void loadServers() {
     ProxyServer proxy = this.getProxy();
-    for (GuidoServer server : this.bungeeConfiguration.getServers()) {
+    List<GuidoServer> servers = this.configuration.getServers();
+    Proxy.unloadServers( servers);
+    for (GuidoServer server : servers) {
       if (proxy.getServerInfo(server.getName()) == null) {
         InetSocketAddress address = server.constructAddress();
-        this.getLogger().info("Using address " + address);
         ServerInfo serverInfo =
             proxy.constructServerInfo(server.getName(), address, "Ignored", server.isRestricted());
-        this.getLogger().info(serverInfo + " has been created");
         proxy.getServers().put(server.getName(), serverInfo);
       }
     }
@@ -113,46 +119,11 @@ public class GuidoPlugin extends Plugin {
         "The listener " + clazz.getSimpleName() + " has not been loaded");
   }
 
-  /**
-   * Get the bungeeConfiguration for the guido plugin
-   *
-   * @return the bungeeConfiguration for the guido plugin
-   */
-  @NonNull
-  public BungeeConfiguration getBungeeConfiguration() {
-    return this.bungeeConfiguration;
-  }
-
-  @Override
-  public void onDisable() {
-    this.client.disconnect();
-    super.onDisable();
-  }
-
-  /**
-   * Get the client that is connected to the bot
-   *
-   * @return the client
-   */
-  public @NonNull Client getClient() {
-    return this.client;
-  }
-
-  /**
-   * Get the language handler that the plugin is using
-   *
-   * @return the language handler
-   */
-  @NonNull
-  public BungeeLanguageHandler getLanguageHandler() {
-    return this.languageHandler;
-  }
-
   @Override
   public void onEnable() {
     Guido.setPlugin(this);
     this.loadConfiguration();
-    this.client.setToken(this.bungeeConfiguration.getToken());
+    this.client.setToken(this.configuration.getToken());
     try {
       this.client.startConnection();
     } catch (IOException e) {

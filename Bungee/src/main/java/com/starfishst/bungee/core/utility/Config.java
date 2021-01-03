@@ -5,6 +5,7 @@ import com.starfishst.bungee.api.configuration.GuidoServer;
 import com.starfishst.bungee.core.configuration.SimpleGuidoListenerSettings;
 import com.starfishst.bungee.core.configuration.SimpleGuidoServer;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -45,4 +46,12 @@ public class Config {
     }
     return parsedSettings;
   }
+
+  public static boolean isSafeToDelete(@NonNull String serverName, @NonNull Collection<GuidoServer> servers) {
+    for (GuidoServer server : servers) {
+      if (server.getName().equalsIgnoreCase(serverName)) return false;
+    }
+    return true;
+  }
+
 }

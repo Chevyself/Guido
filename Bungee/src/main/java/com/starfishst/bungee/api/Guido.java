@@ -55,7 +55,7 @@ public class Guido {
    */
   @NonNull
   public static BungeeConfiguration getConfiguration() {
-    return Guido.validated().getBungeeConfiguration();
+    return Guido.validated().getConfiguration();
   }
 
   /**
