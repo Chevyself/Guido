@@ -3,11 +3,11 @@ package com.starfishst.bukkit.listeners;
 import com.starfishst.bukkit.api.Guido;
 import com.starfishst.bukkit.api.events.GuidoListener;
 import com.starfishst.bukkit.utils.BukkitUtils;
-import java.util.ArrayList;
 import java.util.List;
 import lombok.NonNull;
 import me.googas.api.permissions.Group;
 import me.googas.commons.Strings;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.player.PlayerLoginEvent;
@@ -22,20 +22,12 @@ public class DecorationsListener implements GuidoListener {
    */
   @EventHandler(priority = EventPriority.HIGHEST)
   public void onPlayerLoginEvent(PlayerLoginEvent event) {
-    PermissionListener permissions = Guido.getListener(PermissionListener.class);
-    if (permissions != null) {
-      List<Group> groups = new ArrayList<>(permissions.getGroups(event.getPlayer().getUniqueId()));
-      Guido.getLogger().info("Groups of " + event.getPlayer().getUniqueId() + " " + groups);
-      String displayName =
-          BukkitUtils.build(
-              this.getPrefixes(groups)
-                  + event.getPlayer().getName()
-                  + this.getSuffixes(groups)
-                  + "&r");
-      Guido.getLogger()
-          .info("Display name of " + event.getPlayer().getUniqueId() + " " + displayName);
-      event.getPlayer().setDisplayName(displayName);
-    }
+    Player player = event.getPlayer();
+    List<Group> groups = this.groups().getGroups(player);
+    String displayName =
+        BukkitUtils.build(
+            this.getPrefixes(groups) + player.getName() + this.getSuffixes(groups) + "&r");
+    player.setDisplayName(displayName);
   }
 
   /**
@@ -96,17 +88,13 @@ public class DecorationsListener implements GuidoListener {
     }
   }
 
-  /** Called on {@link #unregister()} */
-  @Override
-  public void onUnload() {}
-
-  /**
-   * Get the name of this listener
-   *
-   * @return the name of the listener
-   */
   @Override
   public @NonNull String getName() {
     return "decorations";
+  }
+
+  @NonNull
+  private GroupsListener groups() {
+    return Guido.getListener(GroupsListener.class);
   }
 }

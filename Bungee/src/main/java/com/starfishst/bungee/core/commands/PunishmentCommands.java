@@ -71,27 +71,27 @@ public class PunishmentCommands {
             });
   }
 
-    @Settings("async")
-    @Command(aliases = "kick", permission = "guido.kick")
-    public void kick(
-            CommandSender sender,
-            BungeeLocaleFile locale,
-            @Required(name = "Player", description = "The player to ban") ProxiedOfflinePlayer player,
-            @Multiple @Required(name = "Reason", description = "The reason to why the player is banned")
-                    JoinedStrings reason) {
-        this.punish(PunishmentType.KICK, sender, player, reason.build(), new Time(1, Unit.MONTHS))
-                .sendIfPresent(
-                        punishment -> {
-                            ProxiedPlayer proxy = player.toProxy();
-                            sender.sendMessage(
-                                    locale.getComponent(
-                                            "kick.success", Maps.singleton("nickname", player.getNickname())));
-                            if (proxy == null) return;
-                            proxy.disconnect(
-                                    Chat.getLocale(proxy)
-                                            .getComponent("server.kicked", Maps.singleton("reason", reason.build())));
-                        });
-    }
+  @Settings("async")
+  @Command(aliases = "kick", permission = "guido.kick")
+  public void kick(
+      CommandSender sender,
+      BungeeLocaleFile locale,
+      @Required(name = "Player", description = "The player to ban") ProxiedOfflinePlayer player,
+      @Multiple @Required(name = "Reason", description = "The reason to why the player is banned")
+          JoinedStrings reason) {
+    this.punish(PunishmentType.KICK, sender, player, reason.build(), new Time(1, Unit.MONTHS))
+        .sendIfPresent(
+            punishment -> {
+              ProxiedPlayer proxy = player.toProxy();
+              sender.sendMessage(
+                  locale.getComponent(
+                      "kick.success", Maps.singleton("nickname", player.getNickname())));
+              if (proxy == null) return;
+              proxy.disconnect(
+                  Chat.getLocale(proxy)
+                      .getComponent("server.kicked", Maps.singleton("reason", reason.build())));
+            });
+  }
 
   @NonNull
   private BungeeRequest<Punishment> punish(

@@ -4,30 +4,23 @@ import com.starfishst.bukkit.GuidoPlugin;
 import com.starfishst.bukkit.api.Guido;
 import com.starfishst.bukkit.api.events.GuidoListener;
 import com.starfishst.bukkit.client.BukkitBooleanRequest;
-import java.io.IOException;
-import java.util.ArrayList;
+import com.starfishst.bukkit.client.BukkitRequest;
 import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 import lombok.NonNull;
 import me.googas.api.client.data.SimpleValuesMap;
 import me.googas.api.client.data.links.SimpleLinkableInfo;
-import me.googas.api.client.data.permissions.SimplePermissionStack;
+import me.googas.api.links.LinkableInfo;
 import me.googas.api.links.LinkableType;
-import me.googas.api.permissions.Group;
 import me.googas.api.permissions.Permission;
 import me.googas.api.permissions.PermissionStack;
 import me.googas.commons.UUIDUtils;
 import me.googas.commons.maps.Maps;
-import me.googas.messaging.Request;
 import me.googas.messaging.api.MessengerListenFailException;
-import me.googas.messaging.json.client.JsonClient;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -38,9 +31,6 @@ import org.bukkit.permissions.PermissionAttachment;
 
 /** Listens to changes to the player and player data to add or remove permissions */
 public class PermissionListener implements GuidoListener {
-
-  /** A map of the users and the groups that they have. Groups must be sorted when added here */
-  @NonNull private final Map<UUID, Collection<Group>> groups = new HashMap<>();
 
   /** Permissions are given to the server in async then are added to the player */
   @NonNull private final Map<UUID, Collection<Permission>> toGive = new HashMap<>();
@@ -71,7 +61,6 @@ public class PermissionListener implements GuidoListener {
     UUID uniqueId = player.getUniqueId();
     player.removeAttachment(this.getAttachment(player));
     this.attachments.remove(uniqueId);
-    this.groups.remove(uniqueId);
   }
 
   /**
@@ -107,63 +96,25 @@ public class PermissionListener implements GuidoListener {
   @EventHandler(priority = EventPriority.LOWEST)
   public void onPlayerLogin(AsyncPlayerPreLoginEvent event) {
     UUID uniqueId = event.getUniqueId();
-
     try {
-      JsonClient connection = Guido.getClient().validatedConnection();
-
       if (!this.checkBungee(event)) return;
-      Guido.getLogger().info("Bungee checked the player as true");
-      SimpleLinkableInfo info =
+      LinkableInfo link =
           new SimpleLinkableInfo(
               LinkableType.MINECRAFT,
               new SimpleValuesMap(Maps.singleton("uuid", UUIDUtils.trim(uniqueId))));
       String context = Guido.getConfiguration().getContext();
-      SimplePermissionStack stack =
-          connection.sendRequest(
-              new Request<>(
-                  SimplePermissionStack.class,
-                  "permission",
-                  Maps.objects("context", context).append("info", info).build()));
-      GroupListener groupListener = Guido.getListener(GroupListener.class);
+      PermissionStack stack =
+          new BukkitRequest<>(
+                  PermissionStack.class,
+                  "link/permissions",
+                  Maps.objects("link", link).append("context", context).append("global", true))
+              .send();
       Set<Permission> permissionsToGive = new HashSet<>();
-      List<Group> groups = new ArrayList<>();
-      Guido.getLogger().info("uuid: " + uniqueId + " permissions stack " + stack);
       if (stack != null && !stack.getPermissions().isEmpty()) {
-        for (Permission permission : stack.getPermissions()) {
-          if (groupListener != null && permission.getNode().startsWith("guido.group.")) {
-            Group group = groupListener.getGroupByPermission(permission.getNode());
-            groups.add(group);
-          }
-          permissionsToGive.add(permission);
-        }
-      }
-      ArrayList<Group> groupsCopy = new ArrayList<>(groups);
-      for (Group group : groupsCopy) {
-        if (groupListener == null) break;
-        groups.addAll(groupListener.getParents(group));
-      }
-      groups.sort(Comparator.comparingInt(Group::getWeight));
-      Guido.getLogger().info("Permissions with no groups " + permissionsToGive);
-
-      groups.sort(Comparator.comparingInt(Group::getWeight));
-      Collections.reverse(groups);
-      for (Group group : groups) {
-        PermissionStack permissions = group.getPermissions(context);
-        PermissionStack global = group.getPermissions("global");
-        if (permissions != null && !permissions.getPermissions().isEmpty()) {
-          for (Permission permission : permissions.getPermissions()) {
-            this.replaceOrAdd(permissionsToGive, permission);
-          }
-        }
-        if (global != null && !global.getPermissions().isEmpty()) {
-          for (Permission permission : global.getPermissions()) {
-            this.replaceOrAdd(permissionsToGive, permission);
-          }
-        }
+        permissionsToGive.addAll(stack.getPermissions());
       }
       this.toGive.put(uniqueId, permissionsToGive);
-      this.groups.put(uniqueId, groups);
-    } catch (IOException | MessengerListenFailException e) {
+    } catch (MessengerListenFailException e) {
       e.printStackTrace();
     }
   }
@@ -177,9 +128,10 @@ public class PermissionListener implements GuidoListener {
    */
   public boolean checkBungee(@NonNull AsyncPlayerPreLoginEvent event)
       throws MessengerListenFailException {
-    if (this.getSettings().getOr("bungee", Boolean.class, false)) {
+    if (Guido.isBungee()) {
       Boolean bol =
-          new BukkitBooleanRequest("is-bungee", Maps.singleton("uuid", event.getUniqueId())).send();
+          new BukkitBooleanRequest("bungee/is-online", Maps.singleton("uuid", event.getUniqueId()))
+              .send();
       if (bol != null) {
         if (!bol) {
           event.disallow(
@@ -217,7 +169,6 @@ public class PermissionListener implements GuidoListener {
   @EventHandler(priority = EventPriority.LOWEST)
   public void onPlayerJoin(PlayerLoginEvent event) {
     Collection<Permission> permissions = this.toGive.get(event.getPlayer().getUniqueId());
-    Guido.getLogger().info("Permissions to give " + event.getPlayer() + " are " + permissions);
     if (permissions != null) {
       for (Permission permission : permissions) {
         if (permission.isEnabled()) {
@@ -244,17 +195,6 @@ public class PermissionListener implements GuidoListener {
       this.attachments.put(player.getUniqueId(), attachment);
     }
     return attachment;
-  }
-
-  /**
-   * Get the groups for the specified uuid
-   *
-   * @param uuid the uuid to get the groups
-   * @return the groups
-   */
-  @NonNull
-  public Collection<Group> getGroups(@NonNull UUID uuid) {
-    return this.groups.getOrDefault(uuid, new ArrayList<>());
   }
 
   @Override

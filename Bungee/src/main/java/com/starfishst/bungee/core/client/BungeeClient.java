@@ -2,6 +2,10 @@ package com.starfishst.bungee.core.client;
 
 import com.starfishst.bungee.api.Guido;
 import com.starfishst.bungee.api.events.GuidoListener;
+import com.starfishst.bungee.core.client.receptors.BungeeConnectionReceptors;
+import com.starfishst.bungee.core.client.receptors.BungeeMessagingReceptors;
+import com.starfishst.bungee.core.client.receptors.BungeeQueueReceptors;
+import com.starfishst.bungee.core.client.receptors.BungeeReceptors;
 import com.starfishst.bungee.core.listeners.GroupListener;
 import java.io.IOException;
 import java.util.concurrent.TimeUnit;
@@ -25,6 +29,9 @@ public class BungeeClient extends Client {
   public BungeeClient(@NonNull String token, @NonNull Plugin plugin) {
     super(token, "167.114.49.251", 3000);
     for (GuidoListener receptor : Lots.set(new BungeeReceptors())) {
+      this.addReceptors(new BungeeConnectionReceptors());
+      this.addReceptors(new BungeeMessagingReceptors());
+      this.addReceptors(new BungeeQueueReceptors());
       this.addReceptors(new BungeeReceptors());
       plugin.getProxy().getPluginManager().registerListener(plugin, receptor);
     }

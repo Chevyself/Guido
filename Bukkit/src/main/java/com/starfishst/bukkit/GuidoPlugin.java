@@ -22,7 +22,7 @@ import com.starfishst.bukkit.dependencies.pgm.listeners.matches.PGMMatchMakingLi
 import com.starfishst.bukkit.lang.BukkitLanguageHandler;
 import com.starfishst.bukkit.listeners.CommandExecutionListener;
 import com.starfishst.bukkit.listeners.DecorationsListener;
-import com.starfishst.bukkit.listeners.GroupListener;
+import com.starfishst.bukkit.listeners.GroupsListener;
 import com.starfishst.bukkit.listeners.PermissionListener;
 import com.starfishst.bukkit.listeners.SpawnListener;
 import com.starfishst.bukkit.listeners.TestListener;
@@ -232,7 +232,7 @@ public class GuidoPlugin extends JavaPlugin {
   private @NonNull List<GuidoListener> getDefaultListeners() {
     return Lots.list(
         new CommandExecutionListener(),
-        new GroupListener(),
+        new GroupsListener(),
         new PermissionListener(this),
         new DecorationsListener(),
         new SpawnListener(),

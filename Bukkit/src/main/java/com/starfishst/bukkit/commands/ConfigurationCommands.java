@@ -4,7 +4,7 @@ import com.starfishst.bukkit.annotations.Command;
 import com.starfishst.bukkit.api.Guido;
 import com.starfishst.bukkit.api.commands.GuidoCommand;
 import com.starfishst.bukkit.lang.BukkitLocaleFile;
-import com.starfishst.bukkit.listeners.GroupListener;
+import com.starfishst.bukkit.listeners.GroupsListener;
 import com.starfishst.bukkit.result.Result;
 import com.starfishst.core.annotations.Settings;
 import lombok.NonNull;
@@ -24,7 +24,7 @@ public class ConfigurationCommands implements GuidoCommand {
   @Settings("async")
   @Command(aliases = "groups", description = "groups.desc", permission = "guido.config.groups")
   public Result groups(BukkitLocaleFile locale, CommandSender sender) {
-    Guido.getListener(GroupListener.class)
+    Guido.getListener(GroupsListener.class)
         .reload(
             loaded -> {
               if (loaded != null) {

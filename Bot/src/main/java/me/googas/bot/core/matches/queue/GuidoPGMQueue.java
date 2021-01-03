@@ -45,6 +45,7 @@ public class GuidoPGMQueue extends GuidoQueue {
   public GuidoMatch checkReady() {
     Ladder ladder = this.getLadder();
     // TODO if there is more than 30 people playing create a queue based on elo
+    // to create this we should create playlist to count people playing on it not people in queue
     if (this.getWaiting().size() >= ladder.playersPerTeam() * 2) {
       Set<TeamMember> participants = new HashSet<>();
       for (int i = 0; i < ladder.playersPerTeam() * 2; i++) {
@@ -84,13 +85,13 @@ public class GuidoPGMQueue extends GuidoQueue {
     try {
       Boolean bol =
           bungee.sendRequest(
-              new Request<>(Boolean.class, "is-online", Maps.singleton("uuid", uuid)));
+              new Request<>(Boolean.class, "bungee/is-online", Maps.singleton("uuid", uuid)));
       if (bol != null) {
         if (bol) {
           QueueResult join = super.join(queueable);
           if (join.isCancelled()) return join;
           bungee.sendRequest(
-              new Request<>(Boolean.class, "add-queue", Maps.singleton("uuid", uuid)),
+              new Request<>(Boolean.class, "bungee/add-queue", Maps.singleton("uuid", uuid)),
               ignored -> {});
         } else {
           return new QueueResult(locale.get("pgm-queue.join-server"));

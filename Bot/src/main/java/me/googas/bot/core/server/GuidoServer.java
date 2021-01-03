@@ -7,6 +7,7 @@ import me.googas.bot.Guido;
 import me.googas.bot.api.events.server.GuidoServerConnectionEvent;
 import me.googas.bot.api.events.server.GuidoServerDisconnectionEvent;
 import me.googas.bot.api.server.BotServer;
+import me.googas.bot.core.server.receptors.bungee.BungeeReceptors;
 import me.googas.bot.core.server.receptors.handlers.LinkReceptors;
 import me.googas.bot.core.server.receptors.handlers.QueueReceptors;
 import me.googas.bot.core.server.receptors.links.MinecraftReceptor;
@@ -45,6 +46,7 @@ public class GuidoServer extends JsonSocketServer implements BotServer {
         timeout);
     this.setAuthenticator(this.authenticator);
     this.addReceptors(
+        new BungeeReceptors(),
         new LinkReceptors(),
         new QueueReceptors(),
         new LinkReceptors(),

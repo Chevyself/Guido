@@ -28,12 +28,10 @@ public interface GuidoListener extends Listener {
   /** Called on {@link #unregister()} */
   default void onUnload() {}
 
-  /**
-   * Called after {@link #onEnable()}
-   */
-    default void onEnable() {}
+  /** Called after {@link #onEnable()} */
+  default void onEnable() {}
 
-    /**
+  /**
    * Get the name of the listener
    *
    * @return the name of the listener

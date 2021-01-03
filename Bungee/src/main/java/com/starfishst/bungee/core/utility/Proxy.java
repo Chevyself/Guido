@@ -1,11 +1,14 @@
 package com.starfishst.bungee.core.utility;
 
+import com.starfishst.bungee.api.Guido;
 import com.starfishst.bungee.api.configuration.GuidoServer;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import lombok.NonNull;
+import me.googas.annotations.Nullable;
 import net.md_5.bungee.api.ProxyServer;
+import net.md_5.bungee.api.config.ServerInfo;
 
 /** Static methods for the proxy bungee server */
 public class Proxy {
@@ -23,6 +26,22 @@ public class Proxy {
               if (Config.isSafeToDelete(name, servers)) safeToDelete.add(name);
             });
     safeToDelete.forEach(name -> Proxy.instance().getServers().remove(name));
+  }
+
+  @Nullable
+  public static ServerInfo getServer(@NonNull String ip) {
+    for (GuidoServer server : Guido.getConfiguration().getServers()) {
+      Guido.getLogger().info(ip);
+      if (server.getAddress().equalsIgnoreCase(ip)) {
+        return ProxyServer.getInstance().getServerInfo(server.getName());
+      }
+      if (server.getAddress().startsWith("localhost")) {
+        if (server.getAddress().substring(9).equalsIgnoreCase(ip)) {
+          return ProxyServer.getInstance().getServerInfo(server.getName());
+        }
+      }
+    }
+    return null;
   }
 
   @NonNull

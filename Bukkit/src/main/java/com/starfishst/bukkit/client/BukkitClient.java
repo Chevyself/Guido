@@ -1,7 +1,7 @@
 package com.starfishst.bukkit.client;
 
 import com.starfishst.bukkit.api.Guido;
-import com.starfishst.bukkit.listeners.GroupListener;
+import com.starfishst.bukkit.listeners.GroupsListener;
 import java.io.IOException;
 import lombok.NonNull;
 import me.googas.api.client.Client;
@@ -45,7 +45,7 @@ public class BukkitClient extends Client {
   @Override
   public void onAuthentication(boolean authenticated) {
     if (authenticated) {
-      Guido.validated().requireListener(GroupListener.class).loadGroups(null);
+      Guido.validated().requireListener(GroupsListener.class).loadGroups(null);
     }
   }
 }

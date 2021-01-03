@@ -41,8 +41,7 @@ import net.md_5.bungee.config.YamlConfiguration;
 /** The guido plugin for Bungee */
 public class GuidoPlugin extends Plugin {
 
-  @NonNull @Getter
-  private final Scheduler scheduler = new BungeeScheduler(this);
+  @NonNull @Getter private final Scheduler scheduler = new BungeeScheduler(this);
   /** The bungee language handler */
   @NonNull @Getter
   private final BungeeLanguageHandler languageHandler =

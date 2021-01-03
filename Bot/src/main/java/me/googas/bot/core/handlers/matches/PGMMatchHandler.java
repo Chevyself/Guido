@@ -76,7 +76,7 @@ public class PGMMatchHandler implements MatchHandler {
     JsonClientThread bungee = server.getAuthenticator().getBungee();
     if (bungee != null) {
       server.sendRequest(
-          new Request<>(Boolean.class, "can-host", Maps.singleton("match", match)),
+          new Request<>(Boolean.class, "server/can-host", Maps.singleton("match", match)),
           ((messenger, canHost) -> {
             if (this.waitingForServer.contains(match)
                 && canHost != null
@@ -104,7 +104,7 @@ public class PGMMatchHandler implements MatchHandler {
           UUIDUtils.untrim(Validate.notNull(trimmed, "Queueing user does not have uuid")));
     }
     messenger.sendRequest(
-        new Request<>(String.class, "host", Maps.singleton("match", match)),
+        new Request<>(String.class, "server/host", Maps.singleton("match", match)),
         serverIp ->
             serverIp.ifPresent(s -> this.sendParticipantsToServer(bungee, s, participants)));
   }
@@ -123,7 +123,7 @@ public class PGMMatchHandler implements MatchHandler {
     bungee.sendRequest(
         new Request<>(
             Boolean.class,
-            "send-to-server-by-ip",
+            "bungee/send-to-server-by-ip",
             Maps.objects("uuids", participants).append("server", serverIp).build()),
         joined -> {});
   }

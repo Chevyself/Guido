@@ -18,6 +18,7 @@ import me.googas.api.matches.team.Team;
 import me.googas.api.permissions.Group;
 import me.googas.api.permissions.GroupInfo;
 import me.googas.api.punishment.Punishment;
+import me.googas.api.punishment.PunishmentStatus;
 import me.googas.api.token.AuthToken;
 import me.googas.api.user.UserData;
 import me.googas.bot.api.events.data.guild.BotGuildUnloadedEvent;
@@ -107,16 +108,15 @@ public class GuidoFileLoader implements BotDataLoader {
     return 0;
   }
 
-  /**
-   * Get the max page of the leaderboard in a stat
-   *
-   * @param stat the stat to see the max page
-   * @param size the size of documents per page
-   * @return the maximum page of the leaderboard
-   */
   @Override
   public long maxPageLeaderboard(@NonNull String stat, int size) {
     return 0;
+  }
+
+  @Override
+  public @NonNull Collection<Punishment> getPunishments(
+      @NonNull LinkableInfo link, @NonNull PunishmentStatus... statuses) {
+    return new ArrayList<>();
   }
 
   @Override

@@ -136,4 +136,8 @@ public class Guido {
   public static CommandManager getCommandManager() {
     return Guido.validated().getCommandManager();
   }
+
+  public static boolean isBungee() {
+    return Bukkit.spigot().getSpigotConfig().getBoolean("setting.bungeecord", false);
+  }
 }
