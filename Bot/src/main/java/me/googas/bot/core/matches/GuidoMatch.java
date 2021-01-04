@@ -30,7 +30,7 @@ public class GuidoMatch implements Match, BotCatchable {
 
   @NonNull private final String id;
   private final long guildId;
-  @NonNull private final Set<MatchTeam> matchTeams;
+  @NonNull private final Set<MatchTeam> teams;
   @NonNull private final GuidoLinkedValuesMap details;
   @NonNull private MatchStatus status;
   private int winners;
@@ -41,7 +41,7 @@ public class GuidoMatch implements Match, BotCatchable {
    * @param id the id of the match
    * @param guildId the id of the guild where the match happened
    * @param status the status of the match
-   * @param matchTeams the matchTeams inside the match
+   * @param teams the matchTeams inside the match
    * @param details the details of the match
    * @param winners the winners of the match
    */
@@ -49,13 +49,13 @@ public class GuidoMatch implements Match, BotCatchable {
       @NonNull String id,
       long guildId,
       @NonNull MatchStatus status,
-      @NonNull Set<MatchTeam> matchTeams,
+      @NonNull Set<MatchTeam> teams,
       @NonNull GuidoLinkedValuesMap details,
       int winners) {
     this.id = id;
     this.guildId = guildId;
     this.status = status;
-    this.matchTeams = matchTeams;
+    this.teams = teams;
     this.details = details;
     this.winners = winners;
   }
@@ -65,28 +65,27 @@ public class GuidoMatch implements Match, BotCatchable {
    *
    * @param id the id of the match
    * @param guildId the id of the guild where the match happened
-   * @param matchTeams the matchTeams inside the match
+   * @param teams the matchTeams inside the match
    * @param details the details of the match
    */
   public GuidoMatch(
       @NonNull String id,
       long guildId,
-      @NonNull Set<MatchTeam> matchTeams,
+      @NonNull Set<MatchTeam> teams,
       @NonNull GuidoLinkedValuesMap details) {
-    this(id, guildId, MatchStatus.WAITING, matchTeams, details, -1);
+    this(id, guildId, MatchStatus.WAITING, teams, details, -1);
   }
 
   /**
    * Create the match in a status of waiting
    *
    * @param guildId the id of the guild where the match happened
-   * @param matchTeams the matchTeams inside the match
+   * @param teams the matchTeams inside the match
    * @param details the details of the match
    */
   public GuidoMatch(
-      long guildId, @NonNull Set<MatchTeam> matchTeams, @NonNull GuidoLinkedValuesMap details) {
-    this(
-        Guido.getDataLoader().nextMatchId(), guildId, MatchStatus.WAITING, matchTeams, details, -1);
+      long guildId, @NonNull Set<MatchTeam> teams, @NonNull GuidoLinkedValuesMap details) {
+    this(Guido.getDataLoader().nextMatchId(), guildId, MatchStatus.WAITING, teams, details, -1);
   }
 
   /** @deprecated this constructor may only be used by gson */
@@ -122,7 +121,7 @@ public class GuidoMatch implements Match, BotCatchable {
 
   @Override
   public @NonNull Collection<MatchTeam> getTeams() {
-    return this.matchTeams;
+    return this.teams;
   }
 
   @Override
@@ -181,7 +180,7 @@ public class GuidoMatch implements Match, BotCatchable {
     return new ToStringBuilder(this)
         .append("id", this.id)
         .append("guildId", this.guildId)
-        .append("matchTeams", this.matchTeams)
+        .append("matchTeams", this.teams)
         .append("details", this.details)
         .append("status", this.status)
         .append("winners", this.winners)

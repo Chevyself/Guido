@@ -44,6 +44,27 @@ public class LatestLinkableScheme implements Scheme<Linkable> {
     this.user = user;
   }
 
+  @NonNull
+  public GuidoValuesMap getIdentification() {
+    if (this.type == LinkableType.MINECRAFT) {
+      GuidoValuesMap map = new GuidoValuesMap(this.identification.getMap());
+      if (map.get("nickname") != null) map.remove("nickname");
+      return map;
+    }
+    return this.identification;
+  }
+
+  @NonNull
+  public GuidoValuesMap getRecognition() {
+    if (this.type == LinkableType.MINECRAFT) {
+      GuidoValuesMap map = new GuidoValuesMap();
+      String nickname = this.identification.get("nickname", String.class);
+      if (nickname != null) map.put("nickname", nickname);
+      return map;
+    }
+    return this.identification;
+  }
+
   /** @deprecated this constructor may only be used by gson */
   public LatestLinkableScheme() {
     this(
@@ -60,9 +81,9 @@ public class LatestLinkableScheme implements Scheme<Linkable> {
   public @NonNull GuidoLinkable build() {
     return new GuidoLinkable(
         this.type,
-        this.recognition,
+        this.getRecognition(),
         this.user,
-        this.identification,
+        this.getIdentification(),
         this.preferences,
         this.stats,
         this.permissions);

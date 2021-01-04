@@ -154,6 +154,10 @@ public interface Stateable {
     return global;
   }
 
+  default void setElo(Ladder ladder, float elo) {
+    // TODO
+  }
+
   /**
    * Get the stats of the entity
    *

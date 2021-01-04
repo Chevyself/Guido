@@ -1,5 +1,6 @@
 package me.googas.bot.core.handlers.matches;
 
+import java.util.Collection;
 import lombok.NonNull;
 import me.googas.api.Stateable;
 import me.googas.api.links.Linkable;
@@ -155,6 +156,35 @@ public class MatchEloCalculator implements GuidoHandler {
   public void recount(@NonNull Match match, boolean callEvents) {
     this.voidMatch(match, false);
     this.setElo(match, callEvents);
+  }
+
+  public void setNewSeasonElo(@NonNull Stateable stateable, @NonNull Collection<Ladder> ladders) {
+    for (Ladder ladder : ladders) {
+      this.setNewSeasonElo(stateable, ladder);
+    }
+  }
+
+  public void setNewSeasonElo(@NonNull Stateable stateable, @NonNull Ladder ladder) {
+    float wins = stateable.getWins(ladder);
+    float loses = stateable.getLoses(ladder);
+    float elo = ladder.baseValue();
+    for (int i = 0; i < wins; i++) {
+      double expected = this.calculateExpected(elo, elo, ladder.baseValue());
+      elo =
+          this.newElo(
+              elo,
+              expected,
+              ladder.getOptions().getOr("win-multiplier", Number.class, 1).floatValue());
+    }
+    for (int i = 0; i < loses; i++) {
+      double expected = this.calculateExpected(elo, elo, ladder.baseValue());
+      elo =
+          this.newElo(
+              elo,
+              expected,
+              ladder.getOptions().getOr("lose-multiplier", Number.class, 1).floatValue());
+    }
+    stateable.setElo(ladder, elo);
   }
 
   /**

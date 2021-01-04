@@ -20,7 +20,7 @@ public class SimpleMatch implements Match {
 
   @NonNull private final String id;
   private final long guildId;
-  @NonNull private final Set<MatchTeam> matchTeams;
+  @NonNull private final Set<MatchTeam> teams;
   private final int winners;
   @NonNull private final ValuesMap details;
   @NonNull private final MatchStatus status;
@@ -30,7 +30,7 @@ public class SimpleMatch implements Match {
    *
    * @param id the id of the match
    * @param guildId the id of the guild where the match is being played
-   * @param matchTeams the matchTeams playing the match
+   * @param teams the matchTeams playing the match
    * @param winners the winners of the match
    * @param details the details of the match
    * @param status the status of the match
@@ -38,13 +38,13 @@ public class SimpleMatch implements Match {
   public SimpleMatch(
       @NonNull String id,
       long guildId,
-      @NonNull Set<MatchTeam> matchTeams,
+      @NonNull Set<MatchTeam> teams,
       int winners,
       @NonNull ValuesMap details,
       @NonNull MatchStatus status) {
     this.id = id;
     this.guildId = guildId;
-    this.matchTeams = matchTeams;
+    this.teams = teams;
     this.winners = winners;
     this.details = details;
     this.status = status;
@@ -72,7 +72,7 @@ public class SimpleMatch implements Match {
 
   @Override
   public @NonNull Collection<MatchTeam> getTeams() {
-    return Collections.unmodifiableSet(this.matchTeams);
+    return Collections.unmodifiableSet(this.teams);
   }
 
   @Override
@@ -120,7 +120,7 @@ public class SimpleMatch implements Match {
     return new ToStringBuilder(this)
         .append("id", this.id)
         .append("guildId", this.guildId)
-        .append("matchTeams", this.matchTeams)
+        .append("matchTeams", this.teams)
         .append("winners", this.winners)
         .append("details", this.details)
         .append("status", this.status)
