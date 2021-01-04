@@ -1,12 +1,11 @@
 package com.starfishst.bukkit.dependencies.pgm;
 
+import com.starfishst.bukkit.matches.HostedMatch;
+import com.starfishst.bukkit.matches.HostedPlayer;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
-
-import com.starfishst.bukkit.matches.HostedMatch;
-import com.starfishst.bukkit.matches.HostedPlayer;
 import lombok.Getter;
 import lombok.NonNull;
 import me.googas.annotations.Nullable;
@@ -30,7 +29,13 @@ public class PGMHostedMatch extends HostedMatch {
   /** The id of the pgm match */
   @NonNull @Getter private final String pgm;
 
-  public PGMHostedMatch(@NonNull String id, @NonNull Set<HostedPlayer> participants, @Nullable String ladder, @NonNull ValuesMap details, @NonNull MapInfo map, @NonNull String pgm) {
+  public PGMHostedMatch(
+      @NonNull String id,
+      @NonNull Set<HostedPlayer> participants,
+      @Nullable String ladder,
+      @NonNull ValuesMap details,
+      @NonNull MapInfo map,
+      @NonNull String pgm) {
     super(id, participants, ladder, details);
     this.map = map;
     this.pgm = pgm;

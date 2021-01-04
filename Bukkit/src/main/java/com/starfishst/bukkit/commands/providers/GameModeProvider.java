@@ -4,10 +4,10 @@ import com.starfishst.bukkit.context.CommandContext;
 import com.starfishst.bukkit.providers.type.BukkitArgumentProvider;
 import com.starfishst.bukkit.utils.BukkitUtils;
 import com.starfishst.core.exceptions.ArgumentProviderException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import lombok.NonNull;
+import me.googas.api.utility.Enums;
 import me.googas.commons.Lots;
 import org.bukkit.GameMode;
 
@@ -33,22 +33,14 @@ public class GameModeProvider implements BukkitArgumentProvider<GameMode> {
 
   @Override
   public @NonNull List<String> getSuggestions(@NonNull String s, CommandContext commandContext) {
-    List<String> names = new ArrayList<>();
-    for (GameMode value : GameMode.values()) {
-      names.add(value.toString().toLowerCase());
-    }
-    return names;
+    return Enums.getNames(GameMode.values());
   }
 
   /** An implementation to easily get gamemodes */
   enum GuidoGameMode {
-    /** Minecraft survival gamemode */
     SURVIVAL(Lots.set("0", "s", "survival"), GameMode.SURVIVAL),
-    /** Minecraft creative gamemode */
     CREATIVE(Lots.set("1", "c", "creative"), GameMode.CREATIVE),
-    /** Minecraft adventure gamemode */
     ADVENTURE(Lots.set("2", "a", "adventure"), GameMode.ADVENTURE),
-    /** Minecraft spectator gamemode */
     SPECTATOR(Lots.set("3", "o", "spectator"), GameMode.SPECTATOR);
 
     /** The set of aliases that can be used to identify the gamemode */

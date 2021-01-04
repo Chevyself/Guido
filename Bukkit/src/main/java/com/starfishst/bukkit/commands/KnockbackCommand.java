@@ -19,8 +19,8 @@ public class KnockbackCommand implements GuidoCommand {
       @Required double sprint,
       @Required double walk,
       @Required double friction) {
-    VelocityImprovement listener = Guido.getListener(VelocityImprovement.class);
-    if (listener == null) return;
+    VelocityImprovement listener =
+        Guido.getHandlerRegistry().requireHandler(VelocityImprovement.class);
     listener.setMultiplierHorizontal(horizontal);
     listener.setMultiplierVertical(vertical);
     listener.setMultiplierVerticalAir(vertical);

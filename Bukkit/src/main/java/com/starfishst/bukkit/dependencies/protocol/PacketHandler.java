@@ -1,18 +1,20 @@
-package com.starfishst.bukkit.api.events;
+package com.starfishst.bukkit.dependencies.protocol;
 
 import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.events.PacketListener;
 import com.starfishst.bukkit.api.Guido;
+import com.starfishst.bukkit.api.events.Handler;
 import lombok.NonNull;
 import org.bukkit.plugin.Plugin;
 
 /** A listener that also supports listening to packets */
-public interface GuidoPacketListener extends GuidoListener, PacketListener {
+public interface PacketHandler extends Handler, PacketListener {
 
   @Override
-  default void register(@NonNull Plugin plugin) {
-    GuidoListener.super.register(plugin);
+  default PacketHandler register(@NonNull Plugin plugin) {
+    Handler.super.register(plugin);
     ProtocolLibrary.getProtocolManager().addPacketListener(this);
+    return this;
   }
 
   @Override

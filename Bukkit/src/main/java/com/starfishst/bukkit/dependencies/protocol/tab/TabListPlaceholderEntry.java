@@ -3,7 +3,7 @@ package com.starfishst.bukkit.dependencies.protocol.tab;
 import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.ProtocolManager;
 import com.starfishst.bukkit.api.Guido;
-import com.starfishst.bukkit.listeners.placeholders.PlaceholderListener;
+import com.starfishst.bukkit.listeners.placeholders.PlaceholderHandler;
 import lombok.NonNull;
 
 /** A tab list entry that can be replaced */
@@ -25,8 +25,8 @@ public class TabListPlaceholderEntry extends TabListEmptyEntry {
     this.raw = raw;
   }
 
-  public PlaceholderListener placeholders() {
-    return Guido.getListener(PlaceholderListener.class);
+  public PlaceholderHandler placeholders() {
+    return Guido.getHandlerRegistry().getHandler(PlaceholderHandler.class);
   }
 
   /**

@@ -281,8 +281,8 @@ public class CustomTab implements Comparator<TabSlot> {
   }
 
   @NonNull
-  public TabListListener listener() {
-    return Guido.getListener(TabListListener.class);
+  public TabListHandler listener() {
+    return Guido.getHandlerRegistry().requireHandler(TabListHandler.class);
   }
 
   /**

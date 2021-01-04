@@ -137,7 +137,7 @@ public class AutoClickDetector extends PacketAdapter implements AntiCheatDetecto
   }
 
   @Override
-  public void onUnload() {
+  public void onDisable() {
     this.tracker.unregister();
     this.clicks.clear();
     this.time.clear();

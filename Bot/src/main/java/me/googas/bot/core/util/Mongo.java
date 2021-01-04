@@ -46,7 +46,6 @@ import me.googas.bot.core.discord.GuidoGuild;
 import me.googas.bot.core.links.GuidoLinkable;
 import me.googas.bot.core.links.GuidoLinkableInfo;
 import me.googas.bot.core.permissions.GuidoPermission;
-import me.googas.bot.core.permissions.GuidoPermissionStack;
 import me.googas.commons.cache.MemoryCache;
 import org.bson.Document;
 
@@ -71,7 +70,6 @@ public class Mongo {
         .registerTypeAdapter(Permission.class, new PermissionAdapter())
         .registerTypeAdapter(PermissionStack.class, new PermissionStackDeserializer())
         .registerTypeAdapter(GuidoPermission.class, new PermissionAdapter())
-        .registerTypeAdapter(GuidoPermissionStack.class, new PermissionStackDeserializer())
         .registerTypeAdapter(RankRange.class, new RankRangeAdapter())
         .registerTypeAdapter(GuidoLinkedValuesMap.class, new LinkedValuesMapAdapter())
         .registerTypeAdapter(long.class, new LongMongoAdapter())

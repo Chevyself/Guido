@@ -1,6 +1,6 @@
-package com.starfishst.bukkit.listeners;
+package com.starfishst.bukkit.dependencies.protocol.anticheat;
 
-import com.starfishst.bukkit.api.events.GuidoListener;
+import com.starfishst.bukkit.api.events.Handler;
 import com.starfishst.bukkit.api.events.anticheat.SuspectDetectedEvent;
 import com.starfishst.bukkit.utils.BukkitUtils;
 import java.util.HashMap;
@@ -16,7 +16,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 
 /** Listens for warning calls from anti-cheat detectors */
-public class AntiCheatListener implements GuidoListener {
+public class AntiCheatHandler implements Handler {
 
   // /** The calls that a player has had */
   // @NotNull private final HashMap<UUID, List<SuspectDetectedEvent>> calls = new HashMap<>();
@@ -79,7 +79,7 @@ public class AntiCheatListener implements GuidoListener {
   }
 
   @Override
-  public void onUnload() {
+  public void onDisable() {
     // calls.clear();
   }
 

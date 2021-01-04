@@ -1,12 +1,12 @@
 package com.starfishst.bukkit.listeners;
 
 import com.starfishst.bukkit.api.events.GuidoEvent;
-import com.starfishst.bukkit.api.events.GuidoListener;
+import com.starfishst.bukkit.api.events.Handler;
 import lombok.NonNull;
 import org.bukkit.event.EventHandler;
 
 /** Listens to guido events */
-public class TestListener implements GuidoListener {
+public class TestHandler implements Handler {
 
   /**
    * Listen to guido events and print them
@@ -22,5 +22,5 @@ public class TestListener implements GuidoListener {
   }
 
   @Override
-  public void onUnload() {}
+  public void onDisable() {}
 }

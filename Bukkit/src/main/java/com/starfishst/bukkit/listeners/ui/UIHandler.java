@@ -1,13 +1,13 @@
 package com.starfishst.bukkit.listeners.ui;
 
-import com.starfishst.bukkit.api.events.GuidoListener;
+import com.starfishst.bukkit.api.events.Handler;
 import lombok.NonNull;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.InventoryHolder;
 
-public class UIListener implements GuidoListener {
+public class UIHandler implements Handler {
 
   @EventHandler(priority = EventPriority.HIGHEST)
   public void onInventoryClick(InventoryClickEvent event) {

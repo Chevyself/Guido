@@ -94,7 +94,7 @@ public class ReachDetector extends PacketAdapter implements AntiCheatDetector {
   }
 
   @Override
-  public void onUnload() {}
+  public void onDisable() {}
 
   @Override
   public @NonNull String getName() {

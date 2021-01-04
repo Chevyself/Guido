@@ -1,8 +1,8 @@
 package com.starfishst.bukkit.listeners.placeholders;
 
 import com.starfishst.bukkit.api.Guido;
-import com.starfishst.bukkit.api.events.GuidoListener;
-import com.starfishst.bukkit.dependencies.papi.PAPIPlaceholderListener;
+import com.starfishst.bukkit.api.events.Handler;
+import com.starfishst.bukkit.dependencies.papi.PAPIPlaceholderHandler;
 import com.starfishst.bukkit.utils.BukkitUtils;
 import java.util.HashSet;
 import java.util.Set;
@@ -13,7 +13,7 @@ import lombok.experimental.Delegate;
 import me.googas.annotations.Nullable;
 import org.bukkit.OfflinePlayer;
 
-public class PlaceholderListener implements GuidoListener {
+public class PlaceholderHandler implements Handler {
 
   public static final Pattern PATTERN = Pattern.compile("%.*?%");
 
@@ -29,9 +29,11 @@ public class PlaceholderListener implements GuidoListener {
 
   public String build(@NonNull OfflinePlayer player, @NonNull String raw) {
     if (Guido.isPAPIConnected()) {
-      return Guido.getListener(PAPIPlaceholderListener.class).build(player, raw);
+      return Guido.getHandlerRegistry()
+          .requireHandler(PAPIPlaceholderHandler.class)
+          .build(player, raw);
     } else {
-      Matcher matcher = PlaceholderListener.PATTERN.matcher(raw);
+      Matcher matcher = PlaceholderHandler.PATTERN.matcher(raw);
       while (matcher.find()) {
         String name = matcher.group().replace("%", "");
         Placeholder placeholder = this.getPlaceholder(name);

@@ -8,28 +8,38 @@ import org.bukkit.event.Listener;
 import org.bukkit.plugin.Plugin;
 
 /** A listener for the guido plugin */
-public interface GuidoListener extends Listener {
+public interface Handler extends Listener {
 
   /**
    * Register the listener for a plugin
    *
    * @param plugin the plugin to register the listener to
+   * @return this same handler instance
    */
-  default void register(@NonNull Plugin plugin) {
+  default Handler register(@NonNull Plugin plugin) {
     plugin.getServer().getPluginManager().registerEvents(this, plugin);
+    return this;
   }
 
   /** Unregisters the listener */
   default void unregister() {
-    this.onUnload();
     HandlerList.unregisterAll(this);
   }
 
-  /** Called on {@link #unregister()} */
-  default void onUnload() {}
+  /** Called before {@link #unregister()} */
+  default void onDisable() {}
 
   /** Called after {@link #register(Plugin)} */
   default void onEnable() {}
+
+  /**
+   * Whether this handler has receptors to be registered in the client
+   *
+   * @return by default is false and must be overridden by the handler
+   */
+  default boolean hasReceptors() {
+    return false;
+  }
 
   /**
    * Get the name of this listener

@@ -2,7 +2,7 @@ package com.starfishst.bukkit.lang;
 
 import com.starfishst.bukkit.AnnotatedCommand;
 import com.starfishst.bukkit.ParentCommand;
-import com.starfishst.bukkit.api.events.GuidoListener;
+import com.starfishst.bukkit.api.events.Handler;
 import com.starfishst.bukkit.context.CommandContext;
 import com.starfishst.bukkit.messages.MessagesProvider;
 import com.starfishst.core.arguments.Argument;
@@ -25,7 +25,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
 /** Handles the language for messages */
-public class BukkitLanguageHandler implements GuidoListener, MessagesProvider {
+public class BukkitLanguageHandler implements Handler, MessagesProvider {
 
   /** The loaded locale files */
   @NonNull private final List<BukkitLocaleFile> files = new ArrayList<>();
@@ -346,7 +346,7 @@ public class BukkitLanguageHandler implements GuidoListener, MessagesProvider {
   }
 
   @Override
-  public void onUnload() {
+  public void onDisable() {
     this.files.clear();
   }
 

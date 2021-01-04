@@ -6,7 +6,7 @@ import com.starfishst.bukkit.api.commands.GuidoCommand;
 import com.starfishst.bukkit.dependencies.pgm.PGMHostedMatch;
 import com.starfishst.bukkit.dependencies.pgm.PGMHostedPlayer;
 import com.starfishst.bukkit.dependencies.pgm.PGMLeader;
-import com.starfishst.bukkit.dependencies.pgm.listeners.matches.PGMMatchMakingListener;
+import com.starfishst.bukkit.dependencies.pgm.listeners.matches.PGMMatchMakingHandler;
 import com.starfishst.bukkit.dependencies.pgm.listeners.matches.creation.PickTeamSelection;
 import com.starfishst.bukkit.dependencies.pgm.listeners.matches.creation.TeamCreation;
 import com.starfishst.bukkit.lang.BukkitLocaleFile;
@@ -23,20 +23,19 @@ public class PickCommands implements GuidoCommand {
       BukkitLocaleFile locale,
       PGMLeader leader,
       @Required(name = "pick.player", description = "pick.player.desc") PGMHostedPlayer player) {
-    PGMMatchMakingListener listener = Guido.getListener(PGMMatchMakingListener.class);
-    if (listener != null) {
-      TeamCreation creation = listener.getCreation("pick");
-      if (creation instanceof PickTeamSelection) {
-        if (((PickTeamSelection) creation).isPicking(match.getId(), leader.validated())) {
-          ((PickTeamSelection) creation).pick(match.getId(), leader.validated(), player.validated());
-          return new Result(
-              locale.get(
-                  "pick.success",
-                  Maps.singleton(
-                      "name", player.getIdentification().getOr("nickname", String.class, ""))));
-        } else {
-          return new Result(locale.get("pick.not-picking"));
-        }
+    PGMMatchMakingHandler listener =
+        Guido.getHandlerRegistry().requireHandler(PGMMatchMakingHandler.class);
+    TeamCreation creation = listener.getCreation("pick");
+    if (creation instanceof PickTeamSelection) {
+      if (((PickTeamSelection) creation).isPicking(match.getId(), leader.validated())) {
+        ((PickTeamSelection) creation).pick(match.getId(), leader.validated(), player.validated());
+        return new Result(
+            locale.get(
+                "pick.success",
+                Maps.singleton(
+                    "name", player.getIdentification().getOr("nickname", String.class, ""))));
+      } else {
+        return new Result(locale.get("pick.not-picking"));
       }
     }
     return new Result(locale.get("pick.not-match"));

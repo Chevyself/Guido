@@ -1,6 +1,6 @@
 package com.starfishst.bukkit.dependencies.events;
 
-import com.starfishst.bukkit.client.BukkitRequest;
+import com.starfishst.bukkit.client.requests.BukkitRequest;
 import dev.pgm.events.Tournament;
 import dev.pgm.events.team.TeamParser;
 import dev.pgm.events.team.TournamentTeam;

@@ -1,10 +1,11 @@
 package com.starfishst.bukkit.dependencies.pgm.listeners.matches.creation;
 
 import com.starfishst.bukkit.api.Guido;
-import com.starfishst.bukkit.client.BukkitIntRequest;
+import com.starfishst.bukkit.client.requests.BukkitIntRequest;
 import com.starfishst.bukkit.dependencies.pgm.PGMHostedMatch;
-import com.starfishst.bukkit.dependencies.pgm.listeners.matches.PGMMatchMakingListener;
+import com.starfishst.bukkit.dependencies.pgm.listeners.matches.PGMMatchMakingHandler;
 import com.starfishst.bukkit.lang.BukkitLocaleFile;
+import com.starfishst.bukkit.matches.HostedPlayer;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -14,9 +15,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
-import java.util.logging.Logger;
-
-import com.starfishst.bukkit.matches.HostedPlayer;
 import lombok.Getter;
 import lombok.NonNull;
 import me.googas.api.client.data.matches.SimpleMatchTeam;
@@ -204,10 +202,9 @@ public class PickTeamSelection implements TeamCreation {
     if (selecting != null && this.isPicking(matchId, captain)) {
       SimpleTeamMember teamMember = new SimpleTeamMember(hosted.toLink(), TeamRole.NORMAL);
       selecting.getMembers().add(teamMember);
-      PGMMatchMakingListener listener = Guido.getListener(PGMMatchMakingListener.class);
-      if (listener != null) {
-        listener.add(hosted.getUniqueId(), selecting.getParty());
-      }
+      PGMMatchMakingHandler listener =
+          Guido.getHandlerRegistry().requireHandler(PGMMatchMakingHandler.class);
+      listener.add(hosted.getUniqueId(), selecting.getParty());
       Collection<HostedPlayer> playersLeft = this.getPlayersLeft(matchId);
       playersLeft.remove(hosted);
       this.nextPick(matchId, selecting);
@@ -229,35 +226,32 @@ public class PickTeamSelection implements TeamCreation {
    * @param team the team that just selected a player
    */
   public void nextPick(@NonNull String matchId, @NonNull SelectingTeam team) {
-    Logger logger = Guido.getLogger();
     Collection<HostedPlayer> playersLeft = this.getPlayersLeft(matchId);
     if (playersLeft.isEmpty()) {
-      logger.info("Players left is now empty");
-      PGMMatchMakingListener listener = Guido.getListener(PGMMatchMakingListener.class);
-      if (listener != null) {
-        PGMHostedMatch match = listener.getMatch(matchId);
-        if (match == null) return;
-        Match matchPgm = match.toPGM();
-        if (matchPgm == null) return;
-        matchPgm
-            .needModule(StartMatchModule.class)
-            .forceStartCountdown(
-                Duration.ofSeconds(PGMMatchMakingListener.secondsToStart), Duration.ZERO);
-        for (SelectingTeam selectingTeam : this.getTeams(matchId)) {
-          SimpleMatchTeam construct = selectingTeam.build();
-          try {
-            Integer id =
-                new BukkitIntRequest(
-                        "match-add-team", Maps.objects("id", matchId).append("team", construct))
-                    .send();
-            if (id != null) {
-              if (selectingTeam.getParty() instanceof Team) {
-                match.getTeams().put(((Team) selectingTeam.getParty()).getId(), id);
-              }
+      PGMMatchMakingHandler listener =
+          Guido.getHandlerRegistry().requireHandler(PGMMatchMakingHandler.class);
+      PGMHostedMatch match = listener.getMatch(matchId);
+      if (match == null) return;
+      Match matchPgm = match.toPGM();
+      if (matchPgm == null) return;
+      matchPgm
+          .needModule(StartMatchModule.class)
+          .forceStartCountdown(
+              Duration.ofSeconds(PGMMatchMakingHandler.secondsToStart), Duration.ZERO);
+      for (SelectingTeam selectingTeam : this.getTeams(matchId)) {
+        SimpleMatchTeam construct = selectingTeam.build();
+        try {
+          Integer id =
+              new BukkitIntRequest(
+                      "match-add-team", Maps.objects("id", matchId).append("team", construct))
+                  .send();
+          if (id != null) {
+            if (selectingTeam.getParty() instanceof Team) {
+              match.getTeams().put(((Team) selectingTeam.getParty()).getId(), id);
             }
-          } catch (MessengerListenFailException e) {
-            e.printStackTrace();
           }
+        } catch (MessengerListenFailException e) {
+          e.printStackTrace();
         }
       }
       this.clear();
@@ -405,7 +399,7 @@ public class PickTeamSelection implements TeamCreation {
 
   @Override
   public void createTeams(
-      @NonNull PGMMatchMakingListener matchMaking,
+      @NonNull PGMMatchMakingHandler matchMaking,
       @NonNull PGMHostedMatch PGMHostedMatch,
       @NonNull Match match) {
     this.playersLeft.put(PGMHostedMatch.getId(), PGMHostedMatch.getParticipants());
@@ -441,8 +435,7 @@ public class PickTeamSelection implements TeamCreation {
     @NonNull @Getter private final TeamMember leader;
 
     /** The member of the team */
-    @NonNull @Getter
-    private final Collection<TeamMember> members = new HashSet<>();
+    @NonNull @Getter private final Collection<TeamMember> members = new HashSet<>();
 
     /**
      * Create the team

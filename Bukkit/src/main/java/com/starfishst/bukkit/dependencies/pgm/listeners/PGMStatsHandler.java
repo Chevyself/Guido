@@ -1,7 +1,7 @@
 package com.starfishst.bukkit.dependencies.pgm.listeners;
 
 import com.starfishst.bukkit.api.Guido;
-import com.starfishst.bukkit.api.events.GuidoListener;
+import com.starfishst.bukkit.api.events.Handler;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -28,7 +28,7 @@ import tc.oc.pgm.goals.Contribution;
 import tc.oc.pgm.wool.PlayerWoolPlaceEvent;
 
 /** Track stats including pgm kills and deaths */
-public class PGMStatsListener implements GuidoListener {
+public class PGMStatsHandler implements Handler {
 
   /** The map containing the stats of a player */
   @NonNull private final Map<UUID, Map<String, Double>> stats = new HashMap<>();
@@ -125,7 +125,6 @@ public class PGMStatsListener implements GuidoListener {
     if (connection != null) {
       this.stats.forEach(
           (uuid, statsMap) -> {
-            Guido.getLogger().info("Saving stats for " + UUIDUtils.trim(uuid));
             connection.sendRequest(
                 new Request<>(
                     Boolean.class,
@@ -137,7 +136,7 @@ public class PGMStatsListener implements GuidoListener {
                                 new SimpleValuesMap(Maps.singleton("uuid", UUIDUtils.trim(uuid)))))
                         .append("stats", statsMap)
                         .build()),
-                bol -> Guido.getLogger().info("Were stats saved for " + uuid + " " + bol));
+                bol -> {});
           });
     }
     this.stats.clear();
@@ -199,7 +198,7 @@ public class PGMStatsListener implements GuidoListener {
 
   /** Called on {@link #unregister()} */
   @Override
-  public void onUnload() {
+  public void onDisable() {
     this.stats.clear();
   }
 

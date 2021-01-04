@@ -1,7 +1,7 @@
 package com.starfishst.bukkit.listeners;
 
 import com.starfishst.bukkit.api.Guido;
-import com.starfishst.bukkit.api.events.GuidoListener;
+import com.starfishst.bukkit.api.events.Handler;
 import com.starfishst.bukkit.utils.BukkitUtils;
 import java.util.List;
 import lombok.NonNull;
@@ -13,7 +13,7 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.player.PlayerLoginEvent;
 
 /** Listener for the decorations in a players name */
-public class DecorationsListener implements GuidoListener {
+public class DecorationsHandler implements Handler {
 
   /**
    * Listen to a player joining the game to give them the prefixes
@@ -88,13 +88,13 @@ public class DecorationsListener implements GuidoListener {
     }
   }
 
+  @NonNull
+  private GroupsHandler groups() {
+    return Guido.getHandlerRegistry().requireHandler(GroupsHandler.class);
+  }
+
   @Override
   public @NonNull String getName() {
     return "decorations";
-  }
-
-  @NonNull
-  private GroupsListener groups() {
-    return Guido.getListener(GroupsListener.class);
   }
 }

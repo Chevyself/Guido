@@ -3,7 +3,7 @@ package com.starfishst.bukkit.dependencies.pgm.commands;
 import com.starfishst.bukkit.annotations.Command;
 import com.starfishst.bukkit.api.Guido;
 import com.starfishst.bukkit.api.commands.GuidoCommand;
-import com.starfishst.bukkit.dependencies.pgm.listeners.matches.PGMMatchMakingListener;
+import com.starfishst.bukkit.dependencies.pgm.listeners.matches.PGMMatchMakingHandler;
 import com.starfishst.bukkit.lang.BukkitLocaleFile;
 import com.starfishst.bukkit.result.Result;
 import java.time.Duration;
@@ -86,7 +86,7 @@ public class ReadyCommand implements GuidoCommand {
    * @return the duration
    */
   public Duration calculateDuration(@NonNull Match match) {
-    int base = PGMMatchMakingListener.secondsToStart;
+    int base = PGMMatchMakingHandler.secondsToStart;
     if (this.partiesReady.isEmpty()) {
       return Duration.ofSeconds(base);
     } else {

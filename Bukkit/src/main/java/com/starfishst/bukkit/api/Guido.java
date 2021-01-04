@@ -3,12 +3,12 @@ package com.starfishst.bukkit.api;
 import com.starfishst.bukkit.CommandManager;
 import com.starfishst.bukkit.GuidoPlugin;
 import com.starfishst.bukkit.api.config.Configuration;
+import com.starfishst.bukkit.api.dependencies.DependencyManager;
 import com.starfishst.bukkit.api.events.GuidoEvent;
-import com.starfishst.bukkit.api.events.GuidoListener;
+import com.starfishst.bukkit.client.BukkitClient;
 import com.starfishst.bukkit.lang.BukkitLanguageHandler;
-import java.util.logging.Logger;
+import com.starfishst.bukkit.listeners.HandlerRegistry;
 import lombok.NonNull;
-import me.googas.api.client.Client;
 import me.googas.commons.Validate;
 import org.bukkit.Bukkit;
 
@@ -17,17 +17,6 @@ public class Guido {
 
   /** The instance of the guido plugin */
   private static GuidoPlugin plugin;
-
-  /**
-   * Get a listener using its class
-   *
-   * @param clazz the class of the listener
-   * @param <T> the type of the listener class
-   * @return the listener if found null if it might not have been registered
-   */
-  public static <T extends GuidoListener> T getListener(@NonNull Class<T> clazz) {
-    return Guido.validated().getListener(clazz);
-  }
 
   /**
    * Gives the instance validated to not be null
@@ -49,12 +38,17 @@ public class Guido {
   }
 
   /**
-   * Get whether pgm is connected with the plugin
+   * Sets the plugin that this util is using
    *
-   * @return true if pgm is connected
+   * @param plugin the plugin to set
+   * @return
    */
-  public static boolean isPgmConnected() {
-    return Guido.validated().getDependencies().getDependency("PGM").isEnabled();
+  public static boolean setPlugin(GuidoPlugin plugin) {
+    if (plugin != null && Guido.plugin != null) {
+      return false;
+    }
+    Guido.plugin = plugin;
+    return true;
   }
 
   /**
@@ -67,25 +61,12 @@ public class Guido {
   }
 
   /**
-   * Sets the plugin that this util is using
+   * Get whether pgm is connected with the plugin
    *
-   * @param plugin the plugin to set
+   * @return true if pgm is connected
    */
-  public static void setPlugin(GuidoPlugin plugin) {
-    if (plugin != null && Guido.plugin != null) {
-      throw new IllegalStateException("Plugin is already initialized");
-    }
-    Guido.plugin = plugin;
-  }
-
-  /**
-   * Get the configuration that the plugin is using
-   *
-   * @return the plugin configuration
-   */
-  @NonNull
-  public static Configuration getConfiguration() {
-    return Guido.validated().getConfiguration();
+  public static boolean isPPGMConnected() {
+    return Guido.validated().getDependencies().getDependency("PGM").isEnabled();
   }
 
   /**
@@ -97,41 +78,38 @@ public class Guido {
     return Guido.validated().getDependencies().getDependency("ProtocolLib").isEnabled();
   }
 
-  /**
-   * Get the client of the implementation
-   *
-   * @return the client
-   */
   @NonNull
-  public static Client getClient() {
+  public static BukkitLanguageHandler getBukkitLanguageHandler() {
+    return Guido.validated().getBukkitLanguageHandler();
+  }
+
+  @NonNull
+  public static CommandManager getManager() {
+    return Guido.validated().getManager();
+  }
+
+  public static @NonNull HandlerRegistry getHandlerRegistry() {
+    return Guido.validated().getHandlerRegistry();
+  }
+
+  public static @NonNull DependencyManager getDependencies() {
+    return Guido.validated().getDependencies();
+  }
+
+  public static @NonNull BukkitClient getClient() {
     return Guido.validated().getClient();
   }
 
-  /**
-   * Get the language handler of the plugin
-   *
-   * @return the language handler
-   */
+  @NonNull
+  public static Configuration getConfiguration() {
+    return Guido.validated().getConfiguration();
+  }
+
   @NonNull
   public static BukkitLanguageHandler getLanguageHandler() {
     return Guido.validated().getLanguageHandler();
   }
 
-  /**
-   * Get the logger of the plugin
-   *
-   * @return the logger of the plugin
-   */
-  @NonNull
-  public static Logger getLogger() {
-    return Guido.validated().getLogger();
-  }
-
-  /**
-   * Get the command manager that the bot is using
-   *
-   * @return the command manager
-   */
   @NonNull
   public static CommandManager getCommandManager() {
     return Guido.validated().getCommandManager();

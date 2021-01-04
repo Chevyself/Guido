@@ -5,7 +5,7 @@ import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.ProtocolManager;
 import com.comphenix.protocol.events.PacketContainer;
 import com.starfishst.bukkit.api.config.GuidoListenerSettings;
-import com.starfishst.bukkit.api.events.GuidoListener;
+import com.starfishst.bukkit.api.events.Handler;
 import java.lang.reflect.InvocationTargetException;
 import lombok.NonNull;
 import org.bukkit.enchantments.Enchantment;
@@ -17,7 +17,7 @@ import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.player.PlayerVelocityEvent;
 import org.bukkit.util.Vector;
 
-public class VelocityImprovement implements GuidoListener {
+public class VelocityImprovement implements Handler {
 
   private double multiplierHorizontal;
   private double multiplierVertical;
@@ -109,7 +109,7 @@ public class VelocityImprovement implements GuidoListener {
   }
 
   @Override
-  public void onUnload() {}
+  public void onDisable() {}
 
   @Override
   public @NonNull String getName() {

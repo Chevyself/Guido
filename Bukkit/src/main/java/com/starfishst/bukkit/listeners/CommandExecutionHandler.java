@@ -1,6 +1,6 @@
 package com.starfishst.bukkit.listeners;
 
-import com.starfishst.bukkit.api.events.GuidoListener;
+import com.starfishst.bukkit.api.events.Handler;
 import com.starfishst.bukkit.utils.BukkitUtils;
 import java.util.List;
 import lombok.NonNull;
@@ -13,7 +13,7 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 
 /** Listens for the commands that are being executed by other players */
-public class CommandExecutionListener implements GuidoListener {
+public class CommandExecutionHandler implements Handler {
 
   /**
    * When the event {@link PlayerCommandPreprocessEvent} is called this will send the message for
@@ -75,5 +75,5 @@ public class CommandExecutionListener implements GuidoListener {
   }
 
   @Override
-  public void onUnload() {}
+  public void onDisable() {}
 }

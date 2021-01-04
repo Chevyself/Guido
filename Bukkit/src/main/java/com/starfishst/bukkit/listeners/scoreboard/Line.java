@@ -1,7 +1,7 @@
 package com.starfishst.bukkit.listeners.scoreboard;
 
 import com.starfishst.bukkit.api.Guido;
-import com.starfishst.bukkit.listeners.placeholders.PlaceholderListener;
+import com.starfishst.bukkit.listeners.placeholders.PlaceholderHandler;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -65,10 +65,12 @@ public class Line {
    */
   @NotNull
   public String build(@NotNull OfflinePlayer player) {
-    return this.placeholders().build(player, this.raw);
+    String built = this.placeholders().build(player, this.raw);
+    return built.length() > 16 ? built.substring(0, 16) : built;
   }
 
-  public PlaceholderListener placeholders() {
-    return Guido.getListener(PlaceholderListener.class);
+  @NonNull
+  public PlaceholderHandler placeholders() {
+    return Guido.getHandlerRegistry().requireHandler(PlaceholderHandler.class);
   }
 }

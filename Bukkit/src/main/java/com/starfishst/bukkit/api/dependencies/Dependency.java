@@ -2,7 +2,7 @@ package com.starfishst.bukkit.api.dependencies;
 
 import com.starfishst.bukkit.GuidoPlugin;
 import com.starfishst.bukkit.api.commands.GuidoCommand;
-import com.starfishst.bukkit.api.events.GuidoListener;
+import com.starfishst.bukkit.api.events.Handler;
 import com.starfishst.bukkit.context.CommandContext;
 import com.starfishst.core.providers.type.IContextualProvider;
 import java.util.Collection;
@@ -19,7 +19,7 @@ public interface Dependency {
    * @return the listeners
    */
   @NonNull
-  Collection<GuidoListener> getListeners(@NonNull Plugin plugin);
+  Collection<Handler> getHandlers(@NonNull Plugin plugin);
 
   /** If the dependency is enabled this method will be called in {@link GuidoPlugin#onEnable()} */
   default void onEnable() {}

@@ -1,8 +1,9 @@
 package com.starfishst.bukkit.dependencies.pgm.listeners.matches.creation;
 
-import com.starfishst.bukkit.client.BukkitIntRequest;
+import com.starfishst.bukkit.client.requests.BukkitIntRequest;
 import com.starfishst.bukkit.dependencies.pgm.PGMHostedMatch;
-import com.starfishst.bukkit.dependencies.pgm.listeners.matches.PGMMatchMakingListener;
+import com.starfishst.bukkit.dependencies.pgm.listeners.matches.PGMMatchMakingHandler;
+import com.starfishst.bukkit.matches.HostedPlayer;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -11,8 +12,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
-
-import com.starfishst.bukkit.matches.HostedPlayer;
 import lombok.NonNull;
 import me.googas.api.client.data.matches.SimpleMatchTeam;
 import me.googas.api.client.data.matches.team.SimpleTeamMember;
@@ -68,7 +67,7 @@ public class RandomTeamCreation implements TeamCreation {
 
   @Override
   public void createTeams(
-      @NonNull PGMMatchMakingListener listener,
+      @NonNull PGMMatchMakingHandler listener,
       @NonNull PGMHostedMatch PGMHostedMatch,
       @NonNull Match match) {
     Set<HostedPlayer> participants = PGMHostedMatch.getParticipants();
@@ -110,7 +109,7 @@ public class RandomTeamCreation implements TeamCreation {
     match
         .needModule(StartMatchModule.class)
         .forceStartCountdown(
-            Duration.ofSeconds(PGMMatchMakingListener.secondsToStart), Duration.ZERO);
+            Duration.ofSeconds(PGMMatchMakingHandler.secondsToStart), Duration.ZERO);
   }
 
   @Override

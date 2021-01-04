@@ -6,7 +6,7 @@ import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.events.PacketEvent;
 import com.comphenix.protocol.wrappers.EnumWrappers;
 import com.comphenix.protocol.wrappers.PlayerInfoData;
-import com.starfishst.bukkit.api.events.GuidoPacketListener;
+import com.starfishst.bukkit.dependencies.protocol.PacketHandler;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
@@ -22,7 +22,7 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.plugin.Plugin;
 
 /** Controls the tab list for players */
-public class TabListListener extends PacketAdapter implements GuidoPacketListener {
+public class TabListHandler extends PacketAdapter implements PacketHandler {
 
   /** The players that are joining the game */
   @NonNull private final Set<UUID> joining = new HashSet<>();
@@ -35,7 +35,7 @@ public class TabListListener extends PacketAdapter implements GuidoPacketListene
    *
    * @param plugin the plugin using the handler
    */
-  public TabListListener(@NonNull Plugin plugin) {
+  public TabListHandler(@NonNull Plugin plugin) {
     super(plugin, PacketType.Play.Server.PLAYER_INFO);
   }
 
@@ -114,7 +114,7 @@ public class TabListListener extends PacketAdapter implements GuidoPacketListene
   @Override
   public void onPacketSending(PacketEvent event) {
     Player player = event.getPlayer();
-    EnumWrappers.PlayerInfoAction action = TabListListener.getAction(event.getPacket());
+    EnumWrappers.PlayerInfoAction action = TabListHandler.getAction(event.getPacket());
     CustomTab tab = this.getCustomTab(player);
     switch (action) {
       case ADD_PLAYER:
@@ -151,7 +151,7 @@ public class TabListListener extends PacketAdapter implements GuidoPacketListene
   }
 
   @Override
-  public void onUnload() {
+  public void onDisable() {
     for (CustomTab tab : this.tabs) {
       tab.exit();
     }

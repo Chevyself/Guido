@@ -3,17 +3,16 @@ package com.starfishst.bukkit.dependencies.pgm;
 import com.starfishst.bukkit.api.Guido;
 import com.starfishst.bukkit.api.commands.GuidoCommand;
 import com.starfishst.bukkit.api.dependencies.Dependency;
-import com.starfishst.bukkit.api.events.GuidoListener;
+import com.starfishst.bukkit.api.events.Handler;
+import com.starfishst.bukkit.context.CommandContext;
 import com.starfishst.bukkit.dependencies.pgm.commands.PickCommands;
 import com.starfishst.bukkit.dependencies.pgm.commands.ReadyCommand;
-import com.starfishst.bukkit.commands.providers.pgm.HostedMatchProvider;
 import com.starfishst.bukkit.dependencies.pgm.commands.provider.PGMHostedMatchProvider;
 import com.starfishst.bukkit.dependencies.pgm.commands.provider.PGMHostedPlayerProvider;
 import com.starfishst.bukkit.dependencies.pgm.commands.provider.PGMLeaderSenderProvider;
 import com.starfishst.bukkit.dependencies.pgm.commands.provider.PartyProvider;
-import com.starfishst.bukkit.context.CommandContext;
-import com.starfishst.bukkit.dependencies.pgm.listeners.PGMStatsListener;
-import com.starfishst.bukkit.dependencies.pgm.listeners.matches.PGMMatchMakingListener;
+import com.starfishst.bukkit.dependencies.pgm.listeners.PGMStatsHandler;
+import com.starfishst.bukkit.dependencies.pgm.listeners.matches.PGMMatchMakingHandler;
 import com.starfishst.core.providers.type.IContextualProvider;
 import java.util.Collection;
 import lombok.NonNull;
@@ -42,8 +41,8 @@ public class PGMDependency implements Dependency {
   }
 
   @Override
-  public @NonNull Collection<GuidoListener> getListeners(@NonNull Plugin plugin) {
-    return Lots.list(new PGMStatsListener(), new PGMMatchMakingListener());
+  public @NonNull Collection<Handler> getHandlers(@NonNull Plugin plugin) {
+    return Lots.list(new PGMStatsHandler(), new PGMMatchMakingHandler());
   }
 
   /**
@@ -63,15 +62,17 @@ public class PGMDependency implements Dependency {
    */
   @Override
   public Collection<IContextualProvider<?, CommandContext>> getProviders() {
-    return Lots.list(new PartyProvider(),
-            new PGMHostedMatchProvider(),
-            new PGMHostedPlayerProvider(),
-            new PGMLeaderSenderProvider());
+    return Lots.list(
+        new PartyProvider(),
+        new PGMHostedMatchProvider(),
+        new PGMHostedPlayerProvider(),
+        new PGMLeaderSenderProvider());
   }
 
   @Override
   public void onEnable() {
-    PGMMatchMakingListener listener = Guido.getListener(PGMMatchMakingListener.class);
+    PGMMatchMakingHandler listener =
+        Guido.getHandlerRegistry().getHandler(PGMMatchMakingHandler.class);
     if (listener == null || !listener.isEnabled()) return;
     listener.readyToHost();
   }

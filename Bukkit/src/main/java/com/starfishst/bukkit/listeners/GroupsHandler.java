@@ -1,9 +1,9 @@
 package com.starfishst.bukkit.listeners;
 
 import com.starfishst.bukkit.api.Guido;
-import com.starfishst.bukkit.api.events.GuidoListener;
-import com.starfishst.bukkit.client.BukkitRequest;
-import com.starfishst.bukkit.dependencies.pgm.listeners.groups.PGMGroupsListener;
+import com.starfishst.bukkit.api.events.Handler;
+import com.starfishst.bukkit.client.requests.BukkitRequest;
+import com.starfishst.bukkit.dependencies.pgm.listeners.groups.PGMGroupsHandler;
 import com.starfishst.bukkit.util.Permissions;
 import java.util.ArrayList;
 import java.util.List;
@@ -17,7 +17,7 @@ import org.bukkit.permissions.Permission;
 import org.bukkit.permissions.PermissionDefault;
 
 /** Listens for groups */
-public class GroupsListener implements GuidoListener {
+public class GroupsHandler implements Handler {
 
   /** The list of loaded groups */
   @NonNull private final List<Group> groups = new ArrayList<>();
@@ -36,7 +36,7 @@ public class GroupsListener implements GuidoListener {
               if (consumer != null) {
                 consumer.accept(newGroups);
               }
-              if (Guido.isPgmConnected()) {
+              if (Guido.isPPGMConnected()) {
                 this.PGM().addInPGM(Lots.set(groups));
                 return;
               }
@@ -64,7 +64,7 @@ public class GroupsListener implements GuidoListener {
       for (Group group : this.groups) {
         Bukkit.getServer().getPluginManager().removePermission(this.getNode(group));
       }
-      if (Guido.isPgmConnected()) this.PGM().unloadGroups(this.groups);
+      if (Guido.isPPGMConnected()) this.PGM().unloadGroups(this.groups);
     }
     this.groups.clear();
   }
@@ -133,6 +133,11 @@ public class GroupsListener implements GuidoListener {
     return groups;
   }
 
+  @NonNull
+  private PGMGroupsHandler PGM() {
+    return Guido.getHandlerRegistry().requireHandler(PGMGroupsHandler.class);
+  }
+
   @Override
   public @NonNull String getName() {
     return "groups";
@@ -141,10 +146,5 @@ public class GroupsListener implements GuidoListener {
   @Override
   public boolean isEnabled() {
     return true;
-  }
-
-  @NonNull
-  private PGMGroupsListener PGM() {
-    return Guido.getListener(PGMGroupsListener.class);
   }
 }

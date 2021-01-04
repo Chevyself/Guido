@@ -1,8 +1,8 @@
 package com.starfishst.bukkit.dependencies.pgm.listeners.groups;
 
 import com.starfishst.bukkit.api.Guido;
-import com.starfishst.bukkit.api.events.GuidoListener;
-import com.starfishst.bukkit.listeners.GroupsListener;
+import com.starfishst.bukkit.api.events.Handler;
+import com.starfishst.bukkit.listeners.GroupsHandler;
 import com.starfishst.bukkit.utils.BukkitUtils;
 import java.util.Collection;
 import java.util.HashMap;
@@ -21,11 +21,11 @@ import tc.oc.pgm.api.Config;
 import tc.oc.pgm.api.PGM;
 import tc.oc.pgm.api.Permissions;
 
-public class PGMGroupsListener implements GuidoListener {
+public class PGMGroupsHandler implements Handler {
 
   /** Adds the loaded groups in PGM */
   public void addInPGM(@NonNull Collection<Group> groups) {
-    if (!Guido.isPgmConnected())
+    if (!Guido.isPPGMConnected())
       throw new IllegalStateException(
           "Groups cannot be added to PGM when it is not in the plugins folder or enabled");
     Config configuration = PGM.get().getConfiguration();
@@ -133,8 +133,8 @@ public class PGMGroupsListener implements GuidoListener {
   }
 
   @NonNull
-  private GroupsListener groups() {
-    return Guido.getListener(GroupsListener.class);
+  private GroupsHandler groups() {
+    return Guido.getHandlerRegistry().requireHandler(GroupsHandler.class);
   }
 
   @Override

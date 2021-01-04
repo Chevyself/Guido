@@ -1,11 +1,11 @@
 package com.starfishst.bukkit.dependencies.pgm.listeners.matches.creation;
 
 import com.starfishst.bukkit.dependencies.pgm.PGMHostedMatch;
-import com.starfishst.bukkit.dependencies.pgm.listeners.matches.PGMMatchMakingListener;
+import com.starfishst.bukkit.dependencies.pgm.listeners.matches.PGMMatchMakingHandler;
 import lombok.NonNull;
 import tc.oc.pgm.api.match.Match;
 
-/** Helps {@link PGMMatchMakingListener} creating teams */
+/** Helps {@link PGMMatchMakingHandler} creating teams */
 public interface TeamCreation {
 
   /**
@@ -16,7 +16,7 @@ public interface TeamCreation {
    * @param match the match waiting for the teams
    */
   void createTeams(
-      @NonNull PGMMatchMakingListener listener,
+      @NonNull PGMMatchMakingHandler listener,
       @NonNull PGMHostedMatch PGMHostedMatch,
       @NonNull Match match);
 

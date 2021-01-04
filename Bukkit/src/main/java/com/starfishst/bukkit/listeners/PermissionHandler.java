@@ -2,9 +2,9 @@ package com.starfishst.bukkit.listeners;
 
 import com.starfishst.bukkit.GuidoPlugin;
 import com.starfishst.bukkit.api.Guido;
-import com.starfishst.bukkit.api.events.GuidoListener;
-import com.starfishst.bukkit.client.BukkitBooleanRequest;
-import com.starfishst.bukkit.client.BukkitRequest;
+import com.starfishst.bukkit.api.events.Handler;
+import com.starfishst.bukkit.client.requests.BukkitBooleanRequest;
+import com.starfishst.bukkit.client.requests.BukkitRequest;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -30,7 +30,7 @@ import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.permissions.PermissionAttachment;
 
 /** Listens to changes to the player and player data to add or remove permissions */
-public class PermissionListener implements GuidoListener {
+public class PermissionHandler implements Handler {
 
   /** Permissions are given to the server in async then are added to the player */
   @NonNull private final Map<UUID, Collection<Permission>> toGive = new HashMap<>();
@@ -46,7 +46,7 @@ public class PermissionListener implements GuidoListener {
    *
    * @param plugin the plugin required for certain tasks
    */
-  public PermissionListener(@NonNull GuidoPlugin plugin) {
+  public PermissionHandler(@NonNull GuidoPlugin plugin) {
     this.plugin = plugin;
   }
 
@@ -203,7 +203,7 @@ public class PermissionListener implements GuidoListener {
   }
 
   @Override
-  public void onUnload() {
+  public void onDisable() {
     this.attachments.clear();
   }
 

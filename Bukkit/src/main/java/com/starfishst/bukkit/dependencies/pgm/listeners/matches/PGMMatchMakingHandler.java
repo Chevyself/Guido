@@ -2,9 +2,9 @@ package com.starfishst.bukkit.dependencies.pgm.listeners.matches;
 
 import com.starfishst.bukkit.AnnotatedCommand;
 import com.starfishst.bukkit.api.Guido;
-import com.starfishst.bukkit.api.events.GuidoListener;
-import com.starfishst.bukkit.client.BukkitBooleanRequest;
-import com.starfishst.bukkit.client.BukkitRequest;
+import com.starfishst.bukkit.api.events.Handler;
+import com.starfishst.bukkit.client.requests.BukkitBooleanRequest;
+import com.starfishst.bukkit.client.requests.BukkitRequest;
 import com.starfishst.bukkit.dependencies.pgm.PGMHostedMatch;
 import com.starfishst.bukkit.dependencies.pgm.commands.ReadyCommand;
 import com.starfishst.bukkit.dependencies.pgm.listeners.matches.creation.PickTeamSelection;
@@ -20,12 +20,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ExecutionException;
-import java.util.logging.Level;
 import lombok.NonNull;
 import me.googas.api.client.data.matches.SimpleMatch;
 import me.googas.api.matches.ladder.Ladder;
 import me.googas.commons.RandomUtils;
-import me.googas.commons.builder.LogBuilder;
 import me.googas.commons.maps.Maps;
 import me.googas.messaging.api.MessengerListenFailException;
 import me.googas.messaging.json.ParamName;
@@ -49,7 +47,7 @@ import tc.oc.pgm.api.player.event.MatchPlayerAddEvent;
 import tc.oc.pgm.restart.RestartManager;
 
 /** Creates matches for the bot */
-public class PGMMatchMakingListener implements GuidoListener {
+public class PGMMatchMakingHandler implements Handler {
 
   /** The seconds to start the matches */
   public static final int secondsToStart = 120;
@@ -169,7 +167,14 @@ public class PGMMatchMakingListener implements GuidoListener {
             if (!maps.isEmpty()) {
               MapInfo random = RandomUtils.getRandom(maps);
               Match loaded = pgm.getMatchManager().createMatch(random.getId()).get();
-              PGMHostedMatch PGMHostedMatch = new PGMHostedMatch(match.getId(), HostedPlayer.parse(match.getParticipants()), ladderName, match.getDetails(), random, loaded.getId());
+              PGMHostedMatch PGMHostedMatch =
+                  new PGMHostedMatch(
+                      match.getId(),
+                      HostedPlayer.parse(match.getParticipants()),
+                      ladderName,
+                      match.getDetails(),
+                      random,
+                      loaded.getId());
               this.matches.add(PGMHostedMatch);
               TeamCreation teamCreation =
                   this.creator.get(
@@ -250,19 +255,6 @@ public class PGMMatchMakingListener implements GuidoListener {
   }
 
   /**
-   * Get the current match that is being played by pgm
-   *
-   * @return the current match being played in pgm
-   */
-  private Match getCurrentPgm() {
-    Iterator<Match> matches = PGM.get().getMatchManager().getMatches();
-    if (matches.hasNext()) {
-      return matches.next();
-    }
-    return null;
-  }
-
-  /**
    * Listen to when a player joins the map to add them to its team
    *
    * @param event the event of
@@ -285,22 +277,13 @@ public class PGMMatchMakingListener implements GuidoListener {
   public void onMatchFinish(MatchFinishEvent event) {
     JsonClient connection = Guido.getClient().getConnection();
     PGMHostedMatch PGMHostedMatch = this.getMatchByPgm(event.getMatch().getId());
-    LogBuilder log = new LogBuilder(Level.INFO, "Checking hosted match not null...");
     if (PGMHostedMatch == null) return;
-    log.append("\n Match is not null");
     int winnersId = PGMHostedMatch.getTeamId(this.getWinnersId(event));
-    log.append("\n Winners=" + winnersId);
     if (connection != null) {
-      log.append("\n There's connection with the bot sending finished");
       new BukkitBooleanRequest(
               "match-finish-id",
               Maps.objects("id", PGMHostedMatch.getId()).append("winners", winnersId))
-          .send(
-              bol -> {
-                log.append("\n Hosted match is finished? " + bol);
-                log.send(Guido.getLogger());
-              });
-      log.append("\n Sending new match can be hosted");
+          .send(bol -> {});
       this.readyToHost();
       this.matches.remove(PGMHostedMatch);
     }
@@ -339,9 +322,6 @@ public class PGMMatchMakingListener implements GuidoListener {
     }
   }
 
-  @Override
-  public void onUnload() {}
-
   /**
    * Get the team creation for the given key
    *
@@ -366,6 +346,29 @@ public class PGMMatchMakingListener implements GuidoListener {
   }
 
   /**
+   * In case that the server is suspended this will take care of it.
+   *
+   * <p>This might be deleted in the future as PGM developers expect to remove dependency in
+   * SportPaper
+   */
+  public void wakeUpServer() {
+    Bukkit.getScheduler().runTask(Guido.validated(), () -> BukkitUtils.dispatch("suspend false"));
+  }
+
+  /**
+   * Get the current match that is being played by pgm
+   *
+   * @return the current match being played in pgm
+   */
+  private Match getCurrentPgm() {
+    Iterator<Match> matches = PGM.get().getMatchManager().getMatches();
+    if (matches.hasNext()) {
+      return matches.next();
+    }
+    return null;
+  }
+
+  /**
    * Get the map of player to add. This map contains the uuid of the player and the party they are
    * on
    *
@@ -377,17 +380,15 @@ public class PGMMatchMakingListener implements GuidoListener {
   }
 
   @Override
-  public @NonNull String getName() {
-    return "match-making";
+  public boolean hasReceptors() {
+    return true;
   }
 
-  /**
-   * In case that the server is suspended this will take care of it.
-   *
-   * <p>This might be deleted in the future as PGM developers expect to remove dependency in
-   * SportPaper
-   */
-  public void wakeUpServer() {
-    Bukkit.getScheduler().runTask(Guido.validated(), () -> BukkitUtils.dispatch("suspend false"));
+  @Override
+  public void onDisable() {}
+
+  @Override
+  public @NonNull String getName() {
+    return "match-making";
   }
 }

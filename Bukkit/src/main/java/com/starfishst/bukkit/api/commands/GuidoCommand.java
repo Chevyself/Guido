@@ -10,7 +10,7 @@ public interface GuidoCommand {
    *
    * @param bol the new value
    */
-  void setEnabled(boolean bol);
+  default void setEnabled(boolean bol) {}
 
   /**
    * Get the name of the command. This is used to enable it or not from the configuration
@@ -25,5 +25,7 @@ public interface GuidoCommand {
    *
    * @return true if the command is enabled
    */
-  boolean isEnabled();
+  default boolean isEnabled() {
+    return false;
+  }
 }

@@ -1,6 +1,6 @@
 package com.starfishst.bukkit.api.config;
 
-import com.starfishst.bukkit.api.events.GuidoListener;
+import com.starfishst.bukkit.api.events.Handler;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -16,7 +16,7 @@ public interface Configuration {
    * @return the settings of the listener
    */
   @NonNull
-  default GuidoListenerSettings getListenerSettings(@NonNull GuidoListener listener) {
+  default GuidoListenerSettings getListenerSettings(@NonNull Handler listener) {
     for (GuidoListenerSettings listenerSettings : this.getListenersSettings()) {
       if (listenerSettings.getName().equalsIgnoreCase(listener.getName())) {
         return listenerSettings;

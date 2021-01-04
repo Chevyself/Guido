@@ -3,7 +3,7 @@ package com.starfishst.bukkit.dependencies.protocol.anticheat;
 import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.events.PacketAdapter;
 import com.comphenix.protocol.events.PacketEvent;
-import com.starfishst.bukkit.api.events.GuidoPacketListener;
+import com.starfishst.bukkit.dependencies.protocol.PacketHandler;
 import java.util.HashMap;
 import java.util.UUID;
 import lombok.NonNull;
@@ -12,7 +12,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
 /** Tracks the ticks for players */
-public abstract class TicksTracker extends PacketAdapter implements GuidoPacketListener {
+public abstract class TicksTracker extends PacketAdapter implements PacketHandler {
 
   /** The amount of ticks that have been sent from the player */
   @NonNull private final HashMap<UUID, Integer> ticks = new HashMap<>();
@@ -102,7 +102,7 @@ public abstract class TicksTracker extends PacketAdapter implements GuidoPacketL
   }
 
   @Override
-  public void onUnload() {
+  public void onDisable() {
     this.ticks.clear();
   }
 

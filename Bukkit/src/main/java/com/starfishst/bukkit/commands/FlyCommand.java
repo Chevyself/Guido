@@ -12,17 +12,8 @@ import org.bukkit.entity.Player;
 /** Commands used for flight */
 public class FlyCommand implements GuidoCommand {
 
-  /** Whether the command is enabled */
   private boolean enabled = false;
 
-  /**
-   * Toggle the fly status for a player or another
-   *
-   * @param player the player sender of the command
-   * @param locale the locale of the sender
-   * @param optional the optional player to toggle fly
-   * @return the result of the command execution
-   */
   @Command(aliases = "fly", description = "Toggle your fly status", permission = "guido.fly")
   public Result fly(
       Player player,

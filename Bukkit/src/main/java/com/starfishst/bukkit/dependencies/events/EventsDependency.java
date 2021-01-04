@@ -2,7 +2,7 @@ package com.starfishst.bukkit.dependencies.events;
 
 import com.starfishst.bukkit.api.commands.GuidoCommand;
 import com.starfishst.bukkit.api.dependencies.Dependency;
-import com.starfishst.bukkit.api.events.GuidoListener;
+import com.starfishst.bukkit.api.events.Handler;
 import com.starfishst.bukkit.context.CommandContext;
 import com.starfishst.core.providers.type.IContextualProvider;
 import java.util.ArrayList;
@@ -15,7 +15,7 @@ public class EventsDependency implements Dependency {
   private boolean enabled = false;
 
   @Override
-  public @NonNull Collection<GuidoListener> getListeners(@NonNull Plugin plugin) {
+  public @NonNull Collection<Handler> getHandlers(@NonNull Plugin plugin) {
     return new ArrayList<>();
   }
 

@@ -1,4 +1,4 @@
-## The context in which this server is working
+ ## The context in which this server is working
 context: Bukkit
 ## The token to authenticate in the bot
 token: none
@@ -13,72 +13,53 @@ enabled-commands:
   - gamemode
 ## The settings for certain listeners
 listener-settings:
-  ## Listener for saving the stats after a match
-  pgm-stats:
-    ## Whether to save stats
-    enabled: false
-  ## Listener for command executions. To print what others are doing with commands!
+  #  <---------------------------------------------------------------------------------------->
+  #                           LISTENERS THAT DO NOT REQUIRE DEPENDENCIES
+  #  <---------------------------------------------------------------------------------------->
+  # Listener for command executions. To print what others are doing with commands!
   command-execution:
-    ## Whether this listener is enabled
+    # Whether this listener is enabled
     enabled: true
-    ## What's the permission that allows players to see who's executing a command
+    # What's the permission that allows players to see who's executing a command
     permission: guido.adminchat
-    ## How is it displayed for those who posses the permission
-    ## Placeholders are:
-    ## %player% for the name of the player
-    ## %player_display%% for the player display name
-    ##  %command% for the command that the player executed
+    # How is it displayed for those who posses the permission
+    # Placeholders are:
+    # %player% for the name of the player
+    # %player_display%% for the player display name
+    #  %command% for the command that the player executed
     chat: "[&6A&r] %player_display% &6executed &r%command%"
-    ## Commands that are not sent
+    # Commands that are not sent
     banned:
       - tell
       - msg
-  ## A listener for testing. This will print guido events
+  # A listener for testing. This will print guido events
   test:
     enabled: true
-  ## An anti-cheat to detect players using unfair advantages
-  anti-cheat:
-    ## Whether the anti-cheat is enabled
-    enabled: true
-    ## The delay between suspicious calls
-    delay: 5s
-    ## The permissions of the players that can see calls
-    permission: guido.adminchat
-    ## How is it displayed for those who posses the permission
-    ## Placeholders are:
-    ## %player% for the name of the player
-    ## %player_display%% for the player display name
-    ##  %reason% the reason why the player is suspicious
-    chat: "[&6A&r] %player_display% &6cheats &r%reason%"
-  ## Detects for auto clicking
-  auto-click-detector:
-    ## Whether the detector is enabled
-    enabled: true
-    ## The delay to which clicks and averages reset. This means how much time should
-    ## take for clicks to be measured again
-    reset-delay: 50
-    ## The maximum cps until it starts warning the staff
-    max-cps: 16.0
-    ## The minimum deviation to which a player might get banned
-    ## This means the difference between click speeds
-    min-deviation: 0.01
-  ## Detect people using reach hacks
-  reach-detector:
-    ## Whether this detector should be enabled
-    enabled: true
-  ## Whether to enable match making
-  match-making:
-    ## True tp enable PGM match making
-    enabled: false
-  ## Whether to force the players to spawn in a central location
+  # Whether to force the players to spawn in a central location
   spawn:
     ## Whether to enable this function
     enabled: false
-  ## Decorations given by the groups of a player
+  # A custom scoreboard that supports PAPI placeholders
+  # Localized lines are supported just add a `localized:` prefix and the line will be looked in language files!
+  scoreboard:
+    # Whether to have a custom scoreboard
+    enabled: true
+    title: "localized:scoreboard.title"
+    # This is the layout of the scoreboard
+    layout:
+      - "localized:scoreboard.ping"
+      - "&egoogas.me"
+  # Decorations given by the groups of a player
   decorations:
-    ## Whether there should be decorations
+    # Whether there should be decorations
     enabled: false
-  ## A listener that aims to improve minecraft velocity
+  #  <---------------------------------------------------------------------------------------->
+  #                             LISTENERS THAT REQUIRE PROTOCOLLIB
+  #  <---------------------------------------------------------------------------------------->
+  # A much better tab list which can be customized by other plugins
+  tab-list:
+    enabled: true
+  # A listener that aims to improve minecraft velocity
   better-velocity:
     enabled: false
     multiplier-horizontal: 0.9
@@ -86,13 +67,43 @@ listener-settings:
     multiplier-vertical-air: 0.4
     multiplier-sprint: 0.8
     multiplier-walk: 0.4
-  ## A custom scoreboard that supports PAPI placeholders
-  ## Localized lines are supported just add a `localized:` prefix and the line will be looked in language files!
-  scoreboard:
-    ## Whether to have a custom scoreboard
+  # An anti cheat that ensures a better gameplay for everyone
+  anti-cheat:
     enabled: true
-    title: "localized:scoreboard.title"
-    ## This is the layout of the scoreboard
-    layout:
-      - "localized:scoreboard.ping"
-      - "&egoogas.me"
+    # The delay between suspicious calls
+    delay: 5s
+    # The permissions of the players that can see calls
+    permission: guido.adminchat
+    # How is it displayed for those who posses the permission
+    # Placeholders are:
+    # %player% for the name of the player
+    # %player_display%% for the player display name
+    #  %reason% the reason why the player is suspicious
+    chat: "[&6A&r] %player_display% &6cheats &r%reason%"
+  # Detects for auto clicking
+  auto-click-detector:
+    # Whether the detector is enabled
+    enabled: true
+    # The delay to which clicks anod averages reset. This means how much time should
+    # take for clicks to be measured again
+    reset-delay: 50
+    # The maximum cps until it starts warning the staff
+    max-cps: 16.0
+    # The minimum deviation to which a player might get banned
+    # This means the difference between click speeds
+    min-deviation: 0.01
+  # Detect people using reach hacks
+  reach-detector:
+    ## Whether this detector should be enabled
+    enabled: true
+  #  <---------------------------------------------------------------------------------------->
+  #                             LISTENERS THAT REQUIRE PGM
+  #  <---------------------------------------------------------------------------------------->
+  # Listener for saving the stats after a match
+  pgm-stats:
+    # Whether to save stats
+    enabled: false
+  # Whether to enable match making
+  match-making:
+    # True to enable PGM match making
+    enabled: false

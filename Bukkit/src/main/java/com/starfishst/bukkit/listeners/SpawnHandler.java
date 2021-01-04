@@ -1,7 +1,8 @@
 package com.starfishst.bukkit.listeners;
 
-import com.starfishst.bukkit.api.events.GuidoListener;
+import com.starfishst.bukkit.api.events.Handler;
 import lombok.NonNull;
+import me.googas.annotations.Nullable;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -10,10 +11,10 @@ import org.bukkit.event.EventPriority;
 import org.spigotmc.event.player.PlayerSpawnLocationEvent;
 
 /** Listener for a central spawn location in the world */
-public class SpawnListener implements GuidoListener {
+public class SpawnHandler implements Handler {
 
   /** The location where players will spawn */
-  @NonNull private final Location location = this.construct();
+  @Nullable private Location location = null;
 
   /**
    * Wait for when a player joins the game to set their spawn location
@@ -22,7 +23,7 @@ public class SpawnListener implements GuidoListener {
    */
   @EventHandler(priority = EventPriority.LOWEST)
   public void onPlayerJoinEvent(PlayerSpawnLocationEvent event) {
-    event.setSpawnLocation(this.location);
+    if (this.location != null) event.setSpawnLocation(this.location);
   }
 
   /**
@@ -47,9 +48,14 @@ public class SpawnListener implements GuidoListener {
     return new Location(world, x, y, z, (float) yaw, (float) pitch);
   }
 
+  @Override
+  public void onEnable() {
+    this.location = this.construct();
+  }
+
   /** Called on {@link #unregister()} */
   @Override
-  public void onUnload() {}
+  public void onDisable() {}
 
   /**
    * Get the name of this listener
