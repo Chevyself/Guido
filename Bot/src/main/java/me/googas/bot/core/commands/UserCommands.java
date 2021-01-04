@@ -107,7 +107,8 @@ public class UserCommands {
     if (nickname != null) {
       link =
           Guido.getDataLoader()
-              .getLink(LinkableType.MINECRAFT, new GuidoValuesMap("nickname", nickname));
+              .getLinkByRecognition(
+                  LinkableType.MINECRAFT, new GuidoValuesMap("nickname", nickname));
       if (link != null) {
         return new Result(this.buildStats(guild, locale, context, link));
       } else {
@@ -127,7 +128,7 @@ public class UserCommands {
       @NonNull LocaleFile locale,
       @NonNull CommandContext context,
       @NonNull Linkable linkable) {
-    String nickname = linkable.getIdentification().getOr("nickname", String.class, "");
+    String nickname = linkable.getRecognition().getOr("nickname", String.class, "");
     EmbedQuery query =
         EmbedFactory.fromResult(
             new Result(locale.get("stats.desc", Maps.singleton("nick", nickname))),

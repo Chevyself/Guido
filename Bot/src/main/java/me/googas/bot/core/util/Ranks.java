@@ -13,7 +13,7 @@ public class Ranks {
   @NonNull
   public static String getRankToken(@NonNull RankRange range) {
     return "%rank."
-        + range.getPreferences().getOr("name", String.class, "no-name").replace(" ", ".")
+        + range.getPreferences().getOr("name", String.class, "no-name").replace(" ", "-")
         + "%";
   }
 

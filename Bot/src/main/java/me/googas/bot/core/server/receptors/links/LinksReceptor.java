@@ -125,7 +125,4 @@ public class LinksReceptor {
     return true;
   }
 
-  // @Receptor("link/recognition")
-  // Each recognition in a link must be updated specifying its type
-
 }

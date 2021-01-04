@@ -312,7 +312,7 @@ public class GuidoLinkable implements Permissible, Linkable, BotCatchable {
         User user = this.requireDiscordRef().getUser(Guido.getConnection().validatedJda());
         return user != null ? user.getAsMention() : "invalid";
       case MINECRAFT:
-        return this.getIdentification().getOr("nickname", String.class, "invalid");
+        return this.getRecognition().getOr("nickname", String.class, "invalid");
       default:
         throw new IllegalArgumentException(this.getType() + " is not a valid type");
     }

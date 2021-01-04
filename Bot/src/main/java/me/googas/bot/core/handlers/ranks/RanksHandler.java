@@ -121,6 +121,7 @@ public class RanksHandler implements GuidoHandler {
     if (guild != null && discord != null) {
       Guild guildDiscord = guild.toDiscord();
       Member member = discord.getMember(guildDiscord);
+      if (member == null) return;
       result
           .getApplied()
           .removeIf(

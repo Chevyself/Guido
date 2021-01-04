@@ -155,7 +155,7 @@ public interface Stateable {
   }
 
   default void setElo(Ladder ladder, float elo) {
-    // TODO
+    this.getStats().put(ladder.getName() + "-elo", elo);
   }
 
   /**
@@ -188,5 +188,27 @@ public interface Stateable {
         this.getStats().remove(key);
       }
     }
+  }
+
+  /**
+   * Resets the wins and loses on the given ladders
+   *
+   * @param ladders the ladders to reset the win and loses
+   */
+  default void resetWinsAndLoses(@NonNull Collection<Ladder> ladders) {
+    for (Ladder ladder : ladders) {
+      this.resetWinsAndLoses(ladder);
+    }
+  }
+
+  /**
+   * Resets the wins and loses on the given ladder
+   *
+   * @param ladder the ladder to reset the win and loses
+   */
+  default void resetWinsAndLoses(@NonNull Ladder ladder) {
+    this.getStats().put(ladder.getName() + "-wins", 0f);
+    this.getStats().put(ladder.getName() + "-loses", 0f);
+    this.getStats().put(ladder.getName() + "-played", 0f);
   }
 }

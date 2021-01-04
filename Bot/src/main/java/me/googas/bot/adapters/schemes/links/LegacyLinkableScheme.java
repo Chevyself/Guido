@@ -73,7 +73,7 @@ public class LegacyLinkableScheme implements Scheme<Linkable> {
       if (nickname != null) map.put("nickname", nickname);
       return map;
     }
-    return this.identification;
+    return new GuidoValuesMap();
   }
 
   @Override

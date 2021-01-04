@@ -98,18 +98,12 @@ public class MatchEloCalculator implements GuidoHandler {
     double expected = this.calculateExpected(oldElo, oldElo, ladder.baseValue());
     int winnersDifference =
         (int)
-            (this.newElo(
-                    oldElo,
-                    expected,
-                    ladder.getOptions().getOr("win-multiplier", Double.class, 1.0))
-                - oldElo);
+            ((this.newElo(oldElo, expected, 1) - oldElo)
+                * ladder.getOptions().getOr("win-multiplier", Double.class, 1.0));
     int losersDifference =
         (int)
-            (oldElo
-                - this.newElo(
-                    oldElo,
-                    expected,
-                    ladder.getOptions().getOr("lose-multiplier", Double.class, 0.0)));
+            ((oldElo - this.newElo(oldElo, expected, 0))
+                * ladder.getOptions().getOr("lose-multiplier", Double.class, 1.0));
     this.setElo(stateable, winner, ladder, winnersDifference, losersDifference, event);
   }
 
@@ -170,19 +164,19 @@ public class MatchEloCalculator implements GuidoHandler {
     float elo = ladder.baseValue();
     for (int i = 0; i < wins; i++) {
       double expected = this.calculateExpected(elo, elo, ladder.baseValue());
-      elo =
-          this.newElo(
-              elo,
-              expected,
-              ladder.getOptions().getOr("win-multiplier", Number.class, 1).floatValue());
+      int difference =
+          (int)
+              ((this.newElo(elo, expected, 1) - elo)
+                  * ladder.getOptions().getOr("lose-multiplier", Double.class, 1.0));
+      elo += difference;
     }
     for (int i = 0; i < loses; i++) {
       double expected = this.calculateExpected(elo, elo, ladder.baseValue());
-      elo =
-          this.newElo(
-              elo,
-              expected,
-              ladder.getOptions().getOr("lose-multiplier", Number.class, 1).floatValue());
+      int difference =
+          (int)
+              ((elo - this.newElo(elo, expected, 1))
+                  * ladder.getOptions().getOr("lose-multiplier", Double.class, 1.0));
+      elo -= -difference;
     }
     stateable.setElo(ladder, elo);
   }
@@ -246,16 +240,18 @@ public class MatchEloCalculator implements GuidoHandler {
       float losersElo = this.getLosersElo(match, ladder);
       float newWinners =
           this.newElo(
-              winnersElo,
-              this.calculateExpected(winnersElo, losersElo, ladder.baseValue()),
-              ladder.getOptions().getOr("win-multiplier", Double.class, 1.0));
+              winnersElo, this.calculateExpected(winnersElo, losersElo, ladder.baseValue()), 1);
       float newLosers =
           this.newElo(
-              losersElo,
-              this.calculateExpected(losersElo, winnersElo, ladder.baseValue()),
-              ladder.getOptions().getOr("lose-multiplier", Double.class, 0.0));
-      int winnersDifference = (int) (newWinners - winnersElo);
-      int losersDifference = (int) (losersElo - newLosers);
+              losersElo, this.calculateExpected(losersElo, winnersElo, ladder.baseValue()), 0);
+      int winnersDifference =
+          (int)
+              ((newWinners - winnersElo)
+                  * ladder.getOptions().getOr("win-multiplier", Double.class, 1.0));
+      int losersDifference =
+          (int)
+              ((losersElo - newLosers)
+                  * ladder.getOptions().getOr("lose-multiplier", Double.class, 1.0));
       match.getDetails().put("winners-difference", winnersDifference);
       match.getDetails().put("losers-difference", losersDifference);
       this.setElo(match, ladder, winnersDifference, losersDifference, event);

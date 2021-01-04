@@ -40,7 +40,15 @@ public class QueueHandler implements GuidoHandler {
       String ladderName = key.substring(5);
       Ladder ladder = guild.getLadder(ladderName);
       if (ladder == null) return;
-      this.joinQueue(guild, member, ladder);
+      QueueResult result = this.joinQueue(guild, member, ladder);
+      if (result.isCancelled())
+        member
+            .getUser()
+            .openPrivateChannel()
+            .queue(
+                channel -> {
+                  channel.sendMessage(result.getReason()).queue();
+                });
     }
   }
 

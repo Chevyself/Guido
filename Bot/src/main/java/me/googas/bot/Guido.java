@@ -28,6 +28,7 @@ import me.googas.bot.core.commands.MatchCommands;
 import me.googas.bot.core.commands.ProvisionalTeamCommands;
 import me.googas.bot.core.commands.QueueCommands;
 import me.googas.bot.core.commands.RangesCommand;
+import me.googas.bot.core.commands.SeasonCommands;
 import me.googas.bot.core.commands.TeamCommands;
 import me.googas.bot.core.commands.TestCommands;
 import me.googas.bot.core.commands.TokenCommands;
@@ -212,6 +213,7 @@ public class Guido {
             new ProvisionalTeamCommands(),
             new QueueCommands(),
             new RangesCommand(),
+            new SeasonCommands(),
             new TeamCommands(),
             new TestCommands(),
             new TokenCommands(),

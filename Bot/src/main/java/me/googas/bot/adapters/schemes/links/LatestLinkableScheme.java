@@ -57,12 +57,12 @@ public class LatestLinkableScheme implements Scheme<Linkable> {
   @NonNull
   public GuidoValuesMap getRecognition() {
     if (this.type == LinkableType.MINECRAFT) {
-      GuidoValuesMap map = new GuidoValuesMap();
+      GuidoValuesMap map = new GuidoValuesMap(this.recognition.getMap());
       String nickname = this.identification.get("nickname", String.class);
       if (nickname != null) map.put("nickname", nickname);
       return map;
     }
-    return this.identification;
+    return new GuidoValuesMap();
   }
 
   /** @deprecated this constructor may only be used by gson */

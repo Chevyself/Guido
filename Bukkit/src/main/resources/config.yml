@@ -84,7 +84,7 @@ listener-settings:
   auto-click-detector:
     # Whether the detector is enabled
     enabled: true
-    # The delay to which clicks anod averages reset. This means how much time should
+    # The delay to which clicks and averages reset. This means how much time should
     # take for clicks to be measured again
     reset-delay: 50
     # The maximum cps until it starts warning the staff

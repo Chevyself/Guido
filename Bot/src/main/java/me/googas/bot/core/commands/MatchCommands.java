@@ -17,6 +17,7 @@ import java.util.Set;
 import lombok.NonNull;
 import me.googas.api.lang.LocaleFile;
 import me.googas.api.links.Linkable;
+import me.googas.api.links.LinkableInfo;
 import me.googas.api.links.LinkableType;
 import me.googas.api.matches.Match;
 import me.googas.api.matches.MatchInfo;
@@ -122,19 +123,10 @@ public class MatchCommands {
       node = "guido.update-ranks")
   public Result updateRanks(BotGuild guild) {
     RanksHandler ranksHandler = Guido.getHandler(RanksHandler.class);
-    for (Member member : guild.toDiscord().getMembers()) {
-      Linkable linkable =
-          Guido.getDataLoader()
-              .getLink(LinkableType.DISCORD, new GuidoValuesMap("id", member.getIdLong()));
-      if (linkable == null) continue;
-      UserData user = linkable.getLinkedUser();
-      if (user != null) {
-        for (Linkable link : user.getLinks()) {
-          ranksHandler.update(link, guild);
-        }
-      } else {
-        ranksHandler.update(linkable, guild);
-      }
+    for (LinkableInfo link : Guido.getDataLoader().getLinks(-1, -1, LinkableType.MINECRAFT)) {
+      Linkable data = link.getLink();
+      if (data == null) continue;
+      ranksHandler.update(data, guild);
     }
     return new Result("Guild ranks have been updated");
   }

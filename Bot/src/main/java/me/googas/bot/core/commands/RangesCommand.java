@@ -67,7 +67,11 @@ public class RangesCommand {
       @Required(name = "range.set.min", description = "range.set.min.desc") int min,
       @Required(name = "range.set.max", description = "range.set.max.desc") int max) {
     GuidoRankRange range =
-        new GuidoRankRange(ladder.getName(), min, max, new GuidoValuesMap("id", role.getIdLong()));
+        new GuidoRankRange(
+            ladder.getName(),
+            min,
+            max,
+            new GuidoValuesMap("id", role.getIdLong()).put("name", role.getName()));
     guild.getRanges().add(range);
     return new Result(
         locale.get(
