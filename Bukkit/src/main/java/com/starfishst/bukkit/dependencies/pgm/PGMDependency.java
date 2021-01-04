@@ -4,12 +4,13 @@ import com.starfishst.bukkit.api.Guido;
 import com.starfishst.bukkit.api.commands.GuidoCommand;
 import com.starfishst.bukkit.api.dependencies.Dependency;
 import com.starfishst.bukkit.api.events.GuidoListener;
-import com.starfishst.bukkit.commands.PickCommands;
-import com.starfishst.bukkit.commands.ReadyCommand;
+import com.starfishst.bukkit.dependencies.pgm.commands.PickCommands;
+import com.starfishst.bukkit.dependencies.pgm.commands.ReadyCommand;
 import com.starfishst.bukkit.commands.providers.pgm.HostedMatchProvider;
-import com.starfishst.bukkit.commands.providers.pgm.PartyProvider;
-import com.starfishst.bukkit.commands.providers.pgm.PlayerInfoProvider;
-import com.starfishst.bukkit.commands.providers.pgm.TeamMemberProvider;
+import com.starfishst.bukkit.dependencies.pgm.commands.provider.PGMHostedMatchProvider;
+import com.starfishst.bukkit.dependencies.pgm.commands.provider.PGMHostedPlayerProvider;
+import com.starfishst.bukkit.dependencies.pgm.commands.provider.PGMLeaderSenderProvider;
+import com.starfishst.bukkit.dependencies.pgm.commands.provider.PartyProvider;
 import com.starfishst.bukkit.context.CommandContext;
 import com.starfishst.bukkit.dependencies.pgm.listeners.PGMStatsListener;
 import com.starfishst.bukkit.dependencies.pgm.listeners.matches.PGMMatchMakingListener;
@@ -62,11 +63,10 @@ public class PGMDependency implements Dependency {
    */
   @Override
   public Collection<IContextualProvider<?, CommandContext>> getProviders() {
-    return Lots.list(
-        new HostedMatchProvider(),
-        new PartyProvider(),
-        new PlayerInfoProvider(),
-        new TeamMemberProvider());
+    return Lots.list(new PartyProvider(),
+            new PGMHostedMatchProvider(),
+            new PGMHostedPlayerProvider(),
+            new PGMLeaderSenderProvider());
   }
 
   @Override

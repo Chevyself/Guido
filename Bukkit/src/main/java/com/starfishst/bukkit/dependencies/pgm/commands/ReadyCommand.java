@@ -1,4 +1,4 @@
-package com.starfishst.bukkit.commands;
+package com.starfishst.bukkit.dependencies.pgm.commands;
 
 import com.starfishst.bukkit.annotations.Command;
 import com.starfishst.bukkit.api.Guido;

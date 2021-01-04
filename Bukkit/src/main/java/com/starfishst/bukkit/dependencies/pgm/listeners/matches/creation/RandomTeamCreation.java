@@ -1,15 +1,18 @@
 package com.starfishst.bukkit.dependencies.pgm.listeners.matches.creation;
 
 import com.starfishst.bukkit.client.BukkitIntRequest;
-import com.starfishst.bukkit.dependencies.pgm.listeners.matches.HostedMatch;
+import com.starfishst.bukkit.dependencies.pgm.PGMHostedMatch;
 import com.starfishst.bukkit.dependencies.pgm.listeners.matches.PGMMatchMakingListener;
 import java.time.Duration;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
+
+import com.starfishst.bukkit.matches.HostedPlayer;
 import lombok.NonNull;
 import me.googas.api.client.data.matches.SimpleMatchTeam;
 import me.googas.api.client.data.matches.team.SimpleTeamMember;
@@ -54,40 +57,49 @@ public class RandomTeamCreation implements TeamCreation {
     return true;
   }
 
+  @NonNull
+  private List<LinkableInfo> randomTeam(@NonNull List<HostedPlayer> random) {
+    List<LinkableInfo> links = new ArrayList<>();
+    for (HostedPlayer hostedPlayer : random) {
+      links.add(hostedPlayer.toLink());
+    }
+    return links;
+  }
+
   @Override
   public void createTeams(
       @NonNull PGMMatchMakingListener listener,
-      @NonNull HostedMatch hostedMatch,
+      @NonNull PGMHostedMatch PGMHostedMatch,
       @NonNull Match match) {
-    List<LinkableInfo> participants = hostedMatch.getParticipants();
+    Set<HostedPlayer> participants = PGMHostedMatch.getParticipants();
     Map<Party, List<LinkableInfo>> teams = new HashMap<>();
-    int perTeam = hostedMatch.getDetails().getOr("players-per-team", Integer.class, 1);
+    int perTeam = PGMHostedMatch.getDetails().getOr("players-per-team", Integer.class, 1);
     int index = 1;
-    for (int i = 0; i < (hostedMatch.getParticipants().size() / perTeam); i++) {
+    for (int i = 0; i < (PGMHostedMatch.getParticipants().size() / perTeam); i++) {
       Team party = this.getAvailableParty(teams, match);
       if (party == null) continue;
-      List<LinkableInfo> aTeam = RandomUtils.getRandom(participants, perTeam);
+      List<LinkableInfo> aTeam = this.randomTeam(RandomUtils.getRandom(participants, perTeam));
       Set<TeamMember> members = new HashSet<>();
       teams.put(party, aTeam);
-      for (LinkableInfo info : aTeam) {
-        UUID uuid = UUIDUtils.untrim(info.getIdentification().validated("uuid", String.class));
+      for (LinkableInfo hosted : aTeam) {
+        UUID uuid = UUIDUtils.untrim(hosted.getIdentification().validated("uuid", String.class));
         MatchPlayer player = match.getPlayer(uuid);
         if (player != null) {
           match.setParty(player, party);
         }
         listener.getToAdd().put(uuid, party);
-        members.add(new SimpleTeamMember(info, TeamRole.NORMAL));
+        members.add(new SimpleTeamMember(hosted, TeamRole.NORMAL));
       }
       String name = "Team " + index;
       try {
         Integer id =
             new BukkitIntRequest(
                     "match-add-team",
-                    Maps.objects("id", hostedMatch.getId())
+                    Maps.objects("id", PGMHostedMatch.getId())
                         .append("team", new SimpleMatchTeam(-3, name, members)))
                 .send();
         if (id != null) {
-          hostedMatch.getTeams().put(party.getId(), id);
+          PGMHostedMatch.getTeams().put(party.getId(), id);
         }
       } catch (MessengerListenFailException e) {
         e.printStackTrace();

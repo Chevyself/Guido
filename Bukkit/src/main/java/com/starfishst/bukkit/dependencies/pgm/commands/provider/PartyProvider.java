@@ -1,4 +1,4 @@
-package com.starfishst.bukkit.commands.providers.pgm;
+package com.starfishst.bukkit.dependencies.pgm.commands.provider;
 
 import com.starfishst.bukkit.api.Guido;
 import com.starfishst.bukkit.context.CommandContext;
