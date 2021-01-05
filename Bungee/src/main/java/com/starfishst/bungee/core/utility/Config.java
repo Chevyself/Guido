@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.Set;
 import lombok.NonNull;
 import me.googas.annotations.Nullable;
+import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.config.Configuration;
 
 /** Static utilities for configuration */
@@ -51,6 +52,9 @@ public class Config {
       @NonNull String serverName, @NonNull Collection<GuidoServer> servers) {
     for (GuidoServer server : servers) {
       if (server.getName().equalsIgnoreCase(serverName)) return false;
+    }
+    for (String key : ProxyServer.getInstance().getConfig().getServers().keySet()) {
+      if (key.equalsIgnoreCase(serverName)) return false;
     }
     return true;
   }

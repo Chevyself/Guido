@@ -55,6 +55,10 @@ public class Mongo {
   private static final Gson GSON = Mongo.constructGson(true);
 
   public static Gson constructGson(boolean emptyAsLatest) {
+    return Mongo.builderGson(emptyAsLatest).create();
+  }
+
+  public static GsonBuilder builderGson(boolean emptyAsLatest) {
     return new GsonBuilder()
         .setPrettyPrinting()
         .registerTypeAdapter(GuidoGuild.class, new BotGuildDeserializer())
@@ -75,8 +79,7 @@ public class Mongo {
         .registerTypeAdapter(long.class, new LongMongoAdapter())
         .registerTypeAdapter(Long.class, new LongMongoAdapter())
         .registerTypeAdapter(ValuesMap.class, new ValuesMapAdapter())
-        .registerTypeAdapter(GuidoValuesMap.class, new ValuesMapAdapter())
-        .create();
+        .registerTypeAdapter(GuidoValuesMap.class, new ValuesMapAdapter());
   }
 
   public static void save(

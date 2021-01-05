@@ -6,6 +6,7 @@ import com.starfishst.bungee.messages.MessagesProvider;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import lombok.NonNull;
 import me.googas.commons.maps.Maps;
 import net.md_5.bungee.api.CommandSender;
@@ -64,10 +65,10 @@ public class BungeeLanguageHandler implements GuidoListener, MessagesProvider {
    */
   @NonNull
   public BungeeLocaleFile getFile(@NonNull CommandSender sender) {
-    return this.getFile(
-        sender instanceof ProxiedPlayer
-            ? ((ProxiedPlayer) sender).getLocale().toString().split("_")[0]
-            : "en");
+    if (!(sender instanceof ProxiedPlayer)) return this.getFile("en");
+    Locale locale = ((ProxiedPlayer) sender).getLocale();
+    if (locale == null) return this.getFile("en");
+    return this.getFile(locale.toString().split("_")[0]);
   }
 
   /**

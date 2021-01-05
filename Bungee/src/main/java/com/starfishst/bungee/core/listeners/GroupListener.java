@@ -25,7 +25,7 @@ public class GroupListener implements GuidoListener {
    * @param consumer what ever you would like to do with the new loaded groups
    */
   public void loadGroups(Consumer<List<Group>> consumer) {
-    new BungeeRequest<>(Group[].class, "groups")
+    new BungeeRequest<>(Group[].class, "all-groups")
         .sendIfPresent(
             groups -> {
               List<Group> newGroups = Lots.list(groups);

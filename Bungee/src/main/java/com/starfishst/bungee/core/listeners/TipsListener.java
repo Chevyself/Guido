@@ -1,20 +1,16 @@
 package com.starfishst.bungee.core.listeners;
 
-import com.starfishst.bungee.api.Guido;
 import com.starfishst.bungee.api.events.GuidoListener;
-import com.starfishst.bungee.utils.BungeeUtils;
-import java.util.ArrayList;
-import java.util.List;
 import lombok.NonNull;
-import me.googas.commons.RandomUtils;
-import me.googas.commons.time.Time;
-import me.googas.commons.time.Unit;
-import net.md_5.bungee.api.ProxyServer;
-import net.md_5.bungee.api.chat.BaseComponent;
-import net.md_5.bungee.api.connection.ProxiedPlayer;
 
 public class TipsListener implements GuidoListener {
 
+  @Override
+  public @NonNull String getName() {
+    return "tips";
+  }
+
+  /*
   @NonNull private final List<BaseComponent[]> messages = new ArrayList<>();
 
   @NonNull
@@ -41,8 +37,6 @@ public class TipsListener implements GuidoListener {
             });
   }
 
-  @Override
-  public @NonNull String getName() {
-    return "tips";
-  }
+
+   */
 }

@@ -28,7 +28,7 @@ public class GroupsHandler implements Handler {
    * @param consumer what ever you would like to do with the new loaded groups
    */
   public void loadGroups(Consumer<List<Group>> consumer) {
-    new BukkitRequest<>(Group[].class, "groups")
+    new BukkitRequest<>(Group[].class, "all-groups")
         .sendIfPresent(
             groups -> {
               List<Group> newGroups = Lots.list(groups);

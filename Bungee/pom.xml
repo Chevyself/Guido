@@ -45,6 +45,7 @@
                                     <include>com.starfishst.bungee:bungee</include>
                                     <include>com.starfishst.core:core</include>
                                     <include>com.starfishst.utils:core-utils</include>
+                                    <include>me.googas.commons:Commons</include>
                                     <include>me.googas.messaging:Commons-Messaging</include>
                                 </includes>
                             </artifactSet>

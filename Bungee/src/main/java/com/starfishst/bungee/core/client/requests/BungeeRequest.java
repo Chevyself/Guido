@@ -4,7 +4,9 @@ import com.starfishst.bungee.api.Guido;
 import java.util.Map;
 import java.util.Optional;
 import java.util.function.Consumer;
+import java.util.logging.Level;
 import lombok.NonNull;
+import me.googas.api.client.Client;
 import me.googas.commons.maps.MapBuilder;
 import me.googas.messaging.Request;
 import me.googas.messaging.api.MessengerListenFailException;
@@ -58,13 +60,11 @@ public class BungeeRequest<T> extends Request<T> {
    * @param exception the consumer for the exception in case there's one
    */
   public void send(@NonNull Consumer<Optional<T>> consumer, Consumer<Throwable> exception) {
-    JsonClient connection = Guido.getClient().getConnection();
-    if (connection != null) {
-      if (exception != null) {
-        connection.sendRequest(this, consumer, exception);
-      } else {
-        connection.sendRequest(this, consumer);
-      }
+    Client connection = Guido.getClient();
+    if (exception != null) {
+      connection.sendRequest(this, consumer, exception);
+    } else {
+      connection.sendRequest(this, consumer);
     }
   }
 
@@ -74,7 +74,7 @@ public class BungeeRequest<T> extends Request<T> {
    * @param consumer the consumer for the given object
    */
   public void send(@NonNull Consumer<Optional<T>> consumer) {
-    this.send(consumer, null);
+    this.send(consumer, exception -> Guido.getLogger().log(Level.SEVERE, exception, () -> ""));
   }
 
   /**

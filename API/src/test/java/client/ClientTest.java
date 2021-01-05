@@ -1,9 +1,82 @@
 package client;
 
+import java.io.IOException;
+import java.util.Scanner;
+import me.googas.api.SortedStats;
+import me.googas.api.client.Client;
+import me.googas.api.client.data.SimpleValuesMap;
+import me.googas.api.client.data.links.SimpleLinkableInfo;
+import me.googas.api.links.LinkableInfo;
+import me.googas.api.links.LinkableType;
+import me.googas.api.permissions.Group;
+import me.googas.api.permissions.PermissionStack;
+import me.googas.api.utility.Requests;
+import me.googas.messaging.Request;
+
 /** A test for the client */
 public class ClientTest {
 
   private static final String groupId = "kI9w6F";
+
+  private static final LinkableInfo link =
+      new SimpleLinkableInfo(
+          LinkableType.MINECRAFT, new SimpleValuesMap("uuid", "5eed208dde5840229ba76ccb5ea7e92a"));
+
+  public static void main(String[] args) throws IOException {
+    // "167.114.49.251"
+    // 5Eh8QKdS7GmrE0Gs
+    // localhost
+    Client client = new Client("5Eh8QKdS7GmrE0Gs", "localhost", 3000);
+    client.startConnection();
+    Scanner scanner = new Scanner(System.in);
+    while (true) {
+      while (scanner.hasNextLine()) {
+        String line = scanner.nextLine();
+        if (line.equalsIgnoreCase("exit")) {
+          client.close();
+          System.exit(0);
+          break;
+        }
+
+        if (line.equalsIgnoreCase("exists")) {
+          Request.builder(Boolean.class, "link/exists")
+              .put("link", ClientTest.link)
+              .send(
+                  client.getConnection(),
+                  Requests.ifPresentElse(
+                      System.out::println, () -> System.out.println("Does not exist")));
+        }
+
+        if (line.equalsIgnoreCase("stats")) {
+          Request.builder(SortedStats.class, "link/stats")
+              .put("link", ClientTest.link)
+              .send(
+                  client.getConnection(),
+                  Requests.ifPresentElse(
+                      System.out::println, () -> System.out.println("Does not exist")));
+        }
+
+        if (line.equalsIgnoreCase("groups")) {
+          Request.builder(Group[].class, "all-groups")
+              .send(
+                  client.getConnection(),
+                  Requests.ifPresentElse(
+                      System.out::println, () -> System.out.println("Does not exist")));
+        }
+
+        if (line.equalsIgnoreCase("permissions")) {
+          Request.builder(PermissionStack.class, "link/permissions")
+              .put("link", ClientTest.link)
+              .put("context", "bungee")
+              .put("global", true)
+              .send(
+                  client.getConnection(),
+                  Requests.ifPresentElse(
+                      System.out::println, () -> System.out.println("Does not exist")));
+        }
+      }
+    }
+  }
 
   /*
   public static void main(String[] args) throws IOException, MessengerListenFailException {

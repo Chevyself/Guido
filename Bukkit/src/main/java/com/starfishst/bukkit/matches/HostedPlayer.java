@@ -69,6 +69,15 @@ public class HostedPlayer implements Stateable {
   }
 
   @NonNull
+  public static Set<LinkableInfo> toInfo(@NonNull Collection<HostedPlayer> players) {
+    Set<LinkableInfo> links = new HashSet<>();
+    for (HostedPlayer player : players) {
+      links.add(player.toLink());
+    }
+    return links;
+  }
+
+  @NonNull
   public LinkableInfo toLink() {
     return new SimpleLinkableInfo(LinkableType.MINECRAFT, this.identification);
   }

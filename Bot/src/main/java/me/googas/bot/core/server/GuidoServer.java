@@ -10,6 +10,7 @@ import me.googas.bot.api.server.BotServer;
 import me.googas.bot.core.server.receptors.bungee.BungeeReceptors;
 import me.googas.bot.core.server.receptors.handlers.LinkReceptors;
 import me.googas.bot.core.server.receptors.handlers.QueueReceptors;
+import me.googas.bot.core.server.receptors.links.LinksReceptors;
 import me.googas.bot.core.server.receptors.links.MinecraftReceptor;
 import me.googas.bot.core.server.receptors.loader.DataLoaderReceptors;
 import me.googas.bot.core.server.receptors.matches.LadderReceptors;
@@ -19,6 +20,8 @@ import me.googas.bot.core.server.receptors.permissions.GroupReceptors;
 import me.googas.bot.core.server.receptors.punishment.PunishmentReceptors;
 import me.googas.bot.core.util.Mongo;
 import me.googas.messaging.Request;
+import me.googas.messaging.api.Message;
+import me.googas.messaging.json.adapters.MessageDeserializer;
 import me.googas.messaging.json.server.JsonClientThread;
 import me.googas.messaging.json.server.JsonSocketServer;
 
@@ -42,14 +45,17 @@ public class GuidoServer extends JsonSocketServer implements BotServer {
             Guido.getLogger()
                 .log(Level.SEVERE, throwable, () -> "An exception was cached in the socket server"),
         null,
-        Mongo.constructGson(false),
+        Mongo.builderGson(false)
+            .registerTypeAdapter(Message.class, new MessageDeserializer())
+            .create(),
         timeout);
     this.setAuthenticator(this.authenticator);
     this.addReceptors(
         new BungeeReceptors(),
+        new LadderReceptors(),
         new LinkReceptors(),
         new QueueReceptors(),
-        new LinkReceptors(),
+        new LinksReceptors(),
         new MinecraftReceptor(),
         new DataLoaderReceptors(),
         new LadderReceptors(),

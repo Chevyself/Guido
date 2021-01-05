@@ -39,6 +39,8 @@ public class GuidoPlugin extends JavaPlugin {
   /** Whether the plugin was set to use in the api */
   private final boolean set = Guido.setPlugin(this);
 
+  @NonNull @Getter private final GuidoScheduler scheduler = new GuidoScheduler(this);
+
   /** The language handler for localized messages */
   @NonNull @Getter
   private final BukkitLanguageHandler bukkitLanguageHandler =

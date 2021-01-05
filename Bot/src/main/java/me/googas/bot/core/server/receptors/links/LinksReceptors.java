@@ -16,7 +16,7 @@ import me.googas.bot.core.permissions.GuidoPermissionStack;
 import me.googas.messaging.json.ParamName;
 import me.googas.messaging.json.Receptor;
 
-public class LinksReceptor {
+public class LinksReceptors {
 
   @Receptor("link/create")
   public Linkable create(
@@ -79,15 +79,16 @@ public class LinksReceptor {
     Linkable link = info.getLink();
     if (link != null) {
       PermissionStack stack = link.getPermissions(context);
+      GuidoPermissionStack newStack = new GuidoPermissionStack();
       if (stack != null) {
-        GuidoPermissionStack newStack = new GuidoPermissionStack(stack);
-        if (global) {
-          newStack.addAll(link.getPermissions("global"));
-        }
-        return newStack;
+        newStack.addAll(stack);
       }
+      if (global) {
+        newStack.addAll(link.getPermissions("global"));
+      }
+      return newStack;
     }
-    return new GuidoPermissionStack("context", new HashSet<>());
+    return new GuidoPermissionStack(context, new HashSet<>());
   }
 
   @Receptor("link/permission")
@@ -124,5 +125,4 @@ public class LinksReceptor {
     link.reset(false);
     return true;
   }
-
 }

@@ -21,7 +21,6 @@ import com.starfishst.bungee.core.listeners.MotdListener;
 import com.starfishst.bungee.core.listeners.PermissionsListener;
 import com.starfishst.bungee.core.listeners.PunishmentsListener;
 import com.starfishst.bungee.core.listeners.TipsListener;
-import com.starfishst.bungee.core.scheduler.BungeeScheduler;
 import com.starfishst.bungee.core.utility.Proxy;
 import java.io.File;
 import java.io.IOException;
@@ -31,7 +30,6 @@ import lombok.Getter;
 import lombok.NonNull;
 import me.googas.commons.CoreFiles;
 import me.googas.commons.Lots;
-import me.googas.commons.scheduler.Scheduler;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.config.ServerInfo;
 import net.md_5.bungee.api.plugin.Plugin;
@@ -41,7 +39,7 @@ import net.md_5.bungee.config.YamlConfiguration;
 /** The guido plugin for Bungee */
 public class GuidoPlugin extends Plugin {
 
-  @NonNull @Getter private final Scheduler scheduler = new BungeeScheduler(this);
+  // @NonNull @Getter private final Scheduler scheduler = new BungeeScheduler(this);
   /** The bungee language handler */
   @NonNull @Getter
   private final BungeeLanguageHandler languageHandler =
@@ -61,7 +59,8 @@ public class GuidoPlugin extends Plugin {
           new MinecraftDataListener(),
           new MotdListener(),
           new PermissionsListener(),
-          new PunishmentsListener());
+          new PunishmentsListener(),
+          new TipsListener());
   /** The client connected with the bot */
   @NonNull @Getter private final BungeeClient client = new BungeeClient("0", this);
   /** The bungeeConfiguration that the plugin will use */
@@ -122,6 +121,7 @@ public class GuidoPlugin extends Plugin {
   @Override
   public void onEnable() {
     Guido.setPlugin(this);
+
     this.loadConfiguration();
     this.client.setToken(this.configuration.getToken());
     try {
@@ -129,18 +129,17 @@ public class GuidoPlugin extends Plugin {
     } catch (IOException e) {
       e.printStackTrace();
     }
+
     for (GuidoListener listener : this.listeners) {
       listener.register(this);
       listener.onEnable();
     }
-
     this.manager.registerCommand(new GuidoCommands());
     this.manager.registerCommand(new LinkCommand());
     this.manager.registerCommand(new PermissionCommands());
     this.manager.registerCommand(new PunishmentCommands());
     this.manager.registerCommand(new ServerCommands());
     this.manager.registerCommand(new StatsCommand());
-    this.manager.registerCommand(new TipsListener());
     this.loadServers();
     super.onEnable();
   }

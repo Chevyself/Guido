@@ -26,16 +26,7 @@ public class GuidoAuthenticator implements Authenticator {
 
   /** The required level for each receptor. By default all receptors have read_write */
   @NonNull
-  private final Map<String, AuthLevel> requiredLevel =
-      Maps.builder("auth", AuthLevel.NONE)
-          .append("client-info", AuthLevel.ADMINISTRATIVE)
-          .append("permissions", AuthLevel.READ)
-          .append("data-exists", AuthLevel.READ)
-          .append("permission", AuthLevel.READ)
-          .append("preferences", AuthLevel.READ)
-          .append("stats", AuthLevel.READ)
-          .append("group", AuthLevel.READ)
-          .build();
+  private final Map<String, AuthLevel> requiredLevel = Maps.builder("auth", AuthLevel.NONE).build();
 
   /**
    * Removes a client from the levels map

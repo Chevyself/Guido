@@ -15,11 +15,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
+import java.util.concurrent.atomic.AtomicInteger;
 import lombok.Getter;
 import lombok.NonNull;
 import me.googas.api.client.data.matches.SimpleMatchTeam;
 import me.googas.api.client.data.matches.team.SimpleTeamMember;
 import me.googas.api.links.LinkableInfo;
+import me.googas.api.matches.MatchStatus;
 import me.googas.api.matches.team.TeamMember;
 import me.googas.api.matches.team.TeamRole;
 import me.googas.commons.Lots;
@@ -29,11 +31,13 @@ import me.googas.commons.builder.Builder;
 import me.googas.commons.maps.Maps;
 import me.googas.commons.time.Time;
 import me.googas.commons.time.Unit;
+import me.googas.messaging.Request;
 import me.googas.messaging.api.MessengerListenFailException;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import tc.oc.pgm.api.match.Match;
 import tc.oc.pgm.api.party.Party;
+import tc.oc.pgm.api.player.MatchPlayer;
 import tc.oc.pgm.start.StartMatchModule;
 import tc.oc.pgm.teams.Team;
 
@@ -41,60 +45,16 @@ import tc.oc.pgm.teams.Team;
 public class PickTeamSelection implements TeamCreation {
 
   /** The time for a leader to pick */
-  private static final long timeToPick = Time.fromString("1m").getValue(Unit.SECONDS);
+  private static final Time timeToPick = Time.fromString("1m");
 
   /** The map of the match and it's players left to select */
-  @NonNull private final Map<String, Collection<HostedPlayer>> playersLeft = new HashMap<>();
+  @NonNull private final Map<String, Set<HostedPlayer>> playersLeft = new HashMap<>();
 
   /** The teams that were selected in the id of the match */
   @NonNull private final Map<String, List<SelectingTeam>> teams = new HashMap<>();
 
-  /** The current leader picking players on its match */
-  @NonNull private final Map<String, TeamMember> currentLeader = new HashMap<>();
-
-  /** The time left for the leader to pick */
-  private final Map<String, Long> secondsLeft = new HashMap<>();
-
-  /** Create the team selection by picking the players */
-  public PickTeamSelection() {
-    Bukkit.getScheduler()
-        .runTaskTimer(
-            Guido.validated(),
-            () -> {
-              for (String string : this.currentLeader.keySet()) {
-                TeamMember leader = this.currentLeader.get(string);
-                if (leader == null) return;
-                this.secondsLeft.put(
-                    string,
-                    this.secondsLeft.getOrDefault(string, PickTeamSelection.timeToPick) - 1L);
-                if (this.secondsLeft.getOrDefault(string, PickTeamSelection.timeToPick) < 1) {
-                  this.pick(
-                      string,
-                      leader,
-                      RandomUtils.getRandom(new ArrayList<>(this.getPlayersLeft(string))));
-                } else {
-                  long secondsLeft = this.getSecondsLeft(string);
-                  if (secondsLeft <= 10 || secondsLeft % 5 == 0) {
-                    Player player = this.getPlayer(leader.getLinkInfo());
-                    if (player != null) {
-                      BukkitLocaleFile locale = Guido.getLanguageHandler().getFile(player);
-                      player.sendMessage(
-                          locale.get(
-                              "match-making.pick.time-left",
-                              Maps.builder(
-                                      "time",
-                                      new Time(secondsLeft, Unit.SECONDS).toEffectiveString())
-                                  .append(
-                                      "picks", Lots.pretty(this.getParticipantsNames(string)))));
-                    }
-                  }
-                }
-              }
-            },
-            0,
-            20);
-  }
-
+  /** The uuid of the leader that is currently picking */
+  @NonNull private final Map<String, UUID> currently = new HashMap<>();
   /**
    * Get the appropriated team name
    *
@@ -103,8 +63,8 @@ public class PickTeamSelection implements TeamCreation {
    * @return the name of the team
    */
   @NonNull
-  public String getTeamName(LinkableInfo captain, @NonNull String extra) {
-    String nickname = captain.getIdentification().getOr("nickname", String.class, "");
+  public String getTeamName(HostedPlayer captain, @NonNull String extra) {
+    String nickname = captain.getRecognition().getOr("nickname", String.class, "");
     if (!nickname.isEmpty()) {
       return nickname + "'s team";
     } else {
@@ -139,12 +99,11 @@ public class PickTeamSelection implements TeamCreation {
    * @return the random leaders
    */
   @NonNull
-  public List<TeamMember> pickLeaders(@NonNull String matchId) {
-    List<TeamMember> captains = new ArrayList<>();
-    Collection<HostedPlayer> playersLeft =
-        this.playersLeft.computeIfAbsent(matchId, string -> new ArrayList<>());
+  public Map<HostedPlayer, TeamMember> pickLeaders(@NonNull String matchId) {
+    Map<HostedPlayer, TeamMember> captains = new HashMap<>();
+    Set<HostedPlayer> playersLeft = this.getPlayersLeft(matchId);
     for (HostedPlayer hosted : RandomUtils.getRandom(new ArrayList<>(playersLeft), 2)) {
-      captains.add(new SimpleTeamMember(hosted.toLink(), TeamRole.LEADER));
+      captains.put(hosted, new SimpleTeamMember(hosted.toLink(), TeamRole.LEADER));
       playersLeft.remove(hosted);
     }
     return captains;
@@ -202,9 +161,9 @@ public class PickTeamSelection implements TeamCreation {
     if (selecting != null && this.isPicking(matchId, captain)) {
       SimpleTeamMember teamMember = new SimpleTeamMember(hosted.toLink(), TeamRole.NORMAL);
       selecting.getMembers().add(teamMember);
-      PGMMatchMakingHandler listener =
-          Guido.getHandlerRegistry().requireHandler(PGMMatchMakingHandler.class);
-      listener.add(hosted.getUniqueId(), selecting.getParty());
+      Team party = selecting.getParty();
+      Match match = party.getMatch();
+      this.setParty(hosted, party, match);
       Collection<HostedPlayer> playersLeft = this.getPlayersLeft(matchId);
       playersLeft.remove(hosted);
       this.nextPick(matchId, selecting);
@@ -218,6 +177,13 @@ public class PickTeamSelection implements TeamCreation {
     }
   }
 
+  public void setParty(@NonNull HostedPlayer hosted, Team party, Match match) {
+    MatchPlayer player = match.getPlayer(hosted.getUniqueId());
+    if (player != null) {
+      match.setParty(player, party);
+    }
+  }
+
   /**
    * Sets the next captain that is picking the match or starts the match in case there's no players
    * left
@@ -228,6 +194,7 @@ public class PickTeamSelection implements TeamCreation {
   public void nextPick(@NonNull String matchId, @NonNull SelectingTeam team) {
     Collection<HostedPlayer> playersLeft = this.getPlayersLeft(matchId);
     if (playersLeft.isEmpty()) {
+      // Starts the match and finishes picking
       PGMMatchMakingHandler listener =
           Guido.getHandlerRegistry().requireHandler(PGMMatchMakingHandler.class);
       PGMHostedMatch match = listener.getMatch(matchId);
@@ -246,21 +213,23 @@ public class PickTeamSelection implements TeamCreation {
                       "match-add-team", Maps.objects("id", matchId).append("team", construct))
                   .send();
           if (id != null) {
-            if (selectingTeam.getParty() instanceof Team) {
-              match.getTeams().put(((Team) selectingTeam.getParty()).getId(), id);
-            }
+            match.getTeams().put(selectingTeam.getParty().getId(), selectingTeam.setId(id).build());
           }
+          Request.builder(Boolean.class, "match/status")
+              .put("id", matchId)
+              .put("status", MatchStatus.STARTING)
+              .send(Guido.getClient().getConnection());
         } catch (MessengerListenFailException e) {
           e.printStackTrace();
         }
       }
-      this.clear();
+      this.clear(matchId);
     } else if (playersLeft.size() == 2) {
       this.nextLeader(matchId, team.getLeader());
     } else {
       TeamMember leader = this.getNext(matchId, team).getLeader();
       if (playersLeft.size() == 1) {
-        this.currentLeader.put(matchId, leader);
+        this.nextLeader(matchId, leader);
         for (HostedPlayer hosted : playersLeft) {
           this.pick(matchId, leader, hosted);
           break;
@@ -271,6 +240,10 @@ public class PickTeamSelection implements TeamCreation {
     }
   }
 
+  private void clear(@NonNull String id) {
+    this.playersLeft.remove(id);
+  }
+
   /**
    * Set the next leader to pick the next player
    *
@@ -278,8 +251,7 @@ public class PickTeamSelection implements TeamCreation {
    * @param nextLeader the next leader to play the match
    */
   public void nextLeader(@NonNull String matchId, @NonNull TeamMember nextLeader) {
-    this.currentLeader.put(matchId, nextLeader);
-    this.secondsLeft.put(matchId, PickTeamSelection.timeToPick);
+    this.nextLeaderTask(matchId, nextLeader);
     Player player = this.getPlayer(nextLeader.getLinkInfo());
     if (player != null) {
       player.sendMessage(
@@ -332,7 +304,7 @@ public class PickTeamSelection implements TeamCreation {
    * @return true if it is picking
    */
   public boolean isPicking(@NonNull String matchId, @NonNull TeamMember member) {
-    return member.equals(this.currentLeader.get(matchId));
+    return this.getUuid(member.getLinkInfo()).equals(this.currently.get(matchId));
   }
 
   /**
@@ -342,8 +314,8 @@ public class PickTeamSelection implements TeamCreation {
    * @return the players left to pick
    */
   @NonNull
-  public Collection<HostedPlayer> getPlayersLeft(@NonNull String matchId) {
-    return this.playersLeft.computeIfAbsent(matchId, string -> new ArrayList<>());
+  public Set<HostedPlayer> getPlayersLeft(@NonNull String matchId) {
+    return this.playersLeft.computeIfAbsent(matchId, string -> new HashSet<>());
   }
 
   /**
@@ -378,14 +350,31 @@ public class PickTeamSelection implements TeamCreation {
     return names;
   }
 
-  /**
-   * Get the seconds left that a leader has
-   *
-   * @param matchId the match id to get the leader
-   * @return the seconds left of the leader of the match
-   */
-  public long getSecondsLeft(@NonNull String matchId) {
-    return this.secondsLeft.computeIfAbsent(matchId, string -> PickTeamSelection.timeToPick);
+  public void nextLeaderTask(@NonNull String id, @NonNull TeamMember leader) {
+    this.currently.put(id, this.getUuid(leader.getLinkInfo()));
+    Guido.getScheduler()
+        .countdown(
+            PickTeamSelection.timeToPick,
+            (left) -> {
+              if (!this.isPicking(id, leader)) return;
+              long secondsLeft = left.getValue(Unit.SECONDS);
+              if (secondsLeft <= 10 || secondsLeft % 5 == 0) {
+                Player player = this.getPlayer(leader.getLinkInfo());
+                if (player != null) {
+                  BukkitLocaleFile locale = Guido.getLanguageHandler().getFile(player);
+                  player.sendMessage(
+                      locale.get(
+                          "match-making.pick.time-left",
+                          Maps.builder(
+                                  "time", new Time(secondsLeft, Unit.SECONDS).toEffectiveString())
+                              .append("picks", Lots.pretty(this.getParticipantsNames(id)))));
+                }
+              }
+            },
+            () -> {
+              if (!this.isPicking(id, leader)) return;
+              this.pick(id, leader, RandomUtils.getRandom(this.getPlayersLeft(id)));
+            });
   }
 
   /** Clears the team creator */
@@ -393,33 +382,33 @@ public class PickTeamSelection implements TeamCreation {
   public void clear() {
     this.playersLeft.clear();
     this.teams.clear();
-    this.currentLeader.clear();
-    this.secondsLeft.clear();
+    this.currently.clear();
   }
 
   @Override
   public void createTeams(
       @NonNull PGMMatchMakingHandler matchMaking,
-      @NonNull PGMHostedMatch PGMHostedMatch,
+      @NonNull PGMHostedMatch hostedMatch,
       @NonNull Match match) {
-    this.playersLeft.put(PGMHostedMatch.getId(), PGMHostedMatch.getParticipants());
-    List<TeamMember> leaders = this.pickLeaders(PGMHostedMatch.getId());
-    for (TeamMember leader : leaders) {
-      Team teamParty = this.getParty(PGMHostedMatch.getId(), match);
-      Player player = this.getPlayer(leader.getLinkInfo());
-      String teamName =
-          this.getTeamName(leader.getLinkInfo(), String.valueOf(leaders.indexOf(leader) + 1));
-      this.teams
-          .computeIfAbsent(PGMHostedMatch.getId(), string -> new ArrayList<>())
-          .add(new SelectingTeam(teamParty, leader));
-      teamParty.setName(teamName);
-      matchMaking.add(this.getUuid(leader.getLinkInfo()), teamParty);
-      if (player != null) {
-        BukkitLocaleFile locale = Guido.getLanguageHandler().getFile(player);
-        player.sendMessage(locale.get("match-making.pick.leader"));
-      }
-    }
-    this.currentLeader.put(PGMHostedMatch.getId(), RandomUtils.getRandom(leaders));
+    this.playersLeft.put(hostedMatch.getId(), hostedMatch.getParticipants());
+    Map<HostedPlayer, TeamMember> leaders = this.pickLeaders(hostedMatch.getId());
+    AtomicInteger index = new AtomicInteger(1);
+    leaders.forEach(
+        (hosted, leader) -> {
+          Team teamParty = this.getParty(hostedMatch.getId(), match);
+          Player player = this.getPlayer(leader.getLinkInfo());
+          String teamName = this.getTeamName(hosted, String.valueOf(index.getAndIncrement()));
+          this.teams
+              .computeIfAbsent(hostedMatch.getId(), string -> new ArrayList<>())
+              .add(new SelectingTeam(teamParty, leader));
+          teamParty.setName(teamName);
+          this.setParty(hosted, teamParty, teamParty.getMatch());
+          if (player != null) {
+            BukkitLocaleFile locale = Guido.getLanguageHandler().getFile(player);
+            player.sendMessage(locale.get("match-making.pick.leader"));
+          }
+        });
+    this.nextLeader(hostedMatch.getId(), RandomUtils.getRandom(leaders.values()));
   }
 
   /**
@@ -429,7 +418,7 @@ public class PickTeamSelection implements TeamCreation {
   public class SelectingTeam implements Builder<SimpleMatchTeam> {
 
     /** The pgm party assigned to this team */
-    @NonNull @Getter private final Party party;
+    @NonNull @Getter private final Team party;
 
     /** The leader of the team */
     @NonNull @Getter private final TeamMember leader;
@@ -437,22 +426,30 @@ public class PickTeamSelection implements TeamCreation {
     /** The member of the team */
     @NonNull @Getter private final Collection<TeamMember> members = new HashSet<>();
 
+    /** The actual id of the team */
+    @Getter private int id = -3;
+
     /**
      * Create the team
      *
      * @param party the pgm party assigned to this team
      * @param leader the leader which is selecting players
      */
-    SelectingTeam(@NonNull Party party, @NonNull TeamMember leader) {
+    SelectingTeam(@NonNull Team party, @NonNull TeamMember leader) {
       this.party = party;
       this.leader = leader;
+    }
+
+    public SelectingTeam setId(int id) {
+      this.id = id;
+      return this;
     }
 
     @Override
     public @NonNull SimpleMatchTeam build() {
       Set<TeamMember> copy = new HashSet<>(this.members);
       copy.add(this.leader);
-      return new SimpleMatchTeam(-3, this.party.getNameLegacy(), copy);
+      return new SimpleMatchTeam(this.id, this.party.getNameLegacy(), copy);
     }
 
     @NonNull

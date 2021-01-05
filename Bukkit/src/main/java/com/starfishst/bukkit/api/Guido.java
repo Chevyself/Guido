@@ -2,6 +2,7 @@ package com.starfishst.bukkit.api;
 
 import com.starfishst.bukkit.CommandManager;
 import com.starfishst.bukkit.GuidoPlugin;
+import com.starfishst.bukkit.GuidoScheduler;
 import com.starfishst.bukkit.api.config.Configuration;
 import com.starfishst.bukkit.api.dependencies.DependencyManager;
 import com.starfishst.bukkit.api.events.GuidoEvent;
@@ -117,5 +118,9 @@ public class Guido {
 
   public static boolean isBungee() {
     return Bukkit.spigot().getSpigotConfig().getBoolean("setting.bungeecord", false);
+  }
+
+  public static @NonNull GuidoScheduler getScheduler() {
+    return Guido.validated().getScheduler();
   }
 }

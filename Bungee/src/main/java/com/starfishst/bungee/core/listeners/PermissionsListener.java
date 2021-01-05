@@ -36,7 +36,7 @@ public class PermissionsListener implements GuidoListener {
         new SimpleLinkableInfo(LinkableType.MINECRAFT, new SimpleValuesMap("uuid", trim));
     new BungeeRequest<>(
             PermissionStack.class,
-            "link/permission",
+            "link/permissions",
             Maps.objects("link", link).append("context", "bungee").append("global", true))
         .sendIfPresent(
             stack -> {
