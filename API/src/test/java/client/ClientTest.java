@@ -6,6 +6,7 @@ import me.googas.api.SortedStats;
 import me.googas.api.client.Client;
 import me.googas.api.client.data.SimpleValuesMap;
 import me.googas.api.client.data.links.SimpleLinkableInfo;
+import me.googas.api.client.data.permissions.SimplePermission;
 import me.googas.api.links.LinkableInfo;
 import me.googas.api.links.LinkableType;
 import me.googas.api.permissions.Group;
@@ -73,6 +74,16 @@ public class ClientTest {
                   client.getConnection(),
                   Requests.ifPresentElse(
                       System.out::println, () -> System.out.println("Does not exist")));
+        }
+
+        if (line.equalsIgnoreCase("add")) {
+          Request.builder(Boolean.class, "link/permission")
+                  .put("link", ClientTest.link)
+                  .put("context", "bungee")
+                  .put("permission", new SimplePermission("guido.test", true, -1))
+                  .send(client.getConnection(),
+                  Requests.ifPresentElse(
+                          System.out::println, () -> System.out.println("Does not exist")));
         }
       }
     }

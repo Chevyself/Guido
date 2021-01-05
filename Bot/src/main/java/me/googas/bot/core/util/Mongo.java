@@ -36,7 +36,7 @@ import me.googas.bot.adapters.matches.team.MatchTeamAdapter;
 import me.googas.bot.adapters.matches.team.TeamMemberAdapter;
 import me.googas.bot.adapters.messages.ResponsiveMessageAdapter;
 import me.googas.bot.adapters.permissions.PermissionAdapter;
-import me.googas.bot.adapters.permissions.PermissionStackDeserializer;
+import me.googas.bot.adapters.permissions.PermissionStackAdapter;
 import me.googas.bot.adapters.ranks.RankRangeAdapter;
 import me.googas.bot.api.types.discord.BotGuild;
 import me.googas.bot.api.types.messages.ResponsiveMesage;
@@ -72,7 +72,7 @@ public class Mongo {
         .registerTypeAdapter(TeamMember.class, new TeamMemberAdapter())
         .registerTypeAdapter(ResponsiveMesage.class, new ResponsiveMessageAdapter())
         .registerTypeAdapter(Permission.class, new PermissionAdapter())
-        .registerTypeAdapter(PermissionStack.class, new PermissionStackDeserializer())
+        .registerTypeAdapter(PermissionStack.class, new PermissionStackAdapter())
         .registerTypeAdapter(GuidoPermission.class, new PermissionAdapter())
         .registerTypeAdapter(RankRange.class, new RankRangeAdapter())
         .registerTypeAdapter(GuidoLinkedValuesMap.class, new LinkedValuesMapAdapter())
