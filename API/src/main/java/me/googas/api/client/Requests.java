@@ -1,4 +1,4 @@
-package me.googas.api.utility;
+package me.googas.api.client;
 
 import java.util.Optional;
 import java.util.function.Consumer;

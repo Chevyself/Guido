@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.Scanner;
 import me.googas.api.SortedStats;
 import me.googas.api.client.Client;
+import me.googas.api.client.Requests;
 import me.googas.api.client.data.SimpleValuesMap;
 import me.googas.api.client.data.links.SimpleLinkableInfo;
 import me.googas.api.client.data.permissions.SimplePermission;
@@ -11,7 +12,6 @@ import me.googas.api.links.LinkableInfo;
 import me.googas.api.links.LinkableType;
 import me.googas.api.permissions.Group;
 import me.googas.api.permissions.PermissionStack;
-import me.googas.api.utility.Requests;
 import me.googas.messaging.Request;
 
 /** A test for the client */
@@ -78,12 +78,13 @@ public class ClientTest {
 
         if (line.equalsIgnoreCase("add")) {
           Request.builder(Boolean.class, "link/permission")
-                  .put("link", ClientTest.link)
-                  .put("context", "bungee")
-                  .put("permission", new SimplePermission("guido.test", true, -1))
-                  .send(client.getConnection(),
+              .put("link", ClientTest.link)
+              .put("context", "bungee")
+              .put("permission", new SimplePermission("guido.test", true, -1))
+              .send(
+                  client.getConnection(),
                   Requests.ifPresentElse(
-                          System.out::println, () -> System.out.println("Does not exist")));
+                      System.out::println, () -> System.out.println("Does not exist")));
         }
       }
     }
