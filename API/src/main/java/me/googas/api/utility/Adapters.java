@@ -1,7 +1,8 @@
-package me.googas.api;
+package me.googas.api.utility;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import me.googas.api.ValuesMap;
 import me.googas.api.adapters.ValuesMapAdapter;
 import me.googas.api.adapters.link.LinkableInfoDeserializer;
 import me.googas.api.adapters.matches.MatchDeserializer;

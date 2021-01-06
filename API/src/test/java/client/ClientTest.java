@@ -2,7 +2,6 @@ package client;
 
 import java.io.IOException;
 import java.util.Scanner;
-import me.googas.api.SortedStats;
 import me.googas.api.client.Client;
 import me.googas.api.client.Requests;
 import me.googas.api.client.data.SimpleValuesMap;
@@ -12,6 +11,7 @@ import me.googas.api.links.LinkableInfo;
 import me.googas.api.links.LinkableType;
 import me.googas.api.permissions.Group;
 import me.googas.api.permissions.PermissionStack;
+import me.googas.api.utility.SortedStats;
 import me.googas.messaging.Request;
 
 /** A test for the client */

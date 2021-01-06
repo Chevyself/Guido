@@ -1,10 +1,11 @@
-package me.googas.api;
+package me.googas.api.utility;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 import lombok.Getter;
 import lombok.NonNull;
+import me.googas.api.Stateable;
 import me.googas.commons.builder.ToStringBuilder;
 
 /** This object is used to get the stats from a {@link Stateable} is a way more organized way */

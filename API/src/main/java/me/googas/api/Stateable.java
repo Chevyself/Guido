@@ -7,6 +7,7 @@ import java.util.Set;
 import java.util.TreeMap;
 import lombok.NonNull;
 import me.googas.api.matches.ladder.Ladder;
+import me.googas.api.utility.SortedStats;
 
 /** This object represents an entity that can have stats */
 public interface Stateable {

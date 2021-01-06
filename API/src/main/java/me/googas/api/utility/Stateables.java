@@ -1,4 +1,4 @@
-package me.googas.api;
+package me.googas.api.utility;
 
 import java.util.ArrayList;
 import java.util.Collection;
