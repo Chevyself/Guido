@@ -5,7 +5,7 @@ import com.starfishst.jda.context.CommandContext;
 import com.starfishst.jda.providers.type.JdaArgumentProvider;
 import lombok.NonNull;
 import me.googas.api.user.UserData;
-import me.googas.bot.Guido;
+import me.googas.bot.core.util.Discord;
 import me.googas.bot.core.util.Lang;
 import me.googas.commons.maps.Maps;
 import net.dv8tion.jda.api.entities.User;
@@ -22,7 +22,7 @@ public class GuidoUserProvider implements JdaArgumentProvider<UserData> {
   public UserData fromString(@NonNull String s, @NonNull CommandContext context)
       throws ArgumentProviderException {
     User user = context.get(s, User.class, context);
-    UserData userData = Guido.getDataLoader().getDiscordUserData(user.getIdLong()).getLinkedUser();
+    UserData userData = Discord.getUser(user).getLinkedUser();
     if (userData != null) {
       return userData;
     }

@@ -6,7 +6,7 @@ import com.starfishst.jda.context.GuildCommandContext;
 import com.starfishst.jda.providers.type.JdaArgumentProvider;
 import lombok.NonNull;
 import me.googas.api.matches.ladder.Ladder;
-import me.googas.bot.Guido;
+import me.googas.bot.api.Guido;
 import me.googas.bot.api.types.discord.BotGuild;
 import me.googas.bot.core.util.Lang;
 import me.googas.commons.maps.Maps;
@@ -24,8 +24,7 @@ public class LadderProvider implements JdaArgumentProvider<Ladder> {
       throws ArgumentProviderException {
     if (context instanceof GuildCommandContext) {
       BotGuild guild =
-          Guido.getDataLoader()
-              .getGuildDataOrCreate(((GuildCommandContext) context).getGuild().getIdLong());
+          Guido.getDiscordLoader().getGuild(((GuildCommandContext) context).getGuild().getIdLong());
       Ladder ladder = guild.getLadder(s);
       if (ladder != null) {
         return ladder;

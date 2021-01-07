@@ -1,11 +1,14 @@
 package me.googas.api.server.receptors;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.Setter;
+import me.googas.annotations.Nullable;
 import me.googas.api.ValuesMap;
 import me.googas.api.client.data.permissions.SimplePermissionStack;
 import me.googas.api.links.Linkable;
@@ -14,6 +17,7 @@ import me.googas.api.links.LinkableType;
 import me.googas.api.loader.LinksLoader;
 import me.googas.api.permissions.Permission;
 import me.googas.api.permissions.PermissionStack;
+import me.googas.api.user.UserData;
 import me.googas.api.utility.SortedStats;
 import me.googas.messaging.json.ParamName;
 import me.googas.messaging.json.Receptor;
@@ -27,6 +31,60 @@ public class LinkReceptors {
     this.loader = loader;
     this.linkableSupplier = linkableSupplier;
   }
+
+  @Nullable
+  private UserData getUser(@NonNull String id) {
+    return this.loader.getLoader().getUsers().getUserData(id);
+  }
+
+  @Receptor("link/user-links")
+  public Collection<Linkable> getLinks(@ParamName("id") String id) {
+    UserData user = this.getUser(id);
+    if (user == null) return new ArrayList<>();
+    return this.loader.getLinks(user);
+  }
+
+  @Receptor("link/user-type")
+  public Linkable getLink(@ParamName("id") String id, @ParamName("type") LinkableType type) {
+    UserData user = this.getUser(id);
+    if (user == null) return null;
+    return this.loader.getLink(user, type);
+  }
+
+  @Receptor("link/links-size")
+  public long countLinks(@ParamName("types") LinkableType[] types) {
+    return this.loader.countLinks(types);
+  }
+
+  @Receptor("link/links")
+  public Collection<LinkableInfo> getLinks(
+      @ParamName("page") int page,
+      @ParamName("size") int size,
+      @ParamName("types") LinkableType[] types) {
+    return this.loader.getLinks(page, size, types);
+  }
+
+  @Receptor("link")
+  public Linkable getLink(
+      @ParamName("type") LinkableType type,
+      @ParamName("identification") ValuesMap identification,
+      @ParamName("recognition") ValuesMap recognition) {
+    return this.loader.getLink(type, identification, recognition);
+  }
+
+  @Receptor("link/identification")
+  public Linkable getLink(
+      @ParamName("type") LinkableType type, @ParamName("identification") ValuesMap identification) {
+    return this.loader.getLink(type, identification);
+  }
+
+  @Receptor("link/recognition")
+  public Linkable getLinkByRecognition(
+      @ParamName("type") LinkableType type, @ParamName("recognition") ValuesMap recognition) {
+    return this.loader.getLinkByRecognition(type, recognition);
+  }
+
+  // TODO Add support to leaderboard
 
   @Receptor("link/create")
   public Linkable create(

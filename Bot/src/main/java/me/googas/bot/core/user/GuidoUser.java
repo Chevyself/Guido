@@ -7,7 +7,7 @@ import me.googas.api.ValuesMap;
 import me.googas.api.links.Linkable;
 import me.googas.api.links.LinkableType;
 import me.googas.api.user.UserData;
-import me.googas.bot.Guido;
+import me.googas.bot.api.Guido;
 import me.googas.bot.api.events.data.user.UserUnloadedDataEvent;
 import me.googas.bot.api.types.BotCatchable;
 import me.googas.bot.core.GuidoValuesMap;
@@ -35,6 +35,10 @@ public class GuidoUser implements UserData, BotCatchable {
   /** @deprecated this constructor may only be used by gson */
   public GuidoUser() {
     this("", new GuidoValuesMap());
+  }
+
+  public GuidoUser(@NonNull GuidoValuesMap preferences) {
+    this(Guido.getHandlers().getLoader().getUsers().nextUserId(), preferences);
   }
 
   @Override
@@ -84,12 +88,12 @@ public class GuidoUser implements UserData, BotCatchable {
 
   @Override
   public @NonNull Collection<Linkable> getLinks() {
-    return Guido.getDataLoader().getLinks(this);
+    return Guido.getHandlers().getLoader().getLinks().getLinks(this);
   }
 
   @Override
   public Linkable getLink(@NonNull LinkableType type) {
-    return Guido.getDataLoader().getLink(this, type);
+    return Guido.getHandlers().getLoader().getLinks().getLink(this, type);
   }
 
   @Override

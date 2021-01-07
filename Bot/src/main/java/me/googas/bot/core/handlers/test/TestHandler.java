@@ -17,5 +17,5 @@ public class TestHandler implements GuidoHandler {
   public void onGuidoEvent(@NonNull GuidoEvent event) {}
 
   @Override
-  public void close() {}
+  public void onDisable() {}
 }

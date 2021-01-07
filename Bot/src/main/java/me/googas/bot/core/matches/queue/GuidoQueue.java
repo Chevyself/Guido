@@ -7,7 +7,7 @@ import me.googas.api.matches.ladder.Ladder;
 import me.googas.api.matches.queue.Queue;
 import me.googas.api.matches.queue.QueueResult;
 import me.googas.api.matches.queue.Queueable;
-import me.googas.bot.Guido;
+import me.googas.bot.api.Guido;
 import me.googas.bot.api.events.queue.QueueJoinEvent;
 import me.googas.bot.api.events.queue.QueuePreJoinEvent;
 import me.googas.bot.core.matches.GuidoMatch;
@@ -41,7 +41,7 @@ public class GuidoQueue implements Queue {
   @NonNull
   public Ladder getLadder() {
     return Validate.notNull(
-        Guido.getDataLoader().getGuildDataOrCreate(this.guildId).getLadder(this.ladder),
+        Guido.getDiscordLoader().getGuild(this.guildId).getLadder(this.ladder),
         "Ladder was deleted?");
   }
 

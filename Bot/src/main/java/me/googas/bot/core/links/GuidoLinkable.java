@@ -18,7 +18,7 @@ import me.googas.api.matches.team.Team;
 import me.googas.api.permissions.Permissible;
 import me.googas.api.permissions.PermissionStack;
 import me.googas.api.user.UserData;
-import me.googas.bot.Guido;
+import me.googas.bot.api.Guido;
 import me.googas.bot.api.events.data.links.LinkableUnloadedEvent;
 import me.googas.bot.api.events.data.permissible.PermissiblePermissionAddedEvent;
 import me.googas.bot.api.events.data.permissible.PermissiblePermissionRemovedEvent;
@@ -186,6 +186,7 @@ public class GuidoLinkable implements Permissible, Linkable, BotCatchable {
   public void sendLocalized(@NonNull String key) {
     if (this.type == LinkableType.MINECRAFT) {
       MinecraftLinkable minecraft = this.requireMinecraftRef();
+      //  TODO change it to a request in Requests
       JsonClientThread bungee = Guido.getServer().getAuthenticator().getBungee();
       if (bungee != null) {
         bungee.sendRequest(
@@ -201,7 +202,7 @@ public class GuidoLinkable implements Permissible, Linkable, BotCatchable {
             });
       }
     } else {
-      this.sendMessage(Guido.getLanguageHandler().getFile(this).get(key));
+      this.sendMessage(Guido.getHandlers().getLanguageHandler().getFile(this).get(key));
     }
   }
 
@@ -224,7 +225,8 @@ public class GuidoLinkable implements Permissible, Linkable, BotCatchable {
             });
       }
     } else {
-      this.sendMessage(Guido.getLanguageHandler().getFile(this).get(key, placeholders));
+      this.sendMessage(
+          Guido.getHandlers().getLanguageHandler().getFile(this).get(key, placeholders));
     }
   }
 
@@ -240,7 +242,7 @@ public class GuidoLinkable implements Permissible, Linkable, BotCatchable {
 
   @Override
   public Team getTeam() {
-    return Guido.getDataLoader().getTeam(this);
+    return Guido.getHandlers().getLoader().getTeams().getTeam(this);
   }
 
   @Override
@@ -299,7 +301,7 @@ public class GuidoLinkable implements Permissible, Linkable, BotCatchable {
   public Collection<Linkable> getLinks() {
     UserData user = this.getLinkedUser();
     if (user != null) {
-      return Guido.getDataLoader().getLinks(user);
+      return Guido.getHandlers().getLoader().getLinks().getLinks(user);
     }
     return new HashSet<>();
   }
@@ -344,6 +346,6 @@ public class GuidoLinkable implements Permissible, Linkable, BotCatchable {
 
   @Override
   public UserData getLinkedUser() {
-    return Guido.getDataLoader().getUserData(this.getLinkedUserId());
+    return Guido.getHandlers().getLoader().getUsers().getUserData(this.getLinkedUserId());
   }
 }

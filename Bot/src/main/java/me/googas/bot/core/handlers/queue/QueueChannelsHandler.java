@@ -6,13 +6,13 @@ import java.util.Map;
 import lombok.NonNull;
 import me.googas.api.links.Linkable;
 import me.googas.api.links.LinkableInfo;
-import me.googas.api.links.LinkableType;
+import me.googas.api.links.ref.DiscordLinkable;
 import me.googas.api.matches.queue.Queueable;
-import me.googas.bot.Guido;
+import me.googas.bot.api.Guido;
 import me.googas.bot.api.events.queue.QueueLeaveEvent;
 import me.googas.bot.api.types.discord.BotGuild;
-import me.googas.bot.core.GuidoValuesMap;
 import me.googas.bot.core.handlers.GuidoHandler;
+import me.googas.bot.core.util.Discord;
 import me.googas.commons.events.ListenPriority;
 import me.googas.commons.events.Listener;
 import net.dv8tion.jda.api.entities.Guild;
@@ -59,16 +59,14 @@ public class QueueChannelsHandler implements GuidoHandler {
    *
    * @param channelLeft the channel that the user left
    * @param guild the guild in which the event happened
-   * @param disc the event that left the queue
+   * @param discordMember the event that left the queue
    */
   public void checkRemoveQueue(
-      @NonNull VoiceChannel channelLeft, @NonNull Guild guild, @NonNull Member disc) {
+      @NonNull VoiceChannel channelLeft, @NonNull Guild guild, @NonNull Member discordMember) {
     long guildId = guild.getIdLong();
     long channelId = this.waiting.getOrDefault(guildId, -1L);
     if (channelId == channelLeft.getIdLong()) {
-      Linkable member =
-          Guido.getDataLoader()
-              .getLink(LinkableType.DISCORD, new GuidoValuesMap("id", disc.getIdLong()));
+      DiscordLinkable member = Discord.getUser(discordMember.getIdLong());
       for (Linkable data : member.getLinks()) {
         this.queues().leaveQueue(data.getInfo());
       }
@@ -97,7 +95,7 @@ public class QueueChannelsHandler implements GuidoHandler {
    */
   @NonNull
   private QueueHandler queues() {
-    return Guido.getHandler(QueueHandler.class);
+    return Guido.getHandlers().getHandler(QueueHandler.class);
   }
 
   /**
@@ -151,5 +149,5 @@ public class QueueChannelsHandler implements GuidoHandler {
   }
 
   @Override
-  public void close() {}
+  public void onDisable() {}
 }

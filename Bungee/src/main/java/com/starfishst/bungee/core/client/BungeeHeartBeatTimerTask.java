@@ -2,7 +2,7 @@ package com.starfishst.bungee.core.client;
 
 import com.starfishst.bungee.api.Guido;
 import lombok.NonNull;
-import me.googas.api.client.HeartBeatTask;
+import me.googas.api.client.tasks.HeartBeatTask;
 
 /** This task makes the bungee client attempt to reconnect to the bot */
 public class BungeeHeartBeatTimerTask implements HeartBeatTask {

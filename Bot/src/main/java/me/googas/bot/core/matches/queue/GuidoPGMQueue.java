@@ -15,7 +15,7 @@ import me.googas.api.matches.queue.Queueable;
 import me.googas.api.matches.team.TeamMember;
 import me.googas.api.matches.team.TeamRole;
 import me.googas.api.user.UserData;
-import me.googas.bot.Guido;
+import me.googas.bot.api.Guido;
 import me.googas.bot.core.GuidoLinkedValuesMap;
 import me.googas.bot.core.matches.GuidoMatch;
 import me.googas.bot.core.matches.GuidoMatchTeam;

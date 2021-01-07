@@ -4,7 +4,7 @@ import com.starfishst.jda.annotations.Command;
 import com.starfishst.jda.context.CommandContext;
 import com.starfishst.jda.result.Result;
 import lombok.NonNull;
-import me.googas.bot.Guido;
+import me.googas.bot.api.Guido;
 import me.googas.bot.core.handlers.responsive.GuidoMessagesController;
 import me.googas.bot.core.handlers.responsive.lang.LangChangeResponsiveMessage;
 import me.googas.bot.core.lang.GuidoLanguageHandler;
@@ -14,7 +14,7 @@ import net.dv8tion.jda.api.entities.User;
 public class LangCommands {
 
   /** The handler to localize the messages of the command */
-  @NonNull private final GuidoLanguageHandler handler = Guido.getLanguageHandler();
+  @NonNull private final GuidoLanguageHandler handler = Guido.getHandlers().getLanguageHandler();
 
   /**
    * Change the language of the user
@@ -30,7 +30,9 @@ public class LangCommands {
         msg -> {
           LangChangeResponsiveMessage responsiveMessage =
               new LangChangeResponsiveMessage(user, msg);
-          Guido.getHandler(GuidoMessagesController.class).addMessage(responsiveMessage);
+          Guido.getHandlers()
+              .getHandler(GuidoMessagesController.class)
+              .addMessage(responsiveMessage);
         });
   }
 }

@@ -1,7 +1,8 @@
-package me.googas.api.client;
+package me.googas.api.client.tasks;
 
 import java.io.IOException;
 import lombok.NonNull;
+import me.googas.api.client.Client;
 
 /** This task attempts to reconnect to the bot */
 public interface HeartBeatTask extends Runnable {

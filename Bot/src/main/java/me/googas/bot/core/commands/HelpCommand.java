@@ -11,7 +11,7 @@ import com.starfishst.jda.context.CommandContext;
 import com.starfishst.jda.result.Result;
 import com.starfishst.jda.result.ResultType;
 import me.googas.api.lang.LocaleFile;
-import me.googas.bot.Guido;
+import me.googas.bot.api.Guido;
 import me.googas.commons.Lots;
 import me.googas.commons.Strings;
 import me.googas.commons.maps.Maps;

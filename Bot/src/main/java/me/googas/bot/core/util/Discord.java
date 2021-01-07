@@ -2,21 +2,33 @@ package me.googas.bot.core.util;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.function.Consumer;
 import java.util.logging.Level;
+import lombok.CustomLog;
 import lombok.NonNull;
-import me.googas.bot.Guido;
+import me.googas.api.links.Linkable;
+import me.googas.api.links.LinkableType;
+import me.googas.api.links.ref.DiscordLinkable;
+import me.googas.bot.api.Guido;
+import me.googas.bot.core.GuidoValuesMap;
+import me.googas.bot.core.links.GuidoLinkable;
+import me.googas.bot.core.user.GuidoUser;
 import me.googas.commons.Lots;
+import me.googas.commons.Validate;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.GuildChannel;
 import net.dv8tion.jda.api.entities.IMentionable;
 import net.dv8tion.jda.api.entities.IPermissionHolder;
+import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.PermissionOverride;
+import net.dv8tion.jda.api.entities.User;
 
 /** y Static utilities for mentions */
+@CustomLog
 public class Discord {
 
   /** All the permissions required to join the voice channel */
@@ -32,11 +44,8 @@ public class Discord {
   @NonNull
   private static final Consumer<Throwable> EXCEPTION_CONSUMER =
       throwable ->
-          Guido.getLogger()
-              .log(
-                  Level.SEVERE,
-                  throwable,
-                  () -> "There's been an error while doing a discord action");
+          Discord.log.log(
+              Level.SEVERE, throwable, () -> "There's been an error while doing a discord action");
 
   /**
    * Get the mentions from a collection of mentionables.
@@ -188,5 +197,36 @@ public class Discord {
    */
   public static Consumer<Throwable> exceptionConsumer() {
     return Discord.EXCEPTION_CONSUMER;
+  }
+
+  @NonNull
+  public static DiscordLinkable getUser(long id) {
+    Linkable linkable =
+        Validate.notNullOrGet(
+            Guido.getHandlers()
+                .getLoader()
+                .getLinks()
+                .getLink(LinkableType.DISCORD, new GuidoValuesMap("id", id)),
+            () ->
+                new GuidoLinkable(
+                    LinkableType.DISCORD,
+                    new GuidoValuesMap(),
+                    new GuidoUser(new GuidoValuesMap()).getId(),
+                    new GuidoValuesMap("id", id),
+                    new GuidoValuesMap(),
+                    new HashMap<>(),
+                    new HashSet<>()));
+    if (linkable != null) return linkable.requireDiscordRef();
+    throw new IllegalStateException("Could not get linkable for user " + id);
+  }
+
+  @NonNull
+  public static DiscordLinkable getUser(@NonNull User user) {
+    return Discord.getUser(user.getIdLong());
+  }
+
+  @NonNull
+  public static DiscordLinkable getUser(Member member) {
+    return Discord.getUser(member.getIdLong());
   }
 }

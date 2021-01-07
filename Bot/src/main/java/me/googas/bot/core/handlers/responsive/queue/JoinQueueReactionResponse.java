@@ -10,7 +10,7 @@ import lombok.NonNull;
 import me.googas.api.matches.ladder.Ladder;
 import me.googas.api.matches.queue.Queue;
 import me.googas.api.matches.queue.Queueable;
-import me.googas.bot.Guido;
+import me.googas.bot.api.Guido;
 import me.googas.bot.api.types.discord.BotGuild;
 import me.googas.bot.core.handlers.queue.QueueHandler;
 import me.googas.bot.core.handlers.responsive.command.SimpleCommandReactionResponse;
@@ -54,14 +54,15 @@ public class JoinQueueReactionResponse extends SimpleCommandReactionResponse {
     EmbedQuery query = EmbedFactory.fromResult(new Result(""), listener, null);
 
     StringBuilder participants = Strings.getBuilder();
-    BotGuild guildData = Guido.getDataLoader().getGuildDataOrCreate(guild.getIdLong());
+    BotGuild guildData = Guido.getDiscordLoader().getGuild(guild.getIdLong());
     Ladder ladder = guildData.getLadder(this.ladder);
     if (ladder != null) {
-      Queue queue = Guido.getHandler(QueueHandler.class).getQueue(guildData, ladder);
+      Queue queue = Guido.getHandlers().getHandler(QueueHandler.class).getQueue(guildData, ladder);
       Collection<Queueable> waiting = queue.getWaiting();
       if (waiting.isEmpty()) {
         participants.append(
-            Guido.getLanguageHandler()
+            Guido.getHandlers()
+                .getLanguageHandler()
                 .getDefault()
                 .get("iq.empty", Maps.singleton("ladder", ladder.getName())));
       } else {

@@ -8,7 +8,7 @@ import java.util.Set;
 import lombok.NonNull;
 import me.googas.api.permissions.Group;
 import me.googas.api.permissions.PermissionStack;
-import me.googas.bot.Guido;
+import me.googas.bot.api.Guido;
 import me.googas.bot.api.events.data.group.GroupUnloadedEvent;
 import me.googas.bot.api.events.data.permissible.PermissiblePermissionAddedEvent;
 import me.googas.bot.api.events.data.permissible.PermissiblePermissionRemovedEvent;
@@ -67,7 +67,13 @@ public class GuidoGroup implements Group, BotCatchable {
       @NonNull Set<PermissionStack> permissions,
       String name,
       List<String> parents) {
-    this(Guido.getDataLoader().nextGroupId(), weight, name, preferences, permissions, parents);
+    this(
+        Guido.getHandlers().getLoader().getGroups().nextGroupId(),
+        weight,
+        name,
+        preferences,
+        permissions,
+        parents);
   }
 
   /** @deprecated this may only be used be used by json */

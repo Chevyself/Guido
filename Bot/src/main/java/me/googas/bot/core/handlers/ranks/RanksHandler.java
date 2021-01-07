@@ -6,7 +6,6 @@ import java.util.List;
 import lombok.Getter;
 import lombok.NonNull;
 import me.googas.annotations.Nullable;
-import me.googas.api.Stateables;
 import me.googas.api.links.Linkable;
 import me.googas.api.links.LinkableType;
 import me.googas.api.links.ref.DiscordLinkable;
@@ -17,7 +16,8 @@ import me.googas.api.matches.ladder.Ladder;
 import me.googas.api.matches.team.TeamMember;
 import me.googas.api.ranks.RankRange;
 import me.googas.api.user.UserData;
-import me.googas.bot.Guido;
+import me.googas.api.utility.Stateables;
+import me.googas.bot.api.Guido;
 import me.googas.bot.api.events.data.links.LinkableRankUpdatedEvent;
 import me.googas.bot.api.events.match.MatchStatusUpdatedEvent;
 import me.googas.bot.api.types.discord.BotGuild;
@@ -69,7 +69,7 @@ public class RanksHandler implements GuidoHandler {
     long guildId = match.getGuildId();
     String ladderName = match.getDetails().get("ladder", String.class);
     if (ladderName != null) {
-      BotGuild guildData = Guido.getDataLoader().getGuildDataOrCreate(guildId);
+      BotGuild guildData = Guido.getDiscordLoader().getGuild(guildId);
       Ladder ladder = guildData.getLadder(ladderName);
       if (ladder != null) {
         for (MatchTeam matchTeam : match.getTeams()) {
@@ -185,7 +185,7 @@ public class RanksHandler implements GuidoHandler {
   }
 
   @Override
-  public void close() {}
+  public void onDisable() {}
 
   /** This is a result of the ranks that have been applied or removed */
   public static class UpdateResult {

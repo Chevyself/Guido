@@ -8,7 +8,7 @@ import me.googas.annotations.Nullable;
 import me.googas.api.matches.ladder.GlobalLadder;
 import me.googas.api.matches.ladder.Ladder;
 import me.googas.api.ranks.RankRange;
-import me.googas.bot.Guido;
+import me.googas.bot.api.Guido;
 import me.googas.bot.api.types.BotCatchable;
 import me.googas.bot.api.types.messages.ResponsiveMesage;
 import me.googas.commons.Validate;

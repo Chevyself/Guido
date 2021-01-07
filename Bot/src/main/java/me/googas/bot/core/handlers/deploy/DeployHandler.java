@@ -2,7 +2,7 @@ package me.googas.bot.core.handlers.deploy;
 
 import me.googas.api.links.Linkable;
 import me.googas.api.permissions.Permissible;
-import me.googas.bot.Guido;
+import me.googas.bot.api.Guido;
 import me.googas.bot.api.events.data.links.LinkableEloUpdatedEvent;
 import me.googas.bot.api.events.data.links.LinkableRankUpdatedEvent;
 import me.googas.bot.api.events.data.permissible.PermissiblePermissionAddedEvent;
@@ -93,5 +93,5 @@ public class DeployHandler implements GuidoHandler {
   }
 
   @Override
-  public void close() {}
+  public void onDisable() {}
 }

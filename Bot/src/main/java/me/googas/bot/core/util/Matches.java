@@ -10,7 +10,7 @@ import me.googas.api.lang.LocaleFile;
 import me.googas.api.matches.Match;
 import me.googas.api.matches.MatchStatus;
 import me.googas.api.matches.MatchTeam;
-import me.googas.bot.Guido;
+import me.googas.bot.api.Guido;
 import me.googas.bot.api.types.discord.BotGuild;
 import me.googas.commons.Lots;
 import me.googas.commons.maps.Maps;
@@ -39,7 +39,7 @@ public class Matches {
    * @return the guild of the match or null if not found
    */
   public static BotGuild getGuild(@NonNull Match match) {
-    return Guido.getDataLoader().getGuildData(match.getGuildId());
+    return Guido.getDiscordLoader().getGuild(match.getGuildId());
   }
 
   /**

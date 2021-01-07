@@ -5,7 +5,7 @@ import java.util.Map;
 import lombok.NonNull;
 import me.googas.api.token.AuthLevel;
 import me.googas.api.token.AuthToken;
-import me.googas.bot.Guido;
+import me.googas.bot.api.Guido;
 import me.googas.bot.core.GuidoValuesMap;
 import me.googas.commons.maps.Maps;
 import me.googas.messaging.IRequest;
@@ -57,7 +57,7 @@ public class GuidoAuthenticator implements Authenticator {
   @Receptor("auth")
   public boolean auth(@NonNull JsonMessenger messenger, @ParamName("token") String token) {
     if (messenger instanceof JsonClientThread) {
-      AuthToken authToken = Guido.getDataLoader().getAuthToken(token);
+      AuthToken authToken = Guido.getHandlers().getLoader().getTokens().getAuthToken(token);
       if (authToken != null) {
         this.levels.put((JsonClientThread) messenger, authToken.getLevel());
         return true;

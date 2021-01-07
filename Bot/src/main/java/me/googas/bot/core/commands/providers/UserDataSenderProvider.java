@@ -5,7 +5,7 @@ import com.starfishst.jda.context.CommandContext;
 import com.starfishst.jda.providers.type.JdaExtraArgumentProvider;
 import lombok.NonNull;
 import me.googas.api.user.UserData;
-import me.googas.bot.Guido;
+import me.googas.bot.core.util.Discord;
 
 /** Provides the commands with bot user as a command sender */
 public class UserDataSenderProvider implements JdaExtraArgumentProvider<UserData> {
@@ -17,8 +17,7 @@ public class UserDataSenderProvider implements JdaExtraArgumentProvider<UserData
   @NonNull
   @Override
   public UserData getObject(@NonNull CommandContext context) throws ArgumentProviderException {
-    UserData user =
-        Guido.getDataLoader().getDiscordUserData(context.getSender().getIdLong()).getLinkedUser();
+    UserData user = Discord.getUser(context.getSender()).getLinkedUser();
     if (user != null) {
       return user;
     }

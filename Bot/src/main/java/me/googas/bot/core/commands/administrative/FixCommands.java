@@ -7,7 +7,7 @@ import java.util.Collection;
 import me.googas.api.links.Linkable;
 import me.googas.api.links.LinkableInfo;
 import me.googas.api.links.LinkableType;
-import me.googas.bot.Guido;
+import me.googas.bot.api.Guido;
 
 /** Commands for fixing */
 public class FixCommands {
@@ -23,7 +23,8 @@ public class FixCommands {
       description = "Fix the Minecraft linkable",
       node = "guido.fix.minecraft")
   public Result minecraft() {
-    Collection<LinkableInfo> links = Guido.getDataLoader().getLinks(-1, -1, LinkableType.MINECRAFT);
+    Collection<LinkableInfo> links =
+        Guido.getHandlers().getLoader().getLinks().getLinks(-1, -1, LinkableType.MINECRAFT);
     for (LinkableInfo linkInfo : links) {
       Linkable link = linkInfo.getLink();
       if (link != null) {
@@ -34,7 +35,7 @@ public class FixCommands {
         link.getIdentification().remove("nickname");
       }
     }
-    Guido.clearCache();
+    Guido.validated().clearCache();
     return new Result("Minecraft links have been updated");
   }
 }

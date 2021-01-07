@@ -3,6 +3,7 @@ package me.googas.api.loader;
 import java.util.Collection;
 import java.util.Map;
 import lombok.NonNull;
+import me.googas.annotations.Nullable;
 import me.googas.api.ValuesMap;
 import me.googas.api.links.Linkable;
 import me.googas.api.links.LinkableInfo;
@@ -46,6 +47,7 @@ public interface LinksLoader extends DataLoader {
    * @param identification the identification to get the linked data from
    * @return the linked data if found else null
    */
+  @Nullable
   Linkable getLink(@NonNull LinkableType type, @NonNull ValuesMap identification);
 
   /**
@@ -56,6 +58,7 @@ public interface LinksLoader extends DataLoader {
    * @param recognition the recognition map
    * @return the link if found else null
    */
+  @Nullable
   Linkable getLink(
       @NonNull LinkableType type,
       @NonNull ValuesMap identification,

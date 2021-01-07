@@ -6,7 +6,7 @@ import lombok.Getter;
 import lombok.NonNull;
 import me.googas.api.links.Linkable;
 import me.googas.api.links.LinkableInfo;
-import me.googas.bot.Guido;
+import me.googas.bot.api.Guido;
 import me.googas.bot.core.handlers.GuidoHandler;
 import me.googas.commons.RandomUtils;
 import me.googas.commons.time.Time;
@@ -25,7 +25,11 @@ public class LinkHandler implements GuidoHandler {
    * @return the created code if the data is found and it is linked
    */
   public String createCode(@NonNull LinkableInfo info) {
-    Linkable data = Guido.getDataLoader().getLink(info.getType(), info.getIdentification());
+    Linkable data =
+        Guido.getHandlers()
+            .getLoader()
+            .getLinks()
+            .getLink(info.getType(), info.getIdentification());
     if (data != null && !data.isLinked()) {
       String code = this.nextCode();
       LinkQuery linkQuery = new LinkQuery(code, info);
@@ -83,7 +87,7 @@ public class LinkHandler implements GuidoHandler {
   }
 
   @Override
-  public void close() {}
+  public void onDisable() {}
 
   @Override
   public void unregister() {}

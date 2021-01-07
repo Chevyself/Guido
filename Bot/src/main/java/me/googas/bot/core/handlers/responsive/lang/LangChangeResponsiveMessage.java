@@ -4,11 +4,12 @@ import com.starfishst.jda.utils.responsive.ReactionResponse;
 import java.util.HashSet;
 import java.util.Set;
 import lombok.NonNull;
-import me.googas.api.links.Linkable;
-import me.googas.bot.Guido;
+import me.googas.api.links.ref.DiscordLinkable;
+import me.googas.bot.api.Guido;
 import me.googas.bot.api.types.BotCatchable;
 import me.googas.bot.core.handlers.responsive.GuidoResponsiveMessage;
 import me.googas.bot.core.lang.GuidoLocaleFile;
+import me.googas.bot.core.util.Discord;
 import me.googas.commons.time.Time;
 import me.googas.commons.time.Unit;
 import net.dv8tion.jda.api.JDA;
@@ -37,8 +38,8 @@ public class LangChangeResponsiveMessage implements GuidoResponsiveMessage, BotC
   public LangChangeResponsiveMessage(@NonNull User toChange, @NonNull Message message) {
     this.id = message.getIdLong();
     this.channelId = message.getChannel().getIdLong();
-    Linkable userData = Guido.getDataLoader().getDiscordUserData(toChange.getIdLong());
-    for (GuidoLocaleFile file : Guido.getLanguageHandler().getFiles()) {
+    DiscordLinkable userData = Discord.getUser(toChange);
+    for (GuidoLocaleFile file : Guido.getHandlers().getLanguageHandler().getFiles()) {
       if (!file.getLang()
           .equalsIgnoreCase(userData.getPreferences().getOr("lang", String.class, "en"))) {
         this.addReactionResponse(

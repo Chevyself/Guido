@@ -5,7 +5,7 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import lombok.NonNull;
 import me.googas.api.matches.Match;
-import me.googas.bot.Guido;
+import me.googas.bot.api.Guido;
 import me.googas.bot.api.types.discord.BotGuild;
 import me.googas.bot.core.handlers.GuidoHandler;
 import me.googas.bot.core.util.Discord;
@@ -135,7 +135,7 @@ public class MatchMakingChannelsHandler implements GuidoHandler {
    */
   public void deleteVoices(@NonNull Match match) {
     Map<Integer, Long> voices = this.getVoices(match.getId());
-    BotGuild guild = Guido.getDataLoader().getGuildDataOrCreate(match.getGuildId());
+    BotGuild guild = Guido.getDiscordLoader().getGuild(match.getGuildId());
     for (Long value : voices.values()) {
       VoiceChannel voiceChannel = Guido.getConnection().validatedJda().getVoiceChannelById(value);
       this.deleteAndMove(guild, voiceChannel);
@@ -144,5 +144,5 @@ public class MatchMakingChannelsHandler implements GuidoHandler {
   }
 
   @Override
-  public void close() {}
+  public void onDisable() {}
 }

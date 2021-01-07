@@ -4,7 +4,7 @@ import lombok.NonNull;
 import me.googas.api.token.AuthLevel;
 import me.googas.api.token.AuthToken;
 import me.googas.api.user.UserData;
-import me.googas.bot.Guido;
+import me.googas.bot.api.Guido;
 import me.googas.bot.api.events.data.token.AuthTokenUnloadedEvent;
 import me.googas.bot.api.types.BotCatchable;
 import me.googas.commons.RandomUtils;
@@ -70,7 +70,7 @@ public class GuidoAuthToken implements AuthToken, BotCatchable {
 
   @Override
   public UserData getUser() {
-    return Guido.getDataLoader().getUserData(this.user);
+    return Guido.getHandlers().getLoader().getUsers().getUserData(this.user);
   }
 
   @Override

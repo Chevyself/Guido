@@ -8,7 +8,7 @@ import java.io.Reader;
 import java.util.Properties;
 import lombok.NonNull;
 import me.googas.api.lang.LocaleFile;
-import me.googas.bot.Guido;
+import me.googas.bot.api.Guido;
 import me.googas.commons.CoreFiles;
 import me.googas.commons.Validate;
 

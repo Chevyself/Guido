@@ -2,22 +2,12 @@ package me.googas.bot.core.server;
 
 import java.io.IOException;
 import java.util.logging.Level;
+import lombok.CustomLog;
 import lombok.NonNull;
-import me.googas.bot.Guido;
 import me.googas.bot.api.events.server.GuidoServerConnectionEvent;
 import me.googas.bot.api.events.server.GuidoServerDisconnectionEvent;
 import me.googas.bot.api.server.BotServer;
-import me.googas.bot.core.server.receptors.bungee.BungeeReceptors;
 import me.googas.bot.core.server.receptors.handlers.LinkReceptors;
-import me.googas.bot.core.server.receptors.handlers.QueueReceptors;
-import me.googas.bot.core.server.receptors.links.LinksReceptors;
-import me.googas.bot.core.server.receptors.links.MinecraftReceptor;
-import me.googas.bot.core.server.receptors.loader.DataLoaderReceptors;
-import me.googas.bot.core.server.receptors.matches.LadderReceptors;
-import me.googas.bot.core.server.receptors.matches.MatchReceptors;
-import me.googas.bot.core.server.receptors.matches.TeamReceptors;
-import me.googas.bot.core.server.receptors.permissions.GroupReceptors;
-import me.googas.bot.core.server.receptors.punishment.PunishmentReceptors;
 import me.googas.bot.core.util.Mongo;
 import me.googas.messaging.Request;
 import me.googas.messaging.api.Message;
@@ -26,6 +16,7 @@ import me.googas.messaging.json.server.JsonClientThread;
 import me.googas.messaging.json.server.JsonSocketServer;
 
 /** A server for implementations connections */
+@CustomLog
 public class GuidoServer extends JsonSocketServer implements BotServer {
 
   /** The authentication system for the guido server */
@@ -42,28 +33,15 @@ public class GuidoServer extends JsonSocketServer implements BotServer {
     super(
         port,
         throwable ->
-            Guido.getLogger()
-                .log(Level.SEVERE, throwable, () -> "An exception was cached in the socket server"),
+            GuidoServer.log.log(
+                Level.SEVERE, throwable, () -> "An exception was cached in the socket server"),
         null,
         Mongo.builderGson(false)
             .registerTypeAdapter(Message.class, new MessageDeserializer())
             .create(),
         timeout);
     this.setAuthenticator(this.authenticator);
-    this.addReceptors(
-        new BungeeReceptors(),
-        new LadderReceptors(),
-        new LinkReceptors(),
-        new QueueReceptors(),
-        new LinksReceptors(),
-        new MinecraftReceptor(),
-        new DataLoaderReceptors(),
-        new LadderReceptors(),
-        new MatchReceptors(),
-        new TeamReceptors(),
-        new GroupReceptors(),
-        new PunishmentReceptors(),
-        this.authenticator);
+    this.addReceptors(new LinkReceptors(), this.authenticator);
   }
 
   @Override

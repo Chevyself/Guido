@@ -7,7 +7,7 @@ import lombok.NonNull;
 import me.googas.api.links.Linkable;
 import me.googas.api.links.LinkableInfo;
 import me.googas.api.links.LinkableType;
-import me.googas.bot.Guido;
+import me.googas.bot.api.Guido;
 import me.googas.bot.core.GuidoValuesMap;
 import me.googas.commons.builder.ToStringBuilder;
 
@@ -50,7 +50,10 @@ public class GuidoLinkableInfo implements LinkableInfo {
 
   @Override
   public Linkable getLink() {
-    return Guido.getDataLoader().getLink(this.getType(), this.getIdentification());
+    return Guido.getHandlers()
+        .getLoader()
+        .getLinks()
+        .getLink(this.getType(), this.getIdentification());
   }
 
   @Override

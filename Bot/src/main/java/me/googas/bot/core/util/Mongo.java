@@ -6,6 +6,7 @@ import com.google.gson.JsonSyntaxException;
 import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoCursor;
+import java.io.Reader;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
@@ -15,6 +16,7 @@ import lombok.NonNull;
 import me.googas.annotations.Nullable;
 import me.googas.api.GuidoCatchable;
 import me.googas.api.ValuesMap;
+import me.googas.api.adapters.permissions.PermissionAdapter;
 import me.googas.api.links.Linkable;
 import me.googas.api.links.LinkableInfo;
 import me.googas.api.links.LinkableType;
@@ -22,9 +24,7 @@ import me.googas.api.matches.MatchTeam;
 import me.googas.api.matches.ladder.Ladder;
 import me.googas.api.matches.team.TeamMember;
 import me.googas.api.permissions.Permission;
-import me.googas.api.permissions.PermissionStack;
 import me.googas.api.ranks.RankRange;
-import me.googas.bot.Guido;
 import me.googas.bot.adapters.LinkedValuesMapAdapter;
 import me.googas.bot.adapters.LongMongoAdapter;
 import me.googas.bot.adapters.ValuesMapAdapter;
@@ -35,9 +35,8 @@ import me.googas.bot.adapters.matches.ladder.LadderAdapter;
 import me.googas.bot.adapters.matches.team.MatchTeamAdapter;
 import me.googas.bot.adapters.matches.team.TeamMemberAdapter;
 import me.googas.bot.adapters.messages.ResponsiveMessageAdapter;
-import me.googas.bot.adapters.permissions.PermissionAdapter;
-import me.googas.bot.adapters.permissions.PermissionStackAdapter;
 import me.googas.bot.adapters.ranks.RankRangeAdapter;
+import me.googas.bot.api.Guido;
 import me.googas.bot.api.types.discord.BotGuild;
 import me.googas.bot.api.types.messages.ResponsiveMesage;
 import me.googas.bot.core.GuidoLinkedValuesMap;
@@ -45,7 +44,6 @@ import me.googas.bot.core.GuidoValuesMap;
 import me.googas.bot.core.discord.GuidoGuild;
 import me.googas.bot.core.links.GuidoLinkable;
 import me.googas.bot.core.links.GuidoLinkableInfo;
-import me.googas.bot.core.permissions.GuidoPermission;
 import me.googas.commons.cache.MemoryCache;
 import org.bson.Document;
 
@@ -72,8 +70,6 @@ public class Mongo {
         .registerTypeAdapter(TeamMember.class, new TeamMemberAdapter())
         .registerTypeAdapter(ResponsiveMesage.class, new ResponsiveMessageAdapter())
         .registerTypeAdapter(Permission.class, new PermissionAdapter())
-        .registerTypeAdapter(PermissionStack.class, new PermissionStackAdapter())
-        .registerTypeAdapter(GuidoPermission.class, new PermissionAdapter())
         .registerTypeAdapter(RankRange.class, new RankRangeAdapter())
         .registerTypeAdapter(GuidoLinkedValuesMap.class, new LinkedValuesMapAdapter())
         .registerTypeAdapter(long.class, new LongMongoAdapter())
@@ -280,5 +276,10 @@ public class Mongo {
       }
     }
     return many;
+  }
+
+  @Nullable
+  public static <T> T fromJson(@NonNull Reader reader, @NonNull Type typeOfT) {
+    return Mongo.GSON.fromJson(reader, typeOfT);
   }
 }

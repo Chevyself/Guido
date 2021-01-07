@@ -1,14 +1,14 @@
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoCursor;
 import lombok.NonNull;
-import me.googas.bot.core.loader.JsongoDataLoader;
+import me.googas.bot.core.loader.jsongo.JsongoLoader;
 import org.bson.Document;
 
 public class SeeDuplicates {
 
   public static void main(String[] args) {
-    JsongoDataLoader loader =
-        new JsongoDataLoader("mongodb+srv://Chevy:1004133609@googas.jbisg.mongodb.net", "Main");
+    JsongoLoader loader =
+        new JsongoLoader("mongodb+srv://Chevy:1004133609@googas.jbisg.mongodb.net", "Main");
     MongoCollection<Document> collection =
         loader.getClient().getDatabase("Main").getCollection("links");
     MongoCursor<Document> cursor = collection.find().cursor();

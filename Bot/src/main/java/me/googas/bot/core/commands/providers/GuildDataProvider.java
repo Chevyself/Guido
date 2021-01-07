@@ -5,7 +5,7 @@ import com.starfishst.jda.context.CommandContext;
 import com.starfishst.jda.context.GuildCommandContext;
 import com.starfishst.jda.providers.type.JdaExtraArgumentProvider;
 import lombok.NonNull;
-import me.googas.bot.Guido;
+import me.googas.bot.api.Guido;
 import me.googas.bot.api.types.discord.BotGuild;
 
 public class GuildDataProvider implements JdaExtraArgumentProvider<BotGuild> {
@@ -23,8 +23,8 @@ public class GuildDataProvider implements JdaExtraArgumentProvider<BotGuild> {
   @Override
   public BotGuild getObject(@NonNull CommandContext context) throws ArgumentProviderException {
     if (context instanceof GuildCommandContext) {
-      return Guido.getDataLoader()
-          .getGuildDataOrCreate(((GuildCommandContext) context).getGuild().getIdLong());
+      return Guido.getDiscordLoader()
+          .getGuild(((GuildCommandContext) context).getGuild().getIdLong());
     }
     throw new ArgumentProviderException(context.getMessagesProvider().guildOnly(context));
   }

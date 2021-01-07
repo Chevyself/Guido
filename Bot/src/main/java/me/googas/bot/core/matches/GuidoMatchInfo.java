@@ -5,7 +5,7 @@ import lombok.NonNull;
 import me.googas.annotations.Nullable;
 import me.googas.api.matches.Match;
 import me.googas.api.matches.MatchInfo;
-import me.googas.bot.Guido;
+import me.googas.bot.api.Guido;
 import me.googas.commons.builder.ToStringBuilder;
 
 /** Implementation for match info */
@@ -28,37 +28,22 @@ public class GuidoMatchInfo implements MatchInfo {
   @Nullable
   @Override
   public Match toMatch() {
-    return Guido.getDataLoader().getMatch(this.id);
+    return Guido.getHandlers().getLoader().getMatches().getMatch(this.id);
   }
 
-  /**
-   * The unique id of the match
-   *
-   * @return the unique id of the match
-   */
   @Override
   public @NonNull String getId() {
     return this.id;
   }
 
-  /**
-   * Get the id of the guild where this match occurred
-   *
-   * @return the id of the guild
-   */
   @Override
   public long getGuildId() {
     return this.guildId;
   }
 
-  /**
-   * Get the match with the provided information by this object
-   *
-   * @return the match if found null otherwise
-   */
   @Override
   public Match getMatch() {
-    return Guido.getDataLoader().getMatch(this.id);
+    return Guido.getHandlers().getLoader().getMatches().getMatch(this.id);
   }
 
   @Override

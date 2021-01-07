@@ -5,7 +5,7 @@ import me.googas.api.links.Linkable;
 import me.googas.api.matches.team.Team;
 import me.googas.commons.RandomUtils;
 
-public interface TeamLoader extends MatchLoader {
+public interface TeamLoader extends DataLoader {
 
   /**
    * Get a team by its id

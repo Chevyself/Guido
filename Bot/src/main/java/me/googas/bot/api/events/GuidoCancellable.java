@@ -1,6 +1,6 @@
 package me.googas.bot.api.events;
 
-import me.googas.bot.Guido;
+import me.googas.bot.api.Guido;
 import me.googas.commons.events.Cancellable;
 import me.googas.commons.events.Event;
 
@@ -15,6 +15,6 @@ public interface GuidoCancellable extends Cancellable {
    * @throws IllegalArgumentException cancellable is not an instance of {@link Event}
    */
   default boolean callAndGet() {
-    return !Guido.call(this);
+    return !Guido.getListenerManager().call(this);
   }
 }

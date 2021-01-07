@@ -5,7 +5,7 @@ import com.starfishst.jda.context.CommandContext;
 import com.starfishst.jda.providers.type.JdaArgumentProvider;
 import lombok.NonNull;
 import me.googas.api.links.ref.DiscordLinkable;
-import me.googas.bot.Guido;
+import me.googas.bot.core.util.Discord;
 import net.dv8tion.jda.api.entities.User;
 
 public class DiscordLinkableProvider implements JdaArgumentProvider<DiscordLinkable> {
@@ -19,6 +19,6 @@ public class DiscordLinkableProvider implements JdaArgumentProvider<DiscordLinka
   public @NonNull DiscordLinkable fromString(
       @NonNull String s, @NonNull CommandContext commandContext) throws ArgumentProviderException {
     User user = commandContext.get(s, User.class, commandContext);
-    return new DiscordLinkable(Guido.getDataLoader().getDiscordUserData(user.getIdLong()));
+    return Discord.getUser(user);
   }
 }

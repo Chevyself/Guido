@@ -9,7 +9,7 @@ import lombok.NonNull;
 import me.googas.api.links.LinkableInfo;
 import me.googas.api.matches.Match;
 import me.googas.api.matches.MatchStatus;
-import me.googas.bot.Guido;
+import me.googas.bot.api.Guido;
 import me.googas.bot.api.events.match.MatchLoadedEvent;
 import me.googas.bot.api.events.match.MatchStatusUpdatedEvent;
 import me.googas.bot.api.server.BotServer;
@@ -135,5 +135,5 @@ public class PGMMatchHandler implements MatchHandler {
   }
 
   @Override
-  public void close() {}
+  public void onDisable() {}
 }

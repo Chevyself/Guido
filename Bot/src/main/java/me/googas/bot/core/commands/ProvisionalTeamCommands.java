@@ -14,7 +14,7 @@ import me.googas.api.links.LinkableType;
 import me.googas.api.matches.team.Team;
 import me.googas.api.matches.team.TeamMember;
 import me.googas.api.matches.team.TeamRole;
-import me.googas.bot.Guido;
+import me.googas.bot.api.Guido;
 import me.googas.bot.core.GuidoValuesMap;
 import me.googas.bot.core.matches.team.GuidoTeam;
 import me.googas.bot.core.matches.team.GuidoTeamMember;
@@ -61,7 +61,9 @@ public class ProvisionalTeamCommands {
     Set<String> hasTeam = new HashSet<>();
     for (String trimmed : players.getStrings()) {
       Linkable player =
-          Guido.getDataLoader()
+          Guido.getHandlers()
+              .getLoader()
+              .getLinks()
               .getLink(LinkableType.MINECRAFT, new GuidoValuesMap("uuid", trimmed));
       if (player != null) {
         if (members.isEmpty()) {
@@ -81,7 +83,7 @@ public class ProvisionalTeamCommands {
       return new Result("The next players haven't joined googas: " + Lots.pretty(notJoined));
     if (!hasTeam.isEmpty())
       return new Result("The next players already have a team " + Lots.pretty(hasTeam));
-    new GuidoTeam(Guido.getDataLoader().nextTeamId(), name, members).cache();
+    new GuidoTeam(Guido.getHandlers().getLoader().getTeams().nextTeamId(), name, members).cache();
     return new Result("The team " + name + " has been created");
   }
 
@@ -93,7 +95,10 @@ public class ProvisionalTeamCommands {
       @Required(name = "team", description = "The team to add the player") Team team,
       @Required(name = "uuid", description = "The trimmed uuid of the player") String trimmed) {
     Linkable player =
-        Guido.getDataLoader().getLink(LinkableType.MINECRAFT, new GuidoValuesMap("uuid", trimmed));
+        Guido.getHandlers()
+            .getLoader()
+            .getLinks()
+            .getLink(LinkableType.MINECRAFT, new GuidoValuesMap("uuid", trimmed));
     if (player == null) return new Result(ResultType.ERROR, trimmed + " hasn't joined googas yet");
     if (player.getTeam() != null)
       return new Result(ResultType.ERROR, player.getSingle() + " is already on a team");
@@ -109,7 +114,10 @@ public class ProvisionalTeamCommands {
       @Required(name = "team", description = "The team to remove the player") Team team,
       @Required(name = "uuid", description = "The trimmed uuid of the player") String trimmed) {
     Linkable player =
-        Guido.getDataLoader().getLink(LinkableType.MINECRAFT, new GuidoValuesMap("uuid", trimmed));
+        Guido.getHandlers()
+            .getLoader()
+            .getLinks()
+            .getLink(LinkableType.MINECRAFT, new GuidoValuesMap("uuid", trimmed));
     if (player == null) return new Result(ResultType.ERROR, trimmed + " hasn't joined googas yet");
     if (player.getTeam() == null)
       return new Result(ResultType.ERROR, player.getSingle() + " is not on a team");
@@ -121,7 +129,7 @@ public class ProvisionalTeamCommands {
 
   @Command(aliases = "delete", description = "Deletes a team")
   public Result delete(@Required(name = "team", description = "The team to delete") Team team) {
-    if (Guido.getDataLoader().deleteTeam(team.getId())) {
+    if (Guido.getHandlers().getLoader().getTeams().deleteTeam(team.getId())) {
       return new Result(team.getName() + " has been deleted");
     }
     return new Result(team.getName() + " could not be deleted");

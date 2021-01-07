@@ -10,17 +10,17 @@ import com.starfishst.jda.utils.embeds.EmbedFactory;
 import com.starfishst.jda.utils.embeds.EmbedQuery;
 import java.util.Collection;
 import lombok.NonNull;
-import me.googas.api.SortedStats;
 import me.googas.api.lang.LocaleFile;
 import me.googas.api.links.Linkable;
 import me.googas.api.links.LinkableInfo;
 import me.googas.api.links.LinkableType;
 import me.googas.api.user.UserData;
-import me.googas.bot.Guido;
+import me.googas.api.utility.SortedStats;
+import me.googas.bot.api.Guido;
 import me.googas.bot.api.types.discord.BotGuild;
-import me.googas.bot.api.types.loader.BotDataLoader;
 import me.googas.bot.core.GuidoValuesMap;
 import me.googas.bot.core.handlers.link.LinkHandler;
+import me.googas.bot.core.loader.GuidoLoader;
 import me.googas.commons.Strings;
 import me.googas.commons.maps.Maps;
 
@@ -46,8 +46,8 @@ public class UserCommands {
     } else {
       toSee = sender;
     }
-    BotDataLoader loader = Guido.getDataLoader();
-    Collection<Linkable> links = loader.getLinks(toSee);
+    GuidoLoader loader = Guido.getHandlers().getLoader();
+    Collection<Linkable> links = loader.getLinks().getLinks(toSee);
     if (links.isEmpty()) {
       return new Result(locale.get("links.empty", Maps.singleton("id", toSee.getId())));
     } else {
@@ -73,16 +73,17 @@ public class UserCommands {
       LocaleFile locale,
       UserData user,
       @Required(name = "link.code", description = "link.code.desc") String code) {
-    LinkableInfo info = Guido.getHandler(LinkHandler.class).getInfo(code);
+    GuidoLoader loader = Guido.getHandlers().getLoader();
+    LinkableInfo info = Guido.getHandlers().getHandler(LinkHandler.class).getInfo(code);
     if (info != null) {
-      Linkable link = Guido.getDataLoader().getLink(user, info.getType());
+      Linkable link = loader.getLinks().getLink(user, info.getType());
       if (link != null) {
         return new Result(
             ResultType.ERROR,
             locale.get(
                 "link.only-one", Maps.singleton("type", info.getType().toString().toLowerCase())));
       } else {
-        Linkable data = Guido.getDataLoader().getLink(info.getType(), info.getIdentification());
+        Linkable data = loader.getLinks().getLink(info.getType(), info.getIdentification());
         if (data != null) {
           data.setLinkedUser(user);
           return new Result(
@@ -103,10 +104,12 @@ public class UserCommands {
       LocaleFile locale,
       UserData data,
       @Optional(name = "stats.name", description = "stats.name.desc") String nickname) {
-    Linkable link = Guido.getDataLoader().getLink(data, LinkableType.MINECRAFT);
+    GuidoLoader loader = Guido.getHandlers().getLoader();
+    Linkable link = loader.getLinks().getLink(data, LinkableType.MINECRAFT);
     if (nickname != null) {
       link =
-          Guido.getDataLoader()
+          loader
+              .getLinks()
               .getLinkByRecognition(
                   LinkableType.MINECRAFT, new GuidoValuesMap("nickname", nickname));
       if (link != null) {
@@ -162,7 +165,7 @@ public class UserCommands {
 public class UserCommands {
 
  The handler to localize the messages of the command
-  @NotNull private final GuidoLanguageHandler handler = Guido.getLanguageHandler();
+  @NotNull private final GuidoLanguageHandler handler = GuidoBot.getLanguageHandler();
 
    * Manage users
    *

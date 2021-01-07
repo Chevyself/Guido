@@ -12,11 +12,4 @@ public interface BotRole extends Permissible, BotCatchable {
    * @return the unique id of the role
    */
   long getId();
-
-  /**
-   * Get the unique id where this is a role
-   *
-   * @return the unique id of the guild
-   */
-  long getGuildId();
 }

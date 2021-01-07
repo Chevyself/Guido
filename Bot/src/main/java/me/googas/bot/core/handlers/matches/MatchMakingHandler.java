@@ -14,15 +14,15 @@ import me.googas.api.matches.MatchStatus;
 import me.googas.api.matches.MatchTeam;
 import me.googas.api.matches.team.TeamMember;
 import me.googas.api.user.UserData;
-import me.googas.bot.Guido;
+import me.googas.bot.api.Guido;
 import me.googas.bot.api.events.match.MatchAddTeamEvent;
 import me.googas.bot.api.events.match.MatchLoadedEvent;
 import me.googas.bot.api.events.match.MatchStatusUpdatedEvent;
 import me.googas.bot.api.events.queue.QueueJoinEvent;
 import me.googas.bot.api.types.discord.BotGuild;
-import me.googas.bot.api.types.loader.BotDataLoader;
 import me.googas.bot.core.handlers.GuidoHandler;
 import me.googas.bot.core.handlers.queue.QueueHandler;
+import me.googas.bot.core.loader.GuidoLoader;
 import me.googas.bot.core.util.Discord;
 import me.googas.bot.core.util.Matches;
 import me.googas.commons.events.ListenPriority;
@@ -47,9 +47,9 @@ public class MatchMakingHandler implements GuidoHandler {
   @Listener(priority = ListenPriority.HIGHEST)
   public void onMatchStatusUpdatedEvent(@NonNull MatchStatusUpdatedEvent event) {
     Match match = event.getMatch();
-    BotGuild guildData = Guido.getDataLoader().getGuildDataOrCreate(match.getGuildId());
+    BotGuild guildData = Guido.getDiscordLoader().getGuild(match.getGuildId());
     TextChannel channel = guildData.getTextChannel("matches");
-    LocaleFile locale = Guido.getLanguageHandler().getDefault();
+    LocaleFile locale = Guido.getHandlers().getLanguageHandler().getDefault();
     EmbedQuery information = Matches.getInformation(match, locale);
     if (event.getStatus() == MatchStatus.FINISHED) {
       information.setTitle(locale.get("match.announce.title", Maps.singleton("id", match.getId())));
@@ -69,7 +69,7 @@ public class MatchMakingHandler implements GuidoHandler {
     if (match != null) {
       new MatchLoadedEvent(match).call();
       for (LinkableInfo participant : match.getParticipants()) {
-        Guido.getHandler(QueueHandler.class).leaveQueue(participant);
+        Guido.getHandlers().getHandler(QueueHandler.class).leaveQueue(participant);
       }
     }
   }
@@ -208,34 +208,36 @@ public class MatchMakingHandler implements GuidoHandler {
    * @return the collection of matches where the user is playing
    */
   public Collection<Match> getPlaying(@NonNull UserData data) {
-    BotDataLoader loader = Guido.getDataLoader();
-    Collection<Linkable> links = loader.getLinks(data);
+    GuidoLoader loader = Guido.getHandlers().getLoader();
+    Collection<Linkable> links = loader.getLinks().getLinks(data);
     Collection<Match> participating = new HashSet<>();
     for (Linkable link : links) {
       participating.addAll(
-          loader.getParticipating(
-              link.getType(),
-              link.getIdentification(),
-              MatchStatus.PLAYING,
-              MatchStatus.READY,
-              MatchStatus.STARTING,
-              MatchStatus.WAITING));
+          loader
+              .getMatches()
+              .getParticipating(
+                  link.getType(),
+                  link.getIdentification(),
+                  MatchStatus.PLAYING,
+                  MatchStatus.READY,
+                  MatchStatus.STARTING,
+                  MatchStatus.WAITING));
     }
     return participating;
   }
 
   /** Wake up queues waiting for server */
   public void serverReady() {
-    for (MatchHandler handler : Guido.getHandlers(MatchHandler.class)) {
+    for (MatchHandler handler : Guido.getHandlers().getHandlers(MatchHandler.class)) {
       handler.serverReady();
     }
   }
 
-  @Override
-  public void close() {}
-
   @NonNull
   private MatchMakingChannelsHandler channels() {
-    return Guido.getHandler(MatchMakingChannelsHandler.class);
+    return Guido.getHandlers().getHandler(MatchMakingChannelsHandler.class);
   }
+
+  @Override
+  public void onDisable() {}
 }

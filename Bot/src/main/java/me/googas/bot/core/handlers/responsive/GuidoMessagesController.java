@@ -6,7 +6,7 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 import lombok.NonNull;
-import me.googas.bot.Guido;
+import me.googas.bot.api.Guido;
 import me.googas.bot.api.events.responsive.ResponsiveMessageUnloadedEvent;
 import me.googas.bot.core.handlers.GuidoHandler;
 import me.googas.commons.events.ListenPriority;
@@ -45,7 +45,7 @@ public class GuidoMessagesController implements ResponsiveMessageController, Gui
   }
 
   @Override
-  public void close() {}
+  public void onDisable() {}
 
   @SubscribeEvent
   @Override
@@ -61,8 +61,7 @@ public class GuidoMessagesController implements ResponsiveMessageController, Gui
   @Override
   public @NonNull Collection<ResponsiveMessage> getResponsiveMessages(Guild guild) {
     if (guild != null) {
-      return new HashSet<>(
-          Guido.getDataLoader().getGuildDataOrCreate(guild.getIdLong()).getMessages());
+      return new HashSet<>(Guido.getDiscordLoader().getGuild(guild.getIdLong()).getMessages());
     } else {
       return this.messages;
     }

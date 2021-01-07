@@ -9,7 +9,7 @@ import me.googas.api.matches.Match;
 import me.googas.api.matches.MatchStatus;
 import me.googas.api.matches.MatchTeam;
 import me.googas.api.matches.ladder.Ladder;
-import me.googas.bot.Guido;
+import me.googas.bot.api.Guido;
 import me.googas.bot.api.events.match.MatchAddTeamEvent;
 import me.googas.bot.api.events.match.MatchPreAddTeamEvent;
 import me.googas.bot.api.events.match.MatchPreRemoveTeamEvent;
@@ -85,7 +85,13 @@ public class GuidoMatch implements Match, BotCatchable {
    */
   public GuidoMatch(
       long guildId, @NonNull Set<MatchTeam> teams, @NonNull GuidoLinkedValuesMap details) {
-    this(Guido.getDataLoader().nextMatchId(), guildId, MatchStatus.WAITING, teams, details, -1);
+    this(
+        Guido.getHandlers().getLoader().getMatches().nextMatchId(),
+        guildId,
+        MatchStatus.WAITING,
+        teams,
+        details,
+        -1);
   }
 
   /** @deprecated this constructor may only be used by gson */
@@ -208,8 +214,8 @@ public class GuidoMatch implements Match, BotCatchable {
   @Override
   public Ladder getLadder() {
     String ladderName = this.getDetails().get("ladder", String.class);
-    BotGuild guild = Guido.getDataLoader().getGuildData(this.getGuildId());
-    if (ladderName == null || guild == null) return null;
+    BotGuild guild = Guido.getDiscordLoader().getGuild(this.getGuildId());
+    if (ladderName == null) return null;
     return guild.getLadder(ladderName);
   }
 }

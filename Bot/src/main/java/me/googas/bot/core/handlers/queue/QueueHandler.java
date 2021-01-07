@@ -6,14 +6,14 @@ import java.util.Set;
 import lombok.NonNull;
 import me.googas.api.links.Linkable;
 import me.googas.api.links.LinkableInfo;
-import me.googas.api.links.LinkableType;
+import me.googas.api.links.ref.DiscordLinkable;
 import me.googas.api.matches.ladder.Ladder;
 import me.googas.api.matches.queue.Queue;
 import me.googas.api.matches.queue.QueueResult;
-import me.googas.bot.Guido;
+import me.googas.bot.api.Guido;
 import me.googas.bot.api.types.discord.BotGuild;
-import me.googas.bot.core.GuidoValuesMap;
 import me.googas.bot.core.handlers.GuidoHandler;
+import me.googas.bot.core.util.Discord;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.VoiceChannel;
 import net.dv8tion.jda.api.events.guild.voice.GuildVoiceJoinEvent;
@@ -34,7 +34,7 @@ public class QueueHandler implements GuidoHandler {
    */
   public void joinQueueFromVoice(
       long guildId, @NonNull VoiceChannel channelJoined, @NonNull Member member) {
-    BotGuild guild = Guido.getDataLoader().getGuildDataOrCreate(guildId);
+    BotGuild guild = Guido.getDiscordLoader().getGuild(guildId);
     String key = guild.getVoiceChannel(channelJoined.getIdLong());
     if (key != null && key.startsWith("join-")) {
       String ladderName = key.substring(5);
@@ -117,11 +117,7 @@ public class QueueHandler implements GuidoHandler {
   public QueueResult joinQueue(
       @NonNull BotGuild guild, @NonNull Member member, @NonNull Ladder ladder) {
     Queue queue = this.getQueue(guild, ladder);
-    QueueResult join =
-        queue.join(
-            Guido.getDataLoader()
-                .getLink(LinkableType.DISCORD, new GuidoValuesMap("id", member.getIdLong()))
-                .getInfo());
+    QueueResult join = queue.join(Discord.getUser(member).getInfo());
     if (join.isCancelled()) return join;
     guild.toDiscord().moveVoiceMember(member, this.channels().getWaitingChannel(guild)).queue();
     return new QueueResult();
@@ -153,9 +149,7 @@ public class QueueHandler implements GuidoHandler {
    */
   public boolean isWaiting(
       @NonNull BotGuild guild, @NonNull Member member, @NonNull Ladder ladder) {
-    Linkable memberData =
-        Guido.getDataLoader()
-            .getLink(LinkableType.DISCORD, new GuidoValuesMap("id", member.getIdLong()));
+    DiscordLinkable memberData = Discord.getUser(member);
     Queue queue = this.getQueue(guild, ladder);
     for (Linkable link : memberData.getLinks()) {
       if (queue.isWaiting(link.getInfo())) {
@@ -165,9 +159,6 @@ public class QueueHandler implements GuidoHandler {
     return false;
   }
 
-  @Override
-  public void close() {}
-
   /**
    * Get the queue channels handler
    *
@@ -175,6 +166,9 @@ public class QueueHandler implements GuidoHandler {
    */
   @NonNull
   private QueueChannelsHandler channels() {
-    return Guido.getHandler(QueueChannelsHandler.class);
+    return Guido.getHandlers().getHandler(QueueChannelsHandler.class);
   }
+
+  @Override
+  public void onDisable() {}
 }

@@ -7,32 +7,35 @@ import java.io.IOException;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.logging.Level;
+import lombok.CustomLog;
 import lombok.NonNull;
 import me.googas.api.lang.LocaleFile;
 import me.googas.api.lang.Localized;
-import me.googas.bot.Guido;
-import me.googas.bot.api.types.loader.BotDataLoader;
+import me.googas.api.links.LinkableType;
+import me.googas.api.loader.Loader;
+import me.googas.bot.core.GuidoValuesMap;
 import me.googas.bot.core.handlers.GuidoHandler;
 import me.googas.commons.CoreFiles;
 import me.googas.commons.maps.Maps;
 import me.googas.commons.time.Time;
 
 /** Handles the language for guido messages */
+@CustomLog
 public class GuidoLanguageHandler implements MessagesProvider, GuidoHandler {
 
   /** The files that this handler is using */
   @NonNull private final Set<GuidoLocaleFile> files = new HashSet<>();
 
   /** The loader to get the localization */
-  @NonNull private BotDataLoader dataLoader;
+  @NonNull private Loader loader;
 
   /**
    * Create the guido localization handler
    *
-   * @param dataLoader the file loader to get the user data
+   * @param loader the file loader to get the user data
    */
-  public GuidoLanguageHandler(@NonNull BotDataLoader dataLoader) {
-    this.dataLoader = dataLoader;
+  public GuidoLanguageHandler(@NonNull Loader loader) {
+    this.loader = loader;
   }
 
   /**
@@ -40,7 +43,8 @@ public class GuidoLanguageHandler implements MessagesProvider, GuidoHandler {
    *
    * @param toLoad the locale files to load
    */
-  public void load(String... toLoad) {
+  @NonNull
+  public GuidoLanguageHandler load(String... toLoad) {
     for (String lang : toLoad) {
       try {
         this.files.add(
@@ -49,9 +53,11 @@ public class GuidoLanguageHandler implements MessagesProvider, GuidoHandler {
                     CoreFiles.currentDirectory() + "/assets/lang/" + lang + ".properties",
                     CoreFiles.getResource("lang/" + lang + ".properties"))));
       } catch (IOException e) {
-        Guido.getLogger().log(Level.SEVERE, e, () -> "Failed to register " + lang + ".properties");
+        GuidoLanguageHandler.log.log(
+            Level.SEVERE, e, () -> "Failed to register " + lang + ".properties");
       }
     }
+    return this;
   }
 
   /**
@@ -113,8 +119,9 @@ public class GuidoLanguageHandler implements MessagesProvider, GuidoHandler {
    */
   @NonNull
   public String getLang(@NonNull CommandContext context) {
-    return this.dataLoader
-        .getDiscordUserData(context.getSender().getIdLong())
+    return this.loader
+        .getLinks()
+        .getLink(LinkableType.DISCORD, new GuidoValuesMap("id", context.getSender().getIdLong()))
         .getPreferences()
         .getOr("lang", String.class, "en");
   }
@@ -127,14 +134,14 @@ public class GuidoLanguageHandler implements MessagesProvider, GuidoHandler {
   /**
    * Set the data loader for the language handler
    *
-   * @param dataLoader the new data loader
+   * @param loader the new data loader
    */
-  public void setDataLoader(@NonNull BotDataLoader dataLoader) {
-    this.dataLoader = dataLoader;
+  public void setLoader(@NonNull Loader loader) {
+    this.loader = loader;
   }
 
   @Override
-  public void close() {}
+  public void onDisable() {}
 
   @Override
   public void unregister() {}

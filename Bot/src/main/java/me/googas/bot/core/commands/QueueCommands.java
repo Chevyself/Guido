@@ -11,7 +11,7 @@ import me.googas.api.matches.ladder.Ladder;
 import me.googas.api.matches.queue.QueueResult;
 import me.googas.api.matches.queue.Queueable;
 import me.googas.api.user.UserData;
-import me.googas.bot.Guido;
+import me.googas.bot.api.Guido;
 import me.googas.bot.api.types.discord.BotGuild;
 import me.googas.bot.core.handlers.matches.MatchMakingHandler;
 import me.googas.bot.core.handlers.queue.QueueHandler;
@@ -45,14 +45,14 @@ public class QueueCommands {
       BotGuild guild,
       Member member,
       @Required(name = "queue.ladder", description = "queue.ladder.desc") Ladder ladder) {
-    if (Guido.getHandler(MatchMakingHandler.class).isPlaying(data)) {
+    if (Guido.getHandlers().getHandler(MatchMakingHandler.class).isPlaying(data)) {
       return new Result(ResultType.USAGE, locale.get("queue.already-playing"));
     } else {
       GuildVoiceState state = member.getVoiceState();
       if (state == null || state.getChannel() == null) {
         return new Result(ResultType.USAGE, locale.get("queue.join-voice"));
       } else {
-        QueueHandler queues = Guido.getHandler(QueueHandler.class);
+        QueueHandler queues = Guido.getHandlers().getHandler(QueueHandler.class);
         if (queues.isWaiting(guild, member, ladder)) {
           return new Result(ResultType.USAGE, locale.get("queue.already"));
         } else {
@@ -78,7 +78,7 @@ public class QueueCommands {
       BotGuild guild,
       @Required(name = "iq.ladder", description = "iq.ladder.desc") Ladder ladder) {
     Collection<Queueable> waiting =
-        Guido.getHandler(QueueHandler.class).getQueue(guild, ladder).getWaiting();
+        Guido.getHandlers().getHandler(QueueHandler.class).getQueue(guild, ladder).getWaiting();
     if (waiting.isEmpty()) {
       return new Result(locale.get("iq.empty", Maps.singleton("ladder", ladder.getName())));
     } else {

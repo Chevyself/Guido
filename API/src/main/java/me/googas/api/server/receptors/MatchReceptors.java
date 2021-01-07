@@ -11,6 +11,7 @@ import me.googas.api.loader.MatchLoader;
 import me.googas.api.matches.Match;
 import me.googas.api.matches.MatchStatus;
 import me.googas.api.matches.MatchTeam;
+import me.googas.api.matches.ladder.Ladder;
 import me.googas.messaging.json.ParamName;
 import me.googas.messaging.json.Receptor;
 
@@ -18,10 +19,15 @@ public class MatchReceptors {
 
   @NonNull private final MatchLoader loader;
   @NonNull @Getter @Setter private MatchSupplier matchSupplier;
+  @NonNull @Getter @Setter private LadderSupplier ladderSupplier;
 
-  public MatchReceptors(@NonNull MatchLoader loader, @NonNull MatchSupplier matchSupplier) {
+  public MatchReceptors(
+      @NonNull MatchLoader loader,
+      @NonNull MatchSupplier matchSupplier,
+      @NonNull LadderSupplier ladderSupplier) {
     this.loader = loader;
     this.matchSupplier = matchSupplier;
+    this.ladderSupplier = ladderSupplier;
   }
 
   @Receptor("match/create")
@@ -97,6 +103,11 @@ public class MatchReceptors {
     return true;
   }
 
+  @Receptor("match/ladder")
+  public Ladder ladder(@ParamName("name") String name) {
+    return this.ladderSupplier.getLadder(name);
+  }
+
   public Match getMatch(@NonNull String id) {
     return this.loader.getMatch(id);
   }
@@ -104,5 +115,10 @@ public class MatchReceptors {
   interface MatchSupplier {
     @NonNull
     Match create(long guild, @NonNull Collection<MatchTeam> teams, @NonNull ValuesMap details);
+  }
+
+  interface LadderSupplier {
+    @NonNull
+    Ladder getLadder(@NonNull String name);
   }
 }

@@ -7,7 +7,7 @@ import com.starfishst.jda.result.Result;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.NonNull;
-import me.googas.bot.Guido;
+import me.googas.bot.api.Guido;
 import me.googas.bot.core.lang.GuidoLanguageHandler;
 import me.googas.bot.core.util.Discord;
 import me.googas.commons.RandomUtils;
@@ -20,7 +20,7 @@ import net.dv8tion.jda.api.entities.VoiceChannel;
 public class TeamCommands {
 
   /** The handler to localize the messages of the command */
-  @NonNull private final GuidoLanguageHandler handler = Guido.getLanguageHandler();
+  @NonNull private final GuidoLanguageHandler handler = Guido.getHandlers().getLanguageHandler();
 
   /**
    * Get two event teams from a voice channel. This will get the channel where the sender executed

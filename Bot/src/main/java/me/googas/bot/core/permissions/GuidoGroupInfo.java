@@ -3,7 +3,7 @@ package me.googas.bot.core.permissions;
 import lombok.NonNull;
 import me.googas.api.permissions.Group;
 import me.googas.api.permissions.GroupInfo;
-import me.googas.bot.Guido;
+import me.googas.bot.api.Guido;
 
 public class GuidoGroupInfo implements GroupInfo {
 
@@ -34,6 +34,6 @@ public class GuidoGroupInfo implements GroupInfo {
 
   @Override
   public Group getGroup() {
-    return Guido.getDataLoader().getGroup(this.id);
+    return Guido.getHandlers().getLoader().getGroups().getGroup(this.id);
   }
 }

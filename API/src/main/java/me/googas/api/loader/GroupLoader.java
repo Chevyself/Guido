@@ -17,6 +17,13 @@ public interface GroupLoader extends DataLoader {
   Group getGroup(@NonNull String id);
 
   /**
+   * Get how many groups there are
+   *
+   * @return the amount of groups that there is
+   */
+  long maxPageGroups(int size);
+
+  /**
    * Get all the created groups but only the information of them
    *
    * @param page the page of groups to see
@@ -27,19 +34,20 @@ public interface GroupLoader extends DataLoader {
   Collection<GroupInfo> getGroups(int page, int size);
 
   /**
+   * Get all the created groups
+   *
+   * @return the created groups
+   */
+  @NonNull
+  Collection<Group> getGroups();
+
+  /**
    * Delete the group with the given id
    *
    * @param id the id of the group to delete
    * @return true if the group was deleted
    */
   boolean deleteGroup(String id);
-
-  /**
-   * Get how many groups there are
-   *
-   * @return the amount of groups that there is
-   */
-  long maxPageGroups(int size);
 
   /**
    * Get a new id for a group
@@ -52,12 +60,4 @@ public interface GroupLoader extends DataLoader {
     if (this.getGroup(id) != null) return this.nextGroupId();
     return id;
   }
-
-  /**
-   * Get all the created groups
-   *
-   * @return the created groups
-   */
-  @NonNull
-  Collection<Group> getGroups();
 }

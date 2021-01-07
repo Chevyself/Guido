@@ -28,7 +28,7 @@ import me.googas.api.matches.ladder.Ladder;
 import me.googas.api.matches.team.TeamMember;
 import me.googas.api.matches.team.TeamRole;
 import me.googas.api.user.UserData;
-import me.googas.bot.Guido;
+import me.googas.bot.api.Guido;
 import me.googas.bot.api.types.discord.BotGuild;
 import me.googas.bot.core.GuidoLinkedValuesMap;
 import me.googas.bot.core.GuidoValuesMap;
@@ -99,15 +99,16 @@ public class MatchCommands {
       @Required(name = "void.match", description = "void.match.desc") Match match) {
     if (match.getStatus() == MatchStatus.VOIDED)
       return new Result(ResultType.ERROR, locale.get("void.already"));
-    Guido.getHandler(MatchEloCalculator.class).voidMatch(match, true);
-    Guido.getHandler(RanksHandler.class).update(match, false);
+    Guido.getHandlers().getHandler(MatchEloCalculator.class).voidMatch(match, true);
+    Guido.getHandlers().getHandler(RanksHandler.class).update(match, false);
     return new Result(locale.get("void.voided"));
   }
 
   @Command(aliases = "recountAll", description = "recountAll.desc", node = "guido.recountAll")
   public Result recountAll() {
-    MatchEloCalculator calculator = Guido.getHandler(MatchEloCalculator.class);
-    Collection<MatchInfo> matches = Guido.getDataLoader().getMatches(-1, -1, MatchStatus.FINISHED);
+    MatchEloCalculator calculator = Guido.getHandlers().getHandler(MatchEloCalculator.class);
+    Collection<MatchInfo> matches =
+        Guido.getHandlers().getLoader().getMatches().getMatches(-1, -1, MatchStatus.FINISHED);
     for (MatchInfo matchInfo : matches) {
       Match match = matchInfo.toMatch();
       if (match == null) continue;
@@ -122,8 +123,9 @@ public class MatchCommands {
       description = "Updates the ranks of all the members in a guild",
       node = "guido.update-ranks")
   public Result updateRanks(BotGuild guild) {
-    RanksHandler ranksHandler = Guido.getHandler(RanksHandler.class);
-    for (LinkableInfo link : Guido.getDataLoader().getLinks(-1, -1, LinkableType.MINECRAFT)) {
+    RanksHandler ranksHandler = Guido.getHandlers().getHandler(RanksHandler.class);
+    for (LinkableInfo link :
+        Guido.getHandlers().getLoader().getLinks().getLinks(-1, -1, LinkableType.MINECRAFT)) {
       Linkable data = link.getLink();
       if (data == null) continue;
       ranksHandler.update(data, guild);
@@ -137,8 +139,8 @@ public class MatchCommands {
       description = "Recount the elo of a match",
       node = "guido.match.recount")
   public Result recount(@Required(name = "Match", description = "The match to void") Match match) {
-    Guido.getHandler(MatchEloCalculator.class).recount(match, false);
-    Guido.getHandler(RanksHandler.class).update(match, false);
+    Guido.getHandlers().getHandler(MatchEloCalculator.class).recount(match, false);
+    Guido.getHandlers().getHandler(RanksHandler.class).update(match, false);
     return new Result("Match has been recounted");
   }
 
@@ -147,7 +149,7 @@ public class MatchCommands {
       description = "game.desc")
   public Result game(
       LocaleFile locale, @Required(name = "game.id", description = "game.id.desc") String id) {
-    Match match = Guido.getDataLoader().getMatch(id);
+    Match match = Guido.getHandlers().getLoader().getMatches().getMatch(id);
     if (match != null) {
       return new Result(Matches.getInformation(match, locale));
     } else {
@@ -190,14 +192,16 @@ public class MatchCommands {
       LocaleFile locale,
       UserData sender,
       @Optional(name = "currently.else", description = "currently.else.desc") Member member) {
-    MatchMakingHandler handler = Guido.getHandler(MatchMakingHandler.class);
+    MatchMakingHandler handler = Guido.getHandlers().getHandler(MatchMakingHandler.class);
     String single = sender.getId();
     Collection<Match> playing;
     List<String> matchesId = new ArrayList<>();
     if (member != null) {
       // member.getIdLong(), member.getGuild().getIdLong()
       Linkable link =
-          Guido.getDataLoader()
+          Guido.getHandlers()
+              .getLoader()
+              .getLinks()
               .getLink(LinkableType.DISCORD, new GuidoValuesMap("id", member.getIdLong()));
       UserData linkedUser = link.getLinkedUser();
       if (linkedUser != null) {
@@ -227,7 +231,7 @@ public class MatchCommands {
       description = "Makes the active PGM matches look for servers",
       node = "user:guido.look")
   public void look() {
-    Guido.getHandler(PGMMatchHandler.class).lookForServers();
+    Guido.getHandlers().getHandler(PGMMatchHandler.class).lookForServers();
   }
 
   @Command(aliases = "win", description = "win.desc", node = "guido.win")
@@ -240,8 +244,8 @@ public class MatchCommands {
     if (ladder instanceof GlobalLadder)
       return new Result(ResultType.ERROR, locale.get("win.cannot-global"));
     if (linkables.length == 0) return new Result(ResultType.ERROR, locale.get("win.mention-one"));
-    MatchEloCalculator eloHandler = Guido.getHandler(MatchEloCalculator.class);
-    RanksHandler ranksHandler = Guido.getHandler(RanksHandler.class);
+    MatchEloCalculator eloHandler = Guido.getHandlers().getHandler(MatchEloCalculator.class);
+    RanksHandler ranksHandler = Guido.getHandlers().getHandler(RanksHandler.class);
     for (Linkable linkable : linkables) {
       eloHandler.setElo(linkable, true, ladder, true);
       ranksHandler.update(linkable, guild);
@@ -259,8 +263,8 @@ public class MatchCommands {
     if (ladder instanceof GlobalLadder)
       return new Result(ResultType.ERROR, locale.get("lose.cannot-global"));
     if (linkables.length == 0) return new Result(ResultType.ERROR, locale.get("lose.mention-one"));
-    MatchEloCalculator handler = Guido.getHandler(MatchEloCalculator.class);
-    RanksHandler ranksHandler = Guido.getHandler(RanksHandler.class);
+    MatchEloCalculator handler = Guido.getHandlers().getHandler(MatchEloCalculator.class);
+    RanksHandler ranksHandler = Guido.getHandlers().getHandler(RanksHandler.class);
     for (Linkable linkable : linkables) {
       handler.setElo(linkable, false, ladder, true);
       ranksHandler.update(linkable, guild);

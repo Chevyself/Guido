@@ -259,5 +259,5 @@ public class MatchEloCalculator implements GuidoHandler {
   }
 
   @Override
-  public void close() {}
+  public void onDisable() {}
 }

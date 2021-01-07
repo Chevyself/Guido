@@ -87,6 +87,7 @@ public interface Permissible {
     if (stack != null) {
       if (stack.containsPermission(node)) {
         stack.getPermissions().removeIf(permission -> permission.getNode().equalsIgnoreCase(node));
+        if (stack.getPermissions().isEmpty()) this.getPermissions().remove(stack);
         return true;
       }
     }

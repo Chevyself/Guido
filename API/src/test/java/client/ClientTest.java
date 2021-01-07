@@ -2,8 +2,8 @@ package client;
 
 import java.io.IOException;
 import java.util.Scanner;
+import me.googas.api.Requests;
 import me.googas.api.client.Client;
-import me.googas.api.client.Requests;
 import me.googas.api.client.data.SimpleValuesMap;
 import me.googas.api.client.data.links.SimpleLinkableInfo;
 import me.googas.api.client.data.permissions.SimplePermission;

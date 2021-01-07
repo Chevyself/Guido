@@ -2,7 +2,7 @@ package com.starfishst.bukkit.client;
 
 import com.starfishst.bukkit.api.Guido;
 import lombok.NonNull;
-import me.googas.api.client.HeartBeatTask;
+import me.googas.api.client.tasks.HeartBeatTask;
 import org.bukkit.scheduler.BukkitRunnable;
 
 public class BukkitHeartBeatTimerTask extends BukkitRunnable implements HeartBeatTask {

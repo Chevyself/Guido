@@ -18,35 +18,27 @@ import me.googas.commons.time.Unit;
 public class GuidoRole implements BotRole {
 
   private final long id;
-  private final long guildId;
   @NonNull private final Set<PermissionStack> permissions;
 
   /**
    * Create the guido role
    *
    * @param id the id of the role
-   * @param guildId the unique id of the guild where this role exists
    * @param permissions the permission that the role posses
    */
-  public GuidoRole(long id, long guildId, @NonNull Set<PermissionStack> permissions) {
+  public GuidoRole(long id, @NonNull Set<PermissionStack> permissions) {
     this.id = id;
-    this.guildId = guildId;
     this.permissions = new HashSet<>(permissions);
   }
 
   /** @deprecated this constructor may only be used by gson */
   public GuidoRole() {
-    this(0, 0, new HashSet<>());
+    this(0, new HashSet<>());
   }
 
   @Override
   public long getId() {
     return this.id;
-  }
-
-  @Override
-  public long getGuildId() {
-    return this.guildId;
   }
 
   @Override

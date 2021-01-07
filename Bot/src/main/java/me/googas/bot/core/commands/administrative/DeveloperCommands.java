@@ -13,7 +13,7 @@ import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;
 import lombok.NonNull;
-import me.googas.bot.Guido;
+import me.googas.bot.api.Guido;
 import me.googas.commons.cache.Catchable;
 
 /** Commands made for the developer */
@@ -52,7 +52,7 @@ public class DeveloperCommands {
    */
   @Command(aliases = "cacheClear", node = "guido.cache.clear")
   public Result cacheClear() {
-    Guido.clearCache();
+    Guido.validated().clearCache();
     return new Result("Cache emptied");
   }
 

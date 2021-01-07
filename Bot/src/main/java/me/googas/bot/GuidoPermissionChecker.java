@@ -1,4 +1,4 @@
-package me.googas.bot.core.commands.permissions;
+package me.googas.bot;
 
 import com.starfishst.jda.context.CommandContext;
 import com.starfishst.jda.context.GuildCommandContext;
@@ -11,9 +11,12 @@ import java.util.Set;
 import lombok.NonNull;
 import me.googas.api.links.Linkable;
 import me.googas.api.links.LinkableType;
+import me.googas.api.links.ref.DiscordLinkable;
+import me.googas.bot.api.DiscordLoader;
 import me.googas.bot.api.types.discord.BotRole;
-import me.googas.bot.api.types.loader.BotDataLoader;
 import me.googas.bot.core.GuidoValuesMap;
+import me.googas.bot.core.loader.GuidoLoader;
+import me.googas.bot.core.util.Discord;
 import me.googas.commons.Lots;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Guild;
@@ -30,18 +33,23 @@ public class GuidoPermissionChecker implements PermissionChecker {
   @NonNull private final Set<Long> developers = Lots.set(86321059636203520L);
 
   @NonNull private final MessagesProvider messagesProvider;
-  @NonNull private final BotDataLoader dataLoader;
+  @NonNull private final GuidoLoader dataLoader;
+  @NonNull private final DiscordLoader discordLoader;
 
   /**
    * Create the permission checker
    *
    * @param messagesProvider the messages provider in case it has to return a result
    * @param dataLoader the data loader to get the permissions from the user
+   * @param discordLoader the loader to get roles
    */
   public GuidoPermissionChecker(
-      @NonNull MessagesProvider messagesProvider, @NonNull BotDataLoader dataLoader) {
+      @NonNull MessagesProvider messagesProvider,
+      @NonNull GuidoLoader dataLoader,
+      @NonNull DiscordLoader discordLoader) {
     this.messagesProvider = messagesProvider;
     this.dataLoader = dataLoader;
+    this.discordLoader = discordLoader;
   }
 
   /**
@@ -57,9 +65,7 @@ public class GuidoPermissionChecker implements PermissionChecker {
     Member discordMember = context.getMember();
     Guild guild = context.getGuild();
     // discordMember.getIdLong(), guild.getIdLong()
-    Linkable member =
-        this.dataLoader.getLink(
-            LinkableType.DISCORD, new GuidoValuesMap("id", discordMember.getIdLong()));
+    DiscordLinkable member = Discord.getUser(discordMember);
     if (member.hasPermission(perm.getNode(), "discord")
         || discordMember.hasPermission(Permission.ADMINISTRATOR)
         || (perm.getPermission() != Permission.UNKNOWN
@@ -67,7 +73,7 @@ public class GuidoPermissionChecker implements PermissionChecker {
       return true;
     }
     for (Role role : discordMember.getRoles()) {
-      BotRole roleData = this.dataLoader.getRoleData(role.getIdLong(), guild.getIdLong());
+      BotRole roleData = this.discordLoader.getRole(role.getIdLong());
       if (roleData.hasPermission(perm.getNode(), "discord")
           || role.hasPermission(Permission.ADMINISTRATOR)) {
         return true;
@@ -89,7 +95,12 @@ public class GuidoPermissionChecker implements PermissionChecker {
       } else {
         String node =
             perm.getNode().startsWith("user:") ? perm.getNode().substring(5) : perm.getNode();
-        Linkable userData = this.dataLoader.getDiscordUserData(context.getSender().getIdLong());
+        Linkable userData =
+            this.dataLoader
+                .getLinks()
+                .getLink(
+                    LinkableType.DISCORD,
+                    new GuidoValuesMap("id", context.getSender().getIdLong()));
         if (userData.hasPermission(node, "discord")) {
           return null;
         }

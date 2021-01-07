@@ -9,7 +9,7 @@ import me.googas.api.lang.LocaleFile;
 import me.googas.api.token.AuthLevel;
 import me.googas.api.token.AuthToken;
 import me.googas.api.user.UserData;
-import me.googas.bot.Guido;
+import me.googas.bot.api.Guido;
 import me.googas.bot.core.token.GuidoAuthToken;
 import me.googas.commons.Strings;
 import me.googas.commons.maps.Maps;
@@ -30,7 +30,8 @@ public class TokenCommands {
       description = "tokens.desc",
       node = "user:guido.token")
   public Result token(LocaleFile locale, UserData sender) {
-    Collection<? extends AuthToken> tokens = Guido.getDataLoader().getTokens(sender);
+    Collection<? extends AuthToken> tokens =
+        Guido.getHandlers().getLoader().getTokens().getTokens(sender);
     if (tokens.isEmpty()) {
       return new Result(locale.get("tokens.empty"));
     } else {

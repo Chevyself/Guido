@@ -1,4 +1,4 @@
-package me.googas.bot.core.commands.providers.registry;
+package me.googas.bot;
 
 import com.starfishst.jda.messages.MessagesProvider;
 import com.starfishst.jda.providers.registry.JdaProvidersRegistry;

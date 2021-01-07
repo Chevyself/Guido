@@ -1,14 +1,15 @@
 package me.googas.api.server.receptors;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.Setter;
-import me.googas.annotations.Nullable;
 import me.googas.api.ValuesMap;
 import me.googas.api.loader.GroupLoader;
 import me.googas.api.permissions.Group;
+import me.googas.api.permissions.GroupInfo;
 import me.googas.api.permissions.PermissionStack;
 import me.googas.messaging.json.ParamName;
 import me.googas.messaging.json.Receptor;
@@ -21,6 +22,31 @@ public class GroupReceptors {
   public GroupReceptors(@NonNull GroupLoader loader, @NonNull GroupSupplier groupSupplier) {
     this.loader = loader;
     this.groupSupplier = groupSupplier;
+  }
+
+  @Receptor("group")
+  public Group getGroup(@NonNull String id) {
+    return this.loader.getGroup(id);
+  }
+
+  @Receptor("group/groups-size")
+  public long size(@ParamName("size") int size) {
+    return this.loader.maxPageGroups(size);
+  }
+
+  @Receptor("group/groups")
+  public Collection<GroupInfo> getGroups(@ParamName("page") int page, @ParamName("size") int size) {
+    return this.loader.getGroups(page, size);
+  }
+
+  @Receptor("group/delete")
+  public boolean delete(@NonNull String id) {
+    return this.loader.deleteGroup(id);
+  }
+
+  @Receptor("group/all-groups")
+  public Collection<Group> getAllGroups() {
+    return this.loader.getGroups();
   }
 
   @Receptor("group/create")
@@ -81,11 +107,6 @@ public class GroupReceptors {
     Group parentGroup = this.getGroup(parent);
     if (group == null || parentGroup == null) return false;
     return group.getParents().remove(parentGroup.getId());
-  }
-
-  @Nullable
-  public Group getGroup(@NonNull String id) {
-    return this.loader.getGroup(id);
   }
 
   interface GroupSupplier {

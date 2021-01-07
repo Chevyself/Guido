@@ -1,4 +1,4 @@
-package me.googas.api.client;
+package me.googas.api;
 
 import java.util.Collection;
 import java.util.List;
@@ -7,14 +7,15 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.function.Consumer;
 import lombok.NonNull;
-import me.googas.api.ValuesMap;
 import me.googas.api.links.Linkable;
 import me.googas.api.links.LinkableInfo;
 import me.googas.api.links.LinkableType;
 import me.googas.api.matches.Match;
 import me.googas.api.matches.MatchStatus;
 import me.googas.api.matches.MatchTeam;
+import me.googas.api.matches.ladder.Ladder;
 import me.googas.api.permissions.Group;
+import me.googas.api.permissions.GroupInfo;
 import me.googas.api.permissions.Permission;
 import me.googas.api.permissions.PermissionStack;
 import me.googas.api.punishment.Punishment;
@@ -40,6 +41,33 @@ public class Requests {
 
   public static class Groups {
     @NonNull public static String PREFIX = "group/";
+
+    @NonNull
+    public static RequestBuilder<Group> getGroup(@NonNull String id) {
+      return new RequestBuilder<>(Group.class, "group").put("id", id);
+    }
+
+    @NonNull
+    public static RequestBuilder<Long> getGroupsSize(int size) {
+      return new RequestBuilder<>(Long.class, Groups.PREFIX + "groups-size").put("size", size);
+    }
+
+    @NonNull
+    public static RequestBuilder<GroupInfo[]> getGroups(int page, int size) {
+      return new RequestBuilder<>(GroupInfo[].class, Groups.PREFIX + "groups")
+          .put("page", page)
+          .put("size", size);
+    }
+
+    @NonNull
+    public static RequestBuilder<Boolean> delete(@NonNull String id) {
+      return new RequestBuilder<>(Boolean.class, Groups.PREFIX + "delete").put("id", id);
+    }
+
+    @NonNull
+    public static RequestBuilder<Group[]> getGroups() {
+      return new RequestBuilder<>(Group[].class, Groups.PREFIX + "all-groups");
+    }
 
     @NonNull
     public static RequestBuilder<Group> create(
@@ -102,9 +130,81 @@ public class Requests {
     }
   }
 
+  public static class Server {
+
+    @NonNull
+    public RequestBuilder<Boolean> disconnect() {
+      return new RequestBuilder<>(Boolean.class, "disconnect");
+    }
+
+    @NonNull
+    public RequestBuilder<Boolean> clientInfo(@NonNull ValuesMap info) {
+      return new RequestBuilder<>(Boolean.class, "client-info").put("info", info);
+    }
+
+    @NonNull
+    public RequestBuilder<Boolean> auth(@NonNull String token) {
+      return new RequestBuilder<>(Boolean.class, "auth").put("token", token);
+    }
+  }
+
   public static class Links {
 
     @NonNull public static String PREFIX = "link/";
+
+    @NonNull
+    public static RequestBuilder<Linkable[]> getLinks(@NonNull String userId) {
+      return new RequestBuilder<>(Linkable[].class, Links.PREFIX + "user-links").put("id", userId);
+    }
+
+    @NonNull
+    public static RequestBuilder<Linkable> getLink(
+        @NonNull String userId, @NonNull LinkableType type) {
+      return new RequestBuilder<>(Linkable.class, Links.PREFIX + "user-type")
+          .put("id", userId)
+          .put("type", type);
+    }
+
+    @NonNull
+    public static RequestBuilder<Long> getLinksSize(@NonNull Collection<LinkableType> types) {
+      return new RequestBuilder<>(Long.class, Links.PREFIX + "links-size").put("types", types);
+    }
+
+    @NonNull
+    public static RequestBuilder<LinkableInfo[]> getLinks(
+        int page, int size, @NonNull Collection<LinkableType> types) {
+      return new RequestBuilder<>(LinkableInfo[].class, Links.PREFIX + "links")
+          .put("page", page)
+          .put("size", size)
+          .put("types", types);
+    }
+
+    @NonNull
+    public static RequestBuilder<Linkable> getLink(
+        @NonNull LinkableType type,
+        @NonNull ValuesMap identification,
+        @NonNull ValuesMap recognition) {
+      return new RequestBuilder<>(Linkable.class, "link")
+          .put("type", type)
+          .put("identification", identification)
+          .put("recognition", recognition);
+    }
+
+    @NonNull
+    public static RequestBuilder<Linkable> getLinkByIdentification(
+        @NonNull LinkableType type, @NonNull ValuesMap identification) {
+      return new RequestBuilder<>(Linkable.class, Links.PREFIX + "identification")
+          .put("type", type)
+          .put("identification", identification);
+    }
+
+    @NonNull
+    public static RequestBuilder<Linkable> getLinkByRecognition(
+        @NonNull LinkableType type, @NonNull ValuesMap recognition) {
+      return new RequestBuilder<>(Linkable.class, Links.PREFIX + "recognition")
+          .put("type", type)
+          .put("identification", recognition);
+    }
 
     @NonNull
     public static RequestBuilder<Linkable> create(
@@ -249,6 +349,11 @@ public class Requests {
       return new RequestBuilder<>(Boolean.class, Matches.PREFIX + "remove-detail")
           .put("id", id)
           .put("key", key);
+    }
+
+    @NonNull
+    public static RequestBuilder<Ladder> getLadder(@NonNull String name) {
+      return new RequestBuilder<>(Ladder.class, Matches.PREFIX + "ladder").put("name", name);
     }
   }
 

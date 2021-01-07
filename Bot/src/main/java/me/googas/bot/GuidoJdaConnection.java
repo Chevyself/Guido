@@ -3,6 +3,7 @@ package me.googas.bot;
 import java.util.Scanner;
 import java.util.logging.Level;
 import javax.security.auth.login.LoginException;
+import lombok.CustomLog;
 import lombok.NonNull;
 import me.googas.commons.Lots;
 import me.googas.commons.Validate;
@@ -11,6 +12,7 @@ import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.requests.GatewayIntent;
 
 /** Setups connection with JDA */
+@CustomLog
 public class GuidoJdaConnection {
 
   /** The jda instance used by the bot. */
@@ -72,9 +74,7 @@ public class GuidoJdaConnection {
         Thread.sleep(1);
         millis++;
       } catch (InterruptedException e) {
-        Guido.getLogger()
-            .log(
-                Level.SEVERE, e, () -> "Thread was interrupted while trying to connect to discord");
+        GuidoJdaConnection.log.log(Level.SEVERE, e, () -> "Thread was interrupted while trying to connect to discord");
       }
     }
     return jda;
