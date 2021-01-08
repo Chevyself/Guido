@@ -6,12 +6,12 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 import lombok.NonNull;
+import me.googas.api.Requests;
 import me.googas.api.client.data.SimpleValuesMap;
 import me.googas.api.client.data.links.SimpleLinkableInfo;
 import me.googas.api.links.LinkableType;
 import me.googas.commons.UUIDUtils;
 import me.googas.commons.maps.Maps;
-import me.googas.messaging.Request;
 import me.googas.messaging.json.client.JsonClient;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -31,7 +31,7 @@ import tc.oc.pgm.wool.PlayerWoolPlaceEvent;
 public class PGMStatsHandler implements Handler {
 
   /** The map containing the stats of a player */
-  @NonNull private final Map<UUID, Map<String, Double>> stats = new HashMap<>();
+  @NonNull private final Map<UUID, Map<String, Float>> stats = new HashMap<>();
 
   /**
    * Listen to the death of a player to add the stat to the killer and the death
@@ -124,20 +124,13 @@ public class PGMStatsHandler implements Handler {
     JsonClient connection = Guido.getClient().getConnection();
     if (connection != null) {
       this.stats.forEach(
-          (uuid, statsMap) -> {
-            connection.sendRequest(
-                new Request<>(
-                    Boolean.class,
-                    "save-stats",
-                    Maps.objects(
-                            "info",
-                            new SimpleLinkableInfo(
-                                LinkableType.MINECRAFT,
-                                new SimpleValuesMap(Maps.singleton("uuid", UUIDUtils.trim(uuid)))))
-                        .append("stats", statsMap)
-                        .build()),
-                bol -> {});
-          });
+          (uuid, statsMap) ->
+              Requests.Links.saveStats(
+                      new SimpleLinkableInfo(
+                          LinkableType.MINECRAFT,
+                          new SimpleValuesMap(Maps.singleton("uuid", UUIDUtils.trim(uuid)))),
+                      statsMap)
+                  .queue(connection));
     }
     this.stats.clear();
   }
@@ -181,7 +174,7 @@ public class PGMStatsHandler implements Handler {
    * @return the stats of the player
    */
   @NonNull
-  private Map<String, Double> getStats(@NonNull UUID uuid) {
+  private Map<String, Float> getStats(@NonNull UUID uuid) {
     return this.stats.computeIfAbsent(uuid, k -> new HashMap<>());
   }
 
@@ -192,8 +185,8 @@ public class PGMStatsHandler implements Handler {
    * @param key the key of the stat to increase
    */
   private void increase(@NonNull UUID uuid, @NonNull String key) {
-    Map<String, Double> stats = this.getStats(uuid);
-    stats.put(key, stats.getOrDefault(key, 0D) + 1);
+    Map<String, Float> stats = this.getStats(uuid);
+    stats.put(key, stats.getOrDefault(key, 0f) + 1);
   }
 
   /** Called on {@link #unregister()} */

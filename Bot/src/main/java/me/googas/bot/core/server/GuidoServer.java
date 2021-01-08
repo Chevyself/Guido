@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.logging.Level;
 import lombok.CustomLog;
 import lombok.NonNull;
+import me.googas.api.Requests;
 import me.googas.api.loader.Loader;
 import me.googas.api.server.GuidoAuthenticator;
 import me.googas.api.server.receptors.GroupReceptors;
@@ -21,7 +22,6 @@ import me.googas.bot.core.permissions.GuidoGroup;
 import me.googas.bot.core.punishment.GuidoPunishment;
 import me.googas.bot.core.server.receptors.LinkHandlerReceptors;
 import me.googas.bot.core.util.Mongo;
-import me.googas.messaging.Request;
 import me.googas.messaging.api.Message;
 import me.googas.messaging.json.adapters.MessageDeserializer;
 import me.googas.messaging.json.server.JsonClientThread;
@@ -79,7 +79,7 @@ public class GuidoServer extends JsonSocketServer implements BotServer {
 
   @Override
   public void close() throws IOException {
-    this.sendRequest(new Request<>(Boolean.class, "disconnected"), (client, disconnected) -> {});
+    Requests.Client.disconnected().queue(this);
     super.close();
   }
 

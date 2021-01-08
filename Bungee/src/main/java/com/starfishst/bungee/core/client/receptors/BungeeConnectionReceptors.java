@@ -10,6 +10,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.Setter;
+import me.googas.api.Requests;
 import me.googas.commons.maps.Maps;
 import me.googas.messaging.json.ParamName;
 import me.googas.messaging.json.Receptor;
@@ -19,7 +20,7 @@ import net.md_5.bungee.api.connection.ProxiedPlayer;
 
 public class BungeeConnectionReceptors {
 
-  @Receptor("bungee/send-to-server")
+  @Receptor(Requests.Bungee.SEND_SERVER)
   public boolean sendToServer(@ParamName("uuid") UUID uuid, @ParamName("server") String server) {
     ServerInfo serverInfo = ProxyServer.getInstance().getServerInfo(server);
     ProxiedPlayer player = ProxyServer.getInstance().getPlayer(uuid);
@@ -32,7 +33,7 @@ public class BungeeConnectionReceptors {
     return false;
   }
 
-  @Receptor("bungee/send-to-server-by-ip")
+  @Receptor(Requests.Bungee.SEND_SERVER_IP)
   public boolean sendToServerByIp(
       @ParamName("uuids") List<UUID> uuids, @ParamName("server") String ip) {
     ServerInfo server = Proxy.getServer(ip);

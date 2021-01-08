@@ -1,5 +1,6 @@
 package me.googas.bot.core.handlers.deploy;
 
+import me.googas.api.Requests;
 import me.googas.api.links.Linkable;
 import me.googas.api.permissions.Permissible;
 import me.googas.bot.api.Guido;
@@ -13,7 +14,6 @@ import me.googas.bot.core.util.Ranks;
 import me.googas.commons.events.ListenPriority;
 import me.googas.commons.events.Listener;
 import me.googas.commons.maps.Maps;
-import me.googas.messaging.Request;
 
 /**
  * The deploy handler is in charge to inform other services on changes such a punishment being done
@@ -57,19 +57,13 @@ public class DeployHandler implements GuidoHandler {
   public void onPermissiblePermissionAdded(PermissiblePermissionAddedEvent event) {
     Permissible permissible = event.getPermissible();
     if (permissible instanceof Linkable) {
-      Guido.getServer()
-          .sendRequest(
-              new Request<>(
-                  Boolean.class,
-                  "server/add-permission",
-                  Maps.objects("info", ((Linkable) permissible).getInfo())
-                      .append("node", event.getNode())
-                      .append("context", event.getContext())
-                      .append("expires", event.getExpires())
-                      .build()),
-              (messenger, added) -> {
-                // TODO nothing at the moment
-              });
+      Requests.Deploy.addPermission(
+              ((Linkable) permissible).getInfo(),
+              event.getContext(),
+              event.getNode(),
+              event.isEnabled(),
+              event.getExpires())
+          .queue(Guido.getServer());
     }
   }
 
@@ -77,18 +71,9 @@ public class DeployHandler implements GuidoHandler {
   public void onPermissiblePermissionRemoved(PermissiblePermissionRemovedEvent event) {
     Permissible permissible = event.getPermissible();
     if (permissible instanceof Linkable) {
-      Guido.getServer()
-          .sendRequest(
-              new Request<>(
-                  Boolean.class,
-                  "server/remove-permission",
-                  Maps.objects("info", ((Linkable) permissible).getInfo())
-                      .append("node", event.getNode())
-                      .append("context", event.getContext())
-                      .build()),
-              (messenger, added) -> {
-                // TODO nothing at the moment
-              });
+      Requests.Deploy.removePermission(
+              ((Linkable) permissible).getInfo(), event.getContext(), event.getNode())
+          .queue(Guido.getServer());
     }
   }
 

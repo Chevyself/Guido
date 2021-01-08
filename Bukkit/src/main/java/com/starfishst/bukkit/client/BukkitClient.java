@@ -1,7 +1,7 @@
 package com.starfishst.bukkit.client;
 
 import com.starfishst.bukkit.api.Guido;
-import com.starfishst.bukkit.listeners.GroupsHandler;
+import com.starfishst.bukkit.handlers.GroupsHandler;
 import java.io.IOException;
 import lombok.NonNull;
 import me.googas.api.client.Client;

@@ -6,6 +6,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import lombok.NonNull;
+import me.googas.api.Requests;
 import me.googas.api.lang.LocaleFile;
 import me.googas.api.links.Linkable;
 import me.googas.api.links.LinkableInfo;
@@ -28,6 +29,7 @@ import me.googas.bot.core.util.Matches;
 import me.googas.commons.events.ListenPriority;
 import me.googas.commons.events.Listener;
 import me.googas.commons.maps.Maps;
+import me.googas.messaging.json.Receptor;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.GuildVoiceState;
 import net.dv8tion.jda.api.entities.Member;
@@ -83,7 +85,6 @@ public class MatchMakingHandler implements GuidoHandler {
   public void onMatchLoaded(MatchLoadedEvent event) {
     Match match = event.getMatch();
     BotGuild guild = Matches.getGuild(match);
-    if (guild == null) return;
     guild
         .getCategory("matches")
         .createVoiceChannel("Pre-Game " + match.getId())
@@ -132,43 +133,39 @@ public class MatchMakingHandler implements GuidoHandler {
     Match match = event.getMatch();
     MatchTeam matchTeam = event.getMatchTeam();
     BotGuild data = Matches.getGuild(match);
-    if (data != null) {
-      data.getCategory("matches")
-          .createVoiceChannel(matchTeam.getName())
-          .queue(
-              channel -> {
-                this.channels()
-                    .getVoices(match.getId())
-                    .put(matchTeam.getId(), channel.getIdLong());
-                Discord.removeAllPermission(
-                    channel,
-                    Permission.VIEW_CHANNEL,
-                    Permission.VOICE_SPEAK,
-                    Permission.VOICE_STREAM,
-                    Permission.VOICE_USE_VAD);
-                for (TeamMember member : matchTeam.getMembers()) {
-                  Linkable link = member.getLinkInfo().getLink();
-                  if (link == null) continue;
-                  Member discordMember = link.requireDiscordRef().getMember(data.toDiscord());
-                  if (discordMember != null) {
-                    Discord.addPermissions(
-                        channel,
-                        discordMember,
-                        Discord.VOICE,
-                        (aVoid -> {
-                          GuildVoiceState state = discordMember.getVoiceState();
-                          if (state != null) {
-                            if (state.getChannel() != null) {
-                              data.toDiscord()
-                                  .moveVoiceMember(discordMember, channel)
-                                  .queueAfter(500, TimeUnit.MILLISECONDS);
-                            }
+    data.getCategory("matches")
+        .createVoiceChannel(matchTeam.getName())
+        .queue(
+            channel -> {
+              this.channels().getVoices(match.getId()).put(matchTeam.getId(), channel.getIdLong());
+              Discord.removeAllPermission(
+                  channel,
+                  Permission.VIEW_CHANNEL,
+                  Permission.VOICE_SPEAK,
+                  Permission.VOICE_STREAM,
+                  Permission.VOICE_USE_VAD);
+              for (TeamMember member : matchTeam.getMembers()) {
+                Linkable link = member.getLinkInfo().getLink();
+                if (link == null) continue;
+                Member discordMember = link.requireDiscordRef().getMember(data.toDiscord());
+                if (discordMember != null) {
+                  Discord.addPermissions(
+                      channel,
+                      discordMember,
+                      Discord.VOICE,
+                      (aVoid -> {
+                        GuildVoiceState state = discordMember.getVoiceState();
+                        if (state != null) {
+                          if (state.getChannel() != null) {
+                            data.toDiscord()
+                                .moveVoiceMember(discordMember, channel)
+                                .queueAfter(500, TimeUnit.MILLISECONDS);
                           }
-                        }));
-                  }
+                        }
+                      }));
                 }
-              });
-    }
+              }
+            });
   }
 
   /**
@@ -180,15 +177,13 @@ public class MatchMakingHandler implements GuidoHandler {
   public void onTeamRemoveEvent(@NonNull MatchAddTeamEvent event) {
     Match match = event.getMatch();
     BotGuild data = Matches.getGuild(match);
-    if (data != null) {
-      Map<Integer, Long> voices = this.channels().getVoices(match.getId());
-      VoiceChannel channel =
-          Guido.getConnection()
-              .validatedJda()
-              .getVoiceChannelById(voices.getOrDefault(event.getMatchTeam().getId(), -1L));
-      this.channels().deleteAndMove(data, channel);
-      voices.remove(event.getMatchTeam().getId());
-    }
+    Map<Integer, Long> voices = this.channels().getVoices(match.getId());
+    VoiceChannel channel =
+        Guido.getConnection()
+            .validatedJda()
+            .getVoiceChannelById(voices.getOrDefault(event.getMatchTeam().getId(), -1L));
+    this.channels().deleteAndMove(data, channel);
+    voices.remove(event.getMatchTeam().getId());
   }
 
   /**
@@ -227,6 +222,7 @@ public class MatchMakingHandler implements GuidoHandler {
   }
 
   /** Wake up queues waiting for server */
+  @Receptor(Requests.MatchServer.SERVER_READY)
   public void serverReady() {
     for (MatchHandler handler : Guido.getHandlers().getHandlers(MatchHandler.class)) {
       handler.serverReady();

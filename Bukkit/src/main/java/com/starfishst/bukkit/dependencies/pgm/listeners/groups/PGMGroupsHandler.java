@@ -2,7 +2,7 @@ package com.starfishst.bukkit.dependencies.pgm.listeners.groups;
 
 import com.starfishst.bukkit.api.Guido;
 import com.starfishst.bukkit.api.events.Handler;
-import com.starfishst.bukkit.listeners.GroupsHandler;
+import com.starfishst.bukkit.handlers.GroupsHandler;
 import com.starfishst.bukkit.utils.BukkitUtils;
 import java.util.Collection;
 import java.util.HashMap;

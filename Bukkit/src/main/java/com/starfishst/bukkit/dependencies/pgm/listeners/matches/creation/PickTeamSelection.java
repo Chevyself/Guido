@@ -1,7 +1,6 @@
 package com.starfishst.bukkit.dependencies.pgm.listeners.matches.creation;
 
 import com.starfishst.bukkit.api.Guido;
-import com.starfishst.bukkit.client.requests.BukkitIntRequest;
 import com.starfishst.bukkit.dependencies.pgm.PGMHostedMatch;
 import com.starfishst.bukkit.dependencies.pgm.listeners.matches.PGMMatchMakingHandler;
 import com.starfishst.bukkit.lang.BukkitLocaleFile;
@@ -18,6 +17,7 @@ import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
 import lombok.Getter;
 import lombok.NonNull;
+import me.googas.api.Requests;
 import me.googas.api.client.data.matches.SimpleMatchTeam;
 import me.googas.api.client.data.matches.team.SimpleTeamMember;
 import me.googas.api.links.LinkableInfo;
@@ -31,8 +31,7 @@ import me.googas.commons.builder.Builder;
 import me.googas.commons.maps.Maps;
 import me.googas.commons.time.Time;
 import me.googas.commons.time.Unit;
-import me.googas.messaging.Request;
-import me.googas.messaging.api.MessengerListenFailException;
+import me.googas.messaging.json.client.JsonClient;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import tc.oc.pgm.api.match.Match;
@@ -207,21 +206,20 @@ public class PickTeamSelection implements TeamCreation {
               Duration.ofSeconds(PGMMatchMakingHandler.secondsToStart), Duration.ZERO);
       for (SelectingTeam selectingTeam : this.getTeams(matchId)) {
         SimpleMatchTeam construct = selectingTeam.build();
-        try {
-          Integer id =
-              new BukkitIntRequest(
-                      "match-add-team", Maps.objects("id", matchId).append("team", construct))
-                  .send();
-          if (id != null) {
-            match.getTeams().put(selectingTeam.getParty().getId(), selectingTeam.setId(id).build());
-          }
-          Request.builder(Boolean.class, "match/status")
-              .put("id", matchId)
-              .put("status", MatchStatus.STARTING)
-              .send(Guido.getClient().getConnection());
-        } catch (MessengerListenFailException e) {
-          e.printStackTrace();
-        }
+        JsonClient connection = Guido.getClient().getConnection();
+        Requests.Matches.addTeam(matchId, construct)
+            .send(
+                connection,
+                optional -> {
+                  optional.ifPresent(
+                      id ->
+                          match
+                              .getTeams()
+                              .put(
+                                  selectingTeam.getParty().getId(),
+                                  selectingTeam.setId(id).build()));
+                });
+        Requests.Matches.status(matchId, MatchStatus.STARTING).queue(connection);
       }
       this.clear(matchId);
     } else if (playersLeft.size() == 2) {

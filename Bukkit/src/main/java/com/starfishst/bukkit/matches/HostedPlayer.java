@@ -1,6 +1,6 @@
 package com.starfishst.bukkit.matches;
 
-import com.starfishst.bukkit.client.requests.BukkitRequest;
+import com.starfishst.bukkit.api.Guido;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -11,15 +11,17 @@ import java.util.UUID;
 import lombok.Getter;
 import lombok.NonNull;
 import me.googas.annotations.Nullable;
+import me.googas.api.Requests;
 import me.googas.api.Stateable;
 import me.googas.api.client.data.SimpleValuesMap;
 import me.googas.api.client.data.links.SimpleLinkableInfo;
+import me.googas.api.links.Linkable;
 import me.googas.api.links.LinkableInfo;
 import me.googas.api.links.LinkableType;
 import me.googas.commons.UUIDUtils;
 import me.googas.commons.builder.ToStringBuilder;
-import me.googas.commons.maps.Maps;
 import me.googas.messaging.api.MessengerListenFailException;
+import me.googas.messaging.json.client.JsonClient;
 
 /** This is basically a minecraft linkable information */
 public class HostedPlayer implements Stateable {
@@ -44,6 +46,13 @@ public class HostedPlayer implements Stateable {
     this(new SimpleValuesMap(), new SimpleValuesMap(), new HashMap<>());
   }
 
+  public HostedPlayer(@NonNull Linkable linkable) {
+    this(
+        new SimpleValuesMap(linkable.getIdentification().getMap()),
+        new SimpleValuesMap(linkable.getRecognition().getMap()),
+        linkable.getStats());
+  }
+
   @NonNull
   public static Set<HostedPlayer> parse(@NonNull Collection<LinkableInfo> links) {
     Set<HostedPlayer> players = new HashSet<>();
@@ -60,12 +69,13 @@ public class HostedPlayer implements Stateable {
 
   @Nullable
   public static HostedPlayer parse(@NonNull LinkableInfo link) throws MessengerListenFailException {
-    return new BukkitRequest<>(
-            HostedPlayer.class,
-            "link-identification",
-            Maps.objects("type", LinkableType.MINECRAFT)
-                .append("identification", link.getIdentification()))
-        .send();
+    JsonClient connection = Guido.getClient().getConnection();
+    if (connection == null) return null;
+    Linkable linkable =
+        Requests.Links.getLinkByIdentification(LinkableType.MINECRAFT, link.getIdentification())
+            .send(connection);
+    if (linkable == null) return null;
+    return new HostedPlayer(linkable);
   }
 
   @NonNull

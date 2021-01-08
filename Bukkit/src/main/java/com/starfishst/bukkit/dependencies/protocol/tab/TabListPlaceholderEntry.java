@@ -3,7 +3,7 @@ package com.starfishst.bukkit.dependencies.protocol.tab;
 import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.ProtocolManager;
 import com.starfishst.bukkit.api.Guido;
-import com.starfishst.bukkit.listeners.placeholders.PlaceholderHandler;
+import com.starfishst.bukkit.handlers.placeholders.PlaceholderHandler;
 import lombok.NonNull;
 
 /** A tab list entry that can be replaced */

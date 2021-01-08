@@ -9,11 +9,10 @@ import lombok.NonNull;
 import lombok.Setter;
 import lombok.experimental.Delegate;
 import me.googas.annotations.Nullable;
+import me.googas.api.Requests;
 import me.googas.api.client.receptors.SimpleReceptors;
 import me.googas.api.utility.Adapters;
 import me.googas.commons.Lots;
-import me.googas.commons.maps.Maps;
-import me.googas.messaging.Request;
 import me.googas.messaging.json.client.JsonClient;
 
 /** The client used by implementation to connect with Guido */
@@ -80,15 +79,16 @@ public class Client {
         new JsonClient(new Socket(this.ip, this.port), this.handler, Adapters.buildClient(), 5000);
     this.connection.addReceptors(this.receptors.toArray());
     this.connection.start();
-    this.connection.sendRequest(
-        new Request<>(Boolean.class, "auth", Maps.objects("token", this.token).build()),
-        bol -> {
-          if (bol.isPresent()) {
-            this.onAuthentication(bol.get());
-          } else {
-            this.onAuthentication(false);
-          }
-        });
+    Requests.Server.auth(this.token)
+        .send(
+            this.connection,
+            optional -> {
+              if (optional.isPresent()) {
+                this.onAuthentication(optional.get());
+              } else {
+                this.onAuthentication(false);
+              }
+            });
     return this.connection;
   }
 
@@ -143,9 +143,6 @@ public class Client {
   public void disconnect() {
     JsonClient connection = this.getConnection();
     if (connection == null) return;
-    connection.sendRequest(
-        new Request<>(Boolean.class, "disconnect"),
-        disconnected -> this.onDisconnection(),
-        this.handler::handle);
+    Requests.Server.disconnect().queue(connection);
   }
 }

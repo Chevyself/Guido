@@ -10,10 +10,10 @@ import com.starfishst.bungee.core.listeners.GroupListener;
 import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 import lombok.NonNull;
+import me.googas.api.Requests;
 import me.googas.api.client.Client;
+import me.googas.api.client.data.SimpleValuesMap;
 import me.googas.commons.Lots;
-import me.googas.commons.maps.Maps;
-import me.googas.messaging.Request;
 import me.googas.messaging.json.client.JsonClient;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.plugin.Plugin;
@@ -57,10 +57,7 @@ public class BungeeClient extends Client {
   public void onAuthentication(boolean authenticated) {
     JsonClient connection = this.getConnection();
     if (authenticated && connection != null) {
-      connection.sendRequest(
-          new Request<>(
-              Boolean.class, "client-info", Maps.singleton("info", Maps.singleton("bungee", true))),
-          saved -> {});
+      Requests.Server.clientInfo(new SimpleValuesMap("bungee", true)).queue(connection);
       Guido.getListener(GroupListener.class).loadGroups(null);
     }
   }

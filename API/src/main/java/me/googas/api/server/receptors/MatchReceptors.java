@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.NonNull;
 import lombok.Setter;
 import me.googas.annotations.Nullable;
+import me.googas.api.Requests;
 import me.googas.api.ValuesMap;
 import me.googas.api.client.data.matches.SimpleMatchTeam;
 import me.googas.api.loader.MatchLoader;
@@ -31,7 +32,12 @@ public class MatchReceptors {
     this.ladderSupplier = ladderSupplier;
   }
 
-  @Receptor("match/create")
+  @Receptor(Requests.Matches.MATCH)
+  public Match getMatch(@NonNull String id) {
+    return this.loader.getMatch(id);
+  }
+
+  @Receptor(Requests.Matches.CREATE)
   public Match create(
       @ParamName("guild") long guild,
       @ParamName("teams") Collection<MatchTeam> teams,
@@ -39,7 +45,7 @@ public class MatchReceptors {
     return this.matchSupplier.create(guild, teams, details);
   }
 
-  @Receptor("match/finish")
+  @Receptor(Requests.Matches.FINISH)
   public boolean finish(@ParamName("id") String id, @ParamName("team") int team) {
     Match match = this.getMatch(id);
     if (match == null) return false;
@@ -47,7 +53,7 @@ public class MatchReceptors {
     return true;
   }
 
-  @Receptor("match/add-team")
+  @Receptor(Requests.Matches.ADD_TEAM)
   public int addTeam(@ParamName("id") String id, @ParamName("team") MatchTeam matchTeam) {
     Match match = this.getMatch(id);
     if (matchTeam.getId() == -3) {
@@ -65,7 +71,7 @@ public class MatchReceptors {
     return -4;
   }
 
-  @Receptor("match/remove-team")
+  @Receptor(Requests.Matches.REMOVE_TEAM)
   public boolean removeTeam(@ParamName("id") String id, @ParamName("team") int teamId) {
     Match match = this.getMatch(id);
     if (match != null) {
@@ -77,7 +83,7 @@ public class MatchReceptors {
     return false;
   }
 
-  @Receptor("match/status")
+  @Receptor(Requests.Matches.STATUS)
   public boolean status(@ParamName("id") String id, @ParamName("status") MatchStatus status) {
     Match match = this.getMatch(id);
     if (match != null) {
@@ -87,7 +93,7 @@ public class MatchReceptors {
     return false;
   }
 
-  @Receptor("match/detail")
+  @Receptor(Requests.Matches.DETAIL)
   public boolean detail(
       @ParamName("id") String id, @ParamName("key") String key, @ParamName("value") Object value) {
     Match match = this.getMatch(id);
@@ -96,7 +102,7 @@ public class MatchReceptors {
     return true;
   }
 
-  @Receptor("match/remove-detail")
+  @Receptor(Requests.Matches.REMOVE_DETAIL)
   public boolean detail(@ParamName("id") String id, @ParamName("key") String key) {
     Match match = this.getMatch(id);
     if (match == null) return false;
@@ -104,13 +110,9 @@ public class MatchReceptors {
     return true;
   }
 
-  @Receptor("match/ladder")
+  @Receptor(Requests.Matches.LADDER)
   public Ladder ladder(@ParamName("name") String name) {
     return this.ladderSupplier.getLadder(name);
-  }
-
-  public Match getMatch(@NonNull String id) {
-    return this.loader.getMatch(id);
   }
 
   public interface MatchSupplier {

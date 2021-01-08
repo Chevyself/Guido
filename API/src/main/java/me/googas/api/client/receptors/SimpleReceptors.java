@@ -1,6 +1,7 @@
 package me.googas.api.client.receptors;
 
 import lombok.NonNull;
+import me.googas.api.Requests;
 import me.googas.api.client.Client;
 import me.googas.messaging.json.Receptor;
 import me.googas.messaging.json.client.JsonClient;
@@ -23,7 +24,7 @@ public class SimpleReceptors {
    *
    * @return true if successfully disconnected
    */
-  @Receptor("disconnected")
+  @Receptor(Requests.Client.DISCONNECTED)
   public boolean disconnected() {
     JsonClient connection = this.client.getConnection();
     if (connection != null) {

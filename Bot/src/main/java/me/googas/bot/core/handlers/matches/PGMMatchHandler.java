@@ -18,8 +18,6 @@ import me.googas.commons.UUIDUtils;
 import me.googas.commons.Validate;
 import me.googas.commons.events.ListenPriority;
 import me.googas.commons.events.Listener;
-import me.googas.commons.maps.Maps;
-import me.googas.messaging.Request;
 import me.googas.messaging.json.JsonMessenger;
 import me.googas.messaging.json.server.JsonClientThread;
 
@@ -87,18 +85,6 @@ public class PGMMatchHandler implements MatchHandler {
                   this.pleaseHost(match, bungee, (JsonMessenger) messenger);
                 }
               });
-
-      server.sendRequest(
-          new Request<>(Boolean.class, "server/can-host", Maps.singleton("match", match)),
-          ((messenger, canHost) -> {
-            if (this.waitingForServer.contains(match)
-                && canHost != null
-                && canHost.isPresent()
-                && canHost.get()) {
-              this.waitingForServer.remove(match);
-              this.pleaseHost(match, bungee, (JsonMessenger) messenger);
-            }
-          }));
     }
   }
 
@@ -122,10 +108,13 @@ public class PGMMatchHandler implements MatchHandler {
             Requests.ifPresentElse(
                 ip -> {
                   this.sendParticipantsToServer(bungee, ip, participants);
+                  Requests.Bungee.serverName(ip)
+                      .send(
+                          bungee,
+                          optinal ->
+                              optinal.ifPresent(name -> match.getDetails().put("server", name)));
                 },
-                () -> {
-                  // TODO add too need host
-                }));
+                () -> this.waitingForServer.add(match)));
   }
 
   /**

@@ -1,7 +1,6 @@
 package com.starfishst.bukkit.dependencies.pgm.listeners.matches.creation;
 
 import com.starfishst.bukkit.api.Guido;
-import com.starfishst.bukkit.client.requests.BukkitIntRequest;
 import com.starfishst.bukkit.dependencies.pgm.PGMHostedMatch;
 import com.starfishst.bukkit.dependencies.pgm.listeners.matches.PGMMatchMakingHandler;
 import com.starfishst.bukkit.matches.HostedPlayer;
@@ -13,6 +12,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 import lombok.NonNull;
+import me.googas.api.Requests;
 import me.googas.api.client.data.matches.SimpleMatchTeam;
 import me.googas.api.client.data.matches.team.SimpleTeamMember;
 import me.googas.api.links.LinkableInfo;
@@ -21,9 +21,7 @@ import me.googas.api.matches.team.TeamMember;
 import me.googas.api.matches.team.TeamRole;
 import me.googas.commons.RandomUtils;
 import me.googas.commons.UUIDUtils;
-import me.googas.commons.maps.Maps;
-import me.googas.messaging.Request;
-import me.googas.messaging.api.MessengerListenFailException;
+import me.googas.messaging.json.client.JsonClient;
 import tc.oc.pgm.api.match.Match;
 import tc.oc.pgm.api.party.Party;
 import tc.oc.pgm.api.player.MatchPlayer;
@@ -82,23 +80,18 @@ public class RandomTeamCreation implements TeamCreation {
         members.add(new SimpleTeamMember(link, TeamRole.NORMAL));
       }
       String name = "Team " + index;
-      try {
-        Integer id =
-            new BukkitIntRequest(
-                    "match-add-team",
-                    Maps.objects("id", hosted.getId())
-                        .append("team", new SimpleMatchTeam(-3, name, members)))
-                .send();
-        if (id != null) {
-          hosted.getTeams().put(party.getId(), new SimpleMatchTeam(id, name, members));
-        }
-        Request.builder(Boolean.class, "match/status")
-            .put("id", hosted.getId())
-            .put("status", MatchStatus.STARTING)
-            .send(Guido.getClient().getConnection());
-      } catch (MessengerListenFailException e) {
-        e.printStackTrace();
-      }
+      JsonClient connection = Guido.getClient().getConnection();
+      Requests.Matches.addTeam(hosted.getId(), new SimpleMatchTeam(-3, name, members))
+          .send(
+              connection,
+              optional -> {
+                optional.ifPresent(
+                    id ->
+                        hosted
+                            .getTeams()
+                            .put(party.getId(), new SimpleMatchTeam(id, name, members)));
+              });
+      Requests.Matches.status(hosted.getId(), MatchStatus.STARTING).queue(connection);
       index++;
     }
     match

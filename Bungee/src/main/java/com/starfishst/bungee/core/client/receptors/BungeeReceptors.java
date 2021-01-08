@@ -5,6 +5,7 @@ import com.starfishst.bungee.api.configuration.GuidoServer;
 import com.starfishst.bungee.api.events.GuidoListener;
 import java.util.UUID;
 import lombok.NonNull;
+import me.googas.api.Requests;
 import me.googas.messaging.json.ParamName;
 import me.googas.messaging.json.Receptor;
 import net.md_5.bungee.api.ProxyServer;
@@ -21,7 +22,7 @@ public class BungeeReceptors implements GuidoListener {
    * @param uuid the uuid of the player to check
    * @return true if the player is inside the server
    */
-  @Receptor("bungee/is-online")
+  @Receptor(Requests.Bungee.IS_ONLINE)
   public boolean isOnline(@ParamName("uuid") UUID uuid) {
     for (ProxiedPlayer player : ProxyServer.getInstance().getPlayers()) {
       if (player.getUniqueId().equals(uuid)) {
@@ -37,7 +38,7 @@ public class BungeeReceptors implements GuidoListener {
    * @param ip the ip of the server to get the name
    * @return the name of the server if the ip matches one else null
    */
-  @Receptor("bungee/server-name")
+  @Receptor(Requests.Bungee.SERVER_NAME)
   public String serverName(@ParamName("ip") String ip) {
     for (GuidoServer server : Guido.getConfiguration().getServers()) {
       if (server.getAddress().equalsIgnoreCase(ip)) {

@@ -9,6 +9,7 @@ import lombok.Getter;
 import lombok.NonNull;
 import lombok.Setter;
 import me.googas.annotations.Nullable;
+import me.googas.api.Requests;
 import me.googas.api.ValuesMap;
 import me.googas.api.client.data.permissions.SimplePermissionStack;
 import me.googas.api.links.Linkable;
@@ -37,26 +38,26 @@ public class LinkReceptors {
     return this.loader.getLoader().getUsers().getUserData(id);
   }
 
-  @Receptor("link/user-links")
+  @Receptor(Requests.Links.USER_LINKS)
   public Collection<Linkable> getLinks(@ParamName("id") String id) {
     UserData user = this.getUser(id);
     if (user == null) return new ArrayList<>();
     return this.loader.getLinks(user);
   }
 
-  @Receptor("link/user-type")
+  @Receptor(Requests.Links.USER_TYPE)
   public Linkable getLink(@ParamName("id") String id, @ParamName("type") LinkableType type) {
     UserData user = this.getUser(id);
     if (user == null) return null;
     return this.loader.getLink(user, type);
   }
 
-  @Receptor("link/links-size")
+  @Receptor(Requests.Links.LINKS_SIZE)
   public long countLinks(@ParamName("types") LinkableType[] types) {
     return this.loader.countLinks(types);
   }
 
-  @Receptor("link/links")
+  @Receptor(Requests.Links.LINKS)
   public Collection<LinkableInfo> getLinks(
       @ParamName("page") int page,
       @ParamName("size") int size,
@@ -64,7 +65,7 @@ public class LinkReceptors {
     return this.loader.getLinks(page, size, types);
   }
 
-  @Receptor("link")
+  @Receptor(Requests.Links.LINK)
   public Linkable getLink(
       @ParamName("type") LinkableType type,
       @ParamName("identification") ValuesMap identification,
@@ -72,13 +73,13 @@ public class LinkReceptors {
     return this.loader.getLink(type, identification, recognition);
   }
 
-  @Receptor("link/identification")
+  @Receptor(Requests.Links.IDENTIFICATION)
   public Linkable getLink(
       @ParamName("type") LinkableType type, @ParamName("identification") ValuesMap identification) {
     return this.loader.getLink(type, identification);
   }
 
-  @Receptor("link/recognition")
+  @Receptor(Requests.Links.RECOGNITION)
   public Linkable getLinkByRecognition(
       @ParamName("type") LinkableType type, @ParamName("recognition") ValuesMap recognition) {
     return this.loader.getLinkByRecognition(type, recognition);
@@ -86,7 +87,7 @@ public class LinkReceptors {
 
   // TODO Add support to leaderboard
 
-  @Receptor("link/create")
+  @Receptor(Requests.Links.CREATE)
   public Linkable create(
       @ParamName("type") LinkableType type,
       @ParamName("recognition") ValuesMap recognition,
@@ -98,14 +99,14 @@ public class LinkReceptors {
         type, recognition, identification, preferences, stats, permissions);
   }
 
-  @Receptor("link/is-linked")
+  @Receptor(Requests.Links.IS_LINKED)
   public boolean isLinked(@ParamName("link") LinkableInfo info) {
     Linkable link = info.getLink();
     if (link == null) return false;
     return link.getLinkedUser() != null;
   }
 
-  @Receptor("link/link")
+  @Receptor(Requests.Links.LINK_LINK)
   public boolean link(@ParamName("link") LinkableInfo info, @ParamName("id") String id) {
     Linkable link = info.getLink();
     if (link == null) return false;
@@ -113,12 +114,12 @@ public class LinkReceptors {
     return true;
   }
 
-  @Receptor("link/exists")
+  @Receptor(Requests.Links.EXISTS)
   public boolean exists(@ParamName("link") LinkableInfo info) {
     return info.getLink() != null;
   }
 
-  @Receptor("link/set-recognition")
+  @Receptor(Requests.Links.SET_RECOGNITION)
   public boolean setRecognition(
       @ParamName("link") LinkableInfo link,
       @ParamName("key") String key,
@@ -129,7 +130,7 @@ public class LinkReceptors {
     return true;
   }
 
-  @Receptor("link/preference")
+  @Receptor(Requests.Links.PREFERENCE)
   public boolean preference(
       @ParamName("link") LinkableInfo info,
       @ParamName("key") String key,
@@ -140,7 +141,7 @@ public class LinkReceptors {
     return true;
   }
 
-  @Receptor("link/remove-preference")
+  @Receptor(Requests.Links.REMOVE_PREFERENCE)
   public boolean removePreference(
       @ParamName("link") LinkableInfo info, @ParamName("key") String key) {
     Linkable link = info.getLink();
@@ -149,7 +150,7 @@ public class LinkReceptors {
     return true;
   }
 
-  @Receptor("link/permissions")
+  @Receptor(Requests.Links.PERMISSIONS)
   public PermissionStack permissions(
       @ParamName("link") LinkableInfo info,
       @ParamName("context") String context,
@@ -169,7 +170,7 @@ public class LinkReceptors {
     return new SimplePermissionStack(context, new HashSet<>());
   }
 
-  @Receptor("link/permission")
+  @Receptor(Requests.Links.PERMISSION)
   public boolean permission(
       @ParamName("link") LinkableInfo info,
       @ParamName("context") String context,
@@ -180,7 +181,7 @@ public class LinkReceptors {
         context, permission.getNode(), permission.isEnabled(), permission.expires());
   }
 
-  @Receptor("link/remove-permission")
+  @Receptor(Requests.Links.REMOVE_PERMISSION)
   public boolean removePermission(
       @ParamName("link") LinkableInfo info,
       @ParamName("context") String context,
@@ -190,13 +191,22 @@ public class LinkReceptors {
     return link.removePermission(context, permission);
   }
 
-  @Receptor("link/stats")
+  @Receptor(Requests.Links.STATS)
   public SortedStats stats(@ParamName("link") LinkableInfo info) {
     Linkable link = info.getLink();
     return link == null ? new SortedStats() : link.getOrganized(null);
   }
 
-  @Receptor("link/reset-stats")
+  @Receptor(Requests.Links.SAVE_STATS)
+  public boolean saveStats(
+      @ParamName("link") LinkableInfo link, @ParamName("stats") Map<String, Float> stats) {
+    Linkable data = link.getLink();
+    if (data == null) return false;
+    stats.forEach(data::increaseStat);
+    return true;
+  }
+
+  @Receptor(Requests.Links.RESET_STATS)
   public boolean resetStats(@ParamName("link") LinkableInfo info) {
     Linkable link = info.getLink();
     if (link == null) return false;

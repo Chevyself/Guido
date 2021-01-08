@@ -17,6 +17,7 @@ import com.starfishst.core.providers.type.IContextualProvider;
 import java.util.Collection;
 import lombok.NonNull;
 import me.googas.commons.Lots;
+import me.googas.messaging.json.client.JsonClient;
 import org.bukkit.plugin.Plugin;
 
 /** The dependency to the PGM */
@@ -73,7 +74,8 @@ public class PGMDependency implements Dependency {
   public void onEnable() {
     PGMMatchMakingHandler listener =
         Guido.getHandlerRegistry().getHandler(PGMMatchMakingHandler.class);
-    if (listener == null || !listener.isEnabled()) return;
-    listener.readyToHost();
+    JsonClient connection = Guido.getClient().getConnection();
+    if (listener == null || !listener.isEnabled() || connection == null) return;
+    listener.readyToHost(connection);
   }
 }

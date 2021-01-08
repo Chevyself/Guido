@@ -7,7 +7,6 @@ import com.starfishst.core.annotations.Settings;
 import me.googas.api.Requests;
 import me.googas.api.links.LinkableInfo;
 import me.googas.commons.maps.Maps;
-import me.googas.messaging.Request;
 import me.googas.messaging.json.client.JsonClient;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 
@@ -26,16 +25,14 @@ public class LinkCommand {
             Requests.ifPresentElse(
                 linked -> {
                   if (!linked) {
-                    Request.builder(String.class, "link-code")
-                        .put("link", link)
+                    Requests.Server.linkCode(link)
                         .send(
                             client,
                             Requests.ifPresentElse(
-                                code -> {
-                                  player.sendMessage(
-                                      locale.getComponent(
-                                          "link.code", Maps.singleton("code", code)));
-                                },
+                                code ->
+                                    player.sendMessage(
+                                        locale.getComponent(
+                                            "link.code", Maps.singleton("code", code))),
                                 () -> {
                                   // TODO could not retrieve code
                                 }));
