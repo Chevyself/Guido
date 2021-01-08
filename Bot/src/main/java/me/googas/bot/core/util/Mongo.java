@@ -17,6 +17,7 @@ import me.googas.annotations.Nullable;
 import me.googas.api.GuidoCatchable;
 import me.googas.api.ValuesMap;
 import me.googas.api.adapters.permissions.PermissionAdapter;
+import me.googas.api.adapters.permissions.PermissionStackAdapter;
 import me.googas.api.links.Linkable;
 import me.googas.api.links.LinkableInfo;
 import me.googas.api.links.LinkableType;
@@ -24,6 +25,7 @@ import me.googas.api.matches.MatchTeam;
 import me.googas.api.matches.ladder.Ladder;
 import me.googas.api.matches.team.TeamMember;
 import me.googas.api.permissions.Permission;
+import me.googas.api.permissions.PermissionStack;
 import me.googas.api.ranks.RankRange;
 import me.googas.bot.adapters.LinkedValuesMapAdapter;
 import me.googas.bot.adapters.LongMongoAdapter;
@@ -50,7 +52,7 @@ import org.bson.Document;
 /** Static utilities for mongo */
 public class Mongo {
 
-  private static final Gson GSON = Mongo.constructGson(true);
+  @NonNull public static final Gson GSON = Mongo.constructGson(true);
 
   public static Gson constructGson(boolean emptyAsLatest) {
     return Mongo.builderGson(emptyAsLatest).create();
@@ -70,6 +72,7 @@ public class Mongo {
         .registerTypeAdapter(TeamMember.class, new TeamMemberAdapter())
         .registerTypeAdapter(ResponsiveMesage.class, new ResponsiveMessageAdapter())
         .registerTypeAdapter(Permission.class, new PermissionAdapter())
+        .registerTypeAdapter(PermissionStack.class, new PermissionStackAdapter())
         .registerTypeAdapter(RankRange.class, new RankRangeAdapter())
         .registerTypeAdapter(GuidoLinkedValuesMap.class, new LinkedValuesMapAdapter())
         .registerTypeAdapter(long.class, new LongMongoAdapter())

@@ -135,7 +135,7 @@ public class MatchMakingChannelsHandler implements GuidoHandler {
    */
   public void deleteVoices(@NonNull Match match) {
     Map<Integer, Long> voices = this.getVoices(match.getId());
-    BotGuild guild = Guido.getDiscordLoader().getGuild(match.getGuildId());
+    BotGuild guild = Guido.getHandlers().getDiscordLoader().getGuild(match.getGuildId());
     for (Long value : voices.values()) {
       VoiceChannel voiceChannel = Guido.getConnection().validatedJda().getVoiceChannelById(value);
       this.deleteAndMove(guild, voiceChannel);

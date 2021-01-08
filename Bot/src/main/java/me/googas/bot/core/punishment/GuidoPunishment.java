@@ -6,6 +6,7 @@ import me.googas.api.links.LinkableInfo;
 import me.googas.api.punishment.Punishment;
 import me.googas.api.punishment.PunishmentStatus;
 import me.googas.api.punishment.PunishmentType;
+import me.googas.api.server.receptors.PunishmentReceptors;
 import me.googas.bot.api.Guido;
 import me.googas.bot.api.events.punishment.PunishmentExpiresUpdatedEvent;
 import me.googas.bot.api.events.punishment.PunishmentStatusUpdatedEvent;
@@ -17,6 +18,11 @@ import me.googas.commons.time.Unit;
 
 public class GuidoPunishment implements Punishment, BotCatchable {
 
+  public static PunishmentReceptors.PunishmentSupplier SUPPLIER =
+      (type, status, punisher, punished, details, expires) ->
+          new GuidoPunishment(
+                  type, status, punisher, punished, new GuidoValuesMap(details), expires)
+              .cache();
   @NonNull private final String id;
   @NonNull private final PunishmentType type;
   @NonNull private PunishmentStatus status;

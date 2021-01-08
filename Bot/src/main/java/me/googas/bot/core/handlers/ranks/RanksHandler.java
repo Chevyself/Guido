@@ -69,7 +69,7 @@ public class RanksHandler implements GuidoHandler {
     long guildId = match.getGuildId();
     String ladderName = match.getDetails().get("ladder", String.class);
     if (ladderName != null) {
-      BotGuild guildData = Guido.getDiscordLoader().getGuild(guildId);
+      BotGuild guildData = Guido.getHandlers().getDiscordLoader().getGuild(guildId);
       Ladder ladder = guildData.getLadder(ladderName);
       if (ladder != null) {
         for (MatchTeam matchTeam : match.getTeams()) {

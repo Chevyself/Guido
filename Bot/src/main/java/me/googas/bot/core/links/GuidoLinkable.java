@@ -6,17 +6,17 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-import java.util.UUID;
 import lombok.Getter;
 import lombok.NonNull;
+import me.googas.api.Requests;
 import me.googas.api.ValuesMap;
 import me.googas.api.lang.LocaleFile;
 import me.googas.api.links.Linkable;
 import me.googas.api.links.LinkableType;
-import me.googas.api.links.ref.MinecraftLinkable;
 import me.googas.api.matches.team.Team;
 import me.googas.api.permissions.Permissible;
 import me.googas.api.permissions.PermissionStack;
+import me.googas.api.server.receptors.LinkReceptors;
 import me.googas.api.user.UserData;
 import me.googas.bot.api.Guido;
 import me.googas.bot.api.events.data.links.LinkableUnloadedEvent;
@@ -28,7 +28,6 @@ import me.googas.commons.builder.ToStringBuilder;
 import me.googas.commons.maps.Maps;
 import me.googas.commons.time.Time;
 import me.googas.commons.time.Unit;
-import me.googas.messaging.Request;
 import me.googas.messaging.json.server.JsonClientThread;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.User;
@@ -36,6 +35,18 @@ import net.dv8tion.jda.api.entities.User;
 /** The implementation of bot linked ata */
 public class GuidoLinkable implements Permissible, Linkable, BotCatchable {
 
+  @NonNull
+  public static LinkReceptors.LinkableSupplier SUPPLIER =
+      (type, recognition, identification, preferences, stats, permissions) ->
+          new GuidoLinkable(
+                  type,
+                  new GuidoValuesMap(recognition),
+                  null,
+                  new GuidoValuesMap(identification),
+                  new GuidoValuesMap(preferences),
+                  stats,
+                  permissions)
+              .cache();
   /** The version of serialization for the scheme */
   @NonNull @Getter private final String version = "PRE-3";
 
@@ -169,14 +180,8 @@ public class GuidoLinkable implements Permissible, Linkable, BotCatchable {
         break;
       case MINECRAFT:
         JsonClientThread bungee = Guido.getServer().getAuthenticator().getBungee();
-        UUID uniqueId = new MinecraftLinkable(this).getUuid();
         if (bungee != null) {
-          bungee.sendRequest(
-              new Request<>(
-                  Boolean.class,
-                  "bungee/send-message",
-                  Maps.objects("uuid", uniqueId).append("message", message).build()),
-              bol -> {});
+          Requests.Bungee.sendMessage(this.requireMinecraftRef().getUuid(), message).queue(bungee);
         }
         break;
     }
@@ -185,22 +190,7 @@ public class GuidoLinkable implements Permissible, Linkable, BotCatchable {
   @Override
   public void sendLocalized(@NonNull String key) {
     if (this.type == LinkableType.MINECRAFT) {
-      MinecraftLinkable minecraft = this.requireMinecraftRef();
-      //  TODO change it to a request in Requests
-      JsonClientThread bungee = Guido.getServer().getAuthenticator().getBungee();
-      if (bungee != null) {
-        bungee.sendRequest(
-            new Request<>(
-                Boolean.class,
-                "bungee/send-message-localized`",
-                Maps.objects("uuid", minecraft.getUuid())
-                    .append("key", key)
-                    .append("placeholders", new HashMap<>())
-                    .build()),
-            bol -> {
-              // TODO maybe log it?
-            });
-      }
+      this.sendLocalized(key, new HashMap<>());
     } else {
       this.sendMessage(Guido.getHandlers().getLanguageHandler().getFile(this).get(key));
     }
@@ -209,20 +199,10 @@ public class GuidoLinkable implements Permissible, Linkable, BotCatchable {
   @Override
   public void sendLocalized(@NonNull String key, @NonNull Map<String, String> placeholders) {
     if (this.type == LinkableType.MINECRAFT) {
-      MinecraftLinkable minecraft = this.requireMinecraftRef();
       JsonClientThread bungee = Guido.getServer().getAuthenticator().getBungee();
       if (bungee != null) {
-        bungee.sendRequest(
-            new Request<>(
-                Boolean.class,
-                "bungee/send-message-localized",
-                Maps.objects("uuid", minecraft.getUuid())
-                    .append("key", key)
-                    .append("placeholders", placeholders)
-                    .build()),
-            bol -> {
-              // TODO maybe log it?
-            });
+        Requests.Bungee.sendLocalized(this.requireMinecraftRef().getUuid(), key, placeholders)
+            .queue(bungee);
       }
     } else {
       this.sendMessage(

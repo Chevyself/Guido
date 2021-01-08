@@ -39,7 +39,7 @@ public class Matches {
    * @return the guild of the match or null if not found
    */
   public static BotGuild getGuild(@NonNull Match match) {
-    return Guido.getDiscordLoader().getGuild(match.getGuildId());
+    return Guido.getHandlers().getDiscordLoader().getGuild(match.getGuildId());
   }
 
   /**

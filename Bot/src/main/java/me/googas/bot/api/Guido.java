@@ -37,14 +37,6 @@ public class Guido {
     Guido.instance = bot;
   }
 
-  public static void setServer(@NonNull BotServer server) {
-    Guido.validated().setServer(server);
-  }
-
-  public static void setCommandManager(@Nullable CommandManager commandManager) {
-    Guido.validated().setCommandManager(commandManager);
-  }
-
   public static @NonNull GuidoHandlerRegistry getHandlers() {
     return Guido.validated().getHandlerRegistry();
   }
@@ -79,12 +71,7 @@ public class Guido {
         Guido.validated().getCommandManager(), "Command manager might not have been initialized");
   }
 
-  @NonNull
-  public static DiscordLoader getDiscordLoader() {
-    return Guido.validated().getDiscordLoader();
-  }
-
   public static @NonNull Logger getLogger() {
-    return GuidoBot.getLOG();
+    return GuidoBot.getLog();
   }
 }

@@ -8,6 +8,7 @@ import java.util.Set;
 import lombok.NonNull;
 import me.googas.api.permissions.Group;
 import me.googas.api.permissions.PermissionStack;
+import me.googas.api.server.receptors.GroupReceptors;
 import me.googas.bot.api.Guido;
 import me.googas.bot.api.events.data.group.GroupUnloadedEvent;
 import me.googas.bot.api.events.data.permissible.PermissiblePermissionAddedEvent;
@@ -19,6 +20,12 @@ import me.googas.commons.time.Unit;
 
 /** An implementation for the bot group */
 public class GuidoGroup implements Group, BotCatchable {
+
+  @NonNull
+  public static GroupReceptors.GroupSupplier SUPPLIER =
+      (weight, preferences, permissions, name, parents) ->
+          new GuidoGroup(weight, new GuidoValuesMap(preferences), permissions, name, parents)
+              .cache();
 
   @NonNull private final String id;
   private int weight;

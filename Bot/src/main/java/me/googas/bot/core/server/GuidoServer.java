@@ -4,10 +4,22 @@ import java.io.IOException;
 import java.util.logging.Level;
 import lombok.CustomLog;
 import lombok.NonNull;
+import me.googas.api.loader.Loader;
+import me.googas.api.server.GuidoAuthenticator;
+import me.googas.api.server.receptors.GroupReceptors;
+import me.googas.api.server.receptors.GuidoServerReceptors;
+import me.googas.api.server.receptors.LinkReceptors;
+import me.googas.api.server.receptors.MatchReceptors;
+import me.googas.api.server.receptors.PunishmentReceptors;
 import me.googas.bot.api.events.server.GuidoServerConnectionEvent;
 import me.googas.bot.api.events.server.GuidoServerDisconnectionEvent;
 import me.googas.bot.api.server.BotServer;
-import me.googas.bot.core.server.receptors.handlers.LinkReceptors;
+import me.googas.bot.core.links.GuidoLinkable;
+import me.googas.bot.core.matches.GuidoMatch;
+import me.googas.bot.core.matches.ladder.GuidoLadder;
+import me.googas.bot.core.permissions.GuidoGroup;
+import me.googas.bot.core.punishment.GuidoPunishment;
+import me.googas.bot.core.server.receptors.LinkHandlerReceptors;
 import me.googas.bot.core.util.Mongo;
 import me.googas.messaging.Request;
 import me.googas.messaging.api.Message;
@@ -20,7 +32,7 @@ import me.googas.messaging.json.server.JsonSocketServer;
 public class GuidoServer extends JsonSocketServer implements BotServer {
 
   /** The authentication system for the guido server */
-  @NonNull private final GuidoAuthenticator authenticator = new GuidoAuthenticator();
+  @NonNull private final GuidoAuthenticator authenticator;
 
   /**
    * Creates the guido socket server
@@ -29,7 +41,7 @@ public class GuidoServer extends JsonSocketServer implements BotServer {
    * @param timeout the time too timeout requests
    * @throws IOException if the port is already in use
    */
-  public GuidoServer(int port, long timeout) throws IOException {
+  public GuidoServer(int port, long timeout, @NonNull Loader loader) throws IOException {
     super(
         port,
         throwable ->
@@ -40,8 +52,17 @@ public class GuidoServer extends JsonSocketServer implements BotServer {
             .registerTypeAdapter(Message.class, new MessageDeserializer())
             .create(),
         timeout);
+    this.authenticator = new GuidoAuthenticator(loader);
     this.setAuthenticator(this.authenticator);
-    this.addReceptors(new LinkReceptors(), this.authenticator);
+    this.addReceptors(
+        new GroupReceptors(loader.getGroups(), GuidoGroup.SUPPLIER),
+        new GuidoServerReceptors(this.authenticator),
+        new LinkReceptors(loader.getLinks(), GuidoLinkable.SUPPLIER),
+        new MatchReceptors(loader.getMatches(), GuidoMatch.SUPPLIER, GuidoLadder.SUPPLIER),
+        new PunishmentReceptors(loader.getPunishments(), GuidoPunishment.SUPPLIER),
+        // End of default receptors
+        new LinkHandlerReceptors(),
+        this.authenticator);
   }
 
   @Override

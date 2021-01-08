@@ -1,20 +1,17 @@
 package com.starfishst.bungee.core.listeners;
 
+import com.starfishst.bungee.api.Guido;
 import com.starfishst.bungee.api.events.GuidoListener;
-import com.starfishst.bungee.core.client.requests.BungeeBooleanRequest;
-import com.starfishst.bungee.core.client.requests.BungeeRequest;
 import java.util.HashMap;
 import java.util.HashSet;
 import lombok.NonNull;
 import me.googas.api.Requests;
 import me.googas.api.client.data.SimpleValuesMap;
 import me.googas.api.client.data.links.SimpleLinkableInfo;
-import me.googas.api.links.Linkable;
 import me.googas.api.links.LinkableInfo;
 import me.googas.api.links.LinkableType;
 import me.googas.commons.UUIDUtils;
-import me.googas.commons.maps.MapBuilder;
-import me.googas.commons.maps.Maps;
+import me.googas.messaging.json.client.JsonClient;
 import net.md_5.bungee.api.connection.PendingConnection;
 import net.md_5.bungee.api.event.LoginEvent;
 import net.md_5.bungee.event.EventHandler;
@@ -25,41 +22,36 @@ public class MinecraftDataListener implements GuidoListener {
 
   @EventHandler(priority = EventPriority.LOWEST)
   public void onPreLoginEvent(LoginEvent event) {
+    JsonClient client = Guido.getClient().getConnection();
+    if (client == null)
+      return; // Let the punishment handler check if the player cannot join the server
     PendingConnection connection = event.getConnection();
-    String ip = connection.getVirtualHost().getHostName();
+    String nickname = connection.getName();
+    String ip = connection.getSocketAddress().toString();
     String trim = UUIDUtils.trim(connection.getUniqueId());
     LinkableInfo link =
         new SimpleLinkableInfo(LinkableType.MINECRAFT, new SimpleValuesMap("uuid", trim));
-    MapBuilder<String, Object> builder = Maps.objects("link", link);
-    new BungeeBooleanRequest("link/exists", builder)
+    Requests.Links.getLinkByIdentification(link.getType(), link.getIdentification())
         .send(
+            client,
             Requests.ifPresentElse(
-                exists -> {
-                  System.out.println(exists);
-                  if (exists) {
-                    System.out.println("Exists and sending to update ip and nick");
-                    new BungeeBooleanRequest(
-                            "minecraft/nickname", builder.append("nickname", connection.getName()))
-                        .queue();
-                    new BungeeBooleanRequest("minecraft/ip", builder.append("ip", ip)).queue();
-                  } else {
-                    new BungeeRequest<>(
-                            Linkable.class,
-                            "link/create",
-                            Maps.objects("type", LinkableType.MINECRAFT)
-                                .append(
-                                    "recognition",
-                                    new SimpleValuesMap("nickname", connection.getName())
-                                        .put("ip", ip))
-                                .append("identification", new SimpleValuesMap("uuid", trim))
-                                .append("preferences", new SimpleValuesMap())
-                                .append("stats", new HashMap<>())
-                                .append("permissions", new HashSet<>()))
-                        .queue();
-                  }
+                linkable -> {
+                  // Update link and ip
+                  Requests.Links.addRecognition(link, "nickname", nickname).queue(client);
+                  Requests.Links.addRecognition(link, "ip", ip).queue(client);
+                  // TODO this means that it exists maybe it can be used in the future
+
                 },
-                () -> System.out.println("Not found")),
-            Throwable::printStackTrace);
+                () -> {
+                  Requests.Links.create(
+                          link.getType(),
+                          link.getIdentification(),
+                          new SimpleValuesMap("nickname", nickname).put("ip", ip),
+                          new SimpleValuesMap(),
+                          new HashMap<>(),
+                          new HashSet<>())
+                      .queue(client);
+                }));
   }
 
   @Override

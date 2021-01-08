@@ -74,7 +74,8 @@ public class GuidoJdaConnection {
         Thread.sleep(1);
         millis++;
       } catch (InterruptedException e) {
-        GuidoJdaConnection.log.log(Level.SEVERE, e, () -> "Thread was interrupted while trying to connect to discord");
+        GuidoJdaConnection.log.log(
+            Level.SEVERE, e, () -> "Thread was interrupted while trying to connect to discord");
       }
     }
     return jda;

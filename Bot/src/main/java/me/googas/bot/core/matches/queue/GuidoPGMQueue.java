@@ -2,8 +2,8 @@ package me.googas.bot.core.matches.queue;
 
 import java.util.HashSet;
 import java.util.Set;
-import java.util.UUID;
 import lombok.NonNull;
+import me.googas.api.Requests;
 import me.googas.api.lang.LocaleFile;
 import me.googas.api.links.Linkable;
 import me.googas.api.links.LinkableInfo;
@@ -23,9 +23,6 @@ import me.googas.bot.core.matches.team.GuidoTeamMember;
 import me.googas.bot.core.util.Lang;
 import me.googas.commons.Lots;
 import me.googas.commons.Validate;
-import me.googas.commons.maps.Maps;
-import me.googas.messaging.Request;
-import me.googas.messaging.api.MessengerListenFailException;
 import me.googas.messaging.json.server.JsonClientThread;
 
 /** A queue that uses pgm */
@@ -81,25 +78,13 @@ public class GuidoPGMQueue extends GuidoQueue {
     if (link == null) return new QueueResult(locale.get("pgm-queue.link-first"));
     MinecraftLinkable toPlay =
         Validate.notNull(link.toMinecraftRef(), "Does not have a linked minecraft account");
-    UUID uuid = toPlay.getUuid();
-    try {
-      Boolean bol =
-          bungee.sendRequest(
-              new Request<>(Boolean.class, "bungee/is-online", Maps.singleton("uuid", uuid)));
-      if (bol != null) {
-        if (bol) {
-          QueueResult join = super.join(queueable);
-          if (join.isCancelled()) return join;
-          bungee.sendRequest(
-              new Request<>(Boolean.class, "bungee/add-queue", Maps.singleton("uuid", uuid)),
-              ignored -> {});
-        } else {
-          return new QueueResult(locale.get("pgm-queue.join-server"));
-        }
-      }
-      return new QueueResult(locale.get("pgm-queue.internal-not-check"));
-    } catch (MessengerListenFailException e) {
-      return new QueueResult(e.getMessage());
+    if (toPlay.isOnline()) {
+      QueueResult join = super.join(queueable);
+      if (join.isCancelled()) return join;
+      Requests.Bungee.addQueue(toPlay.getUuid()).queue(bungee);
+      return new QueueResult();
+    } else {
+      return new QueueResult(locale.get("pgm-queue.join-server"));
     }
   }
 
@@ -111,12 +96,7 @@ public class GuidoPGMQueue extends GuidoQueue {
     JsonClientThread bungee = Guido.getServer().getAuthenticator().getBungee();
     Linkable linked = ((LinkableInfo) queueable).getLink();
     if (bungee != null && linked != null && linked.getType() == LinkableType.MINECRAFT) {
-      bungee.sendRequest(
-          new Request<>(
-              Boolean.class,
-              "remove-queue",
-              Maps.singleton("uuid", new MinecraftLinkable(linked).getUuid())),
-          bol -> {});
+      Requests.Bungee.removeQueue(linked.requireMinecraftRef().getUuid()).queue(bungee);
     }
     return new QueueResult();
   }

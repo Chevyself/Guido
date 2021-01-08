@@ -2,11 +2,11 @@ package com.starfishst.bungee.core.listeners;
 
 import com.starfishst.bungee.api.Guido;
 import com.starfishst.bungee.api.events.GuidoListener;
-import com.starfishst.bungee.core.client.requests.BungeeRequest;
 import com.starfishst.bungee.core.data.ProxiedOfflinePlayer;
 import com.starfishst.bungee.core.lang.BungeeLocaleFile;
 import lombok.NonNull;
 import me.googas.annotations.Nullable;
+import me.googas.api.Requests;
 import me.googas.api.punishment.Punishment;
 import me.googas.api.punishment.PunishmentStatus;
 import me.googas.api.punishment.PunishmentType;
@@ -29,24 +29,25 @@ public class PunishmentsListener implements GuidoListener {
       player.disconnect(locale.getComponent("server.under-maintenance"));
       return;
     }
-    new BungeeRequest<>(
-            Punishment[].class,
-            "link-punishments",
-            Maps.objects("link", new ProxiedOfflinePlayer(event.getPlayer()).getLinkedInfo())
-                .append("status", Lots.set(PunishmentStatus.ACTIVE)))
-        .sendIfPresent(
-            punishments -> {
-              if (punishments.length == 0) return;
-              Punishment active = this.getActive(punishments);
-              if (active == null) return;
-              player.disconnect(
-                  locale.getComponent(
-                      "server.banned",
-                      Maps.singleton(
-                          "reason",
-                          active
-                              .getDetails()
-                              .getOr("reason", String.class, "No reason provided"))));
+    Requests.Punishments.getPunishments(
+            new ProxiedOfflinePlayer(event.getPlayer()).getLinkedInfo(),
+            Lots.set(PunishmentStatus.ACTIVE))
+        .send(
+            connection,
+            optional -> {
+              optional.ifPresent(
+                  punishments -> {
+                    Punishment active = this.getActive(punishments);
+                    if (active == null) return;
+                    player.disconnect(
+                        locale.getComponent(
+                            "server.banned",
+                            Maps.singleton(
+                                "reason",
+                                active
+                                    .getDetails()
+                                    .getOr("reason", String.class, "No reason provided"))));
+                  });
             });
   }
 

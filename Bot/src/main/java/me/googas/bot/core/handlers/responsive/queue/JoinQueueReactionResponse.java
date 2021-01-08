@@ -54,7 +54,7 @@ public class JoinQueueReactionResponse extends SimpleCommandReactionResponse {
     EmbedQuery query = EmbedFactory.fromResult(new Result(""), listener, null);
 
     StringBuilder participants = Strings.getBuilder();
-    BotGuild guildData = Guido.getDiscordLoader().getGuild(guild.getIdLong());
+    BotGuild guildData = Guido.getHandlers().getDiscordLoader().getGuild(guild.getIdLong());
     Ladder ladder = guildData.getLadder(this.ladder);
     if (ladder != null) {
       Queue queue = Guido.getHandlers().getHandler(QueueHandler.class).getQueue(guildData, ladder);

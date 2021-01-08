@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.UUID;
 import java.util.function.Consumer;
 import lombok.NonNull;
 import me.googas.api.links.Linkable;
@@ -22,7 +23,9 @@ import me.googas.api.punishment.Punishment;
 import me.googas.api.punishment.PunishmentStatus;
 import me.googas.api.punishment.PunishmentType;
 import me.googas.api.utility.SortedStats;
+import me.googas.messaging.Request;
 import me.googas.messaging.RequestBuilder;
+import org.jetbrains.annotations.NotNull;
 
 /** Static utilities for requests */
 public class Requests {
@@ -241,6 +244,15 @@ public class Requests {
     }
 
     @NonNull
+    public static RequestBuilder<Boolean> addRecognition(
+        @NonNull LinkableInfo link, @NonNull String key, @NonNull Object value) {
+      return Request.builder(Boolean.class, Links.PREFIX + "set-recognition")
+          .put("link", link)
+          .put("key", key)
+          .put("value", value);
+    }
+
+    @NonNull
     public static RequestBuilder<Boolean> preference(
         @NonNull LinkableInfo link, @NonNull String key, @NonNull Object value) {
       return new RequestBuilder<>(Boolean.class, Links.PREFIX + "preference")
@@ -358,7 +370,20 @@ public class Requests {
   }
 
   public static class Punishments {
-    @NonNull public static String PREFIX = "link/";
+    @NonNull public static String PREFIX = "punishment/";
+
+    @NonNull
+    public static RequestBuilder<Punishment> getPunishment(@NonNull String id) {
+      return new RequestBuilder<>(Punishment.class, "punishment").put("id", id);
+    }
+
+    @NonNull
+    public static RequestBuilder<Punishment[]> getPunishments(
+        @NonNull LinkableInfo link, @NonNull Collection<PunishmentStatus> statuses) {
+      return new RequestBuilder<>(Punishment[].class, Punishments.PREFIX + "punishments")
+          .put("link", link)
+          .put("statuses", statuses);
+    }
 
     @NonNull
     public static RequestBuilder<Punishment> create(
@@ -398,6 +423,81 @@ public class Requests {
       return new RequestBuilder<>(Boolean.class, Punishments.PREFIX + "remove-detail")
           .put("id", id)
           .put("key", key);
+    }
+  }
+
+  public static class MatchServer {
+
+    @NonNull public static String PREFIX = "server/";
+
+    @NotNull
+    public static RequestBuilder<Boolean> canHost(@NonNull Match match) {
+      return new RequestBuilder<>(Boolean.class, MatchServer.PREFIX + "can-host")
+          .put("match", match);
+    }
+
+    // Must return the server IP
+    @NonNull
+    public static RequestBuilder<String> host(@NonNull Match match) {
+      return new RequestBuilder<>(String.class, MatchServer.PREFIX + "server/host")
+          .put("match", match);
+    }
+  }
+
+  public static class Bungee {
+
+    @NonNull public static String PREFIX = "bungee/";
+
+    @NonNull
+    public static RequestBuilder<Boolean> sendToServer(@NonNull UUID uuid, @NonNull String server) {
+      return new RequestBuilder<>(Boolean.class, Bungee.PREFIX + "send-to-server")
+          .put("uuid", uuid)
+          .put("server", server);
+    }
+
+    @NonNull
+    public static RequestBuilder<Boolean> sendToServerByIp(
+        @NonNull List<UUID> uuids, @NonNull String ip) {
+      return new RequestBuilder<>(Boolean.class, Bungee.PREFIX + "send-to-server-by-ip")
+          .put("uuids", uuids)
+          .put("server", ip);
+    }
+
+    @NonNull
+    public static RequestBuilder<Boolean> sendMessage(@NonNull UUID uuid, @NonNull String message) {
+      return new RequestBuilder<>(Boolean.class, Bungee.PREFIX + "send-message")
+          .put("uuid", uuid)
+          .put("message", message);
+    }
+
+    @NonNull
+    public static RequestBuilder<Boolean> sendLocalized(
+        @NonNull UUID uuid, @NonNull String key, @NonNull Map<String, String> placeholders) {
+      return new RequestBuilder<>(Boolean.class, Bungee.PREFIX + "send-message-localized")
+          .put("uuid", uuid)
+          .put("key", key)
+          .put("placeholders", placeholders);
+    }
+
+    @NonNull
+    public static RequestBuilder<Boolean> addQueue(@NonNull UUID uuid) {
+      return new RequestBuilder<>(Boolean.class, Bungee.PREFIX + "add-queue").put("uuid", uuid);
+    }
+
+    @NonNull
+    public static RequestBuilder<Boolean> removeQueue(@NonNull UUID uuid) {
+      return new RequestBuilder<>(Boolean.class, Bungee.PREFIX + "remove-queue").put("uuid", uuid);
+    }
+
+    @NonNull
+    @Deprecated
+    public static RequestBuilder<Boolean> isOnline(@NonNull UUID uuid) {
+      return new RequestBuilder<>(Boolean.class, Bungee.PREFIX + "is-online").put("uuid", uuid);
+    }
+
+    @NonNull
+    public static RequestBuilder<String> serverName(@NonNull String ip) {
+      return new RequestBuilder<>(String.class, Bungee.PREFIX + "server-name").put("ip", ip);
     }
   }
 }

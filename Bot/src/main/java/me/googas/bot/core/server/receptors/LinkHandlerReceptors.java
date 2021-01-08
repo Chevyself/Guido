@@ -1,4 +1,4 @@
-package me.googas.bot.core.server.receptors.handlers;
+package me.googas.bot.core.server.receptors;
 
 import me.googas.api.links.LinkableInfo;
 import me.googas.bot.api.Guido;
@@ -7,7 +7,7 @@ import me.googas.messaging.json.ParamName;
 import me.googas.messaging.json.Receptor;
 
 /** Receptors for linking two accounts */
-public class LinkReceptors {
+public class LinkHandlerReceptors {
 
   /**
    * Create a link code for the linked given info

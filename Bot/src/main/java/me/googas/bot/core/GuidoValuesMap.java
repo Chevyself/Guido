@@ -36,6 +36,10 @@ public class GuidoValuesMap implements ValuesMap {
     this(new HashMap<>());
   }
 
+  public GuidoValuesMap(@NonNull ValuesMap preferences) {
+    this(preferences.getMap());
+  }
+
   @Override
   public @NonNull Map<String, Object> getMap() {
     return this.map;

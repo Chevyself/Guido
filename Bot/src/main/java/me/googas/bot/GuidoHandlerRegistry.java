@@ -5,6 +5,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import lombok.NonNull;
+import me.googas.bot.api.DiscordLoader;
 import me.googas.bot.core.handlers.GuidoHandler;
 import me.googas.bot.core.lang.GuidoLanguageHandler;
 import me.googas.bot.core.loader.GuidoFallbackLoader;
@@ -33,7 +34,7 @@ public class GuidoHandlerRegistry {
    */
   public <T extends GuidoHandler> T getHandler(@NonNull Class<T> clazz) {
     for (GuidoHandler handler : this.registered) {
-      if (handler.getClass() == clazz) {
+      if (clazz.isAssignableFrom(handler.getClass())) {
         return clazz.cast(handler);
       }
     }
@@ -104,8 +105,19 @@ public class GuidoHandlerRegistry {
   }
 
   @NonNull
+  public GuidoHandlerRegistry setupDiscordLoader() {
+    this.primaryHandlers.add(new GuidoDiscordFileLoader());
+    return this;
+  }
+
+  @NonNull
   public GuidoLanguageHandler getLanguageHandler() {
     return this.getHandler(GuidoLanguageHandler.class);
+  }
+
+  @NonNull
+  public DiscordLoader getDiscordLoader() {
+    return this.getHandler(DiscordLoader.class);
   }
 
   @NonNull

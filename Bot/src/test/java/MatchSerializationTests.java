@@ -9,7 +9,7 @@ import me.googas.api.adapters.matches.MatchTeamDeserializer;
 import me.googas.api.adapters.matches.ladder.LadderDeserializer;
 import me.googas.api.adapters.matches.team.TeamMemberDeserializer;
 import me.googas.api.adapters.permissions.GroupDeserializer;
-import me.googas.api.adapters.permissions.PermissionStackDeserializer;
+import me.googas.api.adapters.permissions.PermissionStackAdapter;
 import me.googas.api.client.data.SimpleValuesMap;
 import me.googas.api.links.LinkableInfo;
 import me.googas.api.links.LinkableType;
@@ -59,7 +59,7 @@ public class MatchSerializationTests {
             .registerTypeAdapter(Match.class, new MatchDeserializer())
             .registerTypeAdapter(
                 Permission.class, new me.googas.api.adapters.permissions.PermissionAdapter())
-            .registerTypeAdapter(PermissionStack.class, new PermissionStackDeserializer())
+            .registerTypeAdapter(PermissionStack.class, new PermissionStackAdapter())
             .registerTypeAdapter(MatchTeam.class, new MatchTeamDeserializer())
             .registerTypeAdapter(TeamMember.class, new TeamMemberDeserializer())
             .registerTypeAdapter(ValuesMap.class, new me.googas.api.adapters.ValuesMapAdapter())

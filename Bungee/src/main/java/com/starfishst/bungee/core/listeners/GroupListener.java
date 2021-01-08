@@ -1,7 +1,7 @@
 package com.starfishst.bungee.core.listeners;
 
+import com.starfishst.bungee.api.Guido;
 import com.starfishst.bungee.api.events.GuidoListener;
-import com.starfishst.bungee.core.client.requests.BungeeRequest;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -9,8 +9,10 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.function.Consumer;
 import lombok.NonNull;
+import me.googas.api.Requests;
 import me.googas.api.permissions.Group;
 import me.googas.commons.Lots;
+import me.googas.messaging.json.client.JsonClient;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 
 /** Handles groups used for permissions */
@@ -25,15 +27,18 @@ public class GroupListener implements GuidoListener {
    * @param consumer what ever you would like to do with the new loaded groups
    */
   public void loadGroups(Consumer<List<Group>> consumer) {
-    new BungeeRequest<>(Group[].class, "all-groups")
-        .sendIfPresent(
-            groups -> {
-              List<Group> newGroups = Lots.list(groups);
-              this.groups.addAll(newGroups);
-              if (consumer != null) {
-                consumer.accept(newGroups);
-              }
-            });
+    JsonClient connection = Guido.getClient().getConnection();
+    if (connection == null) return;
+    Requests.Groups.getGroups()
+        .send(
+            connection,
+            optional ->
+                optional.ifPresent(
+                    groups -> {
+                      List<Group> list = Lots.list(groups);
+                      this.groups.addAll(list);
+                      if (consumer != null) consumer.accept(list);
+                    }));
   }
 
   /** Clears the list of loaded groups */

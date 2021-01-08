@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 import lombok.NonNull;
+import me.googas.api.Requests;
 import me.googas.api.links.LinkableInfo;
 import me.googas.api.matches.Match;
 import me.googas.api.matches.MatchStatus;
@@ -75,6 +76,18 @@ public class PGMMatchHandler implements MatchHandler {
     BotServer server = Guido.getServer();
     JsonClientThread bungee = server.getAuthenticator().getBungee();
     if (bungee != null) {
+      Requests.MatchServer.canHost(match)
+          .send(
+              server,
+              (messenger, canHost) -> {
+                if (!(messenger instanceof JsonClientThread)) return;
+                if (!canHost.isPresent()) return;
+                if (this.waitingForServer.contains(match) && canHost.get()) {
+                  this.waitingForServer.remove(match);
+                  this.pleaseHost(match, bungee, (JsonMessenger) messenger);
+                }
+              });
+
       server.sendRequest(
           new Request<>(Boolean.class, "server/can-host", Maps.singleton("match", match)),
           ((messenger, canHost) -> {
@@ -83,7 +96,7 @@ public class PGMMatchHandler implements MatchHandler {
                 && canHost.isPresent()
                 && canHost.get()) {
               this.waitingForServer.remove(match);
-              this.pleaseHost(match, bungee, messenger);
+              this.pleaseHost(match, bungee, (JsonMessenger) messenger);
             }
           }));
     }
@@ -103,10 +116,16 @@ public class PGMMatchHandler implements MatchHandler {
       participants.add(
           UUIDUtils.untrim(Validate.notNull(trimmed, "Queueing user does not have uuid")));
     }
-    messenger.sendRequest(
-        new Request<>(String.class, "server/host", Maps.singleton("match", match)),
-        serverIp ->
-            serverIp.ifPresent(s -> this.sendParticipantsToServer(bungee, s, participants)));
+    Requests.MatchServer.host(match)
+        .send(
+            messenger,
+            Requests.ifPresentElse(
+                ip -> {
+                  this.sendParticipantsToServer(bungee, ip, participants);
+                },
+                () -> {
+                  // TODO add too need host
+                }));
   }
 
   /**
@@ -120,12 +139,7 @@ public class PGMMatchHandler implements MatchHandler {
       @NonNull JsonClientThread bungee,
       @NonNull String serverIp,
       @NonNull List<UUID> participants) {
-    bungee.sendRequest(
-        new Request<>(
-            Boolean.class,
-            "bungee/send-to-server-by-ip",
-            Maps.objects("uuids", participants).append("server", serverIp).build()),
-        joined -> {});
+    Requests.Bungee.sendToServerByIp(participants, serverIp).queue(bungee);
   }
 
   /** Called when a server is ready to host a match */

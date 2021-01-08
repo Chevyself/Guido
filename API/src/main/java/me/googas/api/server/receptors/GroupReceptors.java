@@ -109,7 +109,7 @@ public class GroupReceptors {
     return group.getParents().remove(parentGroup.getId());
   }
 
-  interface GroupSupplier {
+  public interface GroupSupplier {
     @NonNull
     Group create(
         int weight,

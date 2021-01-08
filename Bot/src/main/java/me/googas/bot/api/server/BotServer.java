@@ -1,7 +1,7 @@
 package me.googas.bot.api.server;
 
 import lombok.NonNull;
-import me.googas.bot.core.server.GuidoAuthenticator;
+import me.googas.api.server.GuidoAuthenticator;
 import me.googas.messaging.api.Server;
 
 /** An extension of server */

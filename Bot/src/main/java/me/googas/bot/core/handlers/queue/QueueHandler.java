@@ -34,7 +34,7 @@ public class QueueHandler implements GuidoHandler {
    */
   public void joinQueueFromVoice(
       long guildId, @NonNull VoiceChannel channelJoined, @NonNull Member member) {
-    BotGuild guild = Guido.getDiscordLoader().getGuild(guildId);
+    BotGuild guild = Guido.getHandlers().getDiscordLoader().getGuild(guildId);
     String key = guild.getVoiceChannel(channelJoined.getIdLong());
     if (key != null && key.startsWith("join-")) {
       String ladderName = key.substring(5);

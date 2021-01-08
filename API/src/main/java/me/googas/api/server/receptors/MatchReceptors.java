@@ -5,6 +5,7 @@ import java.util.HashSet;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.Setter;
+import me.googas.annotations.Nullable;
 import me.googas.api.ValuesMap;
 import me.googas.api.client.data.matches.SimpleMatchTeam;
 import me.googas.api.loader.MatchLoader;
@@ -112,13 +113,13 @@ public class MatchReceptors {
     return this.loader.getMatch(id);
   }
 
-  interface MatchSupplier {
+  public interface MatchSupplier {
     @NonNull
     Match create(long guild, @NonNull Collection<MatchTeam> teams, @NonNull ValuesMap details);
   }
 
-  interface LadderSupplier {
-    @NonNull
+  public interface LadderSupplier {
+    @Nullable
     Ladder getLadder(@NonNull String name);
   }
 }

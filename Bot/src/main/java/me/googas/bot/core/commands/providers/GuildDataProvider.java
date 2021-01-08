@@ -23,7 +23,8 @@ public class GuildDataProvider implements JdaExtraArgumentProvider<BotGuild> {
   @Override
   public BotGuild getObject(@NonNull CommandContext context) throws ArgumentProviderException {
     if (context instanceof GuildCommandContext) {
-      return Guido.getDiscordLoader()
+      return Guido.getHandlers()
+          .getDiscordLoader()
           .getGuild(((GuildCommandContext) context).getGuild().getIdLong());
     }
     throw new ArgumentProviderException(context.getMessagesProvider().guildOnly(context));

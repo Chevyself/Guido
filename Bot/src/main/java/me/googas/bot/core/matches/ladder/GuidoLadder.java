@@ -3,12 +3,19 @@ package me.googas.bot.core.matches.ladder;
 import lombok.NonNull;
 import me.googas.api.matches.ladder.Ladder;
 import me.googas.api.matches.queue.Queue;
+import me.googas.api.server.receptors.MatchReceptors;
+import me.googas.bot.api.Guido;
 import me.googas.bot.core.GuidoValuesMap;
 import me.googas.bot.core.matches.queue.GuidoPGMQueue;
 import me.googas.bot.core.matches.queue.GuidoQueue;
 
 /** An implementation for ladder */
 public class GuidoLadder implements Ladder {
+
+  // At the moment the id of the guild must be hard coded
+  @NonNull
+  public static MatchReceptors.LadderSupplier SUPPLIER =
+      name -> Guido.getHandlers().getDiscordLoader().getGuild(755269005316456490L).getLadder(name);
 
   @NonNull private final String name;
   private final int playersPerTeam;

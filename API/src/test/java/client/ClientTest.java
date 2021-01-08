@@ -1,7 +1,9 @@
 package client;
 
 import java.io.IOException;
+import java.util.Optional;
 import java.util.Scanner;
+import java.util.function.Consumer;
 import me.googas.api.Requests;
 import me.googas.api.client.Client;
 import me.googas.api.client.data.SimpleValuesMap;
@@ -9,10 +11,7 @@ import me.googas.api.client.data.links.SimpleLinkableInfo;
 import me.googas.api.client.data.permissions.SimplePermission;
 import me.googas.api.links.LinkableInfo;
 import me.googas.api.links.LinkableType;
-import me.googas.api.permissions.Group;
-import me.googas.api.permissions.PermissionStack;
-import me.googas.api.utility.SortedStats;
-import me.googas.messaging.Request;
+import me.googas.messaging.json.client.JsonClient;
 
 /** A test for the client */
 public class ClientTest {
@@ -28,7 +27,7 @@ public class ClientTest {
     // 5Eh8QKdS7GmrE0Gs
     // localhost
     Client client = new Client("5Eh8QKdS7GmrE0Gs", "localhost", 3000);
-    client.startConnection();
+    JsonClient connection = client.startConnection();
     Scanner scanner = new Scanner(System.in);
     while (true) {
       while (scanner.hasNextLine()) {
@@ -39,232 +38,29 @@ public class ClientTest {
           break;
         }
 
-        if (line.equalsIgnoreCase("exists")) {
-          Request.builder(Boolean.class, "link/exists")
-              .put("link", ClientTest.link)
-              .send(
-                  client.getConnection(),
-                  Requests.ifPresentElse(
-                      System.out::println, () -> System.out.println("Does not exist")));
-        }
-
         if (line.equalsIgnoreCase("stats")) {
-          Request.builder(SortedStats.class, "link/stats")
-              .put("link", ClientTest.link)
-              .send(
-                  client.getConnection(),
-                  Requests.ifPresentElse(
-                      System.out::println, () -> System.out.println("Does not exist")));
+          Requests.Links.stats(ClientTest.link).send(connection, ClientTest.consumer());
         }
 
         if (line.equalsIgnoreCase("groups")) {
-          Request.builder(Group[].class, "all-groups")
-              .send(
-                  client.getConnection(),
-                  Requests.ifPresentElse(
-                      System.out::println, () -> System.out.println("Does not exist")));
+          Requests.Groups.getGroups().send(connection, ClientTest.consumer());
         }
 
         if (line.equalsIgnoreCase("permissions")) {
-          Request.builder(PermissionStack.class, "link/permissions")
-              .put("link", ClientTest.link)
-              .put("context", "bungee")
-              .put("global", true)
-              .send(
-                  client.getConnection(),
-                  Requests.ifPresentElse(
-                      System.out::println, () -> System.out.println("Does not exist")));
+          Requests.Links.permissions(ClientTest.link, "bungee", true)
+              .send(connection, ClientTest.consumer());
         }
 
         if (line.equalsIgnoreCase("add")) {
-          Request.builder(Boolean.class, "link/permission")
-              .put("link", ClientTest.link)
-              .put("context", "bungee")
-              .put("permission", new SimplePermission("guido.test", true, -1))
-              .send(
-                  client.getConnection(),
-                  Requests.ifPresentElse(
-                      System.out::println, () -> System.out.println("Does not exist")));
+          Requests.Links.permission(
+                  ClientTest.link, "bungee", new SimplePermission("guido.test", true, -1))
+              .send(connection, ClientTest.consumer());
         }
       }
     }
   }
 
-  /*
-  public static void main(String[] args) throws IOException, MessengerListenFailException {
-    String debug = "45.43.24.28";
-    // 5Eh8QKdS7GmrE0Gs
-    String debugToken = "1Uv2AZduciPKwUL8";
-    Client client = new Client("5Eh8QKdS7GmrE0Gs", "167.114.49.251", 3000);
-    String nick = "Selfie";
-    UUID uuid = UUID.fromString("5eed208d-de58-4022-9ba7-6ccb5ea7e92a");
-    String trimmed = UUIDUtils.trim(uuid);
-    JsonClient conn = client.startConnection();
-    Scanner scanner = new Scanner(System.in);
-    SimpleLinkableInfo info =
-        new SimpleLinkableInfo(
-            LinkableType.MINECRAFT, new SimpleValuesMap(Maps.singleton("uuid", trimmed)));
-    while (true) {
-      while (scanner.hasNextLine()) {
-        String line = scanner.nextLine();
-        if (line.equalsIgnoreCase("exit")) {
-          conn.close();
-          System.exit(0);
-        } else if (line.equalsIgnoreCase("exists")) {
-          conn.sendRequest(
-              new Request<>(Boolean.class, "data-exists", Maps.singleton("info", info)),
-              bol -> {
-                System.out.println("Exists? " + bol);
-              });
-        } else if (line.equalsIgnoreCase("create")) {
-          conn.sendRequest(
-              new Request<>(
-                  Boolean.class,
-                  "create-minecraft",
-                  Maps.objects("uuid", uuid).append("nickname", nick).build()),
-              bol -> {
-                System.out.println("Created? " + bol);
-              });
-        } else if (line.equalsIgnoreCase("permission")) {
-          conn.sendRequest(
-              new Request<>(
-                  SimplePermissionStack.class,
-                  "permission",
-                  Maps.objects("context", "asdf").append("info", info).build()),
-              stack -> {
-                System.out.println("Permission for bungee: " + stack);
-              });
-        } else if (line.equalsIgnoreCase("add-permission")) {
-          conn.sendRequest(
-              new Request<>(
-                  Boolean.class,
-                  "add-permission",
-                  Maps.objects("info", info)
-                      .append("context", "bungee")
-                      .append("permission", "guido.*")
-                      .build()),
-              bol -> {
-                System.out.println("Perm added? " + bol);
-              });
-        } else if (line.equalsIgnoreCase("save-stats")) {
-          conn.sendRequest(
-              new Request<>(
-                  Boolean.class,
-                  "save-stats",
-                  Maps.objects("info", info).append("stats", Maps.singleton("kills", 1)).build()),
-              bol -> {
-                System.out.println("Saved? " + bol);
-              });
-        } else if (line.equalsIgnoreCase("group")) {
-          conn.sendRequest(
-              new Request<>(Group.class, "group", Maps.singleton("id", ClientTest.groupId)),
-              System.out::println);
-        } else if (line.equalsIgnoreCase("groups")) {
-          conn.sendRequest(
-              new Request<>(Group[].class, "groups"),
-              arr -> {
-                System.out.println(Arrays.toString(arr));
-              });
-        } else if (line.equalsIgnoreCase("create-group")) {
-          conn.sendRequest(
-              new Request<>(String.class, "create-group"),
-              id -> {
-                ClientTest.groupId = id;
-                System.out.println(id);
-              });
-        } else if (line.equalsIgnoreCase("link")) {
-          conn.sendRequest(
-              new Request<>(
-                  String.class,
-                  "link-code",
-                  Maps.objects("type", LinkableType.MINECRAFT)
-                      .append("identification", Maps.singleton("uuid", trimmed))
-                      .build()),
-              System.out::println);
-        } else if (line.equalsIgnoreCase("by-name")) {
-          conn.sendRequest(
-              new Request<>(LinkableInfo.class, "get-mc-by-name", Maps.singleton("nickname", nick)),
-              linkInfo -> {
-                System.out.println(linkInfo.getType());
-                System.out.println(linkInfo.getIdentification().getMap());
-              });
-        } else if (line.equalsIgnoreCase("ladder")) {
-          System.out.println(
-              conn.sendRequest(
-                  new Request<>(
-                      Ladder.class,
-                      "ladder",
-                      Maps.objects("guild", 718281601112604675L).append("name", "1v1").build())));
-        } else if (line.equalsIgnoreCase("match-add-team")) {
-          conn.sendRequest(
-              new Request<>(
-                  Boolean.class,
-                  "match-add-team",
-                  Maps.objects("id", "surHaun5TJ7CEHLo")
-                      .append(
-                          "team",
-                          new SimpleMatchTeam(
-                              -3,
-                              "2 teanm",
-                              Lots.set(
-                                  new SimpleTeamMember(
-                                      new SimpleLinkableInfo(
-                                          LinkableType.MINECRAFT,
-                                          new SimpleValuesMap(Maps.singleton("nickname", "Chevi"))),
-                                      TeamRole.LEADER))))
-                      .build()),
-              bol -> {
-                System.out.println("Was team added? " + bol);
-              });
-        } else if (line.equalsIgnoreCase("match-remove-team-by-id")) {
-          conn.sendRequest(
-              new Request<>(
-                  Boolean.class,
-                  "match-remove-team-by-id",
-                  Maps.objects("id", "qu7XzgW73hW1gDDY").append("team", -2).build()),
-              bol -> {
-                System.out.println("MatchTeam removed? " + bol);
-              });
-        } else if (line.equalsIgnoreCase("links")) {
-          System.out.println("Seding links request");
-          conn.sendRequest(
-              new Request<>(
-                  LinkedTreeMap.class,
-                  "links",
-                  Maps.objects("types", new ArrayList<>())
-                      .append("page", 0)
-                      .append("limit", 1)
-                      .build()),
-              objects -> {
-                System.out.println("Received");
-              },
-              exception -> {
-                exception.printStackTrace();
-              });
-        } else if (line.equalsIgnoreCase("update nickname")) {
-          conn.sendRequest(
-              new Request<>(
-                  Boolean.class,
-                  "update-minecraft-nickname",
-                  Maps.objects("uuid", uuid).append("nickname", nick).build()),
-              bol -> {
-                System.out.println("Name updated? " + bol);
-              });
-        } else if (line.equalsIgnoreCase("bungee")) {
-          conn.sendRequest(
-              new Request<>(Boolean.class, "is-bungee", Maps.singleton("uuid", uuid)),
-              bol -> {
-                System.out.println("Is bungee? " + bol);
-              });
-        } else if (line.equalsIgnoreCase("team")) {
-          conn.sendRequest(
-              new Request<>(Team.class, "team-by-name", Maps.singleton("name", "Googas")),
-              team -> {
-                System.out.println(team);
-              });
-        }
-      }
-    }
+  private static <T> Consumer<Optional<T>> consumer() {
+    return Requests.ifPresentElse(System.out::println, () -> System.out.println("Not present"));
   }
-   */
 }

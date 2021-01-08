@@ -41,7 +41,7 @@ public class GuidoQueue implements Queue {
   @NonNull
   public Ladder getLadder() {
     return Validate.notNull(
-        Guido.getDiscordLoader().getGuild(this.guildId).getLadder(this.ladder),
+        Guido.getHandlers().getDiscordLoader().getGuild(this.guildId).getLadder(this.ladder),
         "Ladder was deleted?");
   }
 

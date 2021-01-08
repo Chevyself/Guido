@@ -1,9 +1,9 @@
 package me.googas.api.server.receptors;
 
+import java.util.Collection;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.Setter;
-import me.googas.annotations.Nullable;
 import me.googas.api.ValuesMap;
 import me.googas.api.links.LinkableInfo;
 import me.googas.api.loader.PunishmentLoader;
@@ -22,6 +22,17 @@ public class PunishmentReceptors {
       @NonNull PunishmentLoader loader, @NonNull PunishmentSupplier punishmentSupplier) {
     this.loader = loader;
     this.punishmentSupplier = punishmentSupplier;
+  }
+
+  @Receptor("punishment")
+  public Punishment getPunishment(@ParamName("id") String id) {
+    return this.loader.getPunishment(id);
+  }
+
+  @Receptor("punishment/punishments")
+  public Collection<Punishment> getPunishments(
+      @ParamName("link") LinkableInfo link, @ParamName("statuses") PunishmentStatus[] statuses) {
+    return this.loader.getPunishments(link, statuses);
   }
 
   @Receptor("punishment/create")
@@ -66,12 +77,7 @@ public class PunishmentReceptors {
     return true;
   }
 
-  @Nullable
-  public Punishment getPunishment(@NonNull String id) {
-    return this.loader.getPunishment(id);
-  }
-
-  interface PunishmentSupplier {
+  public interface PunishmentSupplier {
     @NonNull
     Punishment create(
         @NonNull PunishmentType type,

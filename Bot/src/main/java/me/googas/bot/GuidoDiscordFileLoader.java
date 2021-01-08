@@ -2,19 +2,55 @@ package me.googas.bot;
 
 import java.io.File;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.HashSet;
 import lombok.NonNull;
 import me.googas.bot.api.DiscordLoader;
 import me.googas.bot.api.Guido;
+import me.googas.bot.api.events.data.guild.BotGuildUnloadedEvent;
+import me.googas.bot.api.events.data.role.BotRoleUnloadedEvent;
+import me.googas.bot.api.types.discord.BotGuild;
+import me.googas.bot.api.types.discord.BotRole;
 import me.googas.bot.core.discord.GuidoGuild;
 import me.googas.bot.core.discord.GuidoRole;
-import me.googas.bot.core.handlers.GuidoHandler;
 import me.googas.bot.core.util.Mongo;
 import me.googas.commons.CoreFiles;
+import me.googas.commons.events.ListenPriority;
+import me.googas.commons.events.Listener;
 
-public class GuidoDiscordFileLoader implements GuidoHandler, DiscordLoader {
+public class GuidoDiscordFileLoader implements DiscordLoader {
+
+  @Listener(priority = ListenPriority.HIGHEST)
+  public void onBotGuildUnloadedEvent(BotGuildUnloadedEvent event) {
+    BotGuild guild = event.getData();
+    try {
+      File file =
+          CoreFiles.getOrCreate(CoreFiles.currentDirectory() + "/guilds", guild.getId() + ".json");
+      this.save(guild, file);
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+  }
+
+  @Listener(priority = ListenPriority.HIGHEST)
+  public void onBotRoleUnloadedEvent(BotRoleUnloadedEvent event) {
+    BotRole role = event.getData();
+    try {
+      File file =
+          CoreFiles.getOrCreate(CoreFiles.currentDirectory() + "/roles", role.getId() + ".json");
+      this.save(role, file);
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+  }
+
+  private void save(@NonNull Object object, @NonNull File file) throws IOException {
+    FileWriter writer = new FileWriter(file);
+    Mongo.GSON.toJson(object, writer);
+    writer.close();
+  }
 
   @NonNull
   public GuidoGuild getGuild(long guildId) {

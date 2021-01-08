@@ -52,6 +52,15 @@ public class MinecraftLinkable {
   }
 
   /**
+   * Get whether the player is inside the bungee server
+   *
+   * @return true if the user is online
+   */
+  public boolean isOnline() {
+    return this.getPreferences().getOr("online", Boolean.class, false);
+  }
+
+  /**
    * Get the unique id of this minecraft link
    *
    * @return the unique id

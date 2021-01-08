@@ -12,7 +12,7 @@ import me.googas.api.adapters.matches.team.TeamDeserializer;
 import me.googas.api.adapters.matches.team.TeamMemberDeserializer;
 import me.googas.api.adapters.permissions.GroupDeserializer;
 import me.googas.api.adapters.permissions.PermissionAdapter;
-import me.googas.api.adapters.permissions.PermissionStackDeserializer;
+import me.googas.api.adapters.permissions.PermissionStackAdapter;
 import me.googas.api.adapters.punishment.PunishmentDeserializer;
 import me.googas.api.client.data.SimpleValuesMap;
 import me.googas.api.links.LinkableInfo;
@@ -40,7 +40,7 @@ public class Adapters {
         .registerTypeAdapter(LinkableInfo.class, new LinkableInfoDeserializer())
         .registerTypeAdapter(Match.class, new MatchDeserializer())
         .registerTypeAdapter(Permission.class, new PermissionAdapter())
-        .registerTypeAdapter(PermissionStack.class, new PermissionStackDeserializer())
+        .registerTypeAdapter(PermissionStack.class, new PermissionStackAdapter())
         .registerTypeAdapter(Punishment.class, new PunishmentDeserializer())
         .registerTypeAdapter(MatchTeam.class, new MatchTeamDeserializer())
         .registerTypeAdapter(Team.class, new TeamDeserializer())

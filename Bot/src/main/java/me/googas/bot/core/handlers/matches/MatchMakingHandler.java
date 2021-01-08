@@ -47,7 +47,7 @@ public class MatchMakingHandler implements GuidoHandler {
   @Listener(priority = ListenPriority.HIGHEST)
   public void onMatchStatusUpdatedEvent(@NonNull MatchStatusUpdatedEvent event) {
     Match match = event.getMatch();
-    BotGuild guildData = Guido.getDiscordLoader().getGuild(match.getGuildId());
+    BotGuild guildData = Guido.getHandlers().getDiscordLoader().getGuild(match.getGuildId());
     TextChannel channel = guildData.getTextChannel("matches");
     LocaleFile locale = Guido.getHandlers().getLanguageHandler().getDefault();
     EmbedQuery information = Matches.getInformation(match, locale);

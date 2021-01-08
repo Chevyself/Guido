@@ -9,6 +9,7 @@ import me.googas.api.matches.Match;
 import me.googas.api.matches.MatchStatus;
 import me.googas.api.matches.MatchTeam;
 import me.googas.api.matches.ladder.Ladder;
+import me.googas.api.server.receptors.MatchReceptors;
 import me.googas.bot.api.Guido;
 import me.googas.bot.api.events.match.MatchAddTeamEvent;
 import me.googas.bot.api.events.match.MatchPreAddTeamEvent;
@@ -28,6 +29,10 @@ import me.googas.commons.time.Unit;
 /** An implementation for a match */
 public class GuidoMatch implements Match, BotCatchable {
 
+  public static final MatchReceptors.MatchSupplier SUPPLIER =
+      (guild, teams, details) ->
+          new GuidoMatch(guild, new HashSet<>(teams), new GuidoLinkedValuesMap(details.getMap()))
+              .cache();
   @NonNull private final String id;
   private final long guildId;
   @NonNull private final Set<MatchTeam> teams;
@@ -214,7 +219,7 @@ public class GuidoMatch implements Match, BotCatchable {
   @Override
   public Ladder getLadder() {
     String ladderName = this.getDetails().get("ladder", String.class);
-    BotGuild guild = Guido.getDiscordLoader().getGuild(this.getGuildId());
+    BotGuild guild = Guido.getHandlers().getDiscordLoader().getGuild(this.getGuildId());
     if (ladderName == null) return null;
     return guild.getLadder(ladderName);
   }

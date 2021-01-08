@@ -11,7 +11,6 @@ import lombok.Getter;
 import lombok.NonNull;
 import lombok.Setter;
 import me.googas.annotations.Nullable;
-import me.googas.bot.api.DiscordLoader;
 import me.googas.bot.api.Guido;
 import me.googas.bot.api.server.BotServer;
 import me.googas.bot.api.types.BotCatchable;
@@ -31,6 +30,7 @@ import me.googas.commons.scheduler.TimerScheduler;
 import me.googas.commons.time.Time;
 import me.googas.commons.time.Unit;
 import net.dv8tion.jda.api.JDA;
+import net.dv8tion.jda.api.hooks.AnnotatedEventManager;
 
 /** The match making bot */
 public class GuidoBot {
@@ -41,7 +41,7 @@ public class GuidoBot {
           "[%level%] %day%/%month%/%year% [GuidoBot] %hour%:%minute%:%second%: %message% %stack%");
 
   @NonNull @Getter
-  public static final Logger LOG =
+  public static final Logger log =
       LoggerFactory.start("Guido", LoggerFactory.getConsoleHandler(GuidoBot.formatter));
 
   @NonNull @Getter private final MemoryCache cache = new MemoryCache();
@@ -50,7 +50,6 @@ public class GuidoBot {
   @NonNull @Getter private final ListenerManager listenerManager = new ListenerManager();
   @NonNull @Getter private final Scheduler scheduler = new TimerScheduler(new Timer());
   @NonNull @Getter private final GuidoHandlerRegistry handlerRegistry = new GuidoHandlerRegistry();
-  @NonNull @Getter private final DiscordLoader discordLoader = new GuidoDiscordFileLoader();
   // TODO what's up with this class with the new authenticator
   @NonNull @Getter @Setter private BotServer server = new GuidoFallbackServer();
   @Nullable @Setter @Getter private CommandManager commandManager;
@@ -83,25 +82,27 @@ public class GuidoBot {
     GuidoBot bot = new GuidoBot();
     Guido.setInstance(bot);
     try {
-      GuidoBot.LOG.addHandler(
+      GuidoBot.log.addHandler(
           LoggerFactory.getFileHandler(
               GuidoBot.getFormatter(),
               CoreFiles.currentDirectory() + "/logs/",
               System.currentTimeMillis() + ".txt"));
     } catch (IOException ioException) {
-      GuidoBot.LOG.info("File Handler for logger could not be added");
+      GuidoBot.log.info("File Handler for logger could not be added");
     }
     ProgramArguments arguments = ProgramArguments.construct(args);
     Thread.setDefaultUncaughtExceptionHandler(
-        (thread, exception) -> GuidoBot.LOG.log(Level.SEVERE, exception, () -> ""));
+        (thread, exception) -> GuidoBot.log.log(Level.SEVERE, exception, () -> ""));
     Time time = new Time(1, Unit.SECONDS);
     bot.getScheduler().repeat(time, time, bot.getCache());
     JDA jda = bot.getConnection().createConnection(arguments.getProperty("token", "none"));
-    BotServer server = GuidoBot.createServer(arguments);
+    jda.setEventManager(new AnnotatedEventManager());
+    bot.getHandlerRegistry().setupDiscordLoader().setupLoader(arguments).register(jda);
+    bot.setCommandManager(
+        new GuidoCommandManager(jda, arguments, bot.getHandlerRegistry()).register());
+    BotServer server = GuidoBot.createServer(arguments, bot);
     if (server != null) bot.setServer(server);
-    bot.getHandlerRegistry().setupLoader(arguments).register(jda);
-    bot.setCommandManager(new GuidoCommandManager(jda, arguments, bot.getHandlerRegistry()));
-    GuidoBot.LOG.info("Bot is ready to use");
+    GuidoBot.log.info("Bot is ready to use");
   }
 
   /**
@@ -110,11 +111,11 @@ public class GuidoBot {
    * @param args the map to get the port and timeout of the server
    */
   @Nullable
-  public static BotServer createServer(@NonNull ProgramArguments args) {
+  public static BotServer createServer(@NonNull ProgramArguments args, @NonNull GuidoBot bot) {
     try {
       int port = Integer.parseInt(args.getProperty("port", "3000"));
       long timeout = Long.parseLong(args.getProperty("timeout", "3000"));
-      BotServer server = new GuidoServer(port, timeout);
+      BotServer server = new GuidoServer(port, timeout, bot.getHandlerRegistry().getLoader());
       server.start();
     } catch (IOException | NumberFormatException e) {
       e.printStackTrace();
@@ -144,7 +145,7 @@ public class GuidoBot {
     try {
       this.server.close();
     } catch (IOException e) {
-      GuidoBot.LOG.log(Level.SEVERE, e, null);
+      GuidoBot.log.log(Level.SEVERE, e, null);
     }
     return this;
   }

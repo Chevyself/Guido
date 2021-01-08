@@ -118,6 +118,17 @@ public class LinkReceptors {
     return info.getLink() != null;
   }
 
+  @Receptor("link/set-recognition")
+  public boolean setRecognition(
+      @ParamName("link") LinkableInfo link,
+      @ParamName("key") String key,
+      @ParamName("value") Object value) {
+    Linkable linkable = link.getLink();
+    if (linkable == null) return false;
+    linkable.getRecognition().put(key, value);
+    return true;
+  }
+
   @Receptor("link/preference")
   public boolean preference(
       @ParamName("link") LinkableInfo info,
@@ -193,7 +204,7 @@ public class LinkReceptors {
     return true;
   }
 
-  interface LinkableSupplier {
+  public interface LinkableSupplier {
     @NonNull
     Linkable create(
         @NonNull LinkableType type,
