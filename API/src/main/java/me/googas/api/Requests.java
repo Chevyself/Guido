@@ -28,7 +28,6 @@ import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
 /** Static utilities for requests */
-// TODO add methods in static strings
 public class Requests {
 
   @NonNull
@@ -55,7 +54,9 @@ public class Requests {
     @NonNull public static final String NAME = Groups.PREFIX + "name";
     @NonNull public static final String PREFERENCE = Groups.PREFIX + "preference";
     @NonNull public static final String REMOVE_PREFERENCE = Groups.PREFIX + "remove-preference";
-    @NonNull public static final String PARENT = Groups.PREFIX + "prent";
+    @NonNull public static final String ADD_PERMISSION = Groups.PREFIX + "add-permission";
+    @NonNull public static final String REMOVE_PERMISSION = Groups.PREFIX + "remove-permission";
+    @NonNull public static final String PARENT = Groups.PREFIX + "parent";
     @NonNull public static final String REMOVE_PARENT = Groups.PREFIX + "remove-parent";
 
     @NonNull
@@ -82,16 +83,16 @@ public class Requests {
 
     @NonNull
     public static RequestBuilder<Group> create(
+        @NonNull String name,
         int weight,
         @NonNull ValuesMap preferences,
         @NonNull Set<PermissionStack> permissions,
-        @NonNull String name,
         @NonNull List<String> parents) {
       return new RequestBuilder<>(Group.class, Groups.CREATE)
+          .put("name", name)
           .put("weight", weight)
           .put("preferences", preferences)
           .put("permissions", permissions)
-          .put("name", name)
           .put("parents", parents);
     }
 
@@ -120,6 +121,24 @@ public class Requests {
       return new RequestBuilder<>(Boolean.class, Groups.REMOVE_PREFERENCE)
           .put("id", id)
           .put("key", key);
+    }
+
+    @NonNull
+    public static RequestBuilder<Boolean> addPermission(
+        @NonNull String id, @NonNull String context, @NonNull Permission permission) {
+      return new RequestBuilder<>(Boolean.class, Groups.ADD_PERMISSION)
+          .put("id", id)
+          .put("context", context)
+          .put("permission", permission);
+    }
+
+    @NonNull
+    public static RequestBuilder<Boolean> removePermission(
+        @NonNull String id, @NonNull String context, @NonNull String node) {
+      return new RequestBuilder<>(Boolean.class, Groups.REMOVE_PERMISSION)
+          .put("id", id)
+          .put("context", context)
+          .put("node", node);
     }
 
     @NonNull
@@ -194,26 +213,26 @@ public class Requests {
 
     @NonNull
     public static RequestBuilder<Linkable[]> getLinks(@NonNull String userId) {
-      return new RequestBuilder<>(Linkable[].class, Links.PREFIX + "user-links").put("id", userId);
+      return new RequestBuilder<>(Linkable[].class, Links.USER_LINKS).put("id", userId);
     }
 
     @NonNull
     public static RequestBuilder<Linkable> getLink(
         @NonNull String userId, @NonNull LinkableType type) {
-      return new RequestBuilder<>(Linkable.class, Links.PREFIX + "user-type")
+      return new RequestBuilder<>(Linkable.class, Links.USER_TYPE)
           .put("id", userId)
           .put("type", type);
     }
 
     @NonNull
     public static RequestBuilder<Long> getLinksSize(@NonNull Collection<LinkableType> types) {
-      return new RequestBuilder<>(Long.class, Links.PREFIX + "links-size").put("types", types);
+      return new RequestBuilder<>(Long.class, Links.LINKS_SIZE).put("types", types);
     }
 
     @NonNull
     public static RequestBuilder<LinkableInfo[]> getLinks(
         int page, int size, @NonNull Collection<LinkableType> types) {
-      return new RequestBuilder<>(LinkableInfo[].class, Links.PREFIX + "links")
+      return new RequestBuilder<>(LinkableInfo[].class, Links.LINKS)
           .put("page", page)
           .put("size", size)
           .put("types", types);
@@ -233,7 +252,7 @@ public class Requests {
     @NonNull
     public static RequestBuilder<Linkable> getLinkByIdentification(
         @NonNull LinkableType type, @NonNull ValuesMap identification) {
-      return new RequestBuilder<>(Linkable.class, Links.PREFIX + "identification")
+      return new RequestBuilder<>(Linkable.class, Links.IDENTIFICATION)
           .put("type", type)
           .put("identification", identification);
     }
@@ -241,7 +260,7 @@ public class Requests {
     @NonNull
     public static RequestBuilder<Linkable> getLinkByRecognition(
         @NonNull LinkableType type, @NonNull ValuesMap recognition) {
-      return new RequestBuilder<>(Linkable.class, Links.PREFIX + "recognition")
+      return new RequestBuilder<>(Linkable.class, Links.RECOGNITION)
           .put("type", type)
           .put("identification", recognition);
     }
@@ -254,7 +273,7 @@ public class Requests {
         @NonNull ValuesMap preferences,
         @NonNull Map<String, Float> stats,
         @NonNull Collection<PermissionStack> permissions) {
-      return new RequestBuilder<>(Linkable.class, Links.PREFIX + "create")
+      return new RequestBuilder<>(Linkable.class, Links.CREATE)
           .put("type", type)
           .put("recognition", recognition)
           .put("identification", identification)
@@ -265,25 +284,23 @@ public class Requests {
 
     @NonNull
     public static RequestBuilder<Boolean> isLinked(@NonNull LinkableInfo link) {
-      return new RequestBuilder<>(Boolean.class, Links.PREFIX + "is-linked").put("link", link);
+      return new RequestBuilder<>(Boolean.class, Links.IS_LINKED).put("link", link);
     }
 
     @NonNull
     public static RequestBuilder<Boolean> link(@NonNull LinkableInfo link, @NonNull String id) {
-      return new RequestBuilder<>(Boolean.class, Links.PREFIX + "link")
-          .put("link", link)
-          .put("id", id);
+      return new RequestBuilder<>(Boolean.class, Links.LINK_LINK).put("link", link).put("id", id);
     }
 
     @NonNull
     public static RequestBuilder<Boolean> exists(@NonNull LinkableInfo link) {
-      return new RequestBuilder<>(Boolean.class, Links.PREFIX + "exists").put("link", link);
+      return new RequestBuilder<>(Boolean.class, Links.EXISTS).put("link", link);
     }
 
     @NonNull
-    public static RequestBuilder<Boolean> addRecognition(
+    public static RequestBuilder<Boolean> setRecognition(
         @NonNull LinkableInfo link, @NonNull String key, @NonNull Object value) {
-      return new RequestBuilder<>(Boolean.class, Links.PREFIX + "set-recognition")
+      return new RequestBuilder<>(Boolean.class, Links.SET_RECOGNITION)
           .put("link", link)
           .put("key", key)
           .put("value", value);
@@ -292,7 +309,7 @@ public class Requests {
     @NonNull
     public static RequestBuilder<Boolean> preference(
         @NonNull LinkableInfo link, @NonNull String key, @NonNull Object value) {
-      return new RequestBuilder<>(Boolean.class, Links.PREFIX + "preference")
+      return new RequestBuilder<>(Boolean.class, Links.PREFERENCE)
           .put("link", link)
           .put("key", key)
           .put("value", value);
@@ -301,7 +318,7 @@ public class Requests {
     @NonNull
     public static RequestBuilder<Boolean> removePreference(
         @NonNull LinkableInfo link, @NonNull String key) {
-      return new RequestBuilder<>(Boolean.class, Links.PREFIX + "remove-preference")
+      return new RequestBuilder<>(Boolean.class, Links.REMOVE_PREFERENCE)
           .put("link", link)
           .put("key", key);
     }
@@ -309,7 +326,7 @@ public class Requests {
     @NonNull
     public static RequestBuilder<PermissionStack> permissions(
         @NonNull LinkableInfo link, @NonNull String context, boolean global) {
-      return new RequestBuilder<>(PermissionStack.class, Links.PREFIX + "permissions")
+      return new RequestBuilder<>(PermissionStack.class, Links.PERMISSIONS)
           .put("link", link)
           .put("context", context)
           .put("global", global);
@@ -318,7 +335,7 @@ public class Requests {
     @NonNull
     public static RequestBuilder<Boolean> permission(
         @NonNull LinkableInfo link, @NonNull String context, @NonNull Permission permission) {
-      return new RequestBuilder<>(Boolean.class, Links.PREFIX + "permission")
+      return new RequestBuilder<>(Boolean.class, Links.PERMISSION)
           .put("link", link)
           .put("context", context)
           .put("permission", permission);
@@ -327,7 +344,7 @@ public class Requests {
     @NonNull
     public static RequestBuilder<Boolean> removePermission(
         @NonNull LinkableInfo link, @NonNull String context, @NonNull String permission) {
-      return new RequestBuilder<>(Boolean.class, Links.PREFIX + "remove-permission")
+      return new RequestBuilder<>(Boolean.class, Links.REMOVE_PERMISSION)
           .put("link", link)
           .put("context", context)
           .put("permission", permission);
@@ -335,7 +352,7 @@ public class Requests {
 
     @NonNull
     public static RequestBuilder<SortedStats> stats(@NonNull LinkableInfo link) {
-      return new RequestBuilder<>(SortedStats.class, Links.PREFIX + "stats").put("link", link);
+      return new RequestBuilder<>(SortedStats.class, Links.STATS).put("link", link);
     }
 
     @NonNull

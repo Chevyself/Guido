@@ -33,7 +33,7 @@ public class MatchReceptors {
   }
 
   @Receptor(Requests.Matches.MATCH)
-  public Match getMatch(@NonNull String id) {
+  public @Nullable Match getMatch(@NonNull String id) {
     return this.loader.getMatch(id);
   }
 
@@ -56,6 +56,7 @@ public class MatchReceptors {
   @Receptor(Requests.Matches.ADD_TEAM)
   public int addTeam(@ParamName("id") String id, @ParamName("team") MatchTeam matchTeam) {
     Match match = this.getMatch(id);
+    if (match == null) return -4;
     if (matchTeam.getId() == -3) {
       SimpleMatchTeam guidoTeam =
           new SimpleMatchTeam(

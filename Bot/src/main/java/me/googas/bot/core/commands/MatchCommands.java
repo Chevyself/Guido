@@ -15,6 +15,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import lombok.NonNull;
+import me.googas.api.client.data.matches.SimpleMatchTeam;
+import me.googas.api.client.data.matches.team.SimpleTeamMember;
 import me.googas.api.lang.LocaleFile;
 import me.googas.api.links.Linkable;
 import me.googas.api.links.LinkableInfo;
@@ -37,8 +39,6 @@ import me.googas.bot.core.handlers.matches.MatchMakingHandler;
 import me.googas.bot.core.handlers.matches.PGMMatchHandler;
 import me.googas.bot.core.handlers.ranks.RanksHandler;
 import me.googas.bot.core.matches.GuidoMatch;
-import me.googas.bot.core.matches.GuidoMatchTeam;
-import me.googas.bot.core.matches.team.GuidoTeamMember;
 import me.googas.bot.core.util.Matches;
 import me.googas.commons.Lots;
 import me.googas.commons.maps.Maps;
@@ -70,13 +70,13 @@ public class MatchCommands {
     for (int i = 0; i < participants.length; i++) {
       Linkable participant = participants[i];
       if (i > ladder.playersPerTeam() - 1) {
-        members2.add(new GuidoTeamMember(participant.getInfo(), TeamRole.NORMAL));
+        members2.add(new SimpleTeamMember(participant.getInfo(), TeamRole.NORMAL));
       } else {
-        members1.add(new GuidoTeamMember(participant.getInfo(), TeamRole.NORMAL));
+        members1.add(new SimpleTeamMember(participant.getInfo(), TeamRole.NORMAL));
       }
     }
-    GuidoMatchTeam team1 = new GuidoMatchTeam(1, members1, "Team 1");
-    GuidoMatchTeam team2 = new GuidoMatchTeam(2, members2, "Team 2");
+    SimpleMatchTeam team1 = new SimpleMatchTeam(1, "Team 1", members1);
+    SimpleMatchTeam team2 = new SimpleMatchTeam(2, "Team 2", members2);
     GuidoMatch match =
         new GuidoMatch(
                 guild.getId(),
@@ -161,6 +161,7 @@ public class MatchCommands {
   public Result finish(
       LocaleFile locale,
       BotGuild guild,
+      CommandContext context,
       @Required(name = "finish.match", description = "finish.match.desc") Match match,
       @Multiple @Optional(name = "finish.winners", description = "finish.winners.desc")
           JoinedStrings name) {
@@ -170,6 +171,10 @@ public class MatchCommands {
         return new Result(ResultType.USAGE, locale.get("finish.already", placeholders));
       } else {
         if (name != null) {
+          if (context.hasFlag("-t")) {
+            match.finish(null);
+            return new Result(locale.get("finish.finished", placeholders));
+          }
           MatchTeam matchTeam = match.getTeam(name.getString());
           if (matchTeam != null) {
             match.finish(matchTeam);

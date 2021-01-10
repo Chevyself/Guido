@@ -4,6 +4,8 @@ import java.util.HashSet;
 import java.util.Set;
 import lombok.NonNull;
 import me.googas.api.Requests;
+import me.googas.api.client.data.matches.SimpleMatchTeam;
+import me.googas.api.client.data.matches.team.SimpleTeamMember;
 import me.googas.api.lang.LocaleFile;
 import me.googas.api.links.Linkable;
 import me.googas.api.links.LinkableInfo;
@@ -18,8 +20,6 @@ import me.googas.api.user.UserData;
 import me.googas.bot.api.Guido;
 import me.googas.bot.core.GuidoLinkedValuesMap;
 import me.googas.bot.core.matches.GuidoMatch;
-import me.googas.bot.core.matches.GuidoMatchTeam;
-import me.googas.bot.core.matches.team.GuidoTeamMember;
 import me.googas.bot.core.util.Lang;
 import me.googas.commons.Lots;
 import me.googas.commons.Validate;
@@ -48,14 +48,14 @@ public class GuidoPGMQueue extends GuidoQueue {
       for (int i = 0; i < ladder.playersPerTeam() * 2; i++) {
         Queueable queueable = this.getWaiting().get(i);
         if (!(queueable instanceof LinkableInfo)) continue;
-        participants.add(new GuidoTeamMember((LinkableInfo) queueable, TeamRole.NORMAL));
+        participants.add(new SimpleTeamMember((LinkableInfo) queueable, TeamRole.NORMAL));
       }
       for (TeamMember participant : participants) {
         this.getWaiting().remove(participant.getLinkInfo());
       }
       return new GuidoMatch(
               this.getGuildId(),
-              Lots.set(new GuidoMatchTeam(-2, participants, "participants")),
+              Lots.set(new SimpleMatchTeam(-2, "participants", participants)),
               new GuidoLinkedValuesMap("type", "pgm").put("ladder", ladder.getName()))
           .cache();
     }
@@ -79,7 +79,7 @@ public class GuidoPGMQueue extends GuidoQueue {
     MinecraftLinkable toPlay =
         Validate.notNull(link.toMinecraftRef(), "Does not have a linked minecraft account");
     if (toPlay.isOnline()) {
-      QueueResult join = super.join(queueable);
+      QueueResult join = super.join(toPlay.getInfo());
       if (join.isCancelled()) return join;
       Requests.Bungee.addQueue(toPlay.getUuid()).queue(bungee);
       return new QueueResult();

@@ -11,6 +11,7 @@ import me.googas.api.ValuesMap;
 import me.googas.api.loader.GroupLoader;
 import me.googas.api.permissions.Group;
 import me.googas.api.permissions.GroupInfo;
+import me.googas.api.permissions.Permission;
 import me.googas.api.permissions.PermissionStack;
 import me.googas.messaging.json.ParamName;
 import me.googas.messaging.json.Receptor;
@@ -26,7 +27,7 @@ public class GroupReceptors {
   }
 
   @Receptor(Requests.Groups.GROUP)
-  public Group getGroup(@NonNull String id) {
+  public Group getGroup(@ParamName("id") String id) {
     return this.loader.getGroup(id);
   }
 
@@ -47,10 +48,10 @@ public class GroupReceptors {
 
   @Receptor(Requests.Groups.CREATE)
   public Group create(
+      @ParamName("name") String name,
       @ParamName("weight") int weight,
       @ParamName("preferences") ValuesMap preferences,
       @ParamName("permissions") Set<PermissionStack> permissions,
-      @ParamName("name") String name,
       @ParamName("parents") List<String> parents) {
     return this.groupSupplier.create(weight, preferences, permissions, name, parents);
   }
@@ -87,6 +88,27 @@ public class GroupReceptors {
     if (group == null) return false;
     group.getPreferences().put(key, value);
     return true;
+  }
+
+  @Receptor(Requests.Groups.ADD_PERMISSION)
+  public boolean addPermission(
+      @ParamName("id") String id,
+      @ParamName("context") String context,
+      @ParamName("permission") Permission permission) {
+    Group group = this.getGroup(id);
+    if (group == null) return false;
+    return group.addPermission(
+        context, permission.getNode(), permission.isEnabled(), permission.expires());
+  }
+
+  @Receptor(Requests.Groups.REMOVE_PERMISSION)
+  public boolean addPermission(
+      @ParamName("id") String id,
+      @ParamName("context") String context,
+      @ParamName("node") String node) {
+    Group group = this.getGroup(id);
+    if (group == null) return false;
+    return group.removePermission(context, node);
   }
 
   @Receptor(Requests.Groups.PARENT)

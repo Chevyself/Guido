@@ -26,7 +26,7 @@ public class ClientTest {
     // "167.114.49.251"
     // 5Eh8QKdS7GmrE0Gs
     // localhost
-    Client client = new Client("5Eh8QKdS7GmrE0Gs", "localhost", 3000);
+    Client client = new Client("5Eh8QKdS7GmrE0Gs", "167.114.49.251", 3000);
     JsonClient connection = client.startConnection();
     Scanner scanner = new Scanner(System.in);
     while (true) {
@@ -55,6 +55,18 @@ public class ClientTest {
           Requests.Links.permission(
                   ClientTest.link, "bungee", new SimplePermission("guido.test", true, -1))
               .send(connection, ClientTest.consumer());
+        }
+
+        if (line.equalsIgnoreCase("code")) {
+          Requests.Server.linkCode(
+                  new SimpleLinkableInfo(
+                      LinkableType.MINECRAFT,
+                      new SimpleValuesMap("uuid", "3cd86a0ba63d42ecb7047da79c1ac87a")))
+              .send(connection, ClientTest.consumer());
+        }
+
+        if (line.equalsIgnoreCase("online")) {
+          Requests.Links.preference(ClientTest.link, "online", true).send(connection, ClientTest.consumer());
         }
       }
     }

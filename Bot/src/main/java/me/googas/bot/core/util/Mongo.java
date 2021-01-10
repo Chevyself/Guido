@@ -16,6 +16,8 @@ import lombok.NonNull;
 import me.googas.annotations.Nullable;
 import me.googas.api.GuidoCatchable;
 import me.googas.api.ValuesMap;
+import me.googas.api.adapters.matches.MatchTeamAdapter;
+import me.googas.api.adapters.matches.team.TeamMemberAdapter;
 import me.googas.api.adapters.permissions.PermissionAdapter;
 import me.googas.api.adapters.permissions.PermissionStackAdapter;
 import me.googas.api.links.Linkable;
@@ -34,8 +36,6 @@ import me.googas.bot.adapters.discord.BotGuildDeserializer;
 import me.googas.bot.adapters.links.LinkableDeserializer;
 import me.googas.bot.adapters.links.LinkedInfoDeserializer;
 import me.googas.bot.adapters.matches.ladder.LadderAdapter;
-import me.googas.bot.adapters.matches.team.MatchTeamAdapter;
-import me.googas.bot.adapters.matches.team.TeamMemberAdapter;
 import me.googas.bot.adapters.messages.ResponsiveMessageAdapter;
 import me.googas.bot.adapters.ranks.RankRangeAdapter;
 import me.googas.bot.api.Guido;
@@ -52,7 +52,7 @@ import org.bson.Document;
 /** Static utilities for mongo */
 public class Mongo {
 
-  @NonNull public static final Gson GSON = Mongo.constructGson(true);
+  @NonNull public static final Gson GSON = Mongo.constructGson(false);
 
   public static Gson constructGson(boolean emptyAsLatest) {
     return Mongo.builderGson(emptyAsLatest).create();
@@ -273,7 +273,7 @@ public class Mongo {
     List<T> many = new ArrayList<>(cache.getMany(clazz, predicate));
     List<T> doc = Mongo.getMany(clazz, collection, query, sort, page, size);
     for (T t : doc) {
-      if (!Mongo.contains(doc, t)) {
+      if (!Mongo.contains(many, t)) {
         many.add(t);
         if (!cache.contains(t)) t.cache();
       }

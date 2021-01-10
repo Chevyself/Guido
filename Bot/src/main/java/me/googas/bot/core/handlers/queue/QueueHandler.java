@@ -3,6 +3,7 @@ package me.googas.bot.core.handlers.queue;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
+import lombok.Getter;
 import lombok.NonNull;
 import me.googas.api.links.Linkable;
 import me.googas.api.links.LinkableInfo;
@@ -23,7 +24,7 @@ import net.dv8tion.jda.api.hooks.SubscribeEvent;
 public class QueueHandler implements GuidoHandler {
 
   /** The queues that are working right now in the handler */
-  @NonNull private final Set<Queue> queues = new HashSet<>();
+  @NonNull @Getter private final Set<Queue> queues = new HashSet<>();
 
   /**
    * Make a player join a queue from voice channel

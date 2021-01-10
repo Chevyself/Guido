@@ -4,13 +4,26 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import lombok.Getter;
 import lombok.NonNull;
 import me.googas.bot.api.DiscordLoader;
 import me.googas.bot.core.handlers.GuidoHandler;
+import me.googas.bot.core.handlers.deploy.DeployHandler;
+import me.googas.bot.core.handlers.link.LinkHandler;
+import me.googas.bot.core.handlers.matches.MatchEloCalculator;
+import me.googas.bot.core.handlers.matches.MatchMakingChannelsHandler;
+import me.googas.bot.core.handlers.matches.MatchMakingHandler;
+import me.googas.bot.core.handlers.matches.PGMMatchHandler;
+import me.googas.bot.core.handlers.queue.QueueChannelsHandler;
+import me.googas.bot.core.handlers.queue.QueueHandler;
+import me.googas.bot.core.handlers.ranks.RanksHandler;
+import me.googas.bot.core.handlers.responsive.GuidoMessagesController;
+import me.googas.bot.core.handlers.test.TestHandler;
 import me.googas.bot.core.lang.GuidoLanguageHandler;
 import me.googas.bot.core.loader.GuidoFallbackLoader;
 import me.googas.bot.core.loader.GuidoLoader;
 import me.googas.bot.core.loader.jsongo.JsongoLoader;
+import me.googas.commons.Lots;
 import me.googas.commons.ProgramArguments;
 import net.dv8tion.jda.api.JDA;
 
@@ -19,9 +32,22 @@ public class GuidoHandlerRegistry {
   /** Handlers that must be registered first */
   @NonNull private final Set<GuidoHandler> primaryHandlers = new HashSet<>();
 
-  @NonNull private final Set<GuidoHandler> defaultHandlers = new HashSet<>();
+  @NonNull
+  private final Set<GuidoHandler> defaultHandlers =
+      Lots.set(
+          new DeployHandler(),
+          new LinkHandler(),
+          new MatchEloCalculator(),
+          new MatchMakingChannelsHandler(),
+          new MatchMakingHandler(),
+          new PGMMatchHandler(),
+          new QueueChannelsHandler(),
+          new QueueHandler(),
+          new RanksHandler(),
+          new GuidoMessagesController(),
+          new TestHandler());
   /** The handlers that have been registered */
-  @NonNull private final Set<GuidoHandler> registered = new HashSet<>();
+  @NonNull @Getter private final Set<GuidoHandler> registered = new HashSet<>();
 
   /**
    * Get a handler using its class. This will loop and check if the class of the handler matches the
@@ -61,13 +87,16 @@ public class GuidoHandlerRegistry {
 
   public void register(@NonNull JDA jda) {
     for (GuidoHandler handler : this.primaryHandlers) {
-      handler.register(jda).onEnable();
-      this.registered.add(handler);
+      this.register(jda, handler);
     }
     for (GuidoHandler handler : this.defaultHandlers) {
-      handler.register(jda).onEnable();
-      this.registered.add(handler);
+      this.register(jda, handler);
     }
+  }
+
+  public void register(@NonNull JDA jda, @NonNull GuidoHandler handler) {
+    handler.register(jda).onEnable();
+    this.registered.add(handler);
   }
 
   @NonNull

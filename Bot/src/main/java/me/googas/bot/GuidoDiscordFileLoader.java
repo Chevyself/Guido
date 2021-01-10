@@ -66,18 +66,19 @@ public class GuidoDiscordFileLoader implements DiscordLoader {
                 FileReader reader = new FileReader(file);
                 GuidoGuild guild = Mongo.fromJson(reader, GuidoGuild.class);
                 reader.close();
-                if (guild != null) return guild;
+                if (guild != null) return guild.cache();
               } catch (IOException e) {
                 e.printStackTrace();
               }
               return new GuidoGuild(
-                  guildId,
-                  new HashSet<>(),
-                  new HashSet<>(),
-                  new HashMap<>(),
-                  new HashMap<>(),
-                  new HashMap<>(),
-                  new HashSet<>());
+                      guildId,
+                      new HashSet<>(),
+                      new HashSet<>(),
+                      new HashMap<>(),
+                      new HashMap<>(),
+                      new HashMap<>(),
+                      new HashSet<>())
+                  .cache();
             });
   }
 
@@ -95,11 +96,11 @@ public class GuidoDiscordFileLoader implements DiscordLoader {
                 FileReader reader = new FileReader(file);
                 GuidoRole role = Mongo.fromJson(reader, GuidoRole.class);
                 reader.close();
-                if (role != null) return role;
+                if (role != null) return role.cache();
               } catch (IOException e) {
                 e.printStackTrace();
               }
-              return new GuidoRole(roleId, new HashSet<>());
+              return new GuidoRole(roleId, new HashSet<>()).cache();
             });
   }
 

@@ -49,7 +49,7 @@ public class PermissionCommands {
             client,
             Requests.ifPresentElse(
                 stack -> {
-                  if (stack.getPermissions().isEmpty()) {
+                  if (!stack.getPermissions().isEmpty()) {
                     Pagination<Permission> pagination =
                         new Pagination<>(new ArrayList<>(stack.getPermissions()), 20);
                     int finalPage = page;

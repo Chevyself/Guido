@@ -5,6 +5,7 @@ import com.starfishst.bukkit.api.commands.GuidoCommand;
 import com.starfishst.bukkit.api.dependencies.Dependency;
 import com.starfishst.bukkit.api.events.Handler;
 import com.starfishst.bukkit.context.CommandContext;
+import com.starfishst.bukkit.dependencies.pgm.commands.MatchCommands;
 import com.starfishst.bukkit.dependencies.pgm.commands.PickCommands;
 import com.starfishst.bukkit.dependencies.pgm.commands.ReadyCommand;
 import com.starfishst.bukkit.dependencies.pgm.commands.provider.PGMHostedMatchProvider;
@@ -12,6 +13,7 @@ import com.starfishst.bukkit.dependencies.pgm.commands.provider.PGMHostedPlayerP
 import com.starfishst.bukkit.dependencies.pgm.commands.provider.PGMLeaderSenderProvider;
 import com.starfishst.bukkit.dependencies.pgm.commands.provider.PartyProvider;
 import com.starfishst.bukkit.dependencies.pgm.listeners.PGMStatsHandler;
+import com.starfishst.bukkit.dependencies.pgm.listeners.groups.PGMGroupsHandler;
 import com.starfishst.bukkit.dependencies.pgm.listeners.matches.PGMMatchMakingHandler;
 import com.starfishst.core.providers.type.IContextualProvider;
 import java.util.Collection;
@@ -43,7 +45,7 @@ public class PGMDependency implements Dependency {
 
   @Override
   public @NonNull Collection<Handler> getHandlers(@NonNull Plugin plugin) {
-    return Lots.list(new PGMStatsHandler(), new PGMMatchMakingHandler());
+    return Lots.list(new PGMGroupsHandler(), new PGMMatchMakingHandler(), new PGMStatsHandler());
   }
 
   /**
@@ -53,7 +55,7 @@ public class PGMDependency implements Dependency {
    */
   @Override
   public @NonNull Collection<GuidoCommand> getCommands() {
-    return Lots.list(new ReadyCommand(), new PickCommands());
+    return Lots.list(new MatchCommands(), new ReadyCommand(), new PickCommands());
   }
 
   /**

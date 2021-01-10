@@ -33,24 +33,23 @@ public class GroupsHandler implements Handler {
     Requests.Groups.getGroups()
         .send(
             connection,
-            optional -> {
-              optional.ifPresent(
-                  groups -> {
-                    List<Group> newGroups = Lots.list(groups);
-                    this.groups.addAll(newGroups);
-                    if (consumer != null) {
-                      consumer.accept(newGroups);
-                    }
-                    if (Guido.isPPGMConnected()) {
-                      this.PGM().addInPGM(Lots.set(groups));
-                      return;
-                    }
-                    // Registers the groups in Bukkit
-                    for (Group group : this.groups) {
-                      Bukkit.getPluginManager().addPermission(this.toPermission(group));
-                    }
-                  });
-            });
+            optional ->
+                optional.ifPresent(
+                    groups -> {
+                      List<Group> newGroups = Lots.list(groups);
+                      this.groups.addAll(newGroups);
+                      if (consumer != null) {
+                        consumer.accept(newGroups);
+                      }
+                      if (Guido.isPPGMConnected()) {
+                        this.PGM().addInPGM(Lots.set(groups));
+                        return;
+                      }
+                      // Registers the groups in Bukkit
+                      for (Group group : this.groups) {
+                        Bukkit.getPluginManager().addPermission(this.toPermission(group));
+                      }
+                    }));
   }
 
   /**

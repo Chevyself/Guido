@@ -199,10 +199,13 @@ public class LinkReceptors {
 
   @Receptor(Requests.Links.SAVE_STATS)
   public boolean saveStats(
-      @ParamName("link") LinkableInfo link, @ParamName("stats") Map<String, Float> stats) {
+      @ParamName("link") LinkableInfo link, @ParamName("stats") Map<String, Number> stats) {
     Linkable data = link.getLink();
     if (data == null) return false;
-    stats.forEach(data::increaseStat);
+    stats.forEach(
+        (key, value) -> {
+          data.increaseStat(key, value.floatValue());
+        });
     return true;
   }
 

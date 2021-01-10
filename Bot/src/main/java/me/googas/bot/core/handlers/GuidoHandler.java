@@ -23,9 +23,19 @@ public interface GuidoHandler {
 
   /** Unregisters a guido handler */
   default void unregister() {
-    // TODO remove it from jda
+    JDA jda = Guido.getConnection().getJda();
+    if (jda != null) jda.removeEventListener(this);
     Guido.getListenerManager().unregister(this);
   }
 
   default void onEnable() {}
+
+  /**
+   * Whether this handler has receptors to be registered in the server
+   *
+   * @return true if it has receptors by default it is false
+   */
+  default boolean hasReceptors() {
+    return false;
+  }
 }

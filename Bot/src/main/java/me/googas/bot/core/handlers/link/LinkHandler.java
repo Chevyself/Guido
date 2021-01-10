@@ -4,6 +4,7 @@ import java.util.HashSet;
 import java.util.Set;
 import lombok.Getter;
 import lombok.NonNull;
+import me.googas.api.Requests;
 import me.googas.api.links.Linkable;
 import me.googas.api.links.LinkableInfo;
 import me.googas.bot.api.Guido;
@@ -11,6 +12,8 @@ import me.googas.bot.core.handlers.GuidoHandler;
 import me.googas.commons.RandomUtils;
 import me.googas.commons.time.Time;
 import me.googas.commons.time.Unit;
+import me.googas.messaging.json.ParamName;
+import me.googas.messaging.json.Receptor;
 
 /** Handles linking for accounts */
 public class LinkHandler implements GuidoHandler {
@@ -111,5 +114,21 @@ public class LinkHandler implements GuidoHandler {
       this.code = code;
       this.info = info;
     }
+  }
+
+  /**
+   * Create a link code for the linked given info
+   *
+   * @param info the information of the link to link
+   * @return the link
+   */
+  @Receptor(Requests.Server.LINK_CODE)
+  public String linkCode(@ParamName("link") LinkableInfo info) {
+    return Guido.getHandlers().getHandler(LinkHandler.class).createCode(info);
+  }
+
+  @Override
+  public boolean hasReceptors() {
+    return true;
   }
 }

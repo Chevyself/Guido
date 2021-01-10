@@ -15,7 +15,7 @@ public class GuidoLadder implements Ladder {
   // At the moment the id of the guild must be hard coded
   @NonNull
   public static MatchReceptors.LadderSupplier SUPPLIER =
-      name -> Guido.getHandlers().getDiscordLoader().getGuild(755269005316456490L).getLadder(name);
+      name -> Guido.getHandlers().getDiscordLoader().getGuild(718281601112604675L).getLadder(name);
 
   @NonNull private final String name;
   private final int playersPerTeam;

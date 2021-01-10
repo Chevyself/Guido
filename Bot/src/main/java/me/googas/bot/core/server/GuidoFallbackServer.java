@@ -8,6 +8,7 @@ import java.util.Set;
 import java.util.function.BiConsumer;
 import lombok.NonNull;
 import me.googas.api.server.GuidoAuthenticator;
+import me.googas.bot.GuidoHandlerRegistry;
 import me.googas.bot.api.server.BotServer;
 import me.googas.messaging.Request;
 import me.googas.messaging.api.Messenger;
@@ -15,6 +16,11 @@ import org.jetbrains.annotations.NotNull;
 
 /** A fallback server in case {@link GuidoServer does not work} */
 public class GuidoFallbackServer implements BotServer {
+
+  @Override
+  public @NonNull BotServer registerHandlers(@NonNull GuidoHandlerRegistry registry) {
+    return this;
+  }
 
   @Override
   public @NonNull GuidoAuthenticator getAuthenticator() {

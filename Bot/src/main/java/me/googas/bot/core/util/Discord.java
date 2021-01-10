@@ -209,13 +209,14 @@ public class Discord {
                 .getLink(LinkableType.DISCORD, new GuidoValuesMap("id", id)),
             () ->
                 new GuidoLinkable(
-                    LinkableType.DISCORD,
-                    new GuidoValuesMap(),
-                    new GuidoUser(new GuidoValuesMap()).getId(),
-                    new GuidoValuesMap("id", id),
-                    new GuidoValuesMap(),
-                    new HashMap<>(),
-                    new HashSet<>()));
+                        LinkableType.DISCORD,
+                        new GuidoValuesMap(),
+                        new GuidoUser(new GuidoValuesMap()).cache().getId(),
+                        new GuidoValuesMap("id", id),
+                        new GuidoValuesMap(),
+                        new HashMap<>(),
+                        new HashSet<>())
+                    .cache());
     if (linkable != null) return linkable.requireDiscordRef();
     throw new IllegalStateException("Could not get linkable for user " + id);
   }

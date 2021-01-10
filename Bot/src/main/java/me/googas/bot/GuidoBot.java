@@ -101,7 +101,7 @@ public class GuidoBot {
     bot.setCommandManager(
         new GuidoCommandManager(jda, arguments, bot.getHandlerRegistry()).register());
     BotServer server = GuidoBot.createServer(arguments, bot);
-    if (server != null) bot.setServer(server);
+    if (server != null) bot.setServer(server.registerHandlers(bot.getHandlerRegistry()));
     GuidoBot.log.info("Bot is ready to use");
   }
 
@@ -117,6 +117,7 @@ public class GuidoBot {
       long timeout = Long.parseLong(args.getProperty("timeout", "3000"));
       BotServer server = new GuidoServer(port, timeout, bot.getHandlerRegistry().getLoader());
       server.start();
+      return server;
     } catch (IOException | NumberFormatException e) {
       e.printStackTrace();
     }

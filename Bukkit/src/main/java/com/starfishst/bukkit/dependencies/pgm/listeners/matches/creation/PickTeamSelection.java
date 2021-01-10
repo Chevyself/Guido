@@ -29,6 +29,7 @@ import me.googas.commons.RandomUtils;
 import me.googas.commons.UUIDUtils;
 import me.googas.commons.builder.Builder;
 import me.googas.commons.maps.Maps;
+import me.googas.commons.scheduler.Countdown;
 import me.googas.commons.time.Time;
 import me.googas.commons.time.Unit;
 import me.googas.messaging.json.client.JsonClient;
@@ -36,7 +37,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import tc.oc.pgm.api.match.Match;
 import tc.oc.pgm.api.party.Party;
-import tc.oc.pgm.api.player.MatchPlayer;
 import tc.oc.pgm.start.StartMatchModule;
 import tc.oc.pgm.teams.Team;
 
@@ -54,6 +54,9 @@ public class PickTeamSelection implements TeamCreation {
 
   /** The uuid of the leader that is currently picking */
   @NonNull private final Map<String, UUID> currently = new HashMap<>();
+
+  @NonNull private final Map<UUID, Countdown> tasks = new HashMap<>();
+
   /**
    * Get the appropriated team name
    *
@@ -158,6 +161,12 @@ public class PickTeamSelection implements TeamCreation {
       @NonNull String matchId, @NonNull TeamMember captain, @NonNull HostedPlayer hosted) {
     SelectingTeam selecting = this.getSelecting(matchId, captain);
     if (selecting != null && this.isPicking(matchId, captain)) {
+      UUID uuid = this.getUuid(captain.getLinkInfo());
+      Countdown countdown = this.tasks.get(uuid);
+      if (countdown != null) {
+        countdown.cancel();
+        this.tasks.remove(uuid);
+      }
       SimpleTeamMember teamMember = new SimpleTeamMember(hosted.toLink(), TeamRole.NORMAL);
       selecting.getMembers().add(teamMember);
       Team party = selecting.getParty();
@@ -173,13 +182,6 @@ public class PickTeamSelection implements TeamCreation {
       if (!this.isPicking(matchId, captain)) {
         throw new IllegalArgumentException(captain + " is not currently picking");
       }
-    }
-  }
-
-  public void setParty(@NonNull HostedPlayer hosted, Team party, Match match) {
-    MatchPlayer player = match.getPlayer(hosted.getUniqueId());
-    if (player != null) {
-      match.setParty(player, party);
     }
   }
 
@@ -336,43 +338,42 @@ public class PickTeamSelection implements TeamCreation {
   @NonNull
   public List<String> getParticipantsNames(@NonNull String matchId) {
     List<String> names = new ArrayList<>();
-    for (HostedPlayer linkableInfo : this.getPlayersLeft(matchId)) {
-      String nickname =
-          linkableInfo
-              .getIdentification()
-              .get("nickname", String.class); // Nickname is no longer supplied
-      if (nickname != null) {
-        names.add(nickname);
-      }
+    for (HostedPlayer player : this.getPlayersLeft(matchId)) {
+      String nickname = player.getNickname();
+      names.add(nickname);
     }
     return names;
   }
 
   public void nextLeaderTask(@NonNull String id, @NonNull TeamMember leader) {
-    this.currently.put(id, this.getUuid(leader.getLinkInfo()));
-    Guido.getScheduler()
-        .countdown(
-            PickTeamSelection.timeToPick,
-            (left) -> {
-              if (!this.isPicking(id, leader)) return;
-              long secondsLeft = left.getValue(Unit.SECONDS);
-              if (secondsLeft <= 10 || secondsLeft % 5 == 0) {
-                Player player = this.getPlayer(leader.getLinkInfo());
-                if (player != null) {
-                  BukkitLocaleFile locale = Guido.getLanguageHandler().getFile(player);
-                  player.sendMessage(
-                      locale.get(
-                          "match-making.pick.time-left",
-                          Maps.builder(
-                                  "time", new Time(secondsLeft, Unit.SECONDS).toEffectiveString())
-                              .append("picks", Lots.pretty(this.getParticipantsNames(id)))));
-                }
-              }
-            },
-            () -> {
-              if (!this.isPicking(id, leader)) return;
-              this.pick(id, leader, RandomUtils.getRandom(this.getPlayersLeft(id)));
-            });
+    UUID uuid = this.getUuid(leader.getLinkInfo());
+    this.currently.put(id, uuid);
+    Countdown countdown =
+        Guido.getScheduler()
+            .countdown(
+                PickTeamSelection.timeToPick,
+                (left) -> {
+                  if (!this.isPicking(id, leader)) return;
+                  long secondsLeft = left.getValue(Unit.SECONDS);
+                  if (secondsLeft <= 10 || secondsLeft % 5 == 0) {
+                    Player player = this.getPlayer(leader.getLinkInfo());
+                    if (player != null) {
+                      BukkitLocaleFile locale = Guido.getLanguageHandler().getFile(player);
+                      player.sendMessage(
+                          locale.get(
+                              "match-making.pick.time-left",
+                              Maps.builder(
+                                      "time",
+                                      new Time(secondsLeft, Unit.SECONDS).toEffectiveString())
+                                  .append("picks", Lots.pretty(this.getParticipantsNames(id)))));
+                    }
+                  }
+                },
+                () -> {
+                  if (!this.isPicking(id, leader)) return;
+                  this.pick(id, leader, RandomUtils.getRandom(this.getPlayersLeft(id)));
+                });
+    this.tasks.put(uuid, countdown);
   }
 
   /** Clears the team creator */

@@ -11,11 +11,11 @@ import me.googas.messaging.json.Receptor;
 import me.googas.messaging.json.server.JsonClientThread;
 
 /** Receptors redirected to the bungee client */
-public class BungeeRedirect {
+public class BungeeRedirectReceptors {
 
   @NonNull private final GuidoAuthenticator authenticator;
 
-  public BungeeRedirect(@NonNull GuidoAuthenticator authenticator) {
+  public BungeeRedirectReceptors(@NonNull GuidoAuthenticator authenticator) {
     this.authenticator = authenticator;
   }
 

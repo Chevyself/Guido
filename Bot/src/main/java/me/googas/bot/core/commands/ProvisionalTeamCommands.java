@@ -9,6 +9,7 @@ import com.starfishst.jda.result.Result;
 import com.starfishst.jda.result.ResultType;
 import java.util.HashSet;
 import java.util.Set;
+import me.googas.api.client.data.matches.team.SimpleTeamMember;
 import me.googas.api.links.Linkable;
 import me.googas.api.links.LinkableType;
 import me.googas.api.matches.team.Team;
@@ -17,7 +18,6 @@ import me.googas.api.matches.team.TeamRole;
 import me.googas.bot.api.Guido;
 import me.googas.bot.core.GuidoValuesMap;
 import me.googas.bot.core.matches.team.GuidoTeam;
-import me.googas.bot.core.matches.team.GuidoTeamMember;
 import me.googas.commons.Lots;
 import me.googas.commons.Strings;
 
@@ -67,13 +67,13 @@ public class ProvisionalTeamCommands {
               .getLink(LinkableType.MINECRAFT, new GuidoValuesMap("uuid", trimmed));
       if (player != null) {
         if (members.isEmpty()) {
-          members.add(new GuidoTeamMember(player.getInfo(), TeamRole.LEADER));
+          members.add(new SimpleTeamMember(player.getInfo(), TeamRole.LEADER));
         } else {
           if (player.getTeam() != null) {
             hasTeam.add(player.getSingle());
             continue;
           }
-          members.add(new GuidoTeamMember(player.getInfo(), TeamRole.NORMAL));
+          members.add(new SimpleTeamMember(player.getInfo(), TeamRole.NORMAL));
         }
       } else {
         notJoined.add(trimmed);
@@ -102,7 +102,7 @@ public class ProvisionalTeamCommands {
     if (player == null) return new Result(ResultType.ERROR, trimmed + " hasn't joined googas yet");
     if (player.getTeam() != null)
       return new Result(ResultType.ERROR, player.getSingle() + " is already on a team");
-    team.add(new GuidoTeamMember(player.getInfo(), TeamRole.NORMAL));
+    team.add(new SimpleTeamMember(player.getInfo(), TeamRole.NORMAL));
     return new Result(player.getSingle() + " has joined " + team.getName());
   }
 
@@ -123,7 +123,7 @@ public class ProvisionalTeamCommands {
       return new Result(ResultType.ERROR, player.getSingle() + " is not on a team");
     if (!team.contains(player))
       return new Result(ResultType.ERROR, player.getSingle() + " is not on " + team.getName());
-    team.remove(new GuidoTeamMember(player.getInfo(), TeamRole.NORMAL));
+    team.remove(new SimpleTeamMember(player.getInfo(), TeamRole.NORMAL));
     return new Result(player.getSingle() + " has left " + team.getName());
   }
 

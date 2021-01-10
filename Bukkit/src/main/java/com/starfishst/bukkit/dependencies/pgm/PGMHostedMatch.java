@@ -15,6 +15,7 @@ import me.googas.api.ValuesMap;
 import me.googas.api.client.Links;
 import me.googas.api.matches.MatchTeam;
 import me.googas.api.matches.team.TeamMember;
+import me.googas.commons.builder.ToStringBuilder;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import tc.oc.pgm.api.PGM;
@@ -115,5 +116,14 @@ public class PGMHostedMatch extends HostedMatch {
 
   public void setMap(@NonNull MapInfo info) {
     // TODO
+  }
+
+  @Override
+  public String toString() {
+    return new ToStringBuilder(this)
+        .append("teams", this.teams)
+        .append("map", this.map)
+        .append("pgm", this.pgm)
+        .build();
   }
 }

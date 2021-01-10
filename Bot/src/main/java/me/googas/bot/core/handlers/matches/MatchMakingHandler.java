@@ -4,6 +4,7 @@ import com.starfishst.jda.utils.embeds.EmbedQuery;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import lombok.NonNull;
 import me.googas.api.Requests;
@@ -26,6 +27,7 @@ import me.googas.bot.core.handlers.queue.QueueHandler;
 import me.googas.bot.core.loader.GuidoLoader;
 import me.googas.bot.core.util.Discord;
 import me.googas.bot.core.util.Matches;
+import me.googas.commons.Lots;
 import me.googas.commons.events.ListenPriority;
 import me.googas.commons.events.Listener;
 import me.googas.commons.maps.Maps;
@@ -40,7 +42,12 @@ import net.dv8tion.jda.api.entities.VoiceChannel;
 // TODO this class and QueueHandler must separate its channel handlers to a different class
 public class MatchMakingHandler implements GuidoHandler {
 
-  // TODO move channel creation to MatchMakingChannelsHandler
+  /**
+   * @see #onMatchStatusUpdatedEvent(MatchStatusUpdatedEvent)
+   */
+  @NonNull
+  private final static Set<MatchStatus> announce = Lots.set(MatchStatus.STARTING, MatchStatus.FINISHED);
+
   /**
    * Listen to when a match ends to announce it
    *
@@ -48,6 +55,7 @@ public class MatchMakingHandler implements GuidoHandler {
    */
   @Listener(priority = ListenPriority.HIGHEST)
   public void onMatchStatusUpdatedEvent(@NonNull MatchStatusUpdatedEvent event) {
+    if (!MatchMakingHandler.announce.contains(event.getStatus())) return;
     Match match = event.getMatch();
     BotGuild guildData = Guido.getHandlers().getDiscordLoader().getGuild(match.getGuildId());
     TextChannel channel = guildData.getTextChannel("matches");
@@ -235,5 +243,7 @@ public class MatchMakingHandler implements GuidoHandler {
   }
 
   @Override
-  public void onDisable() {}
+  public boolean hasReceptors() {
+    return true;
+  }
 }

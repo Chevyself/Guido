@@ -8,6 +8,7 @@ import com.starfishst.jda.result.ResultType;
 import java.util.Collection;
 import me.googas.api.lang.LocaleFile;
 import me.googas.api.matches.ladder.Ladder;
+import me.googas.api.matches.queue.Queue;
 import me.googas.api.matches.queue.QueueResult;
 import me.googas.api.matches.queue.Queueable;
 import me.googas.api.user.UserData;
@@ -61,6 +62,14 @@ public class QueueCommands {
           return new Result(locale.get("queue.success"));
         }
       }
+    }
+  }
+
+  @Command(aliases = "queues", node = "guido.queues")
+  public void queues() {
+    // TODO make this command
+    for (Queue queue : Guido.getHandlers().getHandler(QueueHandler.class).getQueues()) {
+      System.out.println(queue);
     }
   }
 

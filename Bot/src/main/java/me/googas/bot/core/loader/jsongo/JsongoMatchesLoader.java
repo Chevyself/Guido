@@ -56,7 +56,7 @@ public class JsongoMatchesLoader extends SimpleJsongoLoader implements MatchLoad
         Mongo.getMany(
             GuidoMatch.class,
             this.matches(),
-            new Document("status", new Document("$in", Enums.getNames(status)))
+            new Document("status", new Document("$in", Enums.getNames(statuses)))
                 .append(
                     "teams",
                     new Document(

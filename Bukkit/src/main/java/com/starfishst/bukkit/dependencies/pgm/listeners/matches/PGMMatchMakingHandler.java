@@ -15,10 +15,14 @@ import com.starfishst.bukkit.utils.BukkitUtils;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.UUID;
 import java.util.concurrent.ExecutionException;
+import lombok.Getter;
 import lombok.NonNull;
 import me.googas.annotations.Nullable;
 import me.googas.api.Requests;
@@ -41,6 +45,8 @@ import tc.oc.pgm.api.match.Match;
 import tc.oc.pgm.api.match.MatchPhase;
 import tc.oc.pgm.api.match.event.MatchFinishEvent;
 import tc.oc.pgm.api.party.Competitor;
+import tc.oc.pgm.api.party.Party;
+import tc.oc.pgm.api.player.MatchPlayer;
 import tc.oc.pgm.api.player.event.MatchPlayerAddEvent;
 import tc.oc.pgm.events.PlayerParticipationStartEvent;
 import tc.oc.pgm.restart.RestartManager;
@@ -61,7 +67,13 @@ public class PGMMatchMakingHandler implements Handler {
           .build();
 
   /** The list of matches hosted by the server */
-  @NonNull private final List<PGMHostedMatch> matches = new ArrayList<>();
+  @NonNull @Getter private final List<PGMHostedMatch> matches = new ArrayList<>();
+
+  /**
+   * The set of uuids of players to ignore in {@link
+   * #onParticipationStart(PlayerParticipationStartEvent)}
+   */
+  @NonNull private final Set<UUID> ignore = new HashSet<>();
 
   /**
    * Checks whether this match maker can host a match
@@ -76,23 +88,26 @@ public class PGMMatchMakingHandler implements Handler {
     String ladderName = match.getDetails().get("ladder", String.class);
     Match pgmMatch = this.getCurrentPgm();
     JsonClient connection = Guido.getClient().getConnection();
-    if (!this.check(type, pgmMatch) || connection == null) return false;
-    try {
-      Ladder ladder = Requests.Matches.getLadder(ladderName).send(connection);
-      if (ladder == null) return false;
-      return !this.getSuitableMaps(ladder).isEmpty();
-    } catch (MessengerListenFailException e) {
-      e.printStackTrace();
-      return false;
+    if (this.check(type, pgmMatch) && connection != null) {
+      try {
+        Ladder ladder = Requests.Matches.getLadder(ladderName).send(connection);
+        if (ladder == null) return false;
+        return !this.getSuitableMaps(ladder).isEmpty();
+      } catch (MessengerListenFailException e) {
+        e.printStackTrace();
+      }
     }
+    return false;
   }
 
   public boolean check(@Nullable String type, @Nullable Match pgmMatch) {
-    return (type != null && type.equalsIgnoreCase("pgm"))
-        || PGM.get().isEnabled()
-        || !RestartManager.isQueued()
-        || ((pgmMatch == null || pgmMatch.getPhase() == MatchPhase.FINISHED)
-            && (pgmMatch == null || !this.isMatch(pgmMatch)));
+    return type != null
+        && type.equalsIgnoreCase("pgm")
+        && PGM.get().isEnabled()
+        && !RestartManager.isQueued()
+        && (pgmMatch == null
+            || pgmMatch.getPhase() == MatchPhase.FINISHED
+            || !this.isMatch(pgmMatch));
   }
 
   /**
@@ -154,7 +169,11 @@ public class PGMMatchMakingHandler implements Handler {
               match.getId(),
               HostedPlayer.parse(match.getParticipants()),
               ladderName,
-              match.getDetails(),
+              match
+                  .getDetails()
+                  .put(
+                      "team-selection",
+                      ladder.getOptions().getOr("team-selection", String.class, "random")),
               random,
               loaded.getId());
       this.matches.add(hostedMatch);
@@ -163,9 +182,9 @@ public class PGMMatchMakingHandler implements Handler {
       Tasks.sync(() -> this.getTeamCreation(hostedMatch).createTeams(this, hostedMatch, loaded));
       return ServerUtil.getIp();
     } catch (MessengerListenFailException
-        | InterruptedException
+        | IOException
         | ExecutionException
-        | IOException e) {
+        | InterruptedException e) {
       e.printStackTrace();
     }
     return null;
@@ -173,8 +192,11 @@ public class PGMMatchMakingHandler implements Handler {
 
   @NonNull
   public TeamCreation getTeamCreation(PGMHostedMatch hostedMatch) {
-    return this.creator.get(
-        hostedMatch.getDetails().getOr("team-selection", String.class, "random"));
+    for (String key : this.creator.keySet()) {
+      String teamSelection = hostedMatch.getDetails().get("team-selection", String.class);
+      if (key.equalsIgnoreCase(teamSelection)) return this.creator.get(key);
+    }
+    return this.creator.get("random");
   }
 
   /**
@@ -209,6 +231,7 @@ public class PGMMatchMakingHandler implements Handler {
    *
    * @param sender the sender to get the match
    */
+  @Nullable
   public PGMHostedMatch getMatch(@NonNull CommandSender sender) {
     for (PGMHostedMatch match : this.matches) {
       if (match.isParticipating(sender)) return match;
@@ -233,6 +256,7 @@ public class PGMMatchMakingHandler implements Handler {
   @EventHandler(priority = EventPriority.LOWEST)
   public void onMatchPlayerAdded(MatchPlayerAddEvent event) {
     PGMHostedMatch match = this.getMatch(event.getPlayer().getBukkit());
+    if (match == null) return;
     Team team = match.getParty(event.getPlayer().getId());
     if (team != null) {
       event.setInitialParty(team);
@@ -242,7 +266,7 @@ public class PGMMatchMakingHandler implements Handler {
   @EventHandler
   public void onParticipationStart(PlayerParticipationStartEvent event) {
     PGMHostedMatch match = this.getMatchByPgm(event.getMatch().getId());
-    if (match == null) return;
+    if (match == null || this.ignore.contains(event.getPlayer().getId())) return;
     Team party = match.getParty(event.getPlayer().getId());
     if (party == null || !party.equals(event.getCompetitor())) {
       event.setCancelled(true);
@@ -320,6 +344,12 @@ public class PGMMatchMakingHandler implements Handler {
       if (match.getPgm().equals(pgmId)) return match;
     }
     return null;
+  }
+
+  public void add(@NonNull Match match, @NonNull Party team, @NonNull MatchPlayer player) {
+    this.ignore.add(player.getId());
+    match.setParty(player, team);
+    this.ignore.remove(player.getId());
   }
 
   /**

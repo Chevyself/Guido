@@ -11,10 +11,9 @@ import lombok.CustomLog;
 import lombok.NonNull;
 import me.googas.api.lang.LocaleFile;
 import me.googas.api.lang.Localized;
-import me.googas.api.links.LinkableType;
 import me.googas.api.loader.Loader;
-import me.googas.bot.core.GuidoValuesMap;
 import me.googas.bot.core.handlers.GuidoHandler;
+import me.googas.bot.core.util.Discord;
 import me.googas.commons.CoreFiles;
 import me.googas.commons.maps.Maps;
 import me.googas.commons.time.Time;
@@ -119,11 +118,7 @@ public class GuidoLanguageHandler implements MessagesProvider, GuidoHandler {
    */
   @NonNull
   public String getLang(@NonNull CommandContext context) {
-    return this.loader
-        .getLinks()
-        .getLink(LinkableType.DISCORD, new GuidoValuesMap("id", context.getSender().getIdLong()))
-        .getPreferences()
-        .getOr("lang", String.class, "en");
+    return Discord.getUser(context.getSender()).getPreferences().getOr("lang", String.class, "en");
   }
 
   @NonNull

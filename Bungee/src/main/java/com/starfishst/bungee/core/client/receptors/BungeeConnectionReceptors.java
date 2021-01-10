@@ -35,13 +35,17 @@ public class BungeeConnectionReceptors {
 
   @Receptor(Requests.Bungee.SEND_SERVER_IP)
   public boolean sendToServerByIp(
-      @ParamName("uuids") List<UUID> uuids, @ParamName("server") String ip) {
+      @ParamName("uuids") List<String> strings, @ParamName("server") String ip) {
     ServerInfo server = Proxy.getServer(ip);
-    if (server == null || uuids.isEmpty()) return false;
-    for (UUID uuid : uuids) {
-      ProxiedPlayer player = ProxyServer.getInstance().getPlayer(uuid);
-      if (player != null) {
-        this.connect(server, player);
+    if (server == null || strings.isEmpty()) return false;
+    for (String string : strings) {
+      try {
+        ProxiedPlayer player = ProxyServer.getInstance().getPlayer(UUID.fromString(string));
+        if (player != null) {
+          this.connect(server, player);
+        }
+      } catch (IllegalArgumentException ignored) {
+
       }
     }
     return true;

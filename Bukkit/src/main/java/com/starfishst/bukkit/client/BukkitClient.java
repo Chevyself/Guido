@@ -12,15 +12,20 @@ import me.googas.messaging.json.client.JsonClient;
 /** Extension for client */
 public class BukkitClient extends Client {
 
+  /** Whether the task is registered */
+  private boolean task = false;
+
   public BukkitClient(@NonNull String token, @NonNull String ip, int port) {
     super(token, ip, port);
   }
 
   @Override
   public @NonNull JsonClient startConnection() throws IOException {
-    new BukkitHeartBeatTimerTask(this)
-        .runTaskTimer(
-            Guido.validated(), 20, new Time(30, Unit.SECONDS).getValue(Unit.MINECRAFT_TICKS));
+    if (!this.task) {
+      Time time = new Time(30, Unit.SECONDS);
+      Guido.getScheduler().repeat(time, time, new BukkitHeartBeatTimerTask(this));
+      this.task = true;
+    }
     return super.startConnection();
   }
 
