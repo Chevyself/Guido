@@ -18,6 +18,7 @@ import me.googas.api.links.LinkableType;
 import me.googas.api.matches.team.Team;
 import me.googas.api.permissions.PermissionStack;
 import me.googas.api.user.UserData;
+import me.googas.commons.builder.ToStringBuilder;
 import me.googas.commons.time.Time;
 import me.googas.commons.time.Unit;
 
@@ -145,5 +146,18 @@ public class SimpleLinkable implements Linkable {
   @Override
   public UserData getLinkedUser() {
     throw new UnsupportedOperationException("Operation must be done using request");
+  }
+
+  @Override
+  public String toString() {
+    return new ToStringBuilder(this)
+        .append("type", this.type)
+        .append("identification", this.identification)
+        .append("recognition", this.recognition)
+        .append("preferences", this.preferences)
+        .append("stats", this.stats)
+        .append("permissions", this.permissions)
+        .append("user", this.user)
+        .build();
   }
 }

@@ -262,7 +262,7 @@ public class Requests {
         @NonNull LinkableType type, @NonNull ValuesMap recognition) {
       return new RequestBuilder<>(Linkable.class, Links.RECOGNITION)
           .put("type", type)
-          .put("identification", recognition);
+          .put("recognition", recognition);
     }
 
     @NonNull

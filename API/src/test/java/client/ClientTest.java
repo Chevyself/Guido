@@ -69,6 +69,12 @@ public class ClientTest {
           Requests.Links.preference(ClientTest.link, "online", true)
               .send(connection, ClientTest.consumer());
         }
+
+        if (line.equalsIgnoreCase("recog")) {
+          Requests.Links.getLinkByRecognition(
+                  LinkableType.MINECRAFT, new SimpleValuesMap("nickname", "Duarzo"))
+              .send(connection, ClientTest.consumer());
+        }
       }
     }
   }
