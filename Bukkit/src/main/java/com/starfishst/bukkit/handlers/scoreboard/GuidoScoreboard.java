@@ -1,15 +1,18 @@
 package com.starfishst.bukkit.handlers.scoreboard;
 
 import com.starfishst.bukkit.utils.BukkitUtils;
+
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.Setter;
 import me.googas.annotations.Nullable;
-import me.googas.commons.Strings;
+import me.googas.commons.maps.Maps;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
@@ -24,6 +27,15 @@ import org.bukkit.scoreboard.Team;
  */
 public class GuidoScoreboard {
 
+  @NonNull
+  private static final Map<Integer, String> characters =
+          Maps.builder(10, "a")
+                  .append(11, "b")
+                  .append(12, "c")
+                  .append(13, "d")
+                  .append(14, "e")
+                  .append(15, "f")
+          .build();
   /** The owner of the custom scoreboard */
   @NonNull @Getter private final UUID player;
 
@@ -68,11 +80,11 @@ public class GuidoScoreboard {
    */
   @NonNull
   public static String getEntryName(int position) {
-    StringBuilder builder = Strings.getBuilder();
-    for (int i = 0; i < position; i++) {
-      builder.insert(0, "&c");
+    if (position > 9) {
+      return BukkitUtils.build("&" + position + "&r");
+    } else {
+      return BukkitUtils.build("&" + GuidoScoreboard.characters.get(position) + "&r");
     }
-    return BukkitUtils.build(builder.toString());
   }
 
   @NonNull
@@ -87,6 +99,18 @@ public class GuidoScoreboard {
     return this;
   }
 
+  @NonNull
+  public static List<String> divide(@NonNull String string, int length) {
+    List<String> split = new ArrayList<>();
+    while (string.length() > length) {
+      String substring = string.substring(0, 16);
+      string = string.substring(length);
+      split.add(substring);
+    }
+    if (!string.isEmpty()) split.add(string);
+    return split;
+  }
+
   /**
    * Adds a new line to the scoreboard
    *
@@ -95,17 +119,31 @@ public class GuidoScoreboard {
    */
   @NonNull
   private Team newLine(@NonNull Line line) {
-    Team team = this.getLine(line.getPosition());
+    Team team = this.getLineTeam(line.getPosition());
     String entryName = GuidoScoreboard.getEntryName(line.getPosition());
     if (team == null) {
       team = this.scoreboard.registerNewTeam("line_" + line.getPosition());
       team.addEntry(entryName);
     }
-    team.setPrefix(line.build(this.bukkitOfflinePlayer()));
+    String build = line.build(this.bukkitOfflinePlayer());
+    List<String> divide = GuidoScoreboard.divide(build, 16);
+    for (int i = 0; i < divide.size(); i++) {
+      String string = divide.get(i);
+      switch (i) {
+        case 0:
+          team.setPrefix(string);
+          break;
+        case 1:
+          team.setDisplayName(string);
+          break;
+        case 2:
+          team.setSuffix(string);
+      }
+    }
+    team.setPrefix(build);
     this.objective.getScore(entryName).setScore(line.getPosition());
     return team;
   }
-
   /**
    * Gets the line in a position
    *
@@ -113,13 +151,26 @@ public class GuidoScoreboard {
    * @return a minecraft team representing a line if it exist in the position
    */
   @Nullable
-  private Team getLine(int position) {
+  private Team getLineTeam(int position) {
     return this.scoreboard.getTeam("line_" + position);
+  }
+
+  @Nullable
+  private Line getLine(int position) {
+    for (Line line : this.layout) {
+      if (line.getPosition() == position) return line;
+    }
+    return null;
   }
 
   /** Updates the scoreboard */
   public void update() {
     this.layout.forEach(this::newLine);
+  }
+
+  public void update(int position) {
+    Line line = this.getLine(position);
+    if (line != null) this.newLine(line);
   }
 
   /** Destroys this scoreboard */

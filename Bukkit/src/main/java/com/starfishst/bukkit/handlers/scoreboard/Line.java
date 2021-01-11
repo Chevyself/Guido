@@ -65,8 +65,7 @@ public class Line {
    */
   @NotNull
   public String build(@NotNull OfflinePlayer player) {
-    String built = this.placeholders().build(player, this.raw);
-    return built.length() > 16 ? built.substring(0, 16) : built;
+    return this.placeholders().build(player, this.raw);
   }
 
   @NonNull

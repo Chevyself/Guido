@@ -42,11 +42,10 @@ import net.dv8tion.jda.api.entities.VoiceChannel;
 // TODO this class and QueueHandler must separate its channel handlers to a different class
 public class MatchMakingHandler implements GuidoHandler {
 
-  /**
-   * @see #onMatchStatusUpdatedEvent(MatchStatusUpdatedEvent)
-   */
+  /** @see #onMatchStatusUpdatedEvent(MatchStatusUpdatedEvent) */
   @NonNull
-  private final static Set<MatchStatus> announce = Lots.set(MatchStatus.STARTING, MatchStatus.FINISHED);
+  private static final Set<MatchStatus> announce =
+      Lots.set(MatchStatus.STARTING, MatchStatus.FINISHED);
 
   /**
    * Listen to when a match ends to announce it

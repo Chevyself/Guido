@@ -19,9 +19,7 @@ public class LocalizedLine extends Line {
 
   @Override
   public @NotNull String build(@NotNull OfflinePlayer player) {
-    String built =
-        this.placeholders()
+    return this.placeholders()
             .build(player, Guido.getLanguageHandler().getFile(player).get(this.getRaw()));
-    return built.length() > 16 ? built.substring(0, 16) : built;
   }
 }

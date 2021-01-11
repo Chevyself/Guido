@@ -66,7 +66,8 @@ public class ClientTest {
         }
 
         if (line.equalsIgnoreCase("online")) {
-          Requests.Links.preference(ClientTest.link, "online", true).send(connection, ClientTest.consumer());
+          Requests.Links.preference(ClientTest.link, "online", true)
+              .send(connection, ClientTest.consumer());
         }
       }
     }
