@@ -23,6 +23,7 @@ import me.googas.bot.core.matches.GuidoMatch;
 import me.googas.bot.core.util.Lang;
 import me.googas.commons.Lots;
 import me.googas.commons.Validate;
+import me.googas.messaging.api.MessengerListenFailException;
 import me.googas.messaging.json.server.JsonClientThread;
 
 /** A queue that uses pgm */
@@ -78,13 +79,17 @@ public class GuidoPGMQueue extends GuidoQueue {
     if (link == null) return new QueueResult(locale.get("pgm-queue.link-first"));
     MinecraftLinkable toPlay =
         Validate.notNull(link.toMinecraftRef(), "Does not have a linked minecraft account");
-    if (toPlay.isOnline()) {
-      QueueResult join = super.join(toPlay.getInfo());
-      if (join.isCancelled()) return join;
-      Requests.Bungee.addQueue(toPlay.getUuid()).queue(bungee);
-      return new QueueResult();
-    } else {
-      return new QueueResult(locale.get("pgm-queue.join-server"));
+    try {
+      if (Validate.notNullOr(Requests.Bungee.isOnline(toPlay.getUuid()).send(bungee), false)) {
+        QueueResult join = super.join(toPlay.getInfo());
+        if (join.isCancelled()) return join;
+        Requests.Bungee.addQueue(toPlay.getUuid()).queue(bungee);
+        return new QueueResult();
+      } else {
+        return new QueueResult(locale.get("pgm-queue.join-server"));
+      }
+    } catch (MessengerListenFailException e) {
+      return new QueueResult(locale.get("pgm-queue.no-bungee"));
     }
   }
 

@@ -6,7 +6,9 @@ import com.starfishst.jda.providers.type.JdaArgumentProvider;
 import lombok.NonNull;
 import me.googas.api.links.Linkable;
 import me.googas.api.links.LinkableType;
+import me.googas.api.links.ref.DiscordLinkable;
 import me.googas.api.links.ref.MinecraftLinkable;
+import me.googas.api.user.UserData;
 import me.googas.bot.api.Guido;
 import me.googas.bot.core.GuidoValuesMap;
 import me.googas.bot.core.loader.GuidoLoader;
@@ -21,8 +23,8 @@ public class MinecraftLinkableProvider implements JdaArgumentProvider<MinecraftL
   }
 
   @Override
-  public @NonNull MinecraftLinkable fromString(
-      @NonNull String s, @NonNull CommandContext commandContext) throws ArgumentProviderException {
+  public @NonNull MinecraftLinkable fromString(@NonNull String s, @NonNull CommandContext context)
+      throws ArgumentProviderException {
     GuidoLoader loader = Guido.getHandlers().getLoader();
     Linkable linkable =
         loader
@@ -34,6 +36,17 @@ public class MinecraftLinkableProvider implements JdaArgumentProvider<MinecraftL
     }
     linkable = loader.getLinks().getLink(LinkableType.MINECRAFT, new GuidoValuesMap("uuid", s));
     if (linkable != null) return new MinecraftLinkable(linkable);
-    throw Lang.getException("invalid.minecraft", Maps.singleton("string", s), commandContext);
+    try {
+      DiscordLinkable discord = context.get(s, DiscordLinkable.class, context);
+      if (discord != null) {
+        UserData user = discord.getLinkedUser();
+        if (user != null) {
+          Linkable link = user.getLink(LinkableType.MINECRAFT);
+          if (link != null) return link.requireMinecraftRef();
+        }
+      }
+    } catch (ArgumentProviderException ignored) {
+    }
+    throw Lang.getException("invalid.minecraft", Maps.singleton("string", s), context);
   }
 }

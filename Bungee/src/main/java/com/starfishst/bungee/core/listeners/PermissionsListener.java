@@ -13,6 +13,7 @@ import me.googas.api.links.LinkableInfo;
 import me.googas.api.links.LinkableType;
 import me.googas.api.permissions.Group;
 import me.googas.api.permissions.Permission;
+import me.googas.api.permissions.PermissionStack;
 import me.googas.commons.UUIDUtils;
 import me.googas.messaging.json.client.JsonClient;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
@@ -48,8 +49,10 @@ public class PermissionsListener implements GuidoListener {
                             .getParents(
                                 groups)); // TODO probably add this to the same method as above
                     for (Group group : groups) {
-                      this.add(player, group.getPermissions("bungee").getPermissions());
-                      this.add(player, group.getPermissions("global").getPermissions());
+                      PermissionStack bungee = group.getPermissions("bungee");
+                      if (bungee != null) this.add(player, bungee.getPermissions());
+                      PermissionStack global = group.getPermissions("global");
+                      if (global != null) this.add(player, global.getPermissions());
                     }
                   });
             });

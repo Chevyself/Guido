@@ -70,16 +70,6 @@ public class LadderCommands {
     }
   }
 
-  /**
-   * Create a new ladder
-   *
-   * @param locale the locale of the command sender
-   * @param guild the guild to edit
-   * @param name the name of the ladder
-   * @param players the max players in the ladder
-   * @param base the base value which players start with
-   * @return whether the ladders was created
-   */
   @Command(
       aliases = {"create", "make"},
       description = "ladders.make.desc",
@@ -103,14 +93,6 @@ public class LadderCommands {
     }
   }
 
-  /**
-   * Delete a ladder
-   *
-   * @param locale the locale of the command sender
-   * @param guild the guild to edit
-   * @param name the name of the ladder to delete
-   * @return whether the ladder was deleted
-   */
   @Command(
       aliases = {"delete", "del"},
       description = "ladders.del.desc",
@@ -128,14 +110,6 @@ public class LadderCommands {
     }
   }
 
-  /**
-   * @see #setValue(LocaleFile, Ladder, String, Object). This sets string values
-   * @param locale the locale of the command sender
-   * @param ladder the ladder to edit
-   * @param key the key of the new value
-   * @param value the new value
-   * @return whether the value was set
-   */
   @Command(aliases = "string", description = "ladder.edit.string", node = "guido.ladders.edit")
   public Result string(
       LocaleFile locale,
@@ -145,14 +119,6 @@ public class LadderCommands {
     return this.setValue(locale, ladder, key, value);
   }
 
-  /**
-   * @see #setValue(LocaleFile, Ladder, String, Object). This sets integer values
-   * @param locale the locale of the command sender
-   * @param ladder the ladder to edit
-   * @param key the key of the new value
-   * @param value the new value
-   * @return whether the value was set
-   */
   @Command(aliases = "integer", description = "ladder.edit.integer", node = "guido.ladders.edit")
   public Result integer(
       LocaleFile locale,
@@ -162,14 +128,6 @@ public class LadderCommands {
     return this.setValue(locale, ladder, key, value);
   }
 
-  /**
-   * @see #setValue(LocaleFile, Ladder, String, Object). This sets double values
-   * @param locale the locale of the command sender
-   * @param ladder the ladder to edit
-   * @param key the key of the new value
-   * @param value the new value
-   * @return whether the value was set
-   */
   @Command(aliases = "double", description = "ladder.edit.double", node = "guido.ladders.edit")
   public Result integer(
       LocaleFile locale,

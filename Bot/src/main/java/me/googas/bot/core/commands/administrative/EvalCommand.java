@@ -8,22 +8,20 @@ import com.starfishst.jda.context.CommandContext;
 import com.starfishst.jda.context.GuildCommandContext;
 import com.starfishst.jda.result.Result;
 import com.starfishst.jda.result.ResultType;
-import java.lang.ref.SoftReference;
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;
 import lombok.NonNull;
 import me.googas.bot.api.Guido;
-import me.googas.commons.cache.Catchable;
 
 /** Commands made for the developer */
-public class DeveloperCommands {
+public class EvalCommand {
 
   /** The script engine to use */
   @NonNull private final ScriptEngine engine;
 
   /** Create the developer commands */
-  public DeveloperCommands() {
+  public EvalCommand() {
     final ScriptEngineManager manager = new ScriptEngineManager();
     this.engine = manager.getEngineByName("nashorn");
     try {
@@ -43,30 +41,6 @@ public class DeveloperCommands {
     } catch (final ScriptException e) {
       e.printStackTrace();
     }
-  }
-
-  /**
-   * Clear
-   *
-   * @return the result of the cache
-   */
-  @Command(aliases = "cacheClear", node = "guido.cache.clear")
-  public Result cacheClear() {
-    Guido.validated().clearCache();
-    return new Result("Cache emptied");
-  }
-
-  /**
-   * See the cache
-   *
-   * @return the result of the cache
-   */
-  @Command(aliases = "cache", node = "guido.cache")
-  public Result cache() {
-    for (SoftReference<Catchable> catchable : Guido.getCache().copy()) {
-      System.out.println("Cache element: " + catchable.get());
-    }
-    return new Result("Check console for the output");
   }
 
   /**
@@ -102,16 +76,5 @@ public class DeveloperCommands {
     }
 
     return new Result("Script has been executed " + (out == null ? "" : out.toString()));
-  }
-
-  /**
-   * Stop the bot
-   *
-   * @return the result of the bot stopping
-   */
-  @Command(aliases = "stop", description = "stop.desc", node = "user:guido.admin")
-  public Result stop() {
-    Guido.stop();
-    return new Result("Bot has been stopped");
   }
 }

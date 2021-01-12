@@ -3,6 +3,7 @@ package me.googas.api.permissions;
 import java.util.Collection;
 import java.util.HashSet;
 import lombok.NonNull;
+import me.googas.annotations.Nullable;
 import me.googas.api.client.data.permissions.SimplePermission;
 import me.googas.api.client.data.permissions.SimplePermissionStack;
 
@@ -43,6 +44,7 @@ public interface Permissible {
    * @param context the context that differentiates the stack
    * @return the stack of permissions if found else null
    */
+  @Nullable
   default PermissionStack getPermissions(@NonNull String context) {
     for (PermissionStack permission : this.getPermissions()) {
       if (permission.getContext().equalsIgnoreCase(context)) {

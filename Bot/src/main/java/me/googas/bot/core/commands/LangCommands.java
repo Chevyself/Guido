@@ -16,13 +16,6 @@ public class LangCommands {
   /** The handler to localize the messages of the command */
   @NonNull private final GuidoLanguageHandler handler = Guido.getHandlers().getLanguageHandler();
 
-  /**
-   * Change the language of the user
-   *
-   * @param context the context of the command
-   * @param user the user to change the language
-   * @return the message to change the language
-   */
   @Command(aliases = "lang", description = "lang.desc")
   public Result lang(CommandContext context, User user) {
     return new Result(

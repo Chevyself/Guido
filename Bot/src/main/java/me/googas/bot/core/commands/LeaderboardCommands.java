@@ -18,14 +18,6 @@ import me.googas.commons.maps.Maps;
 /** Commands for leaderboard */
 public class LeaderboardCommands {
 
-  /**
-   * Get the leaderboard
-   *
-   * @param locale the locale of the sender
-   * @param ladder the ladder to see the leaderboard
-   * @param page the page to see
-   * @return the leaderboard
-   */
   @Command(
       aliases = {"leaderboard", "lb"},
       description = "lb.desc",

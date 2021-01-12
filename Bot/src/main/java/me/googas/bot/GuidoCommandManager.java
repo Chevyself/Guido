@@ -15,13 +15,14 @@ import me.googas.bot.core.commands.QueueCommands;
 import me.googas.bot.core.commands.RangesCommand;
 import me.googas.bot.core.commands.SeasonCommands;
 import me.googas.bot.core.commands.TeamCommands;
-import me.googas.bot.core.commands.TokenCommands;
 import me.googas.bot.core.commands.UserCommands;
 import me.googas.bot.core.commands.administrative.AdministrationCommands;
+import me.googas.bot.core.commands.administrative.CacheCommands;
 import me.googas.bot.core.commands.administrative.CategoryCommands;
 import me.googas.bot.core.commands.administrative.ChannelCommands;
-import me.googas.bot.core.commands.administrative.DeveloperCommands;
-import me.googas.bot.core.commands.administrative.FixCommands;
+import me.googas.bot.core.commands.administrative.EvalCommand;
+import me.googas.bot.core.commands.administrative.StopCommand;
+import me.googas.bot.core.commands.administrative.TokenCommands;
 import me.googas.bot.core.commands.administrative.VoiceChannelCommands;
 import me.googas.bot.core.util.Colors;
 import me.googas.commons.Lots;
@@ -34,10 +35,11 @@ public class GuidoCommandManager extends CommandManager {
   private final Set<Object> commands =
       Lots.set(
           new AdministrationCommands(),
+          new CacheCommands(),
           new CategoryCommands(),
           new ChannelCommands(),
-          new DeveloperCommands(),
-          new FixCommands(),
+          new EvalCommand(),
+          new StopCommand(),
           new VoiceChannelCommands(),
           new HelpCommand(),
           new LadderCommands(),

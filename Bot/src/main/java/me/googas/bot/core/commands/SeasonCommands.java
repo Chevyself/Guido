@@ -19,10 +19,7 @@ public class SeasonCommands {
     return new Result("Please use a subcommand");
   }
 
-  @Command(
-      aliases = "reset",
-      description = "Resets the season",
-      node = "guido.season.resetWinsAndLoses")
+  @Command(aliases = "reset", description = "Resets the season", node = "guido.season.reset")
   public Result season(
       BotGuild guild,
       @Optional(

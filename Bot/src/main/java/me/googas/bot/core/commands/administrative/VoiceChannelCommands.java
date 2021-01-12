@@ -54,15 +54,6 @@ public class VoiceChannelCommands {
     }
   }
 
-  /**
-   * Set the channels in the guild
-   *
-   * @param locale the locale of the command sender
-   * @param guild the guild data
-   * @param member the member to get the voice status
-   * @param key the key of the channel to set
-   * @return whether the channel was set or unset
-   */
   @Command(aliases = "set", description = "vc.set.desc", node = "guido.channels.set")
   public Result set(
       LocaleFile locale,

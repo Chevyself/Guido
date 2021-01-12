@@ -1,4 +1,4 @@
-package me.googas.bot.core.commands;
+package me.googas.bot.core.commands.administrative;
 
 import com.starfishst.core.annotations.Parent;
 import com.starfishst.core.annotations.Required;
@@ -17,13 +17,6 @@ import me.googas.commons.maps.Maps;
 /** Commands for token generation */
 public class TokenCommands {
 
-  /**
-   * See the tokens of an user.
-   *
-   * @param locale the locale of the sender
-   * @param sender the sender of the command
-   * @return the tokens of the user message
-   */
   @Parent
   @Command(
       aliases = {"tokens", "token"},
@@ -47,13 +40,6 @@ public class TokenCommands {
     }
   }
 
-  /**
-   * Generate a token
-   *
-   * @param user the user that generates the token
-   * @param level the level of the token
-   * @return the generated token
-   */
   @Command(aliases = "generate", description = "token.gen.desc", node = "user:guido.token.generate")
   public Result generate(
       UserData user,
