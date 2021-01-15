@@ -13,6 +13,7 @@ import lombok.NonNull;
 import me.googas.commons.maps.Maps;
 import tc.oc.pgm.api.match.Match;
 import tc.oc.pgm.api.party.Party;
+import tc.oc.pgm.countdowns.CountdownContext;
 import tc.oc.pgm.start.StartCountdown;
 import tc.oc.pgm.start.StartMatchModule;
 import tc.oc.pgm.teams.Team;
@@ -92,13 +93,22 @@ public class ReadyCommand implements GuidoCommand {
     } else {
       int perParty = base / this.getParticipating(match);
       int seconds = base - (perParty * this.partiesReady.size());
+      Duration duration;
       if (seconds <= 10) {
-        return Duration.ofSeconds(10);
+        duration = Duration.ofSeconds(10);
       } else if (seconds <= 20) {
-        return Duration.ofSeconds(20);
+        duration = Duration.ofSeconds(20);
       } else {
-        return Duration.ofSeconds(seconds);
+        duration = Duration.ofSeconds(seconds);
       }
+      CountdownContext countdown = match.getCountdown();
+      for (StartCountdown startCountdown : countdown.getAll(StartCountdown.class)) {
+        if (startCountdown == null) continue;
+        if (countdown.getTimeLeft(startCountdown).toMillis() < duration.toMillis()) {
+          duration = countdown.getTimeLeft(startCountdown);
+        }
+      }
+      return duration;
     }
   }
 
