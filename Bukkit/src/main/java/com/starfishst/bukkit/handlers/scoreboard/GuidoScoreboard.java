@@ -1,7 +1,6 @@
 package com.starfishst.bukkit.handlers.scoreboard;
 
 import com.starfishst.bukkit.utils.BukkitUtils;
-
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -29,12 +28,12 @@ public class GuidoScoreboard {
 
   @NonNull
   private static final Map<Integer, String> characters =
-          Maps.builder(10, "a")
-                  .append(11, "b")
-                  .append(12, "c")
-                  .append(13, "d")
-                  .append(14, "e")
-                  .append(15, "f")
+      Maps.builder(10, "a")
+          .append(11, "b")
+          .append(12, "c")
+          .append(13, "d")
+          .append(14, "e")
+          .append(15, "f")
           .build();
   /** The owner of the custom scoreboard */
   @NonNull @Getter private final UUID player;

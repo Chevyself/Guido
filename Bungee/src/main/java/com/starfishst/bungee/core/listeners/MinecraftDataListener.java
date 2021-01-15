@@ -44,8 +44,8 @@ public class MinecraftDataListener implements GuidoListener {
                 () ->
                     Requests.Links.create(
                             link.getType(),
-                            link.getIdentification(),
                             new SimpleValuesMap("nickname", nickname).put("ip", ip),
+                            link.getIdentification(),
                             new SimpleValuesMap("online", true),
                             new HashMap<>(),
                             new HashSet<>())

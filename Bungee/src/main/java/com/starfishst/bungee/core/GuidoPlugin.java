@@ -123,7 +123,7 @@ public class GuidoPlugin extends Plugin {
     Guido.setPlugin(this);
 
     this.loadConfiguration();
-    this.client.setToken(this.configuration.getToken());
+    this.client.startTask().setToken(this.configuration.getToken());
     try {
       this.client.startConnection();
     } catch (IOException e) {

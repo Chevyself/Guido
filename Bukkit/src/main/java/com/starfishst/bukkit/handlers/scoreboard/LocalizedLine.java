@@ -20,6 +20,6 @@ public class LocalizedLine extends Line {
   @Override
   public @NotNull String build(@NotNull OfflinePlayer player) {
     return this.placeholders()
-            .build(player, Guido.getLanguageHandler().getFile(player).get(this.getRaw()));
+        .build(player, Guido.getLanguageHandler().getFile(player).get(this.getRaw()));
   }
 }

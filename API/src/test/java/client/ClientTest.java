@@ -1,6 +1,8 @@
 package client;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Optional;
 import java.util.Scanner;
 import java.util.function.Consumer;
@@ -22,11 +24,15 @@ public class ClientTest {
       new SimpleLinkableInfo(
           LinkableType.MINECRAFT, new SimpleValuesMap("uuid", "5eed208dde5840229ba76ccb5ea7e92a"));
 
+  private static final LinkableInfo chevy =
+      new SimpleLinkableInfo(
+          LinkableType.MINECRAFT, new SimpleValuesMap("uuid", "f1cecd716e634e6982f0cea7d95aea19"));
+
   public static void main(String[] args) throws IOException {
     // "167.114.49.251"
     // 5Eh8QKdS7GmrE0Gs
     // localhost
-    Client client = new Client("5Eh8QKdS7GmrE0Gs", "167.114.49.251", 3000);
+    Client client = new Client("0gA0sHYH8k7Bu7mu", "localhost", 3000);
     JsonClient connection = client.startConnection();
     Scanner scanner = new Scanner(System.in);
     while (true) {
@@ -73,6 +79,27 @@ public class ClientTest {
         if (line.equalsIgnoreCase("recog")) {
           Requests.Links.getLinkByRecognition(
                   LinkableType.MINECRAFT, new SimpleValuesMap("nickname", "Duarzo"))
+              .send(connection, ClientTest.consumer());
+        }
+
+        if (line.equalsIgnoreCase("create")) {
+          Requests.Links.create(
+                  ClientTest.chevy.getType(),
+                  new SimpleValuesMap("nickname", "Chevi"),
+                  ClientTest.chevy.getIdentification(),
+                  new SimpleValuesMap(),
+                  new HashMap<>(),
+                  new HashSet<>())
+              .send(connection, ClientTest.consumer());
+        }
+
+        if (line.equalsIgnoreCase("exists")) {
+          Requests.Links.exists(ClientTest.chevy).send(connection, ClientTest.consumer());
+        }
+
+        if (line.equalsIgnoreCase("identification")) {
+          Requests.Links.getLinkByIdentification(
+                  ClientTest.chevy.getType(), ClientTest.chevy.getIdentification())
               .send(connection, ClientTest.consumer());
         }
       }

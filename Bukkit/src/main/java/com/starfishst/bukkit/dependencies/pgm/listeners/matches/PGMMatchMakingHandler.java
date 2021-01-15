@@ -152,6 +152,7 @@ public class PGMMatchMakingHandler implements Handler {
    */
   @Receptor(Requests.MatchServer.HOST)
   public String host(@ParamName("match") SimpleMatch match) {
+    if (!this.canHost(match)) return null;
     String type = match.getDetails().getOr("type", String.class, "none");
     String ladderName = match.getDetails().get("ladder", String.class);
     PGM pgm = PGM.get();

@@ -71,6 +71,10 @@ public class PGMMatchHandler implements MatchHandler {
    * @param match the match looking for the server
    */
   public void lookForServer(@NonNull Match match) {
+    if (match.getStatus() != MatchStatus.WAITING) {
+      this.waitingForServer.remove(match);
+      return;
+    }
     BotServer server = Guido.getServer();
     JsonClientThread bungee = server.getAuthenticator().getBungee();
     if (bungee != null) {

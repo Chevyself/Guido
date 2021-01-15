@@ -52,7 +52,7 @@ public class Client {
   /** The token that will give access to read or writing */
   @NonNull @Getter @Setter private String token;
   /** The client to connect with the bot */
-  @Getter @Setter private JsonClient connection;
+  @Setter private JsonClient connection;
 
   /**
    * Create the client
@@ -116,7 +116,7 @@ public class Client {
    */
   @NonNull
   public JsonClient validatedConnection() throws IOException {
-    if (this.connection != null) {
+    if (this.connection != null && !this.connection.isClosed()) {
       return this.connection;
     } else {
       return this.startConnection();
@@ -126,6 +126,14 @@ public class Client {
   @SuppressWarnings("unused")
   public interface ClientMethods {
     void addReceptors(Object... receptors);
+  }
+
+  @Nullable
+  public JsonClient getConnection() {
+    if (this.connection != null && this.connection.isClosed()) {
+      this.connection = null;
+    }
+    return this.connection;
   }
 
   /**

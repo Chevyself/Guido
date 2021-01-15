@@ -37,12 +37,17 @@ public class BungeeClient extends Client {
     }
   }
 
-  @Override
-  public @NonNull JsonClient startConnection() throws IOException {
-    Guido.getLogger().info("Starting connection");
+  @NonNull
+  public BungeeClient startTask() {
     ProxyServer.getInstance()
         .getScheduler()
         .schedule(Guido.validated(), new BungeeHeartBeatTimerTask(this), 10, 10, TimeUnit.SECONDS);
+    return this;
+  }
+
+  @Override
+  public @NonNull JsonClient startConnection() throws IOException {
+    Guido.getLogger().info("Starting connection");
     JsonClient client = super.startConnection();
     Guido.getLogger().info("Connection with the bot as been stabilised in " + client);
     return client;
