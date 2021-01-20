@@ -130,7 +130,7 @@ public class GuidoPlugin extends JavaPlugin {
 
   /** Start the connection with the bot */
   private void startConnection() {
-    this.getClient().setToken(this.configuration.getToken());
+    this.getClient().startTask().setToken(this.configuration.getToken());
     try {
       this.getClient().startConnection();
     } catch (IOException e) {
