@@ -8,6 +8,7 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.function.Consumer;
 import lombok.NonNull;
+import me.googas.api.economy.AbstractBank;
 import me.googas.api.links.Linkable;
 import me.googas.api.links.LinkableInfo;
 import me.googas.api.links.LinkableType;
@@ -53,6 +54,7 @@ public class Requests {
     @NonNull public static final String WEIGHT = Groups.PREFIX + "weight";
     @NonNull public static final String NAME = Groups.PREFIX + "name";
     @NonNull public static final String PREFERENCE = Groups.PREFIX + "preference";
+    @NonNull public static final String CONTEXT_PREFERENCE = Groups.PREFIX + "context-preference";
     @NonNull public static final String REMOVE_PREFERENCE = Groups.PREFIX + "remove-preference";
     @NonNull public static final String ADD_PERMISSION = Groups.PREFIX + "add-permission";
     @NonNull public static final String REMOVE_PERMISSION = Groups.PREFIX + "remove-permission";
@@ -106,6 +108,7 @@ public class Requests {
       return new RequestBuilder<>(Boolean.class, Groups.NAME).put("id", id).put("name", name);
     }
 
+    /** @deprecated use {@link #setPreference(String, String, String, Object)} */
     @NonNull
     public static RequestBuilder<Boolean> setPreference(
         @NonNull String id, @NonNull String key, @NonNull Object value) {
@@ -153,6 +156,16 @@ public class Requests {
       return new RequestBuilder<>(Boolean.class, Groups.REMOVE_PARENT)
           .put("id", id)
           .put("parent", parent);
+    }
+
+    @NonNull
+    public static RequestBuilder<Boolean> setPreference(
+        @NonNull String context, @NonNull String id, @NonNull String key, @NonNull Object value) {
+      return new RequestBuilder<>(Boolean.class, Groups.CONTEXT_PREFERENCE)
+          .put("context", context)
+          .put("id", id)
+          .put("key", key)
+          .put("value", value);
     }
 
     @NonNull
@@ -212,6 +225,9 @@ public class Requests {
     @NonNull public static final String STATS = Links.PREFIX + "stats";
     @NonNull public static final String SAVE_STATS = Links.PREFIX + "save-stats";
     @NonNull public static final String RESET_STATS = Links.PREFIX + "reset-stats";
+    @NonNull public static final String SET_PREFERENCE = Links.PREFIX + "set-preference";
+    @NonNull public static final String WITHDRAW = Links.PREFIX + "withdraw";
+    @NonNull public static final String DEPOSIT = Links.PREFIX + "deposit";
 
     @NonNull
     public static RequestBuilder<Linkable[]> getLinks(@NonNull String userId) {
@@ -310,6 +326,7 @@ public class Requests {
           .put("value", value);
     }
 
+    /** @deprecated use {@link #set(LinkableInfo, String, String, Object)} */
     @NonNull
     public static RequestBuilder<Boolean> preference(
         @NonNull LinkableInfo link, @NonNull String key, @NonNull Object value) {
@@ -372,6 +389,36 @@ public class Requests {
     @NonNull
     public static RequestBuilder<Boolean> resetStats(@NonNull LinkableInfo link) {
       return new RequestBuilder<>(Boolean.class, Links.PREFIX + "reset-stats").put("link", link);
+    }
+
+    public static RequestBuilder<Boolean> set(
+        @NonNull LinkableInfo link,
+        @NonNull String context,
+        @NonNull String key,
+        @NonNull Object value) {
+      return new RequestBuilder<>(Boolean.class, Links.SET_PREFERENCE)
+          .put("link", link)
+          .put("context", context)
+          .put("key", key)
+          .put("value", value);
+    }
+
+    @NonNull
+    public static RequestBuilder<Boolean> withdraw(
+        @NonNull LinkableInfo link, @NonNull String context, double amount) {
+      return new RequestBuilder<>(Boolean.class, Links.WITHDRAW)
+          .put("link", link)
+          .put("context", context)
+          .put("amount", amount);
+    }
+
+    @NonNull
+    public static RequestBuilder<Boolean> deposit(
+        @NonNull LinkableInfo link, @NonNull String context, double amount) {
+      return new RequestBuilder<>(Boolean.class, Links.DEPOSIT)
+          .put("link", link)
+          .put("context", context)
+          .put("amount", amount);
     }
   }
 
@@ -634,6 +681,49 @@ public class Requests {
     @NonNull
     public static RequestBuilder<Boolean> disconnected() {
       return new RequestBuilder<>(Boolean.class, Client.DISCONNECTED);
+    }
+  }
+
+  public static class Banks {
+    @NonNull public static final String PREFIX = "banks/";
+    @NonNull public static final String WITHDRAW = Banks.PREFIX + "withdraw";
+    @NonNull public static final String DEPOSIT = Banks.PREFIX + "deposit";
+    @NonNull public static final String GET = Banks.PREFIX + "get";
+    @NonNull public static final String CREATE = Banks.PREFIX + "create";
+    @NonNull public static final String DELETE = Banks.PREFIX + "delete";
+
+    @NonNull
+    public static RequestBuilder<Boolean> withdraw(
+        @NonNull String id, @NonNull String context, double amount) {
+      return new RequestBuilder<>(Boolean.class, Banks.WITHDRAW)
+          .put("id", id)
+          .put("context", context)
+          .put("amount", amount);
+    }
+
+    @NonNull
+    public static RequestBuilder<Boolean> deposit(
+        @NonNull String id, @NonNull String context, double amount) {
+      return new RequestBuilder<>(Boolean.class, Banks.DEPOSIT)
+          .put("id", id)
+          .put("context", context)
+          .put("amount", amount);
+    }
+
+    @NonNull
+    public static RequestBuilder<AbstractBank> getBank(@NonNull String id) {
+      return new RequestBuilder<>(AbstractBank.class, Banks.GET).put("id", id);
+    }
+
+    public static RequestBuilder<AbstractBank> create(
+        @NonNull String id, @NonNull LinkableInfo owner) {
+      return new RequestBuilder<>(AbstractBank.class, Banks.CREATE)
+          .put("id", id)
+          .put("owner", owner);
+    }
+
+    public static RequestBuilder<Boolean> delete(@NonNull String id) {
+      return new RequestBuilder<>(Boolean.class, Banks.DELETE).put("id", id);
     }
   }
 }

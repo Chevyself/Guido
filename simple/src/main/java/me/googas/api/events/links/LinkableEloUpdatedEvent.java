@@ -10,10 +10,10 @@ public class LinkableEloUpdatedEvent extends LinkableEvent {
   /** The ladder where the elo was updated */
   @Getter private final Ladder ladder;
   /** The previous elo */
-  @Getter private final float previous;
+  @Getter private final double previous;
 
   /** The new elo */
-  @Getter private final float newElo;
+  @Getter private final double newElo;
 
   /** Whether the player won the match */
   @Getter private final boolean winner;
@@ -28,7 +28,7 @@ public class LinkableEloUpdatedEvent extends LinkableEvent {
    * @param winner
    */
   public LinkableEloUpdatedEvent(
-      @NonNull Linkable data, Ladder ladder, float previous, float newElo, boolean winner) {
+      @NonNull Linkable data, Ladder ladder, double previous, double newElo, boolean winner) {
     super(data);
     this.ladder = ladder;
     this.previous = previous;

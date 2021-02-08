@@ -69,7 +69,7 @@ public class MatchEloCalculator implements GuidoHandler {
       int losersDifference,
       boolean event) {
     String ladderName = ladder.getName();
-    float previous = stateable.getElo("none", ladder);
+    double previous = stateable.getElo("none", ladder);
     if (winner) {
       stateable.increaseElo("none", ladder, winnersDifference);
       stateable.increaseStat("none", ladderName + "-wins", 1);
@@ -78,7 +78,7 @@ public class MatchEloCalculator implements GuidoHandler {
       stateable.increaseStat("none", ladderName + "-loses", 1);
     }
     stateable.increaseStat("none", ladderName + "-played", 1);
-    float elo = stateable.getElo("none", ladder);
+    double elo = stateable.getElo("none", ladder);
     if (stateable instanceof Linkable && event)
       new LinkableEloUpdatedEvent((Linkable) stateable, ladder, previous, elo, winner).call();
   }
@@ -94,7 +94,7 @@ public class MatchEloCalculator implements GuidoHandler {
    */
   public void setElo(
       @NonNull Stateable stateable, boolean winner, @NonNull Ladder ladder, boolean event) {
-    float oldElo = stateable.getElo("none", ladder);
+    double oldElo = stateable.getElo("none", ladder);
     double expected = this.calculateExpected(oldElo, oldElo, ladder.baseValue());
     int winnersDifference =
         (int)
@@ -155,8 +155,8 @@ public class MatchEloCalculator implements GuidoHandler {
   }
 
   public void setNewSeasonElo(@NonNull Stateable stateable, @NonNull Ladder ladder) {
-    float wins = stateable.getWins("none", ladder);
-    float loses = stateable.getLoses("none", ladder);
+    double wins = stateable.getWins("none", ladder);
+    double loses = stateable.getLoses("none", ladder);
     float elo = ladder.baseValue();
     for (int i = 0; i < wins; i++) {
       double expected = this.calculateExpected(elo, elo, ladder.baseValue());
@@ -186,7 +186,7 @@ public class MatchEloCalculator implements GuidoHandler {
    * @param ladderBase how much does a player start with in this ladder
    * @return the expected chances of winning
    */
-  public double calculateExpected(float elo, float thatElo, @NonNull Number ladderBase) {
+  public double calculateExpected(double elo, double thatElo, @NonNull Number ladderBase) {
     return 1 / (1 + Math.pow(10, (thatElo - elo) / ladderBase.intValue()));
   }
 
@@ -199,7 +199,7 @@ public class MatchEloCalculator implements GuidoHandler {
    *     give a different amount of elo
    * @return the new elo
    */
-  public float newElo(float oldElo, double expected, double multiplier) {
+  public float newElo(double oldElo, double expected, double multiplier) {
     return (float) (oldElo + 32 * (multiplier - expected));
   }
 

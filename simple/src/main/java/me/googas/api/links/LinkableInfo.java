@@ -16,12 +16,12 @@ public class LinkableInfo implements Queueable, Identifiable {
 
   @NonNull @Getter private final LinkableType type;
   @NonNull @Getter private final Map<String, Object> identification;
-  @NonNull @Getter private final Map<String, Map<String, Float>> stats;
+  @NonNull @Getter private final Map<String, Map<String, Double>> stats;
 
   public LinkableInfo(
       @NonNull LinkableType type,
       @NonNull Map<String, Object> identification,
-      @NonNull Map<String, Map<String, Float>> stats) {
+      @NonNull Map<String, Map<String, Double>> stats) {
     this.type = type;
     this.identification = identification;
     this.stats = stats;

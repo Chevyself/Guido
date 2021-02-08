@@ -8,7 +8,7 @@ import me.googas.api.matches.ladder.Ladder;
 
 public class Stats {
 
-  public static float getElo(
+  public static double getElo(
       @NonNull Stateable stateable, @NonNull Ladder ladder, @NonNull Collection<Ladder> ladders) {
     if (ladder instanceof GlobalLadder) return stateable.getGlobalElo(ladders);
     return stateable.getElo("none", ladder);

@@ -90,7 +90,7 @@ public class LinkReceptors {
       @ParamName("accounts") Map<String, Double> accounts,
       @ParamName("permissions") Set<PermissionStack> permissions,
       @ParamName("information") Map<String, Map<String, Object>> information,
-      @ParamName("stats") Map<String, Map<String, Float>> stats) {
+      @ParamName("stats") Map<String, Map<String, Double>> stats) {
     return new Linkable(
             type, identification, recognition, accounts, permissions, information, stats, null)
         .cache();
@@ -144,6 +144,18 @@ public class LinkReceptors {
     Linkable link = info.getLink();
     if (link == null) return false;
     link.set(null, key, null);
+    return true;
+  }
+
+  @Receptor(Requests.Links.SET_PREFERENCE)
+  public boolean setPreference(
+      @ParamName("link") LinkableInfo link,
+      @ParamName("context") String context,
+      @ParamName("key") String key,
+      @ParamName("value") String value) {
+    Linkable linkable = link.getLink();
+    if (linkable == null) return false;
+    linkable.set(context, key, value);
     return true;
   }
 
@@ -210,5 +222,25 @@ public class LinkReceptors {
     if (link == null) return false;
     link.reset(false);
     return true;
+  }
+
+  @Receptor(Requests.Links.WITHDRAW)
+  public boolean withdraw(
+      @ParamName("link") LinkableInfo link,
+      @ParamName("context") String context,
+      @ParamName("amount") Number amount) {
+    Linkable linkable = link.getLink();
+    if (linkable == null || !linkable.has(context, amount.doubleValue())) return false;
+    return linkable.withdraw(context, amount.doubleValue());
+  }
+
+  @Receptor(Requests.Links.DEPOSIT)
+  public boolean deposit(
+      @ParamName("link") LinkableInfo link,
+      @ParamName("context") String context,
+      @ParamName("amount") Number amount) {
+    Linkable linkable = link.getLink();
+    if (linkable == null) return false;
+    return linkable.deposit(context, amount.doubleValue());
   }
 }

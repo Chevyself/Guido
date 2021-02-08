@@ -7,6 +7,7 @@ import lombok.NonNull;
 import me.googas.api.Requests;
 import me.googas.api.loader.Loader;
 import me.googas.api.server.GuidoAuthenticator;
+import me.googas.api.server.receptors.BankReceptors;
 import me.googas.api.server.receptors.GroupReceptors;
 import me.googas.api.server.receptors.GuidoServerReceptors;
 import me.googas.api.server.receptors.LinkReceptors;
@@ -54,6 +55,7 @@ public class GuidoServer extends JsonSocketServer implements BotServer {
     this.authenticator = new GuidoAuthenticator(loader);
     this.setAuthenticator(this.authenticator);
     this.addReceptors(
+        new BankReceptors(),
         new GroupReceptors(loader.getGroups()),
         new GuidoServerReceptors(this.authenticator),
         new LinkReceptors(loader.getLinks()),

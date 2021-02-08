@@ -23,7 +23,9 @@ import lombok.Getter;
 import lombok.NonNull;
 import me.googas.commons.CoreFiles;
 import me.googas.commons.Lots;
+import me.googas.starbox.Starbox;
 import me.googas.starbox.modules.ModuleRegistry;
+import me.googas.starbox.modules.data.DataModule;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -134,6 +136,14 @@ public class GuidoPlugin extends JavaPlugin {
     this.registerCommands();
     this.startConnection();
     super.onEnable();
+  }
+
+  public void setupStarbox() {
+    DataModule module = Starbox.getModuleRegistry().get(DataModule.class);
+    if (module == null) {
+      module = new DataModule();
+      Starbox.getModuleRegistry().engage(module);
+    }
   }
 
   /**

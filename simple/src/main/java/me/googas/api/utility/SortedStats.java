@@ -9,17 +9,18 @@ import me.googas.api.Stateable;
 import me.googas.commons.builder.ToStringBuilder;
 
 /** This object is used to getId the stats from a {@link Stateable} is a way more organized way */
+@Deprecated
 public class SortedStats {
 
   /** A map for each context and the stats of the context */
-  @NonNull @Getter private final Map<String, Map<String, Float>> map;
+  @NonNull @Getter private final Map<String, Map<String, Double>> map;
 
   /**
    * Create the sorted stats
    *
    * @param map the map of stats-context
    */
-  public SortedStats(@NonNull Map<String, Map<String, Float>> map) {
+  public SortedStats(@NonNull Map<String, Map<String, Double>> map) {
     this.map = map;
   }
 

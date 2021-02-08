@@ -14,14 +14,14 @@ import me.googas.api.utility.SortedStats;
 public interface Stateable {
 
   @NonNull
-  default Map<String, Float> getStats(@NonNull String context) {
-    Map<String, Float> map = this.getStats().get(context);
+  default Map<String, Double> getStats(@NonNull String context) {
+    Map<String, Double> map = this.getStats().get(context);
     if (map == null) return new HashMap<>();
     return map;
   }
 
   @NonNull
-  default Map<String, Float> getStatsOrCreate(@NonNull String context) {
+  default Map<String, Double> getStatsOrCreate(@NonNull String context) {
     return this.getStats().computeIfAbsent(context, k -> new HashMap<>());
   }
 
@@ -33,10 +33,10 @@ public interface Stateable {
    * @param amount the amount of elo to increase
    */
   default void increaseElo(@NonNull String context, @NonNull Ladder ladder, float amount) {
-    Map<String, Float> map = this.getStatsOrCreate(context);
+    Map<String, Double> map = this.getStatsOrCreate(context);
     map.put(
         ladder.getName() + "-elo",
-        map.getOrDefault(ladder.getName() + "-elo", (float) ladder.baseValue()) + amount);
+        map.getOrDefault(ladder.getName() + "-elo", (double) ladder.baseValue()) + amount);
   }
 
   /**
@@ -47,8 +47,9 @@ public interface Stateable {
    * @param amount the amount to decrease
    */
   default void decreaseElo(@NonNull String context, @NonNull Ladder ladder, float amount) {
-    Map<String, Float> map = this.getStatsOrCreate(context);
-    float result = map.getOrDefault(ladder.getName() + "-elo", (float) ladder.baseValue()) - amount;
+    Map<String, Double> map = this.getStatsOrCreate(context);
+    double result =
+        map.getOrDefault(ladder.getName() + "-elo", (double) ladder.baseValue()) - amount;
     result = result < 0 ? 0 : result;
     map.put(ladder.getName() + "-elo", result);
   }
@@ -61,8 +62,8 @@ public interface Stateable {
    * @param amount the amount to increase the stat
    */
   default void increaseStat(@NonNull String context, @NonNull String key, float amount) {
-    Map<String, Float> map = this.getStatsOrCreate(context);
-    map.put(key, map.getOrDefault(key, 0f) + amount);
+    Map<String, Double> map = this.getStatsOrCreate(context);
+    map.put(key, map.getOrDefault(key, 0D) + amount);
   }
 
   /**
@@ -72,8 +73,8 @@ public interface Stateable {
    * @param ladder the ladder to getId the wins
    * @return the amount of time won in the ladder
    */
-  default float getWins(@NonNull String context, @NonNull Ladder ladder) {
-    return this.getStats(context).getOrDefault(ladder.getName() + "-wins", 0f);
+  default double getWins(@NonNull String context, @NonNull Ladder ladder) {
+    return this.getStats(context).getOrDefault(ladder.getName() + "-wins", 0D);
   }
 
   /**
@@ -83,8 +84,8 @@ public interface Stateable {
    * @param ladder the ladder
    * @return the amount of times lost
    */
-  default float getLoses(@NonNull String context, @NonNull Ladder ladder) {
-    return this.getStats(context).getOrDefault(ladder.getName() + "-loses", 0f);
+  default double getLoses(@NonNull String context, @NonNull Ladder ladder) {
+    return this.getStats(context).getOrDefault(ladder.getName() + "-loses", 0D);
   }
 
   /**
@@ -94,8 +95,8 @@ public interface Stateable {
    * @param stat the key of the stat
    * @return the stat or 0 if none
    */
-  default float getStat(@NonNull String context, @NonNull String stat) {
-    return this.getStats(context).getOrDefault(stat, 0f);
+  default double getStat(@NonNull String context, @NonNull String stat) {
+    return this.getStats(context).getOrDefault(stat, 0D);
   }
 
   /**
@@ -104,7 +105,7 @@ public interface Stateable {
    * @param ladders the ladders to calculate the global elo with
    * @return the global elo inside the guild
    */
-  default float getGlobalElo(@NonNull Collection<Ladder> ladders) {
+  default double getGlobalElo(@NonNull Collection<Ladder> ladders) {
     float sum = 0;
     float total = ladders.size();
     for (Ladder ladder : ladders) {
@@ -121,9 +122,9 @@ public interface Stateable {
    * @param ladder the ladder to getId the elo from
    * @return the elo for certain ranked ladder
    */
-  default float getElo(@NonNull String context, @NonNull Ladder ladder) {
+  default double getElo(@NonNull String context, @NonNull Ladder ladder) {
     return this.getStats(context)
-        .getOrDefault(ladder.getName() + "-elo", (float) ladder.baseValue());
+        .getOrDefault(ladder.getName() + "-elo", (double) ladder.baseValue());
   }
 
   /**
@@ -133,7 +134,7 @@ public interface Stateable {
    * @return the organized stats
    */
   default SortedStats getOrganized(Collection<Ladder> ladders) {
-    Map<String, Map<String, Float>> map = new TreeMap<>(this.getStats());
+    Map<String, Map<String, Double>> map = new TreeMap<>(this.getStats());
     map.put("global", this.getGlobalStats(ladders, map));
     return new SortedStats(map);
   }
@@ -145,16 +146,15 @@ public interface Stateable {
    * @param map the map containing all the other stats
    * @return the global stats
    */
-  @NonNull
-  default Map<String, Float> getGlobalStats(
-      Collection<Ladder> ladders, Map<String, Map<String, Float>> map) {
-    Map<String, Float> global = new TreeMap<>();
+  default @NonNull Map<String, Double> getGlobalStats(
+      Collection<Ladder> ladders, Map<String, Map<String, Double>> map) {
+    Map<String, Double> global = new TreeMap<>();
     map.forEach(
         (context, contextMap) ->
             contextMap.forEach(
                 (stat, value) -> {
                   if (!stat.startsWith("elo")) {
-                    global.put(stat, global.getOrDefault(stat, 0f) + value);
+                    global.put(stat, global.getOrDefault(stat, 0D) + value);
                   }
                 }));
     if (ladders != null) {
@@ -163,7 +163,7 @@ public interface Stateable {
     return global;
   }
 
-  default void setElo(@NonNull String context, Ladder ladder, float elo) {
+  default void setElo(@NonNull String context, Ladder ladder, double elo) {
     this.getStatsOrCreate(context).put(ladder.getName() + "-elo", elo);
   }
 
@@ -209,9 +209,9 @@ public interface Stateable {
    * @param ladder the ladder to reset the win and loses
    */
   default void resetWinsAndLoses(@NonNull String context, @NonNull Ladder ladder) {
-    this.getStatsOrCreate(context).put(ladder.getName() + "-wins", 0f);
-    this.getStatsOrCreate(context).put(ladder.getName() + "-loses", 0f);
-    this.getStatsOrCreate(context).put(ladder.getName() + "-played", 0f);
+    this.getStatsOrCreate(context).put(ladder.getName() + "-wins", 0D);
+    this.getStatsOrCreate(context).put(ladder.getName() + "-loses", 0D);
+    this.getStatsOrCreate(context).put(ladder.getName() + "-played", 0D);
   }
 
   /**
@@ -220,5 +220,5 @@ public interface Stateable {
    * @return the map of the stats
    */
   @NonNull
-  Map<String, Map<String, Float>> getStats();
+  Map<String, Map<String, Double>> getStats();
 }

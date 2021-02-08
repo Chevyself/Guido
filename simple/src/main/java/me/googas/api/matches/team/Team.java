@@ -72,7 +72,7 @@ public class Team implements GuidoCatchable, Localized, Queueable {
   }
 
   @Override
-  public @NonNull Map<String, Map<String, Float>> getStats() {
+  public @NonNull Map<String, Map<String, Double>> getStats() {
     // TODO implement
     return new HashMap<>();
   }

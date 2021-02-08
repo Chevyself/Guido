@@ -13,6 +13,7 @@ import me.googas.api.GuidoCatchable;
 import me.googas.api.Identifiable;
 import me.googas.api.Informative;
 import me.googas.api.Stateable;
+import me.googas.api.economy.Record;
 import me.googas.api.events.links.LinkableUnloadedEvent;
 import me.googas.api.lang.Localized;
 import me.googas.api.links.ref.DiscordLinkable;
@@ -25,7 +26,13 @@ import me.googas.commons.Validate;
 
 /** This object represents data that can been linked to an user */
 public class Linkable
-    implements Permissible, Stateable, GuidoCatchable, Localized, Informative, Identifiable {
+    implements Permissible,
+        Stateable,
+        GuidoCatchable,
+        Localized,
+        Informative,
+        Identifiable,
+        Record {
 
   @NonNull @Getter private final LinkableType type;
   @NonNull @Getter private final Map<String, Object> identification;
@@ -33,7 +40,7 @@ public class Linkable
   @NonNull @Getter private final Map<String, Double> accounts;
   @NonNull @Getter private final Set<PermissionStack> permissions;
   @NonNull @Getter private final Map<String, Map<String, Object>> information;
-  @NonNull @Getter private final Map<String, Map<String, Float>> stats;
+  @NonNull @Getter private final Map<String, Map<String, Double>> stats;
 
   @Nullable
   @Getter
@@ -49,7 +56,7 @@ public class Linkable
       @NonNull Map<String, Double> accounts,
       @NonNull Set<PermissionStack> permissions,
       @NonNull Map<String, Map<String, Object>> information,
-      @NonNull Map<String, Map<String, Float>> stats,
+      @NonNull Map<String, Map<String, Double>> stats,
       @Nullable String linkedUserId) {
     this.type = type;
     this.identification = identification;

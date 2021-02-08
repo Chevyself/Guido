@@ -65,7 +65,7 @@ public class Guido {
    * @return true if pgm is connected
    */
   public static boolean isPPGMConnected() {
-    return Guido.getPlugin().getCompatibilities().getDependency("PGM").isEnabled();
+    return Guido.getPlugin().getCompatibilities().getCompatibility("PGM").isEnabled();
   }
 
   /**
@@ -74,7 +74,7 @@ public class Guido {
    * @return true if protocol lib is connected
    */
   public static boolean isProtocolLibConnected() {
-    return Guido.getPlugin().getCompatibilities().getDependency("ProtocolLib").isEnabled();
+    return Guido.getPlugin().getCompatibilities().getCompatibility("ProtocolLib").isEnabled();
   }
 
   @NonNull

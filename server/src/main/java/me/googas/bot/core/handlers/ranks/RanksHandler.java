@@ -98,7 +98,7 @@ public class RanksHandler implements GuidoHandler {
     UpdateResult result = new UpdateResult();
     DiscordLinkable discord = linkable.toDiscordRef();
     for (Ladder ladder : ladders) {
-      float elo = Stats.getElo(linkable, ladder, ladders);
+      double elo = Stats.getElo(linkable, ladder, ladders);
       result.append(this.update(elo, ranges));
     }
     this.updateDiscord(linkable, guild, result, discord);
@@ -177,7 +177,7 @@ public class RanksHandler implements GuidoHandler {
     }
   }
 
-  public UpdateResult update(float elo, @NonNull Collection<RankRange> ranges) {
+  public UpdateResult update(double elo, @NonNull Collection<RankRange> ranges) {
     return new UpdateResult(
         Stateables.getApplying(elo, ranges), Stateables.getOutside(elo, ranges));
   }

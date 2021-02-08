@@ -77,11 +77,24 @@ public class GroupReceptors {
   }
 
   @Receptor(Requests.Groups.PREFERENCE)
+  @Deprecated
   public boolean setPreference(
       @ParamName("id") String id, @ParamName("key") String key, @ParamName("value") Object value) {
     Group group = this.getGroup(id);
     if (group == null) return false;
-    group.set(null, key, value);
+    group.set("global", key, value);
+    return true;
+  }
+
+  @Receptor(Requests.Groups.CONTEXT_PREFERENCE)
+  public boolean setContextPreference(
+      @ParamName("context") String context,
+      @ParamName("id") String id,
+      @ParamName("key") String key,
+      @ParamName("value") Object value) {
+    Group group = this.getGroup(id);
+    if (group == null) return false;
+    group.set(context, key, value);
     return true;
   }
 

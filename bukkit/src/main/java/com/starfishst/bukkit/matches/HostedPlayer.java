@@ -29,12 +29,12 @@ public class HostedPlayer implements Stateable, Identifiable {
 
   @NonNull @Getter private final Map<String, Object> recognition;
 
-  @NonNull @Getter private final Map<String, Map<String, Float>> stats;
+  @NonNull @Getter private final Map<String, Map<String, Double>> stats;
 
   public HostedPlayer(
       @NonNull Map<String, Object> identification,
       @NonNull Map<String, Object> recognition,
-      @NonNull Map<String, Map<String, Float>> stats) {
+      @NonNull Map<String, Map<String, Double>> stats) {
     this.identification = identification;
     this.recognition = recognition;
     this.stats = stats;
