@@ -1,0 +1,21 @@
+main: com.starfishst.bukkit.GuidoPlugin
+name: Guido
+description: Googas core
+## The version of the bot is as follows:
+## major.small.patch-status-id
+## The status is:
+## 0 -> SNAPSHOT
+version: ${project.version}
+depend:
+  - Starbox
+softdepend:
+  # PvpGameManager ocn plugin. The plugin is also the googas fork as Guido loads
+  # groups dynamically to keep the server with all of the same
+  - PGM
+  # This is the fork of googas of the plugin to create events of ocn
+  - Events
+  # ProtocolLib is a library to easily use minecraft packets this is the latest version of
+  # the plugin, no fork needed.
+  - ProtocolLib
+  # This is to have richer placeholders as many plugins already use this api
+  - PlaceholderAPI

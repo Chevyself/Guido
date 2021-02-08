@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xmlns="http://maven.apache.org/POM/4.0.0"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>com.starfishst.guido</groupId>
+        <artifactId>guido</artifactId>
+        <version>1.2.1</version>
+    </parent>
+
+    <artifactId>server</artifactId>
+    <version>1.0.0</version>
+
+    <build>
+        <plugins>
+            <!-- Maven java jar plugin -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>3.2.0</version>
+                <configuration>
+                    <archive>
+                        <manifest>
+                            <addClasspath>true</addClasspath>
+                            <mainClass>me.googas.bot.GuidoBot</mainClass>
+                        </manifest>
+                    </archive>
+                </configuration>
+            </plugin>
+            <!-- Maven jar shade plugin -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-shade-plugin</artifactId>
+                <version>3.2.1</version>
+                <configuration>
+                    <createDependencyReducedPom>false</createDependencyReducedPom>
+                    <filters>
+                        <filter>
+                            <artifact>*:*</artifact>
+                            <excludes>
+                                <exclude>module-info.class</exclude>
+                                <exclude>org.projectlombok:lombok</exclude>
+                            </excludes>
+                        </filter>
+                    </filters>
+                </configuration>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>shade</goal>
+                        </goals>
+                        <configuration>
+                            <createDependencyReducedPom>false</createDependencyReducedPom>
+                            <outputFile>../output/Guido-${project.artifactId}.jar</outputFile>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+        <!-- The resources of the bot -->
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+                <filtering>true</filtering>
+            </resource>
+        </resources>
+    </build>
+
+    <repositories>
+        <!-- JDA Repository -->
+        <repository>
+            <id>jcenter</id>
+            <name>jcenter-bintray</name>
+            <url>https://jcenter.bintray.com/ </url>
+        </repository>
+    </repositories>
+
+    <dependencies>
+        <!-- JDA dependency -->
+        <dependency>
+            <groupId>net.dv8tion</groupId>
+            <artifactId>JDA</artifactId>
+            <version>4.1.1_137</version>
+            <scope>provided</scope>
+        </dependency>
+        <!-- Dependency to the bungee api -->
+        <dependency>
+            <groupId>net.md-5</groupId>
+            <artifactId>bungeecord-api</artifactId>
+            <version>1.16-R0.3</version>
+            <type>jar</type>
+            <scope>provided</scope>
+        </dependency>
+        <!-- Dependency to the bungee chat api -->
+        <dependency>
+            <groupId>net.md-5</groupId>
+            <artifactId>bungeecord-chat</artifactId>
+            <version>1.16-R0.4</version>
+            <type>jar</type>
+            <scope>provided</scope>
+        </dependency>
+        <!-- Command framework JDA -->
+        <dependency>
+            <groupId>com.starfishst.commands.JDA</groupId>
+            <artifactId>jda</artifactId>
+            <version>1.0.0_1</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>me.googas.commons</groupId>
+                    <artifactId>commons</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <!-- Command framework Bungee -->
+        <dependency>
+            <groupId>com.starfishst.commands.bungee</groupId>
+            <artifactId>bungee</artifactId>
+            <version>1.0.0_0</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>me.googas.commons</groupId>
+                    <artifactId>commons</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>com.starfishst.commands.core</groupId>
+                    <artifactId>core</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <!-- Dependency to simple -->
+        <dependency>
+            <groupId>com.starfishst.guido</groupId>
+            <artifactId>simple</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+        <!-- Mongo dependency -->
+        <dependency>
+            <groupId>org.mongodb</groupId>
+            <artifactId>mongo-java-driver</artifactId>
+            <version>3.12.7</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>net.sf.trove4j</groupId>
+            <artifactId>core</artifactId>
+            <version>3.1.0</version>
+            <scope>provided</scope>
+        </dependency>
+    </dependencies>
+    
+</project>

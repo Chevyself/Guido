@@ -1,0 +1,4 @@
+name: GuidoBungee
+main: me.googas.bungee.GuidoPlugin
+version: ${project.version}
+author: Selfie

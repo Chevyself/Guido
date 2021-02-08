@@ -5,16 +5,15 @@
 <modelVersion>4.0.0</modelVersion>
 
 <groupId>com.starfishst.guido</groupId>
-<artifactId>Guido</artifactId>
-<version>1.1.1</version>
-<description>A bot for elo and match making</description>
+<artifactId>guido</artifactId>
+<version>1.2.1</version>
+<description>A bot for elo and abstractMatch making</description>
 <packaging>pom</packaging>
 
  <modules>
-     <module>Bot</module>
-     <module>API</module>
-     <module>Bukkit</module>
-     <module>Bungee</module>
+     <module>bukkit</module>
+     <module>simple</module>
+     <module>server</module>
  </modules>
 
 <build>

@@ -24,7 +24,7 @@ larger
 - [ ] Deploy handler
 - [ ] Create configuration files
 - [ ] Team channels should be deleted after a member leaves the channel, the channel is empty and 
-the match has ended
+the abstractMatch has ended
 
 #### Bukkit
 

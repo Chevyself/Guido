@@ -1,0 +1,109 @@
+ ## The context in which this server is working
+context: Bukkit
+## The token to authenticate in the bot
+token: none
+## The list of commands that can be enabled:
+## - fly: allows players to fly
+## - ping: allows players to see their ping
+## - gamemode: allows players to change their gamemode
+## - ready: when pgm is loaded players can /ready and /unready to start a match
+enabled-commands:
+  - fly
+  - ping
+  - gamemode
+## The settings for certain listeners
+listener-settings:
+  #  <---------------------------------------------------------------------------------------->
+  #                           LISTENERS THAT DO NOT REQUIRE DEPENDENCIES
+  #  <---------------------------------------------------------------------------------------->
+  # Listener for command executions. To print what others are doing with commands!
+  command-execution:
+    # Whether this listener is enabled
+    enabled: true
+    # What's the permission that allows players to see who's executing a command
+    permission: guido.adminchat
+    # How is it displayed for those who posses the permission
+    # Placeholders are:
+    # %player% for the name of the player
+    # %player_display%% for the player display name
+    #  %command% for the command that the player executed
+    chat: "[&6A&r] %player_display% &6executed &r%command%"
+    # Commands that are not sent
+    banned:
+      - tell
+      - msg
+  # A listener for testing. This will print guido events
+  test:
+    enabled: true
+  # Whether to force the players to spawn in a central location
+  spawn:
+    ## Whether to enable this function
+    enabled: false
+  # A custom scoreboard that supports PAPI placeholders
+  # Localized lines are supported just add a `localized:` prefix and the line will be looked in language files!
+  scoreboard:
+    # Whether to have a custom scoreboard
+    enabled: true
+    title: "localized:scoreboard.title"
+    # This is the layout of the scoreboard
+    layout:
+      - "localized:scoreboard.ping"
+      - "&egoogas.me"
+  # Decorations given by the groups of a player
+  decorations:
+    # Whether there should be decorations
+    enabled: false
+  #  <---------------------------------------------------------------------------------------->
+  #                             LISTENERS THAT REQUIRE PROTOCOLLIB
+  #  <---------------------------------------------------------------------------------------->
+  # A much better tab list which can be customized by other plugins
+  tab-list:
+    enabled: true
+  # A listener that aims to improve minecraft velocity
+  better-velocity:
+    enabled: false
+    multiplier-horizontal: 0.9
+    multiplier-vertical: 0.35
+    multiplier-vertical-air: 0.4
+    multiplier-sprint: 0.8
+    multiplier-walk: 0.4
+  # An anti cheat that ensures a better gameplay for everyone
+  anti-cheat:
+    enabled: true
+    # The delay between suspicious calls
+    delay: 5s
+    # The permissions of the players that can see calls
+    permission: guido.adminchat
+    # How is it displayed for those who posses the permission
+    # Placeholders are:
+    # %player% for the name of the player
+    # %player_display%% for the player display name
+    #  %reason% the reason why the player is suspicious
+    chat: "[&6A&r] %player_display% &6cheats &r%reason%"
+  # Detects for auto clicking
+  auto-click-detector:
+    # Whether the detector is enabled
+    enabled: true
+    # The delay to which clicks and averages reset. This means how much time should
+    # take for clicks to be measured again
+    reset-delay: 50
+    # The maximum cps until it starts warning the staff
+    max-cps: 16.0
+    # The minimum deviation to which a player might getId banned
+    # This means the difference between click speeds
+    min-deviation: 0.01
+  # Detect people using reach hacks
+  reach-detector:
+    ## Whether this detector should be enabled
+    enabled: true
+  #  <---------------------------------------------------------------------------------------->
+  #                             LISTENERS THAT REQUIRE PGM
+  #  <---------------------------------------------------------------------------------------->
+  # Listener for saving the stats after a match
+  pgm-stats:
+    # Whether to save stats
+    enabled: false
+  # Whether to enable match making
+  match-making:
+    # True to enable PGM match making
+    enabled: false
