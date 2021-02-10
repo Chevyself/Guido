@@ -14,7 +14,7 @@ public class CommandExecutionHandler implements Module {
    * @param event the event of the command pre process
   @EventHandler(priority = EventPriority.MONITOR)
   public void onPlayerCommandPreprocessEvent(PlayerCommandPreprocessEvent event) {
-    Player player = event.getPlayer();
+    Player player = event.getProfile();
     if (this.isBanned(event.getMessage().split(" ")[0].replace("/", ""))) return;
     for (Player onlinePlayer : Bukkit.getOnlinePlayers()) {
       if (onlinePlayer.hasPermission(

@@ -67,6 +67,25 @@ unready:
   not-starting: "&cYou cannot be unready at this point"
   now-unready: "%team% &cis unready"
   success: "&cYour team is now unready"
-scoreboard:
-  title: "&6&lGOOGAS"
-  ping: "&7Your ping: &6%ping%"
+# Balance command
+balance:
+  desc: Check your or other player's balance
+  player:
+    name: Player
+    desc: The player to see the balance off
+  other: "&6%name% &7has a balance of &6%balance%"
+  own: "&7You have a balance of &6%balance%"
+# Pay command
+pay:
+  desc: Pay money to another player
+  player:
+    name: Player
+    desc: The player to make the payment to
+  amount:
+    name: Amount
+    desc: The amount to pay the player
+  withdraw-error: "&cThere's been an error while trying to withdraw the amount from your account. Please contact the staff about this issue."
+  deposit-error: "&cThere's been an error while trying to deposit the amount to the receiver, the money is back in your account. Please contact the staff about this issue."
+  no-money: "&cYou don't have enough money to make this payment"
+  done: "&7The payment to &6%name% &7of &6%amount% &7has been completed"
+  received: "&7You received a payment from &6%sender% &7of &6%amount%"

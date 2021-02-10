@@ -1,7 +1,5 @@
 package com.starfishst.bukkit.client;
 
-import com.starfishst.bukkit.api.Guido;
-import com.starfishst.bukkit.modules.GroupsHandler;
 import lombok.NonNull;
 import me.googas.api.client.Client;
 import me.googas.commons.time.Time;
@@ -25,7 +23,8 @@ public class BukkitClient extends Client {
   @Override
   public void onAuthentication(boolean authenticated) {
     if (authenticated) {
-      Guido.getModuleRegistry().require(GroupsHandler.class).loadGroups(null);
+      // FIXME
+      // Guido.getModuleRegistry().require(GroupsHandler.class).loadGroups(null);
     }
   }
 }

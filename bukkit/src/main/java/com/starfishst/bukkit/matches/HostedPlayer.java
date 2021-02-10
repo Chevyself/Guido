@@ -1,6 +1,6 @@
 package com.starfishst.bukkit.matches;
 
-import com.starfishst.bukkit.api.Guido;
+import com.starfishst.bukkit.Guido;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;

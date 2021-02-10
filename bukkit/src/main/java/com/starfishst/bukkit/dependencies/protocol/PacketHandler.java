@@ -2,7 +2,7 @@ package com.starfishst.bukkit.dependencies.protocol;
 
 import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.events.PacketListener;
-import com.starfishst.bukkit.api.Guido;
+import com.starfishst.bukkit.Guido;
 import com.starfishst.bukkit.modules.GuidoModule;
 
 /** A listener that also supports listening to packets */

@@ -3,6 +3,7 @@ package me.googas.api.user;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import lombok.Getter;
 import lombok.NonNull;
 import me.googas.annotations.Nullable;
@@ -94,5 +95,18 @@ public class UserData implements GuidoCatchable, Localized, Informative {
   @Override
   public @NonNull UserData cache() {
     return (UserData) GuidoCatchable.super.cache();
+  }
+
+  @Override
+  public boolean equals(Object object) {
+    if (this == object) return true;
+    if (object == null || this.getClass() != object.getClass()) return false;
+    UserData userData = (UserData) object;
+    return this.id.equals(userData.id);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(this.id);
   }
 }

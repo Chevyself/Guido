@@ -1,7 +1,7 @@
-package com.starfishst.bukkit.api.events.anticheat;
+package com.starfishst.bukkit.events.anticheat;
 
-import com.starfishst.bukkit.api.events.GuidoEvent;
 import com.starfishst.bukkit.dependencies.protocol.anticheat.AntiCheatDetector;
+import com.starfishst.bukkit.events.GuidoEvent;
 import lombok.NonNull;
 import org.bukkit.entity.Player;
 

@@ -1,6 +1,6 @@
 package com.starfishst.bukkit.dependencies.protocol.anticheat;
 
-import com.starfishst.bukkit.api.events.anticheat.SuspectDetectedEvent;
+import com.starfishst.bukkit.events.anticheat.SuspectDetectedEvent;
 import com.starfishst.bukkit.modules.GuidoModule;
 import java.util.HashMap;
 import java.util.UUID;
@@ -29,7 +29,7 @@ public class AntiCheatHandler implements GuidoModule {
   @EventHandler(priority = EventPriority.MONITOR)
   public void onSuspectDetected(SuspectDetectedEvent event) {
     /*
-    UUID uniqueId = event.getPlayer().getUniqueId();
+    UUID uniqueId = event.getProfile().getUniqueId();
     SuspectDetectedEvent latestPrinted = this.printed.get(uniqueId);
     if (latestPrinted == null
         || event.getDetector() != latestPrinted.getDetector()
@@ -44,8 +44,8 @@ public class AntiCheatHandler implements GuidoModule {
                       .getOr(
                           "chat", String.class, "[&6A&r] %player_display% &6cheats &r%command%"));
           MapBuilder<String, String> placeholders =
-              Maps.builder("player", event.getPlayer().getName())
-                  .append("player_display", event.getPlayer().getDisplayName())
+              Maps.builder("player", event.getProfile().getName())
+                  .append("player_display", event.getProfile().getDisplayName())
                   .append("reason", event.getReason());
           player.sendMessage(Strings.build(msg, placeholders));
         }

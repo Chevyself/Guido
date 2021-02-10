@@ -1,10 +1,9 @@
-package com.starfishst.bukkit.api;
+package com.starfishst.bukkit;
 
-import com.starfishst.bukkit.GuidoPlugin;
-import com.starfishst.bukkit.api.config.Configuration;
-import com.starfishst.bukkit.api.events.GuidoEvent;
 import com.starfishst.bukkit.client.BukkitClient;
+import com.starfishst.bukkit.configuration.GuidoConfiguration;
 import com.starfishst.bukkit.dependencies.GuidoCompatibilities;
+import com.starfishst.bukkit.events.GuidoEvent;
 import com.starfishst.bukkit.lang.BukkitLanguageHandler;
 import com.starfishst.commands.bukkit.CommandManager;
 import lombok.NonNull;
@@ -92,7 +91,7 @@ public class Guido {
   }
 
   @NonNull
-  public static Configuration getConfiguration() {
+  public static GuidoConfiguration getConfiguration() {
     return Guido.getPlugin().getConfiguration();
   }
 

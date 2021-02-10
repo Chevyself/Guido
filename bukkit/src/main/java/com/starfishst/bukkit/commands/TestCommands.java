@@ -1,22 +1,14 @@
 package com.starfishst.bukkit.commands;
 
-import com.starfishst.bukkit.api.commands.GuidoCommand;
 import com.starfishst.commands.bukkit.annotations.Command;
 import com.starfishst.commands.bukkit.result.Result;
-import java.util.Iterator;
 import lombok.NonNull;
-import tc.oc.pgm.api.PGM;
-import tc.oc.pgm.api.match.Match;
 
 /** Commands for testing */
 public class TestCommands implements GuidoCommand {
 
   @Command(aliases = "test")
   public Result test() {
-    Iterator<Match> matches = PGM.get().getMatchManager().getMatches();
-    while (matches.hasNext()) {
-      System.out.println(matches.next());
-    }
     return new Result();
   }
 

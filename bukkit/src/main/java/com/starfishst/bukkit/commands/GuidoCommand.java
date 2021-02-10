@@ -1,4 +1,4 @@
-package com.starfishst.bukkit.api.commands;
+package com.starfishst.bukkit.commands;
 
 import lombok.NonNull;
 import me.googas.starbox.StarboxCommand;

@@ -1,4 +1,4 @@
-package com.starfishst.bukkit.api.events.anticheat;
+package com.starfishst.bukkit.events.anticheat;
 
 /** The player to which a player is suspected to be cheating */
 public enum SuspectLevel {

@@ -77,6 +77,7 @@ public interface Identifiable {
   default <T> T getId(@NonNull String key, @NonNull Class<T> typeOfT) {
     Map<String, Object> info = this.getIdentification();
     Object t = info.get(key);
+    if (t == null) return null;
     if (typeOfT.isAssignableFrom(t.getClass())) return typeOfT.cast(t);
     return null;
   }
@@ -115,6 +116,7 @@ public interface Identifiable {
   default <T> T getRecog(@NonNull String key, @NonNull Class<T> typeOfT) {
     Map<String, Object> info = this.getRecognition();
     Object t = info.get(key);
+    if (t == null) return null;
     if (typeOfT.isAssignableFrom(t.getClass())) return typeOfT.cast(t);
     return null;
   }
@@ -129,7 +131,7 @@ public interface Identifiable {
    */
   @NonNull
   default <T> T getRecogOr(@NonNull String key, @NonNull T def, @NonNull Class<T> typeOfT) {
-    return Validate.notNullOr(this.getId(key, typeOfT), def);
+    return Validate.notNullOr(this.getRecog(key, typeOfT), def);
   }
 
   @NonNull

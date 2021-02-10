@@ -21,6 +21,7 @@ import me.googas.api.links.LinkableType;
 import me.googas.api.matches.ladder.Ladder;
 import me.googas.api.permissions.AbstractPermission;
 import me.googas.bot.adapters.LongMongoAdapter;
+import me.googas.bot.adapters.MapDeserializer;
 import me.googas.bot.adapters.matches.ladder.LadderAdapter;
 import me.googas.bot.adapters.messages.ResponsiveMessageAdapter;
 import me.googas.bot.api.Guido;
@@ -31,7 +32,9 @@ import org.bson.Document;
 /** Static utilities for mongo */
 public class Mongo {
 
-  @NonNull public static final Gson GSON = Mongo.constructGson();
+  @NonNull
+  public static final Gson GSON =
+      Mongo.builderGson().registerTypeAdapter(Map.class, new MapDeserializer()).create();
 
   public static Gson constructGson() {
     return Mongo.builderGson().create();

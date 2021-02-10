@@ -1,6 +1,5 @@
 package com.starfishst.bukkit.commands;
 
-import com.starfishst.bukkit.api.commands.GuidoCommand;
 import com.starfishst.commands.bukkit.annotations.Command;
 import com.starfishst.commands.bukkit.result.Result;
 import com.starfishst.core.annotations.Optional;

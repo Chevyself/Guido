@@ -1,7 +1,7 @@
 package com.starfishst.bukkit.dependencies.pgm.commands;
 
-import com.starfishst.bukkit.api.Guido;
-import com.starfishst.bukkit.api.commands.GuidoCommand;
+import com.starfishst.bukkit.Guido;
+import com.starfishst.bukkit.commands.GuidoCommand;
 import com.starfishst.bukkit.dependencies.pgm.PGMHostedMatch;
 import com.starfishst.bukkit.dependencies.pgm.PGMHostedPlayer;
 import com.starfishst.bukkit.dependencies.pgm.PGMLeader;

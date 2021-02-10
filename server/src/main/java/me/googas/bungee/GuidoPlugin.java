@@ -116,10 +116,10 @@ public class GuidoPlugin extends Plugin {
   @Override
   public void onEnable() {
     GuidoBungee.setPlugin(this);
+    this.loadConfiguration();
     this.getProxy()
         .getScheduler()
         .runAsync(this, () -> GuidoBot.main(this.configuration.getBotArguments().split(" ")));
-    this.loadConfiguration();
     for (GuidoListener listener : this.listeners) {
       listener.register(this);
       listener.onEnable();

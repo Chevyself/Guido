@@ -1,6 +1,6 @@
 package com.starfishst.bukkit.util;
 
-import com.starfishst.bukkit.api.Guido;
+import com.starfishst.bukkit.Guido;
 import lombok.NonNull;
 import org.bukkit.Bukkit;
 

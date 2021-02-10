@@ -1,33 +1,33 @@
 package com.starfishst.bukkit;
 
-import com.starfishst.bukkit.api.Guido;
-import com.starfishst.bukkit.api.commands.GuidoCommand;
-import com.starfishst.bukkit.api.config.Configuration;
 import com.starfishst.bukkit.client.BukkitClient;
 import com.starfishst.bukkit.commands.ConfigurationCommands;
 import com.starfishst.bukkit.commands.FlyCommand;
 import com.starfishst.bukkit.commands.GameModeCommand;
+import com.starfishst.bukkit.commands.GuidoCommand;
 import com.starfishst.bukkit.commands.PingCommand;
+import com.starfishst.bukkit.commands.SudoCommand;
 import com.starfishst.bukkit.commands.TeleportCommand;
 import com.starfishst.bukkit.commands.TestCommands;
+import com.starfishst.bukkit.commands.economy.BalanceCommand;
+import com.starfishst.bukkit.commands.economy.PayCommand;
 import com.starfishst.bukkit.configuration.GuidoConfiguration;
 import com.starfishst.bukkit.dependencies.GuidoCompatibilities;
 import com.starfishst.bukkit.lang.BukkitLanguageHandler;
+import com.starfishst.bukkit.modules.StartMoneyModule;
 import com.starfishst.commands.bukkit.CommandManager;
 import com.starfishst.commands.bukkit.CommandManagerOptions;
-import java.io.File;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.util.Set;
 import lombok.Getter;
 import lombok.NonNull;
-import me.googas.commons.CoreFiles;
 import me.googas.commons.Lots;
 import me.googas.starbox.Starbox;
+import me.googas.starbox.compatibilities.vault.VaultImplementation;
 import me.googas.starbox.modules.ModuleRegistry;
 import me.googas.starbox.modules.data.DataModule;
+import me.googas.starbox.modules.language.LanguageModule;
 import org.bukkit.configuration.InvalidConfigurationException;
-import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
 
 /** Guido implementation for Bukkit */
@@ -56,10 +56,13 @@ public class GuidoPlugin extends JavaPlugin {
   @NonNull
   private final Set<GuidoCommand> commands =
       Lots.set(
+          new BalanceCommand(),
+          new PayCommand(),
           new ConfigurationCommands(),
           new FlyCommand(),
           new GameModeCommand(),
           new PingCommand(),
+          new SudoCommand(),
           new TeleportCommand(),
           new TestCommands());
   /**
@@ -69,15 +72,15 @@ public class GuidoPlugin extends JavaPlugin {
   @NonNull @Getter private final GuidoCompatibilities compatibilities = new GuidoCompatibilities();
   /** The client that the plugin is using */
   @NonNull @Getter
-  private final BukkitClient client = new BukkitClient("none", "167.114.49.251", 3000);
+  private final BukkitClient client = new BukkitClient("none", "66.11.113.47", 3000);
   /** The guidoConfiguration that the implementation is using */
-  @NonNull @Getter private Configuration configuration = new GuidoConfiguration();
+  @NonNull @Getter private GuidoConfiguration configuration = new GuidoConfiguration();
 
   /** Register the commands of the bot */
   private void registerCommands() {
     for (GuidoCommand command : this.commands) {
       if (!command.isEnabled()) {
-        for (String commandName : this.configuration.getEnabledCommands()) {
+        for (String commandName : this.configuration.getCommands()) {
           if (command.getName().equalsIgnoreCase(commandName)) {
             command.setEnabled(true);
             break;
@@ -94,17 +97,7 @@ public class GuidoPlugin extends JavaPlugin {
   /** Load the config.yml. This can be used also to reload the guidoConfiguration */
   private void loadConfiguration() {
     try {
-      InputStreamReader reader = new InputStreamReader(this.getResource("config.yml"));
-      YamlConfiguration defaults = new YamlConfiguration();
-      defaults.load(reader);
-      // TODO
-      File file = CoreFiles.getFileOrResource(this.getDataFolder().getPath(), "config.yml");
-      YamlConfiguration configuration = new YamlConfiguration();
-      configuration.load(file);
-      configuration.setDefaults(defaults);
-      configuration.options().copyDefaults(true);
-      configuration.save(file);
-      this.configuration = new GuidoConfiguration(configuration);
+      this.configuration = GuidoConfiguration.load(this);
     } catch (IOException | InvalidConfigurationException e) {
       e.printStackTrace();
     }
@@ -129,21 +122,34 @@ public class GuidoPlugin extends JavaPlugin {
     super.onDisable();
   }
 
-  @Override
-  public void onEnable() {
-    this.compatibilities.check();
-    this.loadConfiguration();
-    this.registerCommands();
-    this.startConnection();
-    super.onEnable();
-  }
-
   public void setupStarbox() {
     DataModule module = Starbox.getModuleRegistry().get(DataModule.class);
     if (module == null) {
       module = new DataModule();
       Starbox.getModuleRegistry().engage(module);
     }
+    module.getPlayersHandler().getProfileProviders().add(new GuidoProfileProvider().startTask());
+    module.getEconomyHandler().setBankProvider(new GuidoBankProvider().startTask());
+    if (Starbox.isVaultEnabled()) {
+      VaultImplementation.register(this, module);
+    }
+    LanguageModule languageModule = Starbox.getModuleRegistry().get(LanguageModule.class);
+    if (languageModule == null) {
+      languageModule = new LanguageModule();
+      Starbox.getModuleRegistry().engage(languageModule);
+    }
+    languageModule.addAll(GuidoLanguage.loadAll(this, "en"));
+  }
+
+  @Override
+  public void onEnable() {
+    this.compatibilities.check();
+    this.moduleRegistry.engage(new StartMoneyModule());
+    this.setupStarbox();
+    this.loadConfiguration();
+    this.registerCommands();
+    this.startConnection();
+    super.onEnable();
   }
 
   /**

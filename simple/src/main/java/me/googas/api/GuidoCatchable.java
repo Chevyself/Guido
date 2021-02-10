@@ -23,7 +23,10 @@ public interface GuidoCatchable extends Catchable {
    *
    * @param onRemove whether to call the method on remove
    */
-  default void unload(boolean onRemove) {}
+  default void unload(boolean onRemove) throws Throwable {
+    if (onRemove) this.onRemove();
+    API.getCache().remove(this);
+  }
 
   @Override
   default @NonNull Time getToRemove() {

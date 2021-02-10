@@ -1,6 +1,6 @@
 package com.starfishst.bukkit.dependencies.pgm.listeners;
 
-import com.starfishst.bukkit.api.Guido;
+import com.starfishst.bukkit.Guido;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;

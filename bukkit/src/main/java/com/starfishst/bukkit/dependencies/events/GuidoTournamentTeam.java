@@ -44,12 +44,12 @@ public class GuidoTournamentTeam implements TournamentTeam {
   }
 
   @Override
-  public String getName() {
+  public @NonNull String getName() {
     return this.name;
   }
 
   @Override
-  public List<GuidoTournamentPlayer> getPlayers() {
+  public @NonNull List<GuidoTournamentPlayer> getPlayers() {
     return this.players;
   }
 }

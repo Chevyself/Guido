@@ -7,6 +7,7 @@ import java.util.Set;
 import lombok.NonNull;
 import me.googas.annotations.Nullable;
 import me.googas.api.Requests;
+import me.googas.api.economy.AbstractRecord;
 import me.googas.api.links.Linkable;
 import me.googas.api.links.LinkableInfo;
 import me.googas.api.links.LinkableType;
@@ -242,5 +243,12 @@ public class LinkReceptors {
     Linkable linkable = link.getLink();
     if (linkable == null) return false;
     return linkable.deposit(context, amount.doubleValue());
+  }
+
+  @Receptor(Requests.Links.ACCOUNTS)
+  public AbstractRecord accounts(@ParamName("link") LinkableInfo link) {
+    Linkable linkable = link.getLink();
+    if (linkable == null) return null;
+    return new AbstractRecord(linkable.getAccounts());
   }
 }

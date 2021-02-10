@@ -41,7 +41,7 @@
                                     <exclude>META-INF/**</exclude>
                                 </excludes>
                                 <includes>
-                                    <include>me.googas.api:API</include>
+                                    <include>com.starfishst.guido:simple</include>
                                     <include>me.googas.messaging:Commons-Messaging</include>
                                 </includes>
                             </artifactSet>
@@ -78,37 +78,41 @@
             <groupId>org.github.paperspigot</groupId>
             <artifactId>paperspigot-api</artifactId>
             <version>1.8.8-R0.1-SNAPSHOT</version>
+            <scope>provided</scope>
         </dependency>
         <!-- Dependency on simple -->
         <dependency>
             <groupId>com.starfishst.guido</groupId>
             <artifactId>simple</artifactId>
             <version>1.0.0</version>
-            <scope>compile</scope>
         </dependency>
         <!-- Starbox -->
         <dependency>
             <groupId>me.googas.starbox</groupId>
             <artifactId>starbox</artifactId>
             <version>1.0.0</version>
+            <scope>provided</scope>
         </dependency>
         <!-- ProtocolLib -->
         <dependency>
             <groupId>com.comphenix.protocol</groupId>
             <artifactId>ProtocolLib</artifactId>
             <version>4.5.0</version>
+            <scope>provided</scope>
         </dependency>
         <!-- PGM -->
         <dependency>
             <groupId>tc.oc.pgm</groupId>
             <artifactId>core</artifactId>
             <version>0.11-SNAPSHOT</version>
+            <scope>provided</scope>
         </dependency>
         <!-- PGM Events -->
         <dependency>
             <groupId>dev.pgm</groupId>
             <artifactId>Events</artifactId>
             <version>1.0.0-SNAPSHOT</version>
+            <scope>provided</scope>
         </dependency>
     </dependencies>
 

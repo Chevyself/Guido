@@ -1,6 +1,5 @@
 package com.starfishst.bukkit;
 
-import com.starfishst.bukkit.api.Guido;
 import com.starfishst.bukkit.modules.GroupsHandler;
 import java.util.ArrayList;
 import java.util.List;

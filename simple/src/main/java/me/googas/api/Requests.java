@@ -9,6 +9,7 @@ import java.util.UUID;
 import java.util.function.Consumer;
 import lombok.NonNull;
 import me.googas.api.economy.AbstractBank;
+import me.googas.api.economy.AbstractRecord;
 import me.googas.api.links.Linkable;
 import me.googas.api.links.LinkableInfo;
 import me.googas.api.links.LinkableType;
@@ -228,6 +229,7 @@ public class Requests {
     @NonNull public static final String SET_PREFERENCE = Links.PREFIX + "set-preference";
     @NonNull public static final String WITHDRAW = Links.PREFIX + "withdraw";
     @NonNull public static final String DEPOSIT = Links.PREFIX + "deposit";
+    @NonNull public static final String ACCOUNTS = Links.PREFIX + "accounts";
 
     @NonNull
     public static RequestBuilder<Linkable[]> getLinks(@NonNull String userId) {
@@ -261,7 +263,7 @@ public class Requests {
         @NonNull LinkableType type,
         @NonNull Map<String, Object> identification,
         @NonNull Map<String, Object> recognition) {
-      return new RequestBuilder<>(Linkable.class, "link")
+      return new RequestBuilder<>(Linkable.class, Links.LINK)
           .put("type", type)
           .put("identification", identification)
           .put("recognition", recognition);
@@ -419,6 +421,11 @@ public class Requests {
           .put("link", link)
           .put("context", context)
           .put("amount", amount);
+    }
+
+    @NonNull
+    public static RequestBuilder<AbstractRecord> getAccounts(@NonNull LinkableInfo link) {
+      return new RequestBuilder<>(AbstractRecord.class, Links.ACCOUNTS).put("link", link);
     }
   }
 
@@ -691,6 +698,7 @@ public class Requests {
     @NonNull public static final String GET = Banks.PREFIX + "get";
     @NonNull public static final String CREATE = Banks.PREFIX + "create";
     @NonNull public static final String DELETE = Banks.PREFIX + "delete";
+    @NonNull public static final String ACCOUNTS = Banks.PREFIX + "accounts";
 
     @NonNull
     public static RequestBuilder<Boolean> withdraw(
@@ -724,6 +732,10 @@ public class Requests {
 
     public static RequestBuilder<Boolean> delete(@NonNull String id) {
       return new RequestBuilder<>(Boolean.class, Banks.DELETE).put("id", id);
+    }
+
+    public static RequestBuilder<AbstractRecord> getAccounts(@NonNull String id) {
+      return new RequestBuilder<>(AbstractRecord.class, Banks.ACCOUNTS).put("id", id);
     }
   }
 }

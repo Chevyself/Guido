@@ -1,6 +1,5 @@
 package com.starfishst.bukkit;
 
-import com.starfishst.bukkit.api.Guido;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.NonNull;
@@ -17,10 +16,17 @@ import me.googas.starbox.modules.data.economy.TransactionType;
 import me.googas.starbox.modules.data.type.Bank;
 import me.googas.starbox.modules.data.type.Profile;
 import me.googas.starbox.modules.placeholders.LocalizedLine;
+import org.bukkit.Bukkit;
 
 public class GuidoBankProvider implements EconomyHandler.BankProvider {
 
   @NonNull private final MemoryCache bankCache = new MemoryCache();
+
+  @NonNull
+  public GuidoBankProvider startTask() {
+    Bukkit.getScheduler().runTaskTimerAsynchronously(Guido.getPlugin(), this.bankCache, 0, 20);
+    return this;
+  }
 
   @Override
   public @NonNull Transaction createBank(@Nullable String account, @NonNull Profile profile) {
@@ -80,22 +86,24 @@ public class GuidoBankProvider implements EconomyHandler.BankProvider {
   @Nullable
   @Override
   public Bank getBank(@NonNull String account) {
-    AbstractBank abstractBank =
-        this.bankCache.getOrSupply(
-            AbstractBank.class,
-            bank -> bank.getId().equals(account),
-            () -> {
-              try {
-                AbstractBank bank =
-                    Requests.Banks.getBank(account).send(Guido.getClient().getConnection());
-                if (bank != null) this.bankCache.add(bank);
-                return bank;
-              } catch (MessengerListenFailException e) {
-                e.printStackTrace();
-              }
-              return null;
-            });
-    return abstractBank == null ? null : new GuidoBank(abstractBank);
+    return this.bankCache.getOrSupply(
+        GuidoBank.class,
+        bank -> bank.getId().equals(account),
+        () -> {
+          try {
+            AbstractBank bank =
+                Requests.Banks.getBank(account).send(Guido.getClient().getConnection());
+            if (bank != null) {
+              GuidoBank loaded = new GuidoBank(bank);
+              this.bankCache.add(loaded);
+              return loaded;
+            }
+            return null;
+          } catch (MessengerListenFailException e) {
+            e.printStackTrace();
+          }
+          return null;
+        });
   }
 
   @Override

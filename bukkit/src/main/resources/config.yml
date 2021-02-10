@@ -1,18 +1,31 @@
- ## The context in which this server is working
+ # The context in which this server is working
 context: Bukkit
-## The token to authenticate in the bot
+# The token to authenticate in the bot
 token: none
+# The currency of the server
+currency:
+  # How is the currency called
+  name: Dollar
+  # How is the currency called in plural
+  description: Dollars
+  # How much does a player get when it joins the server?
+  start: 100
 ## The list of commands that can be enabled:
 ## - fly: allows players to fly
 ## - ping: allows players to see their ping
 ## - gamemode: allows players to change their gamemode
 ## - ready: when pgm is loaded players can /ready and /unready to start a match
-enabled-commands:
+## - sudo: TODO
+## - pay: TODO
+## - balance: TODO
+commands:
   - fly
   - ping
   - gamemode
+  - pay
+  - balance
 ## The settings for certain listeners
-listener-settings:
+modules:
   #  <---------------------------------------------------------------------------------------->
   #                           LISTENERS THAT DO NOT REQUIRE DEPENDENCIES
   #  <---------------------------------------------------------------------------------------->
@@ -21,7 +34,7 @@ listener-settings:
     # Whether this listener is enabled
     enabled: true
     # What's the permission that allows players to see who's executing a command
-    permission: guido.adminchat
+    permission: guido.adminchat.cmd
     # How is it displayed for those who posses the permission
     # Placeholders are:
     # %player% for the name of the player
@@ -32,33 +45,9 @@ listener-settings:
     banned:
       - tell
       - msg
-  # A listener for testing. This will print guido events
-  test:
-    enabled: true
-  # Whether to force the players to spawn in a central location
-  spawn:
-    ## Whether to enable this function
-    enabled: false
-  # A custom scoreboard that supports PAPI placeholders
-  # Localized lines are supported just add a `localized:` prefix and the line will be looked in language files!
-  scoreboard:
-    # Whether to have a custom scoreboard
-    enabled: true
-    title: "localized:scoreboard.title"
-    # This is the layout of the scoreboard
-    layout:
-      - "localized:scoreboard.ping"
-      - "&egoogas.me"
-  # Decorations given by the groups of a player
-  decorations:
-    # Whether there should be decorations
-    enabled: false
   #  <---------------------------------------------------------------------------------------->
   #                             LISTENERS THAT REQUIRE PROTOCOLLIB
   #  <---------------------------------------------------------------------------------------->
-  # A much better tab list which can be customized by other plugins
-  tab-list:
-    enabled: true
   # A listener that aims to improve minecraft velocity
   better-velocity:
     enabled: false

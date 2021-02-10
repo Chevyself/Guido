@@ -1,6 +1,6 @@
 package com.starfishst.bukkit.client;
 
-import com.starfishst.bukkit.api.Guido;
+import com.starfishst.bukkit.Guido;
 import lombok.NonNull;
 import me.googas.api.client.tasks.HeartBeatTask;
 import org.bukkit.scheduler.BukkitRunnable;

@@ -1,7 +1,7 @@
 package com.starfishst.bukkit.dependencies.pgm.commands;
 
-import com.starfishst.bukkit.api.Guido;
-import com.starfishst.bukkit.api.commands.GuidoCommand;
+import com.starfishst.bukkit.Guido;
+import com.starfishst.bukkit.commands.GuidoCommand;
 import com.starfishst.bukkit.dependencies.pgm.listeners.matches.PGMMatchMakingHandler;
 import com.starfishst.bukkit.lang.BukkitLocaleFile;
 import com.starfishst.commands.bukkit.annotations.Command;

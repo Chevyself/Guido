@@ -1,7 +1,7 @@
 package com.starfishst.bukkit.modules;
 
+import com.starfishst.bukkit.Guido;
 import com.starfishst.bukkit.GuidoRank;
-import com.starfishst.bukkit.api.Guido;
 import com.starfishst.bukkit.dependencies.pgm.listeners.groups.PGMGroupsHandler;
 import com.starfishst.bukkit.util.Permissions;
 import java.util.ArrayList;

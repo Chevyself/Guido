@@ -4,6 +4,7 @@ import com.google.gson.annotations.SerializedName;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import lombok.Getter;
 import lombok.NonNull;
@@ -23,6 +24,7 @@ import me.googas.api.permissions.Permissible;
 import me.googas.api.permissions.PermissionStack;
 import me.googas.api.user.UserData;
 import me.googas.commons.Validate;
+import me.googas.commons.builder.ToStringBuilder;
 
 /** This object represents data that can been linked to an user */
 public class Linkable
@@ -262,5 +264,32 @@ public class Linkable
   @Override
   public @NonNull Linkable cache() {
     return (Linkable) GuidoCatchable.super.cache();
+  }
+
+  @Override
+  public String toString() {
+    return new ToStringBuilder(this)
+        .append("type", this.type)
+        .append("identification", this.identification)
+        .append("recognition", this.recognition)
+        .append("accounts", this.accounts)
+        .append("permissions", this.permissions)
+        .append("information", this.information)
+        .append("stats", this.stats)
+        .append("linkedUserId", this.linkedUserId)
+        .build();
+  }
+
+  @Override
+  public boolean equals(Object object) {
+    if (this == object) return true;
+    if (object == null || this.getClass() != object.getClass()) return false;
+    Linkable linkable = (Linkable) object;
+    return this.type == linkable.type && this.identification.equals(linkable.identification);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(this.type, this.identification);
   }
 }

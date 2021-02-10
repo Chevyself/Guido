@@ -209,7 +209,7 @@ public class Discord {
             () ->
                 new Linkable(
                         LinkableType.DISCORD,
-                        new HashMap<>(),
+                        Maps.singleton("id", id),
                         new HashMap<>(),
                         new HashMap<>(),
                         new HashSet<>(),

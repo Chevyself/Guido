@@ -1,7 +1,7 @@
 package com.starfishst.bukkit.modules;
 
-import com.starfishst.bukkit.api.Guido;
-import com.starfishst.bukkit.api.config.GuidoModuleSettings;
+import com.starfishst.bukkit.Guido;
+import com.starfishst.bukkit.configuration.ModuleSettings;
 import lombok.NonNull;
 import me.googas.starbox.modules.Module;
 
@@ -22,7 +22,7 @@ public interface GuidoModule extends Module {
    * @return the settings of this listener
    */
   @NonNull
-  default GuidoModuleSettings getSettings() {
-    return Guido.getConfiguration().getModuleSettings(this);
+  default ModuleSettings getSettings() {
+    return Guido.getConfiguration().getModulesSettings(this);
   }
 }

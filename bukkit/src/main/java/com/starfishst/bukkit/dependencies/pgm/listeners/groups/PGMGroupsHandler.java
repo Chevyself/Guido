@@ -1,6 +1,6 @@
 package com.starfishst.bukkit.dependencies.pgm.listeners.groups;
 
-import com.starfishst.bukkit.api.Guido;
+import com.starfishst.bukkit.Guido;
 import com.starfishst.bukkit.modules.GroupsHandler;
 import com.starfishst.commands.bukkit.utils.BukkitUtils;
 import java.util.Collection;

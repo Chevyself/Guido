@@ -1,6 +1,6 @@
 package com.starfishst.bukkit.commands.providers;
 
-import com.starfishst.bukkit.api.Guido;
+import com.starfishst.bukkit.Guido;
 import com.starfishst.bukkit.lang.BukkitLocaleFile;
 import com.starfishst.commands.bukkit.context.CommandContext;
 import com.starfishst.commands.bukkit.providers.type.BukkitExtraArgumentProvider;

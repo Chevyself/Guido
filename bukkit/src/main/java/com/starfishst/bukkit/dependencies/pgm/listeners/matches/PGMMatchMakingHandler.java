@@ -1,6 +1,6 @@
 package com.starfishst.bukkit.dependencies.pgm.listeners.matches;
 
-import com.starfishst.bukkit.api.Guido;
+import com.starfishst.bukkit.Guido;
 import com.starfishst.bukkit.dependencies.pgm.PGMHostedMatch;
 import com.starfishst.bukkit.dependencies.pgm.commands.ReadyCommand;
 import com.starfishst.bukkit.dependencies.pgm.listeners.matches.creation.PickTeamSelection;

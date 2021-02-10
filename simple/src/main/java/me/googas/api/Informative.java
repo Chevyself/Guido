@@ -25,6 +25,7 @@ public interface Informative {
   default <T> T get(@Nullable String context, @NonNull String key, @NonNull Class<T> typeOfT) {
     Map<String, Object> info = this.getInformation(context);
     Object t = info.get(key);
+    if (t == null) return null;
     if (typeOfT.isAssignableFrom(t.getClass())) return typeOfT.cast(t);
     return null;
   }

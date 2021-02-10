@@ -1,14 +1,16 @@
 package com.starfishst.bukkit;
 
-import com.starfishst.bukkit.api.Guido;
 import java.util.Map;
+import java.util.Objects;
 import java.util.UUID;
 import lombok.NonNull;
 import me.googas.annotations.Nullable;
 import me.googas.api.Requests;
+import me.googas.api.economy.AbstractRecord;
 import me.googas.api.links.Linkable;
 import me.googas.api.links.LinkableInfo;
 import me.googas.api.permissions.AbstractPermission;
+import me.googas.commons.builder.ToStringBuilder;
 import me.googas.commons.time.Time;
 import me.googas.commons.time.Unit;
 import me.googas.messaging.api.MessengerListenFailException;
@@ -69,12 +71,28 @@ public class GuidoProfile implements Profile {
 
   @Override
   public @NonNull Map<String, Double> getAccounts() {
-    return this.linkable.getAccounts();
+    try {
+      AbstractRecord record =
+          Requests.Links.getAccounts(this.linkable.getInfo())
+              .send(Guido.getClient().getConnection());
+      if (record != null) {
+        return record.getAccounts();
+      }
+      throw new IllegalArgumentException(
+          "There's been an error while trying to get the accounts of " + this.linkable);
+    } catch (MessengerListenFailException e) {
+      throw new IllegalStateException(e);
+    }
   }
 
   @Override
   public @NonNull Time getToRemove() {
     return new Time(3, Unit.MINUTES);
+  }
+
+  @Override
+  public @NonNull String getName() {
+    return this.linkable.getRecogString("nickname", "");
   }
 
   @Override
@@ -133,13 +151,14 @@ public class GuidoProfile implements Profile {
 
   @Override
   public @NonNull Transaction withdraw(double amount, @Nullable String context) {
+    if (context == null) context = "global";
+    double balance = this.getBalance(context);
     try {
       Boolean aBoolean =
-          Requests.Links.withdraw(
-                  this.linkable.getInfo(), context == null ? "global" : context, amount)
+          Requests.Links.withdraw(this.linkable.getInfo(), context, amount)
               .send(Guido.getClient().getConnection());
       if (aBoolean != null && aBoolean) {
-        return Profile.super.withdraw(amount, context);
+        return new Transaction(TransactionType.WITHDRAW, amount, balance - amount);
       }
     } catch (MessengerListenFailException e) {
       e.printStackTrace();
@@ -147,20 +166,21 @@ public class GuidoProfile implements Profile {
     return new Transaction(
         TransactionType.WITHDRAW,
         amount,
-        this.getBalance(context),
+        balance,
         new LocalizedLine("transaction.unknown-error"),
         TransactionResponse.ERROR);
   }
 
   @Override
   public @NonNull Transaction deposit(double amount, @Nullable String context) {
+    if (context == null) context = "global";
+    double balance = this.getBalance(context);
     try {
       Boolean aBoolean =
-          Requests.Links.deposit(
-                  this.linkable.getInfo(), context == null ? "global" : context, amount)
+          Requests.Links.deposit(this.linkable.getInfo(), context, amount)
               .send(Guido.getClient().getConnection());
       if (aBoolean != null && aBoolean) {
-        return Profile.super.deposit(amount, context);
+        return new Transaction(TransactionType.DEPOSIT, amount, balance + amount);
       }
     } catch (MessengerListenFailException e) {
       e.printStackTrace();
@@ -171,5 +191,23 @@ public class GuidoProfile implements Profile {
         this.getBalance(context),
         new LocalizedLine("transaction.unknown-error"),
         TransactionResponse.ERROR);
+  }
+
+  @Override
+  public boolean equals(Object object) {
+    if (this == object) return true;
+    if (object == null || this.getClass() != object.getClass()) return false;
+    GuidoProfile profile = (GuidoProfile) object;
+    return this.linkable.equals(profile.linkable);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(this.linkable);
+  }
+
+  @Override
+  public String toString() {
+    return new ToStringBuilder(this).append("linkable", this.linkable).build();
   }
 }

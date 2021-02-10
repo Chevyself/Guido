@@ -29,7 +29,11 @@ public class JsongoBanksLoader extends SimpleJsongoLoader implements BanksLoader
   public boolean delete(@NonNull String id) {
     AbstractBank bank = this.getBank(id);
     if (bank != null) {
-      bank.unload(false);
+      try {
+        bank.unload(false);
+      } catch (Throwable e) {
+        e.printStackTrace();
+      }
       return Mongo.delete(this.banks(), new Document("id", id));
     }
     return false;

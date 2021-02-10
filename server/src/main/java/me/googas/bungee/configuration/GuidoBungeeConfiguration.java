@@ -48,7 +48,7 @@ public class GuidoBungeeConfiguration implements BungeeConfiguration {
 
   @Override
   public @NonNull String getBotArguments() {
-    return null;
+    return this.botArguments;
   }
 
   @NonNull

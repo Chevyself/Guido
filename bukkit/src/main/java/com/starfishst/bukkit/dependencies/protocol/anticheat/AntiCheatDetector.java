@@ -1,6 +1,6 @@
 package com.starfishst.bukkit.dependencies.protocol.anticheat;
 
-import com.starfishst.bukkit.api.Guido;
+import com.starfishst.bukkit.Guido;
 import com.starfishst.bukkit.dependencies.protocol.PacketHandler;
 
 /** Detects cheats from players */

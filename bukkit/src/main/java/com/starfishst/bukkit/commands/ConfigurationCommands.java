@@ -1,7 +1,6 @@
 package com.starfishst.bukkit.commands;
 
-import com.starfishst.bukkit.api.Guido;
-import com.starfishst.bukkit.api.commands.GuidoCommand;
+import com.starfishst.bukkit.Guido;
 import com.starfishst.bukkit.lang.BukkitLocaleFile;
 import com.starfishst.bukkit.modules.GroupsHandler;
 import com.starfishst.commands.bukkit.annotations.Command;

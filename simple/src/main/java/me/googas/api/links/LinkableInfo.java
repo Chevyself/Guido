@@ -2,11 +2,14 @@ package me.googas.api.links;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import lombok.Getter;
 import lombok.NonNull;
 import me.googas.annotations.Nullable;
+import me.googas.api.API;
 import me.googas.api.Identifiable;
 import me.googas.api.matches.queue.Queueable;
+import me.googas.commons.builder.ToStringBuilder;
 
 /**
  * LinkedInf represents the linked data as an object to getId it. This means that this contains the
@@ -73,12 +76,34 @@ public class LinkableInfo implements Queueable, Identifiable {
    */
   @Nullable
   public Linkable getLink() {
-    return null;
+    return API.getLoader().getLinks().getLink(this.getType(), this.getIdentification());
   }
 
   @Override
   public @NonNull String getSingle() {
     Linkable link = this.getLink();
     return link == null ? "null" : link.getSingle();
+  }
+
+  @Override
+  public boolean equals(Object object) {
+    if (this == object) return true;
+    if (object == null || this.getClass() != object.getClass()) return false;
+    LinkableInfo that = (LinkableInfo) object;
+    return this.type == that.type && this.identification.equals(that.identification);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(this.type, this.identification);
+  }
+
+  @Override
+  public String toString() {
+    return new ToStringBuilder(this)
+        .append("type", this.type)
+        .append("identification", this.identification)
+        .append("stats", this.stats)
+        .build();
   }
 }

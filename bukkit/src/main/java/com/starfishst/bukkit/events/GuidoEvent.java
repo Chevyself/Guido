@@ -1,6 +1,6 @@
-package com.starfishst.bukkit.api.events;
+package com.starfishst.bukkit.events;
 
-import com.starfishst.bukkit.api.Guido;
+import com.starfishst.bukkit.Guido;
 import lombok.NonNull;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;

@@ -84,7 +84,6 @@
             <groupId>net.dv8tion</groupId>
             <artifactId>JDA</artifactId>
             <version>4.1.1_137</version>
-            <scope>provided</scope>
         </dependency>
         <!-- Dependency to the bungee api -->
         <dependency>
@@ -141,7 +140,6 @@
             <groupId>org.mongodb</groupId>
             <artifactId>mongo-java-driver</artifactId>
             <version>3.12.7</version>
-            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>net.sf.trove4j</groupId>

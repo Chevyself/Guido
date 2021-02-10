@@ -1,6 +1,6 @@
 package com.starfishst.bukkit.dependencies.pgm.commands.provider;
 
-import com.starfishst.bukkit.api.Guido;
+import com.starfishst.bukkit.Guido;
 import com.starfishst.bukkit.dependencies.pgm.PGMHostedMatch;
 import com.starfishst.bukkit.dependencies.pgm.listeners.matches.PGMMatchMakingHandler;
 import com.starfishst.commands.bukkit.context.CommandContext;

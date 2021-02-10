@@ -4,7 +4,7 @@ import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.ProtocolManager;
 import com.comphenix.protocol.events.PacketContainer;
-import com.starfishst.bukkit.api.config.GuidoModuleSettings;
+import com.starfishst.bukkit.configuration.ModuleSettings;
 import com.starfishst.bukkit.modules.GuidoModule;
 import java.lang.reflect.InvocationTargetException;
 import lombok.NonNull;
@@ -27,7 +27,7 @@ public class VelocityImprovement implements GuidoModule {
   private double friction;
 
   public VelocityImprovement() {
-    GuidoModuleSettings settings = this.getSettings();
+    ModuleSettings settings = this.getSettings();
     this.multiplierHorizontal = settings.getDouble("multiplier-horizontal", 0.9);
     this.multiplierVertical = settings.getDouble("multiplier-vertical", 0.3);
     this.multiplierVerticalAir = settings.getDouble("multiplier-vertical-air", 0.15);
