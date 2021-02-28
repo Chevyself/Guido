@@ -5,6 +5,7 @@ import com.starfishst.commands.jda.providers.registry.JdaProvidersRegistry;
 import lombok.NonNull;
 import me.googas.bot.core.commands.providers.AuthLevelProvider;
 import me.googas.bot.core.commands.providers.DiscordLinkableProvider;
+import me.googas.bot.core.commands.providers.GroupProvider;
 import me.googas.bot.core.commands.providers.GuidoUserProvider;
 import me.googas.bot.core.commands.providers.GuildDataProvider;
 import me.googas.bot.core.commands.providers.LadderProvider;
@@ -28,6 +29,7 @@ public class GuidoProvidersRegistry extends JdaProvidersRegistry {
     super(messages);
     this.addProvider(new AuthLevelProvider());
     this.addProvider(new DiscordLinkableProvider());
+    this.addProvider(new GroupProvider());
     this.addProvider(new GuidoUserProvider());
     this.addProvider(new GuildDataProvider());
     this.addProvider(new LadderProvider());

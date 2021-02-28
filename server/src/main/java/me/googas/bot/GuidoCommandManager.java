@@ -5,6 +5,7 @@ import com.starfishst.commands.jda.ManagerOptions;
 import java.util.Set;
 import lombok.NonNull;
 import me.googas.bot.api.Guido;
+import me.googas.bot.core.commands.GroupManagementCommands;
 import me.googas.bot.core.commands.HelpCommand;
 import me.googas.bot.core.commands.LadderCommands;
 import me.googas.bot.core.commands.LangCommands;
@@ -41,6 +42,7 @@ public class GuidoCommandManager extends CommandManager {
           new StopCommand(),
           new VoiceChannelCommands(),
           new HelpCommand(),
+          new GroupManagementCommands(),
           new LadderCommands(),
           new LangCommands(),
           new LeaderboardCommands(),
