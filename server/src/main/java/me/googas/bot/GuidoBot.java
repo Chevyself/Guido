@@ -59,7 +59,7 @@ public class GuidoBot implements GuidoInstance {
   @Nullable @Setter @Getter private CommandManager commandManager;
 
   /**
-   * The main method of the bot.
+   * The main method of the bot. x
    *
    * <p>Arguments include:
    *

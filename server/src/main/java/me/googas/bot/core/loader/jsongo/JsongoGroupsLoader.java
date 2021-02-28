@@ -47,7 +47,8 @@ public class JsongoGroupsLoader extends SimpleJsongoLoader implements GroupLoade
       } catch (Throwable throwable) {
         throwable.printStackTrace();
       }
-      return Mongo.delete(this.groups(), new Document("id", id));
+      Mongo.delete(this.groups(), new Document("id", id));
+      return true;
     }
     return false;
   }

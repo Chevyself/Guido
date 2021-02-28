@@ -68,6 +68,9 @@ public class GuidoLanguage implements Language {
 
   @Override
   public String toString() {
-    return new ToStringBuilder(this).append("locale", this.locale).append("section", this.section).build();
+    return new ToStringBuilder(this)
+        .append("locale", this.locale)
+        .append("section", this.section)
+        .build();
   }
 }
