@@ -20,7 +20,7 @@ public class GuidoCommands {
   @NonNull private final Random random = new Random();
 
   @Command(
-      aliases = {"leaders", "capitanes"},
+      aliases = {"leaders", "capitanes", "lideres"},
       description = "Select the given number of captains")
   public Result leaders(
       CommandContext context,

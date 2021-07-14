@@ -1,7 +1,10 @@
 package me.googas.guido.commands;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -12,8 +15,10 @@ import me.googas.commands.jda.annotations.Command;
 import me.googas.commands.jda.result.Result;
 import me.googas.commands.jda.result.ResultType;
 import me.googas.guido.Discord;
+import me.googas.guido.Pagination;
 import me.googas.starbox.Strings;
 import net.dv8tion.jda.api.Permission;
+import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
 
@@ -120,38 +125,38 @@ public class EloCommands {
     return newElo > oldElo ? "+" + (int) difference : "-" + (int) difference;
   }
 
-  /*
-  @Command(aliases = "leaderboard", description = "See the leaderboard of the server")
+  @Command(
+      aliases = {"leaderboard", "lb"},
+      description = "See the leaderboard of the server")
   public Result leaderboard(
-          Guild guild,
-          @Optional(
-                  name = "Page",
-                  description = "The page of the leaderboard you want to see",
-                  suggestions = "1")
-                  int page) {
-      LinkedHashMap<Member, Integer> elos = new LinkedHashMap<>();
-      guild
-              .getMembers()
-              .forEach(
-                      member -> {
-                          if (this.isRegistered(member)) {
-                              elos.put(member, this.getElo(member));
-                          }
-                      });
-      List<Member> members = new ArrayList<>();
-      elos.entrySet().stream()
-              .sorted(Map.Entry.comparingByValue())
-              .forEach(entry -> members.add(entry.getKey()));
-      Collections.reverse(members);
-      List<Member> toSee = new Pagination<>(members).getPage(page, 10);
-      StringBuilder builder = Strings.getBuilder();
-      builder.append("Leaderboard:").append("\n");
-      for (int i = 0; i < toSee.size(); i++) {
-          builder.append(i + 1).append(". ").append(members.get(i).getAsMention()).append("\n");
-      }
-      return new Result(builder.toString());
+      Guild guild,
+      @Optional(
+              name = "Page",
+              description = "The page of the leaderboard you want to see",
+              suggestions = "1")
+          int page) {
+    LinkedHashMap<Member, Integer> elos = new LinkedHashMap<>();
+    guild
+        .getMembers()
+        .forEach(
+            member -> {
+              if (this.isRegistered(member)) {
+                elos.put(member, this.getElo(member));
+              }
+            });
+    List<Member> members = new ArrayList<>();
+    elos.entrySet().stream()
+        .sorted(Map.Entry.comparingByValue())
+        .forEach(entry -> members.add(entry.getKey()));
+    Collections.reverse(members);
+    List<Member> toSee = new Pagination<>(members, 10).getPage(page);
+    StringBuilder builder = new StringBuilder();
+    builder.append("Leaderboard:").append("\n");
+    for (int i = 0; i < toSee.size(); i++) {
+      builder.append(i + 1).append(". ").append(members.get(i).getAsMention()).append("\n");
+    }
+    return new Result(builder.toString());
   }
-   */
 
   private boolean isRegistered(@NonNull Member member) {
     String nickname = member.getNickname();

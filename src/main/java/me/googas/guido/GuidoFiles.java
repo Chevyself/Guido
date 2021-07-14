@@ -13,6 +13,8 @@ public class GuidoFiles {
 
   @NonNull public static final StarboxFile CONFIG = new StarboxFile(GuidoFiles.DIR, "config.json");
 
+  @NonNull public static final StarboxFile MAPS = new StarboxFile(StarboxFile.DIR, "maps.json");
+
   public static class Contexts {
 
     @NonNull
@@ -24,6 +26,7 @@ public class GuidoFiles {
     @NonNull private static final ClassLoader LOADER = GuidoFiles.class.getClassLoader();
 
     @NonNull public static final URL CONFIG = Resources.getResource("config.json");
+    @NonNull public static final URL MAPS = Resources.getResource("maps.json");
 
     @NonNull
     public static URL getResource(@NonNull String name) {
