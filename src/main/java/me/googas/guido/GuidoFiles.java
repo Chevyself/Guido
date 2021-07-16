@@ -6,6 +6,7 @@ import java.util.Objects;
 import lombok.NonNull;
 import me.googas.io.StarboxFile;
 import me.googas.io.context.Json;
+import me.googas.io.context.PropertiesContext;
 
 public class GuidoFiles {
 
@@ -19,6 +20,8 @@ public class GuidoFiles {
 
     @NonNull
     public static final Json JSON = new Json(new GsonBuilder().setPrettyPrinting().create());
+
+    public static PropertiesContext PROPERTIES = new PropertiesContext();
   }
 
   public static class Resources {
@@ -27,6 +30,7 @@ public class GuidoFiles {
 
     @NonNull public static final URL CONFIG = Resources.getResource("config.json");
     @NonNull public static final URL MAPS = Resources.getResource("maps.json");
+    @NonNull public static final URL SQL_QUERIES = Resources.getResource("sql_queries.properties");
 
     @NonNull
     public static URL getResource(@NonNull String name) {

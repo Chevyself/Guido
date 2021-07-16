@@ -6,7 +6,9 @@ import me.googas.commands.jda.annotations.Command;
 import me.googas.commands.jda.result.Result;
 import me.googas.commands.objects.JoinedStrings;
 import net.dv8tion.jda.api.JDA;
+import net.dv8tion.jda.api.OnlineStatus;
 import net.dv8tion.jda.api.Permission;
+import net.dv8tion.jda.api.entities.Activity;
 
 public class FunCommands {
 
@@ -16,9 +18,12 @@ public class FunCommands {
       permission = Permission.ADMINISTRATOR)
   public Result status(
       JDA jda,
-      @Multiple @Required(name = "status", description = "The new status to set")
+      @Required(name = "status", description = "The new status to set") OnlineStatus status,
+      @Required(name = "activity", description = "The new activity to be doing")
+          Activity.ActivityType activity,
+      @Multiple @Required(name = "description", description = "The new status description to set")
           JoinedStrings strings) {
-    // jda.getPresence().setPresence(Activity.);
+    jda.getPresence().setPresence(status, Activity.of(activity, strings.getString()));
     return new Result();
   }
 }
