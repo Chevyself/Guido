@@ -13,12 +13,12 @@ public class OnlineStatusProvider implements JdaArgumentProvider<OnlineStatus> {
   }
 
   @Override
-  public @NonNull OnlineStatus fromString(@NonNull String s, @NonNull CommandContext context)
+  public @NonNull OnlineStatus fromString(@NonNull String string, @NonNull CommandContext context)
       throws ArgumentProviderException {
     try {
-        return OnlineStatus.valueOf(s.toUpperCase());
-      } catch (IllegalArgumentException e) {
-      throw new ArgumentProviderException(s + " is not a valid online status");
+      return OnlineStatus.valueOf(string.toUpperCase());
+    } catch (IllegalArgumentException e) {
+      throw new ArgumentProviderException(string + " is not a valid online status");
     }
   }
 }

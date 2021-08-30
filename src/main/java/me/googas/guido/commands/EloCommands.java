@@ -9,7 +9,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import lombok.NonNull;
-import me.googas.commands.annotations.Optional;
+import me.googas.commands.annotations.Free;
 import me.googas.commands.annotations.Required;
 import me.googas.commands.jda.annotations.Command;
 import me.googas.commands.jda.result.Result;
@@ -40,7 +40,7 @@ public class EloCommands {
   @Command(aliases = "current", description = "Check you elo or someone else's")
   public Result current(
       Member sender,
-      @Optional(name = "who", description = "Who do you want to check elo from") Member member) {
+      @Free(name = "who", description = "Who do you want to check elo from") Member member) {
     boolean isSelf = member == null;
     Member toCheck = member != null ? member : sender;
     if (this.isRegistered(toCheck)) {
@@ -74,7 +74,7 @@ public class EloCommands {
   public Result match(
       Message message,
       @Required(name = "players", description = "The players per team") int size,
-      @Optional(name = "tie", description = "Whether there has been a tie") boolean tie) {
+      @Free(name = "tie", description = "Whether there has been a tie") boolean tie) {
     List<Member> mentioned = message.getMentionedMembers();
     if (size * 2 != mentioned.size()) {
       return new Result(
@@ -130,7 +130,7 @@ public class EloCommands {
       description = "See the leaderboard of the server")
   public Result leaderboard(
       Guild guild,
-      @Optional(
+      @Free(
               name = "Page",
               description = "The page of the leaderboard you want to see",
               suggestions = "1")

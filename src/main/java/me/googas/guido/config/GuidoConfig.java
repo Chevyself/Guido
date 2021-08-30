@@ -8,10 +8,10 @@ public class GuidoConfig {
 
   @NonNull @Getter private final String token;
   @NonNull @Getter private final String prefix;
-  @NonNull @Getter
-  private final DatabaseConfiguration database;
+  @NonNull @Getter private final DatabaseConfiguration database;
 
-  public GuidoConfig(@NonNull String token, @NonNull String prefix, @NonNull DatabaseConfiguration database) {
+  public GuidoConfig(
+      @NonNull String token, @NonNull String prefix, @NonNull DatabaseConfiguration database) {
     this.token = token;
     this.prefix = prefix;
     this.database = database;
@@ -25,6 +25,4 @@ public class GuidoConfig {
     return GuidoFiles.CONFIG.readOr(
         GuidoFiles.Contexts.JSON, GuidoConfig.class, GuidoFiles.Resources.CONFIG);
   }
-
-
 }

@@ -1,4 +1,4 @@
-package me.googas.guido.maps;
+package me.googas.guido.type;
 
 import java.util.ArrayList;
 import java.util.List;

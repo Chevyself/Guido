@@ -33,7 +33,7 @@
                 <executions>
                     <execution>
                         <goals>
-                            <goal>format</goal>
+                            <goal>check</goal>
                         </goals>
                     </execution>
                 </executions>
@@ -85,24 +85,34 @@
 
     <dependencies>
         <dependency>
-            <groupId>com.github.xChevy.Starbox-Commands</groupId>
+            <groupId>me.googas.starbox-commands</groupId>
             <artifactId>jda</artifactId>
-            <version>1fd35cb7cb</version>
+            <version>14fe816088</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>net.dv8tion</groupId>
+                    <artifactId>JDA</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>me.googas.starbox</groupId>
+                    <artifactId>core</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>me.googas.starbox</groupId>
+            <artifactId>core</artifactId>
+            <version>5c6a6008f6</version>
+        </dependency>
+        <dependency>
+            <groupId>me.googas.lazy-db</groupId>
+            <artifactId>sql</artifactId>
+            <version>fe37d085a1</version>
         </dependency>
         <dependency>
             <groupId>net.dv8tion</groupId>
             <artifactId>JDA</artifactId>
             <version>4.3.0_293</version>
-        </dependency>
-        <dependency>
-            <groupId>com.github.xChevy.Starbox-IO</groupId>
-            <artifactId>core</artifactId>
-            <version>d436f5c0d4</version>
-        </dependency>
-        <dependency>
-            <groupId>com.github.xChevy.Starbox-Net</groupId>
-            <artifactId>core</artifactId>
-            <version>7675664611</version>
         </dependency>
         <dependency>
             <groupId>com.h2database</groupId>

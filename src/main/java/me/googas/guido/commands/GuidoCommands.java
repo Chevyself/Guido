@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 import lombok.NonNull;
-import me.googas.commands.annotations.Optional;
+import me.googas.commands.annotations.Free;
 import me.googas.commands.jda.annotations.Command;
 import me.googas.commands.jda.context.CommandContext;
 import me.googas.commands.jda.result.Result;
@@ -25,8 +25,7 @@ public class GuidoCommands {
   public Result leaders(
       CommandContext context,
       Member sender,
-      @Optional(name = "number", description = "leaders.number.desc", suggestions = "2")
-          int number) {
+      @Free(name = "number", description = "leaders.number.desc", suggestions = "2") int number) {
     if (number <= 0) return new Result("You must use a number greater than 0");
     GuildVoiceState voiceState = sender.getVoiceState();
     if (voiceState != null && voiceState.getChannel() != null) {

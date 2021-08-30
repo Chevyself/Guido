@@ -6,8 +6,6 @@ import me.googas.commands.jda.context.CommandContext;
 import me.googas.commands.jda.providers.type.JdaArgumentProvider;
 import net.dv8tion.jda.api.entities.Activity;
 
-import java.util.Locale;
-
 public class ActivityTypeProvider implements JdaArgumentProvider<Activity.ActivityType> {
   @Override
   public @NonNull Class<Activity.ActivityType> getClazz() {
