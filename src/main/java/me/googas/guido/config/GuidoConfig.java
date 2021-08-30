@@ -13,6 +13,11 @@ public class GuidoConfig {
   @NonNull @Getter private final String prefix;
   @NonNull @Getter private final DatabaseConfiguration database;
 
+  @NonNull
+  @Getter
+  @SerializedName("server-token")
+  private final String serverToken;
+
   @SerializedName("server-port")
   @Getter
   private final int serverPort;
@@ -21,15 +26,17 @@ public class GuidoConfig {
       @NonNull String token,
       @NonNull String prefix,
       @NonNull DatabaseConfiguration database,
+      @NonNull String serverToken,
       int serverPort) {
     this.token = token;
     this.prefix = prefix;
     this.database = database;
+    this.serverToken = serverToken;
     this.serverPort = serverPort;
   }
 
   private GuidoConfig() {
-    this("", ".", new DatabaseConfiguration(), 3000);
+    this("", ".", new DatabaseConfiguration(), "dev", 3000);
   }
 
   public static GuidoConfig load() {

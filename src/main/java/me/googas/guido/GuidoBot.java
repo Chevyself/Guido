@@ -74,7 +74,10 @@ public class GuidoBot {
 
   public static void setupServer() throws IOException {
     // TODO setup auth for only allowing servers with an associated ip
-    JsonSocketServer.listen(GuidoBot.config.getServerPort()).start();
+    JsonSocketServer.listen(GuidoBot.config.getServerPort())
+        .addReceptors(new SingleTokenAuthentication.Receptors(GuidoBot.config.getServerToken()))
+        .auth(new SingleTokenAuthentication())
+        .start();
   }
 
   public static void setupCommands() {
