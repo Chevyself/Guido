@@ -17,9 +17,11 @@ import me.googas.guido.commands.providers.ActivityTypeProvider;
 import me.googas.guido.commands.providers.JdaArgumentProvider;
 import me.googas.guido.commands.providers.OnlineStatusProvider;
 import me.googas.guido.config.GuidoConfig;
+import me.googas.guido.db.sql.PropertiesSchemaSupplier;
 import me.googas.guido.db.sql.SqlLinksSubloader;
 import me.googas.lazy.Loader;
 import me.googas.lazy.sql.LazySQL;
+import me.googas.lazy.sql.LazySchema;
 import me.googas.net.cache.Cache;
 import me.googas.net.cache.MemoryCache;
 import me.googas.net.sockets.json.server.JsonSocketServer;
@@ -60,6 +62,10 @@ public class GuidoBot {
     GuidoBot.loader =
         LazySQL.at(GuidoBot.config.getDatabase().getUrl())
             .add(new SqlLinksSubloader.Builder())
+            .setSchema(
+                new LazySchema(
+                    LazySchema.Type.SQL,
+                    PropertiesSchemaSupplier.of(GuidoFiles.Resources.Schemas.SQL)))
             .build()
             .start();
   }

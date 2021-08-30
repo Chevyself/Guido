@@ -38,5 +38,10 @@ public class GuidoFiles {
       return Objects.requireNonNull(
           Resources.LOADER.getResource(name), "Could not find resource " + name);
     }
+
+    public static class Schemas {
+
+      public static URL SQL = Resources.getResource("schemas/sql.properties");
+    }
   }
 }
