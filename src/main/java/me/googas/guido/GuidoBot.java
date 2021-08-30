@@ -48,7 +48,8 @@ public class GuidoBot {
   private static CommandManager manager;
 
   public static void main(String[] args)
-      throws LoginException, InterruptedException, IOException, SQLException {
+      throws LoginException, InterruptedException, IOException, SQLException,
+          ClassNotFoundException {
     GuidoBot.jda =
         JDABuilder.create(GuidoBot.config.getToken(), Arrays.asList(GatewayIntent.values()))
             .build()
@@ -58,7 +59,8 @@ public class GuidoBot {
     GuidoBot.setupCommands();
   }
 
-  public static void setupLoader() throws SQLException {
+  public static void setupLoader() throws SQLException, ClassNotFoundException {
+    Class.forName("com.mysql.cj.jdbc.Driver");
     GuidoBot.loader =
         LazySQL.at(GuidoBot.config.getDatabase().getUrl())
             .add(new SqlLinksSubloader.Builder())

@@ -4,6 +4,8 @@ import com.google.gson.annotations.SerializedName;
 import lombok.Getter;
 import lombok.NonNull;
 import me.googas.guido.GuidoFiles;
+import me.googas.io.StarboxFile;
+import me.googas.io.context.Json;
 
 public class GuidoConfig {
 
@@ -26,12 +28,21 @@ public class GuidoConfig {
     this.serverPort = serverPort;
   }
 
-  public GuidoConfig() {
-    this("", "", new DatabaseConfiguration(), 3000);
+  private GuidoConfig() {
+    this("", ".", new DatabaseConfiguration(), 3000);
   }
 
   public static GuidoConfig load() {
-    return GuidoFiles.CONFIG.readOr(
-        GuidoFiles.Contexts.JSON, GuidoConfig.class, GuidoFiles.Resources.CONFIG);
+    Json json = GuidoFiles.Contexts.JSON;
+    StarboxFile configFile = GuidoFiles.CONFIG;
+    if (configFile.exists()) {
+      return configFile
+          .read(json, GuidoConfig.class)
+          .provide()
+          .orElseThrow(() -> new IllegalStateException("Could not load configuration"));
+    } else {
+      json.write(configFile, new GuidoConfig()).run();
+      return GuidoConfig.load();
+    }
   }
 }

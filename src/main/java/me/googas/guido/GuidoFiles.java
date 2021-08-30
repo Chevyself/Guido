@@ -28,10 +28,6 @@ public class GuidoFiles {
 
     @NonNull private static final ClassLoader LOADER = GuidoFiles.class.getClassLoader();
 
-    @NonNull public static final URL CONFIG = Resources.getResource("config.json");
-    @NonNull public static final URL MAPS = Resources.getResource("maps.json");
-    @NonNull public static final URL SQL_QUERIES = Resources.getResource("sql_queries.properties");
-
     @NonNull
     public static URL getResource(@NonNull String name) {
       Resources.LOADER.getResource(name);
