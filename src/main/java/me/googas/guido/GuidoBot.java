@@ -13,8 +13,9 @@ import me.googas.commands.jda.providers.registry.JdaProvidersRegistry;
 import me.googas.guido.commands.EloCommands;
 import me.googas.guido.commands.FunCommands;
 import me.googas.guido.commands.GuidoCommands;
+import me.googas.guido.commands.LinkCommands;
 import me.googas.guido.commands.providers.ActivityTypeProvider;
-import me.googas.guido.commands.providers.JdaArgumentProvider;
+import me.googas.guido.commands.providers.MinecraftLinkProvider;
 import me.googas.guido.commands.providers.OnlineStatusProvider;
 import me.googas.guido.config.GuidoConfig;
 import me.googas.guido.db.sql.PropertiesSchemaSupplier;
@@ -84,7 +85,7 @@ public class GuidoBot {
     // Registry
     JdaProvidersRegistry registry = new JdaProvidersRegistry(GuidoBot.messagesProvider);
     registry.addProvider(new ActivityTypeProvider());
-    registry.addProvider(new JdaArgumentProvider());
+    registry.addProvider(new MinecraftLinkProvider());
     registry.addProvider(new OnlineStatusProvider());
     // Manager
     GuidoBot.manager =
@@ -94,7 +95,8 @@ public class GuidoBot {
                 () -> GuidoBot.messagesProvider,
                 GuidoBot.jda,
                 new DefaultListenerOptions().setPrefix(GuidoBot.config.getPrefix()))
-            .parseAndRegisterAll(new EloCommands(), new FunCommands(), new GuidoCommands());
+            .parseAndRegisterAll(
+                new EloCommands(), new FunCommands(), new GuidoCommands(), new LinkCommands());
   }
 
   @NonNull

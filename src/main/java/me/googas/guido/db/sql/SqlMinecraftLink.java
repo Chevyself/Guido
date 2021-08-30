@@ -24,7 +24,8 @@ public class SqlMinecraftLink implements MinecraftLink {
 
   @NonNull
   public static SqlMinecraftLink of(@NonNull ResultSet query) throws SQLException {
-    return new SqlMinecraftLink(query.getLong("user"), UUID.fromString(query.getString("uuid")));
+    String uuid = query.getString("uuid");
+    return new SqlMinecraftLink(query.getLong("user"), uuid == null ? null : UUID.fromString(uuid));
   }
 
   @Override

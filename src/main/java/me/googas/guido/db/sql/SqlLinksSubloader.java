@@ -39,7 +39,12 @@ public class SqlLinksSubloader extends LazySQLSubloader implements LinksSubloade
                     .orElseGet(
                         () -> {
                           this.statement("INSERT INTO `minecraft_links`(`user`) VALUES(?);")
-                              .execute(PreparedStatement::executeUpdate);
+                              .execute(
+                                  insert -> {
+                                    insert.setLong(1, user.getIdLong());
+                                    insert.executeUpdate();
+                                    return null;
+                                  });
                           SqlMinecraftLink link = new SqlMinecraftLink(user.getIdLong(), null);
                           this.parent.getCache().add(link);
                           return link;
