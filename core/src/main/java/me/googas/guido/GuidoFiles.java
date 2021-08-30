@@ -14,7 +14,9 @@ public class GuidoFiles {
 
   @NonNull public static final StarboxFile CONFIG = new StarboxFile(GuidoFiles.DIR, "config.json");
 
-  @NonNull public static final StarboxFile MAPS = new StarboxFile(StarboxFile.DIR, "maps.json");
+  @NonNull
+  public static final StarboxFile MAPS =
+      new StarboxFile(StarboxFile.DIR, "src/main/resources/maps.json");
 
   public static class Contexts {
 
@@ -37,7 +39,7 @@ public class GuidoFiles {
 
     public static class Schemas {
 
-      public static URL SQL = Resources.getResource("schemas/sql.properties");
+      public static URL SQL = Resources.getResource("src/main/resources/schemas/sql.properties");
     }
   }
 }

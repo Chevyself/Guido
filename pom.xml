@@ -4,9 +4,15 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>me.googas</groupId>
-    <artifactId>Guido</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <groupId>me.googas.guido</groupId>
+    <artifactId>guido</artifactId>
+    <version>1.0.0</version>
+    <packaging>pom</packaging>
+
+    <modules>
+        <module>bukkit</module>
+        <module>core</module>
+    </modules>
 
     <properties>
         <maven.compiler.source>8</maven.compiler.source>
@@ -38,36 +44,6 @@
                     </execution>
                 </executions>
             </plugin>
-            <!-- Maven jar shade plugin -->
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-shade-plugin</artifactId>
-                <version>3.2.1</version>
-                <executions>
-                    <execution>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>shade</goal>
-                        </goals>
-                        <configuration>
-                            <createDependencyReducedPom>false</createDependencyReducedPom>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-            <!-- Maven java jar plugin -->
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-jar-plugin</artifactId>
-                <version>3.2.0</version>
-                <configuration>
-                    <archive>
-                        <manifest>
-                            <mainClass>me.googas.guido.GuidoBot</mainClass>
-                        </manifest>
-                    </archive>
-                </configuration>
-            </plugin>
         </plugins>
     </build>
 
@@ -76,49 +52,6 @@
             <id>jitpack.io</id>
             <url>https://jitpack.io</url>
         </repository>
-        <repository>
-            <id>dv8tion</id>
-            <name>m2-dv8tion</name>
-            <url>https://m2.dv8tion.net/releases</url>
-        </repository>
     </repositories>
-
-    <dependencies>
-        <dependency>
-            <groupId>me.googas.starbox-commands</groupId>
-            <artifactId>jda</artifactId>
-            <version>14fe816088</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>net.dv8tion</groupId>
-                    <artifactId>JDA</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>me.googas.starbox</groupId>
-                    <artifactId>core</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-        <dependency>
-            <groupId>me.googas.starbox</groupId>
-            <artifactId>core</artifactId>
-            <version>5c6a6008f6</version>
-        </dependency>
-        <dependency>
-            <groupId>me.googas.lazy-db</groupId>
-            <artifactId>sql</artifactId>
-            <version>54f756532c</version>
-        </dependency>
-        <dependency>
-            <groupId>net.dv8tion</groupId>
-            <artifactId>JDA</artifactId>
-            <version>4.3.0_293</version>
-        </dependency>
-        <dependency>
-            <groupId>mysql</groupId>
-            <artifactId>mysql-connector-java</artifactId>
-            <version>8.0.25</version>
-        </dependency>
-    </dependencies>
 
 </project>
