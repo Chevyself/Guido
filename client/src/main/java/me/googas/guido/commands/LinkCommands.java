@@ -1,7 +1,6 @@
 package me.googas.guido.commands;
 
 import java.util.Optional;
-import me.googas.commands.annotations.Free;
 import me.googas.commands.annotations.Required;
 import me.googas.commands.bukkit.annotations.Command;
 import me.googas.commands.bukkit.result.Result;
