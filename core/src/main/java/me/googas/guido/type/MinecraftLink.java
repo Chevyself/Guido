@@ -14,4 +14,6 @@ public interface MinecraftLink extends Catchable {
 
   @NonNull
   Optional<UUID> getMinecraftUniqueId();
+
+  boolean setMinecraftUniqueId(UUID uniqueId);
 }

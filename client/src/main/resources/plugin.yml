@@ -1,0 +1,6 @@
+name: Guido
+description: The Guido bot in minecraft
+version: 1.0.0
+main: me.googas.guido.GuidoPlugin
+depend:
+  - Starbox

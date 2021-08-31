@@ -84,7 +84,7 @@
         <dependency>
             <groupId>me.googas.starbox</groupId>
             <artifactId>core</artifactId>
-            <version>5c6a6008f6</version>
+            <version>d42692badf</version>
         </dependency>
         <!-- Too lazy to db -->
         <dependency>

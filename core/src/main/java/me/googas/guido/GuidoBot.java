@@ -1,5 +1,6 @@
 package me.googas.guido;
 
+import com.google.gson.GsonBuilder;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.Arrays;
@@ -20,11 +21,16 @@ import me.googas.guido.commands.providers.OnlineStatusProvider;
 import me.googas.guido.config.GuidoConfig;
 import me.googas.guido.db.sql.PropertiesSchemaSupplier;
 import me.googas.guido.db.sql.SqlLinksSubloader;
+import me.googas.guido.receptors.LinkReceptors;
+import me.googas.guido.receptors.auth.AuthReceptors;
+import me.googas.guido.receptors.auth.SingleTokenAuthentication;
 import me.googas.lazy.Loader;
 import me.googas.lazy.sql.LazySQL;
 import me.googas.lazy.sql.LazySchema;
+import me.googas.net.api.messages.Message;
 import me.googas.net.cache.Cache;
 import me.googas.net.cache.MemoryCache;
+import me.googas.net.sockets.json.adapters.MessageDeserializer;
 import me.googas.net.sockets.json.server.JsonSocketServer;
 import me.googas.starbox.scheduler.Scheduler;
 import me.googas.starbox.scheduler.TimerScheduler;
@@ -46,6 +52,7 @@ public class GuidoBot {
 
   private static JDA jda;
   private static Loader loader;
+  private static JsonSocketServer server;
   private static CommandManager manager;
 
   public static void main(String[] args)
@@ -74,11 +81,16 @@ public class GuidoBot {
   }
 
   public static void setupServer() throws IOException {
-    // TODO setup auth for only allowing servers with an associated ip
-    JsonSocketServer.listen(GuidoBot.config.getServerPort())
-        .addReceptors(new SingleTokenAuthentication.Receptors(GuidoBot.config.getServerToken()))
-        .auth(new SingleTokenAuthentication())
-        .start();
+    GuidoBot.server =
+        JsonSocketServer.listen(GuidoBot.config.getServerPort())
+            .addReceptors(new LinkReceptors(), new AuthReceptors(GuidoBot.config.getServerToken()))
+            .auth(new SingleTokenAuthentication())
+            .handle(Throwable::printStackTrace)
+            .setGson(
+                new GsonBuilder()
+                    .serializeNulls()
+                    .registerTypeAdapter(Message.class, new MessageDeserializer()))
+            .start();
   }
 
   public static void setupCommands() {
@@ -107,5 +119,10 @@ public class GuidoBot {
   @NonNull
   public static Loader getLoader() {
     return Objects.requireNonNull(GuidoBot.loader, "Loader has not been initialized");
+  }
+
+  @NonNull
+  public static JsonSocketServer getServer() {
+    return Objects.requireNonNull(GuidoBot.server, "Server has not been initialized");
   }
 }

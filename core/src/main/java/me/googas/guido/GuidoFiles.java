@@ -39,7 +39,7 @@ public class GuidoFiles {
 
     public static class Schemas {
 
-      public static URL SQL = Resources.getResource("src/main/resources/schemas/sql.properties");
+      public static URL SQL = Resources.getResource("schemas/sql.properties");
     }
   }
 }

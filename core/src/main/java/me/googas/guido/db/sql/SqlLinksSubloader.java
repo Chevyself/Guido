@@ -3,6 +3,8 @@ package me.googas.guido.db.sql;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Types;
+import java.util.UUID;
 import lombok.NonNull;
 import me.googas.guido.db.LinksSubloader;
 import me.googas.guido.type.MinecraftLink;
@@ -55,6 +57,21 @@ public class SqlLinksSubloader extends LazySQLSubloader implements LinksSubloade
   public @NonNull SqlLinksSubloader createTable() throws SQLException {
     this.statementWithKey("links.minecraft.create-table").execute(PreparedStatement::execute);
     return this;
+  }
+
+  public boolean setMinecraftUniqueId(@NonNull SqlMinecraftLink link, UUID uniqueId) {
+    return this.statement("UPDATE `minecraft_links` SET `uuid`=? WHERE `user`=?;")
+        .execute(
+            statement -> {
+              if (uniqueId == null) {
+                statement.setNull(1, Types.VARCHAR);
+              } else {
+                statement.setString(1, uniqueId.toString());
+              }
+              statement.setLong(2, link.getUser().getIdLong());
+              return statement.executeUpdate() > 0;
+            })
+        .orElse(false);
   }
 
   public static class Builder implements LazySQLSubloaderBuilder {

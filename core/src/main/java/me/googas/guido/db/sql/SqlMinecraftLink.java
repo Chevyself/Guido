@@ -15,7 +15,7 @@ import net.dv8tion.jda.api.entities.User;
 public class SqlMinecraftLink implements MinecraftLink {
 
   private final long user;
-  private final UUID uniqueId;
+  private UUID uniqueId;
 
   public SqlMinecraftLink(long user, UUID uniqueId) {
     this.user = user;
@@ -38,6 +38,17 @@ public class SqlMinecraftLink implements MinecraftLink {
   @Override
   public @NonNull Optional<UUID> getMinecraftUniqueId() {
     return Optional.ofNullable(this.uniqueId);
+  }
+
+  @Override
+  public boolean setMinecraftUniqueId(UUID uniqueId) {
+    if (GuidoBot.getLoader()
+        .getSubloader(SqlLinksSubloader.class)
+        .setMinecraftUniqueId(this, uniqueId)) {
+      this.uniqueId = uniqueId;
+      return true;
+    }
+    return false;
   }
 
   @Override
