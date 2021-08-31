@@ -23,6 +23,14 @@ public class LinkReceptors {
         .orElse(false);
   }
 
+  @Receptor("links/has")
+  public boolean has(@ParamName("uuid") UUID uuid) {
+    return GuidoBot.getLoader()
+        .getSubloader(LinksSubloader.class)
+        .getMinecraftLink(uuid)
+        .isPresent();
+  }
+
   public static class LinkCode implements Catchable {
     @Getter private final int code;
     @Getter private final long user;

@@ -2,6 +2,7 @@ package me.googas.guido.commands;
 
 import java.util.Optional;
 import me.googas.commands.annotations.Free;
+import me.googas.commands.annotations.Required;
 import me.googas.commands.bukkit.annotations.Command;
 import me.googas.commands.bukkit.result.Result;
 import me.googas.guido.Guido;
@@ -15,7 +16,7 @@ public class LinkCommands {
   @Command(aliases = "link", description = "Link your account to discord", async = true)
   public Result link(
       Channel channel,
-      @Free(name = "code", description = "The code to link your account with") int code) {
+      @Required(name = "code", description = "The code to link your account with") int code) {
     Optional<JsonClient> socket = Guido.getClient().getSocket();
     if (socket.isPresent()) {
       socket

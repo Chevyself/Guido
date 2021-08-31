@@ -4,6 +4,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Types;
+import java.util.Optional;
 import java.util.UUID;
 import lombok.NonNull;
 import me.googas.guido.db.LinksSubloader;
@@ -51,6 +52,34 @@ public class SqlLinksSubloader extends LazySQLSubloader implements LinksSubloade
                           this.parent.getCache().add(link);
                           return link;
                         }));
+  }
+
+  @Override
+  public @NonNull Optional<MinecraftLink> getMinecraftLink(@NonNull UUID uuid) {
+    MinecraftLink minecraftLink =
+        this.parent
+            .getCache()
+            .get(
+                MinecraftLink.class,
+                link ->
+                    link.getMinecraftUniqueId().isPresent()
+                        && link.getMinecraftUniqueId().get().equals(uuid))
+            .orElseGet(
+                () ->
+                    this.statement("SELECT * FROM `minecraft_links` WHERE `uuid`=?;")
+                        .execute(
+                            statement -> {
+                              statement.setString(1, uuid.toString());
+                              ResultSet query = statement.executeQuery();
+                              if (query.next()) {
+                                SqlMinecraftLink link = SqlMinecraftLink.of(query);
+                                this.parent.getCache().add(link);
+                                return link;
+                              }
+                              return null;
+                            })
+                        .orElse(null));
+    return Optional.ofNullable(minecraftLink);
   }
 
   @Override

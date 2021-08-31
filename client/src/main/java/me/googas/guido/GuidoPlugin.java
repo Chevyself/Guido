@@ -10,6 +10,7 @@ import me.googas.commands.bukkit.messages.BukkitMessagesProvider;
 import me.googas.commands.bukkit.messages.MessagesProvider;
 import me.googas.commands.bukkit.providers.registry.BukkitProvidersRegistry;
 import me.googas.guido.commands.LinkCommands;
+import me.googas.guido.compatibilities.InvitesCompatibility;
 import me.googas.guido.config.GuidoConfig;
 import me.googas.guido.receptors.LinkReceptors;
 import me.googas.net.api.exception.MessengerListenFailException;
@@ -18,12 +19,20 @@ import me.googas.net.api.messages.RequestBuilder;
 import me.googas.net.sockets.json.adapters.MessageDeserializer;
 import me.googas.net.sockets.json.client.JsonClient;
 import me.googas.starbox.commands.providers.ChannelProvider;
+import me.googas.starbox.compatibilities.Compatibility;
+import me.googas.starbox.compatibilities.CompatibilityManager;
+import me.googas.starbox.modules.ModuleRegistry;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public class GuidoPlugin extends JavaPlugin implements Guido.Client {
 
   @NonNull private final GuidoConfig config = GuidoConfig.load(this);
   @NonNull private final MessagesProvider messages = new BukkitMessagesProvider();
+  @NonNull private final ModuleRegistry registry = new ModuleRegistry(this);
+
+  @NonNull
+  private final CompatibilityManager compatibilities =
+      new CompatibilityManager().add(new InvitesCompatibility());
 
   @NonNull
   private final CommandManager manager =
@@ -39,6 +48,12 @@ public class GuidoPlugin extends JavaPlugin implements Guido.Client {
     Guido.setClient(this);
     this.getSocket();
     this.manager.parseAndRegisterAll(new LinkCommands());
+    this.compatibilities.check().getCompatibilities().stream()
+        .filter(Compatibility::isEnabled)
+        .forEach(
+            compatibility -> {
+              this.registry.engage(compatibility.getModules(this));
+            });
     super.onEnable();
   }
 

@@ -99,6 +99,10 @@ public class GuidoBot {
     registry.addProvider(new ActivityTypeProvider());
     registry.addProvider(new MinecraftLinkProvider());
     registry.addProvider(new OnlineStatusProvider());
+    // Options
+    DefaultListenerOptions listenerOptions = new DefaultListenerOptions();
+    listenerOptions.setPrefix(GuidoBot.config.getPrefix());
+    listenerOptions.setEmbedMessages(true);
     // Manager
     GuidoBot.manager =
         new CommandManager(
@@ -106,7 +110,7 @@ public class GuidoBot {
                 GuidoBot.messagesProvider,
                 () -> GuidoBot.messagesProvider,
                 GuidoBot.jda,
-                new DefaultListenerOptions().setPrefix(GuidoBot.config.getPrefix()))
+                listenerOptions)
             .parseAndRegisterAll(
                 new EloCommands(), new FunCommands(), new GuidoCommands(), new LinkCommands());
   }

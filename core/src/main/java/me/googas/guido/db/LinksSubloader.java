@@ -1,5 +1,7 @@
 package me.googas.guido.db;
 
+import java.util.Optional;
+import java.util.UUID;
 import lombok.NonNull;
 import me.googas.guido.type.MinecraftLink;
 import me.googas.lazy.Subloader;
@@ -9,4 +11,7 @@ public interface LinksSubloader extends Subloader {
 
   @NonNull
   MinecraftLink getMinecraftLink(@NonNull User user);
+
+  @NonNull
+  Optional<MinecraftLink> getMinecraftLink(@NonNull UUID uuid);
 }

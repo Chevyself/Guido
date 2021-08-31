@@ -2,6 +2,8 @@ package me.googas.guido;
 
 import java.util.Objects;
 import java.util.Optional;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import lombok.NonNull;
 import me.googas.net.sockets.json.client.JsonClient;
 
@@ -20,9 +22,16 @@ public class Guido {
     Guido.client = client;
   }
 
+  public static void handle(@NonNull Throwable e) {
+    Guido.getClient().getLogger().log(Level.SEVERE, e, () -> "");
+  }
+
   public interface Client {
 
     @NonNull
     Optional<JsonClient> getSocket();
+
+    @NonNull
+    Logger getLogger();
   }
 }

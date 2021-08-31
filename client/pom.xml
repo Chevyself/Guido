@@ -34,6 +34,12 @@
             <artifactId>bukkit</artifactId>
             <version>d42692badf</version>
         </dependency>
+        <!-- Invites -->
+        <dependency>
+            <groupId>me.googas.invites</groupId>
+            <artifactId>invites</artifactId>
+            <version>1.0.0</version>
+        </dependency>
     </dependencies>
 
 </project>
