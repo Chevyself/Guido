@@ -33,7 +33,7 @@ public class LinkReceptors {
                   .append(tag)
                   .color(ChatColor.GREEN)
                   .append("?")
-                  .color(ChatColor.GREEN)
+                  .color(ChatColor.DARK_GREEN)
                   .append(" [")
                   .color(ChatColor.DARK_GRAY)
                   .event(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/link " + code))
