@@ -30,10 +30,10 @@ public class EloCommands {
   public Result register(
       Member member, @Required(name = "nickname", description = "Minecraft nickname") String nick) {
     if (this.isRegistered(member)) {
-      return new Result(ResultType.USAGE, "You are registered");
+      return Result.forType(ResultType.USAGE).setDescription("You are registered").build();
     } else {
       member.modifyNickname(nick + " (0)").queue();
-      return new Result("You have been registered!");
+      return Result.builder().setDescription("You have been registered!").build();
     }
   }
 
@@ -45,15 +45,19 @@ public class EloCommands {
     Member toCheck = member != null ? member : sender;
     if (this.isRegistered(toCheck)) {
       if (isSelf) {
-        return new Result("You have " + this.getElo(toCheck) + " elo");
+        return Result.builder().setDescription("You have " + this.getElo(toCheck) + " elo").build();
       } else {
-        return new Result(toCheck.getAsMention() + " has " + this.getElo(toCheck) + " elo");
+        return Result.builder()
+            .setDescription(toCheck.getAsMention() + " has " + this.getElo(toCheck) + " elo")
+            .build();
       }
     } else {
       if (isSelf) {
-        return new Result("You are not registered");
+        return Result.builder().setDescription("You are not registered").build();
       } else {
-        return new Result(toCheck.getAsMention() + " is not registered");
+        return Result.builder()
+            .setDescription(toCheck.getAsMention() + " is not registered")
+            .build();
       }
     }
   }
@@ -61,9 +65,13 @@ public class EloCommands {
   @Command(aliases = "average", description = "Calculate the average of the mentioned members")
   public Result average(Message message) {
     if (message.getMentionedMembers().isEmpty()) {
-      return new Result("Please mention at least one member");
+      return Result.forType(ResultType.USAGE)
+          .setDescription("Please mention at least one member")
+          .build();
     } else {
-      return new Result("The team would have " + this.getElo(message.getMentionedMembers()));
+      return Result.builder()
+          .setDescription("The team would have " + this.getElo(message.getMentionedMembers()))
+          .build();
     }
   }
 
@@ -77,11 +85,12 @@ public class EloCommands {
       @Free(name = "tie", description = "Whether there has been a tie") boolean tie) {
     List<Member> mentioned = message.getMentionedMembers();
     if (size * 2 != mentioned.size()) {
-      return new Result(
-          ResultType.USAGE,
-          Strings.format(
-              "The number of mentioned players ({0}) does not match the expected players per team ({0})",
-              mentioned.size(), size * 2));
+      return Result.forType(ResultType.USAGE)
+          .setDescription(
+              Strings.format(
+                  "The number of mentioned players ({0}) does not match the expected players per team ({0})",
+                  mentioned.size(), size * 2))
+          .build();
     } else {
       // Mention winners first
       List<Member> winners = new ArrayList<>(size);
@@ -105,18 +114,16 @@ public class EloCommands {
           newWinners > winnerElo ? newWinners - winnerElo : winnerElo - newWinners;
       double losersDifference =
           newLosers > losersElo ? newLosers - losersElo : losersElo - newLosers;
-      List<String> winnersTag = new ArrayList<>();
-      List<String> losersTag = new ArrayList<>();
-      winners.forEach(winner -> winnersTag.add(winner.getAsMention()));
-      losers.forEach(loser -> losersTag.add(loser.getAsMention()));
       this.updateElo(winners, winnerElo, newWinners, winnersDifference);
       this.updateElo(losers, losersElo, newLosers, losersDifference);
-      return new Result(
-          Discord.prettyToString(winnersTag)
-              + this.printElo(winnerElo, newWinners, winnersDifference)
-              + " - "
-              + Discord.prettyToString(losersTag)
-              + this.printElo(losersElo, newLosers, losersDifference));
+      return Result.builder()
+          .setDescription(
+              Discord.pretty(winners)
+                  + this.printElo(winnerElo, newWinners, winnersDifference)
+                  + " - "
+                  + Discord.pretty(losers)
+                  + this.printElo(losersElo, newLosers, losersDifference))
+          .build();
     }
   }
 
@@ -155,7 +162,7 @@ public class EloCommands {
     for (int i = 0; i < toSee.size(); i++) {
       builder.append(i + 1).append(". ").append(members.get(i).getAsMention()).append("\n");
     }
-    return new Result(builder.toString());
+    return Result.builder().setDescription(builder.toString()).build();
   }
 
   private boolean isRegistered(@NonNull Member member) {

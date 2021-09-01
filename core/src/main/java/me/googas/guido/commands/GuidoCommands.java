@@ -6,7 +6,6 @@ import java.util.Random;
 import lombok.NonNull;
 import me.googas.commands.annotations.Free;
 import me.googas.commands.jda.annotations.Command;
-import me.googas.commands.jda.context.CommandContext;
 import me.googas.commands.jda.result.Result;
 import me.googas.commands.jda.result.ResultType;
 import me.googas.guido.Discord;
@@ -23,10 +22,12 @@ public class GuidoCommands {
       aliases = {"leaders", "capitanes", "lideres"},
       description = "Select the given number of captains")
   public Result leaders(
-      CommandContext context,
       Member sender,
       @Free(name = "number", description = "leaders.number.desc", suggestions = "2") int number) {
-    if (number <= 0) return new Result("You must use a number greater than 0");
+    if (number <= 0)
+      return Result.forType(ResultType.USAGE)
+          .setDescription("You must use a number greater than 0")
+          .build();
     GuildVoiceState voiceState = sender.getVoiceState();
     if (voiceState != null && voiceState.getChannel() != null) {
       VoiceChannel channel = voiceState.getChannel();
@@ -34,14 +35,19 @@ public class GuidoCommands {
       if (members.size() >= number) {
         List<Member> random = this.getRandom(members, number);
         // Can be localized sometime
-        return new Result(Strings.format("The leaders are {0}", Discord.pretty(random)));
+        return Result.builder()
+            .setDescription(Strings.format("The leaders are {0}", Discord.pretty(random)))
+            .build();
       } else {
-        return new Result(
-            ResultType.USAGE,
-            Strings.format("There isn't enough players to select {0} captain(s)", number));
+        return Result.forType(ResultType.USAGE)
+            .setDescription(
+                Strings.format("There isn't enough players to select {0} captain(s)", number))
+            .build();
       }
     } else {
-      return new Result(ResultType.USAGE, "You must be connected to a voice channel");
+      return Result.forType(ResultType.USAGE)
+          .setDescription("You must be connected to a voice channel")
+          .build();
     }
   }
 

@@ -2,7 +2,6 @@ package me.googas.guido.db.sql;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.sql.Types;
 import java.util.Optional;
 import java.util.UUID;
@@ -83,7 +82,7 @@ public class SqlLinksSubloader extends LazySQLSubloader implements LinksSubloade
   }
 
   @Override
-  public @NonNull SqlLinksSubloader createTable() throws SQLException {
+  public @NonNull SqlLinksSubloader createTable() {
     this.statementWithKey("links.minecraft.create-table").execute(PreparedStatement::execute);
     return this;
   }

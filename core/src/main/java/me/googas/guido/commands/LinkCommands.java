@@ -15,24 +15,6 @@ import me.googas.starbox.Strings;
 
 public class LinkCommands {
 
-  @Command(aliases = "unlink")
-  public Result unlink(MinecraftLink link) {
-    if (link.getMinecraftUniqueId().isPresent()) {
-      if (link.setMinecraftUniqueId(null)) {
-        return Result.builder()
-            .withMessageBuilder(builder -> builder.setContent("Your account has been unlinked"))
-            .build();
-      } else {
-        return Result.forType(ResultType.ERROR)
-            .withMessageBuilder(builder -> builder.setContent("Your account could not be unlinked"))
-            .build();
-      }
-    }
-    return Result.forType(ResultType.USAGE)
-        .withMessageBuilder(builder -> builder.setContent("Your are not linked"))
-        .build();
-  }
-
   @Command(aliases = "link")
   public Result link(
       MinecraftLink link,
@@ -44,15 +26,12 @@ public class LinkCommands {
               linkCode -> linkCode.getUser() == link.getUser().getIdLong())
           .isPresent()) {
         return Result.forType(ResultType.USAGE)
-            .withMessageBuilder(
-                builder -> builder.setContent("You are already trying to link an account"))
+            .setDescription("You are already trying to link an account")
             .build();
       }
       if (username == null) {
         return Result.forType(ResultType.USAGE)
-            .withMessageBuilder(
-                builder ->
-                    builder.setContent("You must include the username of the account to link"))
+            .setDescription("You must include the username of the account to link")
             .build();
       }
       AtomicBoolean notified = new AtomicBoolean();
@@ -76,18 +55,19 @@ public class LinkCommands {
               });
       if (!notified.get()) {
         return Result.forType(ResultType.ERROR)
-            .withMessageBuilder(builder -> builder.setContent("Could not find player " + username))
+            .setDescription("The player " + username + " is not online")
+            .build();
+      } else {
+        return Result.builder()
+            .setDescription("A notification to accept has been sent to the player")
             .build();
       }
-      return null;
     } else {
       return Result.builder()
-          .withMessageBuilder(
-              builder ->
-                  builder.setContent(
-                      Strings.format(
-                          "You are currently linked to the minecraft account {0}",
-                          link.getMinecraftUniqueId().get())))
+          .setDescription(
+              Strings.format(
+                  "You are currently linked to the Minecraft account {0}",
+                  link.getMinecraftUniqueId().get()))
           .build();
     }
   }

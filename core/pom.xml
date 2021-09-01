@@ -68,7 +68,7 @@
         <dependency>
             <groupId>me.googas.starbox-commands</groupId>
             <artifactId>jda</artifactId>
-            <version>14fe816088</version>
+            <version>3773c8affa</version>
             <exclusions>
                 <exclusion>
                     <groupId>net.dv8tion</groupId>
