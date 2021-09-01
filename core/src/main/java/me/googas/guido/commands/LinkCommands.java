@@ -4,6 +4,7 @@ import java.util.UUID;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.atomic.AtomicBoolean;
 import me.googas.commands.annotations.Free;
+import me.googas.commands.annotations.Required;
 import me.googas.commands.jda.annotations.Command;
 import me.googas.commands.jda.result.Result;
 import me.googas.commands.jda.result.ResultType;
@@ -12,8 +13,30 @@ import me.googas.guido.receptors.LinkReceptors;
 import me.googas.guido.type.MinecraftLink;
 import me.googas.net.api.messages.RequestBuilder;
 import me.googas.starbox.Strings;
+import net.dv8tion.jda.api.Permission;
 
 public class LinkCommands {
+
+  @Command(
+      aliases = "unlink",
+      description = "Unlinks an user from its Minecraft account",
+      permission = Permission.ADMINISTRATOR)
+  public Result unlink(
+      @Required(name = "user", description = "The user to unlink from") MinecraftLink link) {
+    if (link.getMinecraftUniqueId().isPresent()) {
+      if (link.setMinecraftUniqueId(null)) {
+        return Result.builder().setDescription("User has been unlinked").build();
+      } else {
+        return Result.forType(ResultType.ERROR)
+            .setDescription("User could not be unlinked")
+            .build();
+      }
+    } else {
+      return Result.forType(ResultType.USAGE)
+          .setDescription("User is not linked to a Minecraft account")
+          .build();
+    }
+  }
 
   @Command(aliases = "link")
   public Result link(
