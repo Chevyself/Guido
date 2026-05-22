@@ -60,7 +60,6 @@
         </dependency>
     </dependencies>
 </dependencyManagement>
-
     <dependencies>
         <!-- Dependency to the Lombok annotations -->
         <dependency>

@@ -76,15 +76,13 @@
             <name>jcenter-bintray</name>
             <url>https://jcenter.bintray.com/ </url>
         </repository>
+        <repository>
+            <id>jitpack.io</id>
+            <url>https://jitpack.io</url>
+        </repository>
     </repositories>
 
     <dependencies>
-        <!-- JDA dependency -->
-        <dependency>
-            <groupId>net.dv8tion</groupId>
-            <artifactId>JDA</artifactId>
-            <version>4.1.1_137</version>
-        </dependency>
         <!-- Dependency to the bungee api -->
         <dependency>
             <groupId>net.md-5</groupId>
@@ -103,31 +101,15 @@
         </dependency>
         <!-- Command framework JDA -->
         <dependency>
-            <groupId>com.starfishst.commands.JDA</groupId>
+            <groupId>com.github.Chevyself.starbox-commands</groupId>
             <artifactId>jda</artifactId>
-            <version>1.0.0_1</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>me.googas.commons</groupId>
-                    <artifactId>commons</artifactId>
-                </exclusion>
-            </exclusions>
+            <version>1f35b847fb</version>
         </dependency>
         <!-- Command framework Bungee -->
         <dependency>
-            <groupId>com.starfishst.commands.bungee</groupId>
+            <groupId>com.github.Chevyself.starbox-commands</groupId>
             <artifactId>bungee</artifactId>
-            <version>1.0.0_0</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>me.googas.commons</groupId>
-                    <artifactId>commons</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>com.starfishst.commands.core</groupId>
-                    <artifactId>core</artifactId>
-                </exclusion>
-            </exclusions>
+            <version>1f35b847fb</version>
         </dependency>
         <!-- Dependency to simple -->
         <dependency>
