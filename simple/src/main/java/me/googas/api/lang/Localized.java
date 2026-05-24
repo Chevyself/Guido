@@ -2,7 +2,6 @@ package me.googas.api.lang;
 
 import java.util.Map;
 import lombok.NonNull;
-import me.googas.commons.maps.MapBuilder;
 
 /** An entity which can be sent localized messages */
 public interface Localized {
@@ -28,17 +27,6 @@ public interface Localized {
    * @param placeholders the placeholders of the message
    */
   void sendLocalized(@NonNull String key, @NonNull Map<String, String> placeholders);
-
-  /**
-   * Send a localized message using the given key and placeholders
-   *
-   * @param key the key of the localized message
-   * @param placeholders the placeholders of the message as a map builder
-   */
-  default void sendLocalized(
-      @NonNull String key, @NonNull MapBuilder<String, String> placeholders) {
-    this.sendLocalized(key, placeholders.build());
-  }
 
   /**
    * Set the lang that this localized prefers

@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import lombok.NonNull;
-import me.googas.commons.Validate;
 
 /**
  * This object represents certain changes and configurations for an object
@@ -69,7 +68,8 @@ public interface ValuesMap {
    */
   @NonNull
   default <T> T getOr(@NonNull String name, @NonNull Class<T> clazz, @NonNull T def) {
-    return Validate.notNullOr(this.get(name, clazz), def);
+    T t = this.get(name, clazz);
+    return t != null ? t : def;
   }
 
   /**

@@ -5,11 +5,9 @@ import java.util.Map;
 import java.util.Objects;
 import lombok.Getter;
 import lombok.NonNull;
-import me.googas.annotations.Nullable;
 import me.googas.api.API;
 import me.googas.api.Identifiable;
 import me.googas.api.matches.queue.Queueable;
-import me.googas.commons.builder.ToStringBuilder;
 
 /**
  * LinkedInf represents the linked data as an object to getId it. This means that this contains the
@@ -74,7 +72,6 @@ public class LinkableInfo implements Queueable, Identifiable {
    *
    * @return the data
    */
-  @Nullable
   public Linkable getLink() {
     return API.getLoader().getLinks().getLink(this.getType(), this.getIdentification());
   }
@@ -100,10 +97,13 @@ public class LinkableInfo implements Queueable, Identifiable {
 
   @Override
   public String toString() {
-    return new ToStringBuilder(this)
-        .append("type", this.type)
-        .append("identification", this.identification)
-        .append("stats", this.stats)
-        .build();
+    return "LinkableInfo{"
+        + "type="
+        + type
+        + ", identification="
+        + identification
+        + ", stats="
+        + stats
+        + '}';
   }
 }

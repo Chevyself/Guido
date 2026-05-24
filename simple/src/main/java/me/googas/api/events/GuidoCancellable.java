@@ -1,8 +1,8 @@
 package me.googas.api.events;
 
 import me.googas.api.API;
-import me.googas.commons.events.Cancellable;
-import me.googas.commons.events.Event;
+import me.googas.starbox.events.Cancellable;
+import me.googas.starbox.events.Event;
 
 /** This class represents an event that can be cancelled */
 public interface GuidoCancellable extends Cancellable {
@@ -15,11 +15,11 @@ public interface GuidoCancellable extends Cancellable {
    * @throws IllegalArgumentException cancellable is not an instance of {@link Event}
    */
   default boolean callAndGet() {
-    return API.getListenerManager().call(this);
+    return API.getListenerManager().callAndGet(this);
   }
 
   default boolean not() {
     // TRUE if the event was not cancelled
-    return !API.getListenerManager().call(this);
+    return !API.getListenerManager().callAndGet(this);
   }
 }

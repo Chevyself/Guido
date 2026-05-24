@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.Map;
 import lombok.Getter;
 import lombok.NonNull;
-import me.googas.annotations.Nullable;
 
 /**
  * A permission stack contains permissions with certain context to use its permissions in different
@@ -85,7 +84,7 @@ public class PermissionStack {
     return this.getPermissions().remove(perm);
   }
 
-  public boolean addAll(@Nullable PermissionStack global) {
+  public boolean addAll(PermissionStack global) {
     if (global == null) return false;
     return this.getPermissions().addAll(global.getPermissions());
   }

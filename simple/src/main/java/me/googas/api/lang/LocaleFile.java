@@ -2,8 +2,8 @@ package me.googas.api.lang;
 
 import java.util.Map;
 import lombok.NonNull;
-import me.googas.commons.Strings;
-import me.googas.commons.maps.MapBuilder;
+import me.googas.api.utility.MapBuilder;
+import me.googas.starbox.Strings;
 
 /** The file of localized messages */
 public interface LocaleFile {
@@ -41,7 +41,7 @@ public interface LocaleFile {
    */
   @NonNull
   default String get(@NonNull String path, @NonNull Map<String, String> placeholders) {
-    return Strings.build(this.get(path), placeholders);
+    return Strings.format(this.get(path), placeholders);
   }
 
   /**
@@ -54,7 +54,7 @@ public interface LocaleFile {
    */
   @NonNull
   default String get(@NonNull String path, @NonNull MapBuilder<String, String> placeholders) {
-    return Strings.build(this.get(path), placeholders);
+    return Strings.format(this.get(path), placeholders);
   }
 
   /**

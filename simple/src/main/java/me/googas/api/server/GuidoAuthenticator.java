@@ -7,16 +7,18 @@ import lombok.NonNull;
 import me.googas.api.ValuesMap;
 import me.googas.api.loader.Loader;
 import me.googas.api.token.AuthLevel;
-import me.googas.commons.maps.Maps;
-import me.googas.messaging.IRequest;
-import me.googas.messaging.json.server.Authenticator;
-import me.googas.messaging.json.server.JsonClientThread;
+import me.googas.api.utility.Maps;
+import me.googas.net.api.Messenger;
+import me.googas.net.api.auth.Authenticator;
+import me.googas.net.api.messages.Request;
+import me.googas.net.sockets.json.server.JsonClientThread;
+import org.jetbrains.annotations.NotNull;
 
 /** The implementation for authentication in guido */
 public class GuidoAuthenticator implements Authenticator {
 
   /** Each client and its authentication level */
-  @NonNull @Getter private final HashMap<JsonClientThread, AuthLevel> levels = new HashMap<>();
+  @NonNull @Getter private final HashMap<Messenger, AuthLevel> levels = new HashMap<>();
 
   /** Each client and its provided information */
   @NonNull @Getter private final HashMap<JsonClientThread, ValuesMap> info = new HashMap<>();
@@ -65,9 +67,9 @@ public class GuidoAuthenticator implements Authenticator {
   }
 
   @Override
-  public boolean isAuthenticated(@NonNull JsonClientThread client, @NonNull IRequest request) {
-    if (this.levels.containsKey(client)) {
-      AuthLevel authLevel = this.levels.get(client);
+  public boolean isAuthenticated(@NotNull Messenger messenger, @NonNull Request request) {
+    if (this.levels.containsKey(messenger)) {
+      AuthLevel authLevel = this.levels.get(messenger);
       AuthLevel required =
           this.requiredLevel.getOrDefault(request.getMethod(), AuthLevel.READ_WRITE);
       return required.intValue() <= authLevel.intValue();

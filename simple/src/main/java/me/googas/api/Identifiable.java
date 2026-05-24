@@ -4,9 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 import lombok.NonNull;
-import me.googas.annotations.Nullable;
-import me.googas.commons.UUIDUtils;
-import me.googas.commons.Validate;
+import me.googas.starbox.UUIDUtils;
 
 public interface Identifiable {
 
@@ -14,7 +12,7 @@ public interface Identifiable {
     this.setRecog(key, value);
   }
 
-  default void setRecog(@NonNull String key, @Nullable Object value) {
+  default void setRecog(@NonNull String key, Object value) {
     if (value == null) {
       this.getRecognition().remove(key);
     } else {
@@ -73,7 +71,6 @@ public interface Identifiable {
    * @param <T> the type of the value
    * @return the value if found and the type can cast the value
    */
-  @Nullable
   default <T> T getId(@NonNull String key, @NonNull Class<T> typeOfT) {
     Map<String, Object> info = this.getIdentification();
     Object t = info.get(key);
@@ -92,7 +89,8 @@ public interface Identifiable {
    */
   @NonNull
   default <T> T getIdOr(@NonNull String key, @NonNull T def, @NonNull Class<T> typeOfT) {
-    return Validate.notNullOr(this.getId(key, typeOfT), def);
+    T t = this.getId(key, typeOfT);
+    return t != null ? t : def;
   }
 
   default long getIdLong(@NonNull String key, long def) {
@@ -112,7 +110,6 @@ public interface Identifiable {
    * @param <T> the type of the value
    * @return the value if found and the type can cast the value
    */
-  @Nullable
   default <T> T getRecog(@NonNull String key, @NonNull Class<T> typeOfT) {
     Map<String, Object> info = this.getRecognition();
     Object t = info.get(key);
@@ -131,7 +128,8 @@ public interface Identifiable {
    */
   @NonNull
   default <T> T getRecogOr(@NonNull String key, @NonNull T def, @NonNull Class<T> typeOfT) {
-    return Validate.notNullOr(this.getRecog(key, typeOfT), def);
+    T t = this.getRecog(key, typeOfT);
+    return t != null ? t : def;
   }
 
   @NonNull

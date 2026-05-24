@@ -4,7 +4,6 @@ import lombok.Getter;
 import lombok.NonNull;
 import me.googas.api.events.GuidoEvent;
 import me.googas.api.permissions.Permissible;
-import me.googas.commons.builder.ToStringBuilder;
 
 /** An event that involves a {@link Permissible} */
 public class PermissibleEvent implements GuidoEvent {
@@ -23,6 +22,6 @@ public class PermissibleEvent implements GuidoEvent {
 
   @Override
   public String toString() {
-    return new ToStringBuilder(this).append("permissible", this.permissible).build();
+    return "PermissibleEvent{" + "permissible=" + permissible + '}';
   }
 }

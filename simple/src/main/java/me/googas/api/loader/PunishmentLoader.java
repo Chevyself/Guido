@@ -5,7 +5,7 @@ import lombok.NonNull;
 import me.googas.api.links.LinkableInfo;
 import me.googas.api.punishment.Punishment;
 import me.googas.api.punishment.PunishmentStatus;
-import me.googas.commons.RandomUtils;
+import me.googas.api.utility.RandomUtils;
 
 public interface PunishmentLoader extends DataLoader {
 

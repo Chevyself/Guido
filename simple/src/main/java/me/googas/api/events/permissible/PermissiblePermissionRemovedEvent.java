@@ -3,7 +3,6 @@ package me.googas.api.events.permissible;
 import lombok.Getter;
 import lombok.NonNull;
 import me.googas.api.permissions.Permissible;
-import me.googas.commons.builder.ToStringBuilder;
 
 /** Called when a permissible gets a permission removed */
 public class PermissiblePermissionRemovedEvent extends PermissibleEvent {
@@ -27,6 +26,13 @@ public class PermissiblePermissionRemovedEvent extends PermissibleEvent {
 
   @Override
   public String toString() {
-    return new ToStringBuilder(this).append("node", this.node).build();
+    return "PermissiblePermissionRemovedEvent{"
+        + "context='"
+        + context
+        + '\''
+        + ", node='"
+        + node
+        + '\''
+        + '}';
   }
 }

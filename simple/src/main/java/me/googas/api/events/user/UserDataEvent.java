@@ -4,7 +4,6 @@ import lombok.Getter;
 import lombok.NonNull;
 import me.googas.api.events.GuidoEvent;
 import me.googas.api.user.UserData;
-import me.googas.commons.builder.ToStringBuilder;
 
 /** An event that involves user data */
 public class UserDataEvent implements GuidoEvent {
@@ -23,6 +22,6 @@ public class UserDataEvent implements GuidoEvent {
 
   @Override
   public String toString() {
-    return new ToStringBuilder(this).append("data", this.data).build();
+    return "UserDataEvent{" + "data=" + data + '}';
   }
 }

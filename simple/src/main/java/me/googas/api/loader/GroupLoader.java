@@ -2,10 +2,9 @@ package me.googas.api.loader;
 
 import java.util.Collection;
 import lombok.NonNull;
-import me.googas.annotations.Nullable;
 import me.googas.api.permissions.Group;
 import me.googas.api.permissions.GroupInfo;
-import me.googas.commons.RandomUtils;
+import me.googas.api.utility.RandomUtils;
 
 public interface GroupLoader extends DataLoader {
 
@@ -15,7 +14,6 @@ public interface GroupLoader extends DataLoader {
    * @param id the id of the group
    * @return the group if found else null
    */
-  @Nullable
   Group getGroup(@NonNull String id);
 
   /**
@@ -24,7 +22,6 @@ public interface GroupLoader extends DataLoader {
    * @param name the name of the grou[
    * @return the group if found else null
    */
-  @Nullable
   Group getGroupByBane(@NonNull String name);
 
   /**

@@ -3,8 +3,8 @@ package me.googas.api.client.receptors;
 import lombok.NonNull;
 import me.googas.api.Requests;
 import me.googas.api.client.Client;
-import me.googas.messaging.json.Receptor;
-import me.googas.messaging.json.client.JsonClient;
+import me.googas.net.sockets.json.Receptor;
+import me.googas.net.sockets.json.client.JsonClient;
 
 public class SimpleReceptors {
 

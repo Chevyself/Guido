@@ -4,7 +4,6 @@ import lombok.Getter;
 import lombok.NonNull;
 import me.googas.api.events.GuidoEvent;
 import me.googas.api.token.AuthToken;
-import me.googas.commons.builder.ToStringBuilder;
 
 /** An event that involves an auth token */
 public class AuthTokenEvent implements GuidoEvent {
@@ -23,6 +22,6 @@ public class AuthTokenEvent implements GuidoEvent {
 
   @Override
   public String toString() {
-    return new ToStringBuilder(this).append("token", this.token).build();
+    return "AuthTokenEvent{" + "token=" + token + '}';
   }
 }

@@ -2,7 +2,7 @@ package me.googas.api.loader;
 
 import lombok.NonNull;
 import me.googas.api.user.UserData;
-import me.googas.commons.RandomUtils;
+import me.googas.api.utility.RandomUtils;
 
 public interface UserLoader extends DataLoader {
 

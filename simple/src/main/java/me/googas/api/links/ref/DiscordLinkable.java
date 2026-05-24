@@ -1,11 +1,11 @@
 package me.googas.api.links.ref;
 
 import java.lang.ref.SoftReference;
+import java.util.Objects;
 import lombok.NonNull;
 import lombok.experimental.Delegate;
 import me.googas.api.links.Linkable;
 import me.googas.api.links.LinkableType;
-import me.googas.commons.Validate;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
@@ -50,6 +50,6 @@ public class DiscordLinkable {
   @NonNull
   @Delegate
   public Linkable validated() {
-    return Validate.notNull(this.reference.get(), "Reference is no longer in memory");
+    return Objects.requireNonNull(this.reference.get(), "Reference is no longer in memory");
   }
 }

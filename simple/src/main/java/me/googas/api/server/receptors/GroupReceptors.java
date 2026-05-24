@@ -12,8 +12,8 @@ import me.googas.api.permissions.AbstractPermission;
 import me.googas.api.permissions.Group;
 import me.googas.api.permissions.GroupInfo;
 import me.googas.api.permissions.PermissionStack;
-import me.googas.messaging.json.ParamName;
-import me.googas.messaging.json.Receptor;
+import me.googas.net.sockets.json.ParamName;
+import me.googas.net.sockets.json.Receptor;
 
 public class GroupReceptors {
 
