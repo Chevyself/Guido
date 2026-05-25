@@ -1,9 +1,9 @@
 package me.googas.bungee.commands;
 
-import com.starfishst.commands.bungee.annotations.Command;
-import com.starfishst.commands.bungee.context.CommandContext;
-import com.starfishst.commands.bungee.result.Result;
-import com.starfishst.core.annotations.Parent;
+import com.github.chevyself.starbox.annotations.Command;
+import com.github.chevyself.starbox.annotations.Parent;
+import com.github.chevyself.starbox.bungee.context.CommandContext;
+import com.github.chevyself.starbox.result.Result;
 import me.googas.bungee.GuidoBungee;
 
 /** Commands for reloading guido */

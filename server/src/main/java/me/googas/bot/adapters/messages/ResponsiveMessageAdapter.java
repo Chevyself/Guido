@@ -1,10 +1,7 @@
 package me.googas.bot.adapters.messages;
 
-import com.google.gson.JsonDeserializationContext;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParseException;
-import com.google.gson.JsonSerializationContext;
+import com.google.gson.*;
+
 import java.lang.reflect.Type;
 import java.util.HashMap;
 import java.util.Map;
@@ -13,9 +10,8 @@ import me.googas.bot.api.types.messages.ResponsiveMesage;
 import me.googas.bot.core.handlers.responsive.command.ExecuteCommandResponsiveMessage;
 import me.googas.bot.core.handlers.responsive.queue.JoinQueueResponsiveMessage;
 import me.googas.bot.core.handlers.responsive.roles.GiveRoleResponsiveMessage;
-import me.googas.commons.gson.adapters.JsonAdapter;
 
-public class ResponsiveMessageAdapter implements JsonAdapter<ResponsiveMesage> {
+public class ResponsiveMessageAdapter implements JsonSerializer<ResponsiveMesage>, JsonDeserializer<ResponsiveMesage> {
 
   /** The type of message and the class of it */
   @NonNull private final Map<String, Class<? extends ResponsiveMesage>> types = new HashMap<>();

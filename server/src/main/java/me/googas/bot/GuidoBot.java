@@ -1,6 +1,5 @@
 package me.googas.bot;
 
-import com.starfishst.commands.jda.CommandManager;
 import java.io.IOException;
 import java.lang.ref.SoftReference;
 import java.util.Timer;
@@ -11,7 +10,6 @@ import lombok.Getter;
 import lombok.NonNull;
 import lombok.Setter;
 import me.googas.IOUtil;
-import me.googas.annotations.Nullable;
 import me.googas.api.API;
 import me.googas.api.GuidoCatchable;
 import me.googas.api.GuidoInstance;
@@ -20,18 +18,12 @@ import me.googas.bot.api.Guido;
 import me.googas.bot.api.server.BotServer;
 import me.googas.bot.core.server.GuidoFallbackServer;
 import me.googas.bot.core.server.GuidoServer;
-import me.googas.commons.ProgramArguments;
-import me.googas.commons.cache.Catchable;
-import me.googas.commons.cache.MemoryCache;
-import me.googas.commons.events.ListenerManager;
-import me.googas.commons.fallback.Fallback;
-import me.googas.commons.fallback.SimpleFallback;
-import me.googas.commons.log.LoggerFactory;
-import me.googas.commons.log.formatters.CustomFormatter;
-import me.googas.commons.scheduler.Scheduler;
-import me.googas.commons.scheduler.TimerScheduler;
-import me.googas.commons.time.Time;
-import me.googas.commons.time.Unit;
+import me.googas.net.cache.MemoryCache;
+import me.googas.starbox.events.ListenerManager;
+import me.googas.starbox.scheduler.Scheduler;
+import me.googas.starbox.scheduler.TimerScheduler;
+import me.googas.starbox.time.Time;
+import me.googas.starbox.time.unit.Unit;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.hooks.AnnotatedEventManager;
 
@@ -49,14 +41,13 @@ public class GuidoBot implements GuidoInstance {
 
   @NonNull @Getter private final API.Messenger messenger = new GuidoMessenger();
   @NonNull @Getter private final MemoryCache cache = new MemoryCache();
-  @NonNull @Getter private final Fallback fallback = new SimpleFallback();
   @NonNull @Getter private final GuidoJdaConnection connection = new GuidoJdaConnection();
   @NonNull @Getter private final ListenerManager listenerManager = new ListenerManager();
   @NonNull @Getter private final Scheduler scheduler = new TimerScheduler(new Timer());
   @NonNull @Getter private final GuidoHandlerRegistry handlerRegistry = new GuidoHandlerRegistry();
   // TODO what's up with this class with the new authenticator
   @NonNull @Getter @Setter private BotServer server = new GuidoFallbackServer();
-  @Nullable @Setter @Getter private CommandManager commandManager;
+  @Setter @Getter private CommandManager commandManager;
 
   /**
    * The main method of the bot. x

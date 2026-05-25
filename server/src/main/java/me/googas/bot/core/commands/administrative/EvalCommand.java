@@ -1,16 +1,15 @@
 package me.googas.bot.core.commands.administrative;
 
-import com.starfishst.commands.jda.annotations.Command;
-import com.starfishst.commands.jda.context.CommandContext;
-import com.starfishst.commands.jda.context.GuildCommandContext;
-import com.starfishst.commands.jda.result.Result;
-import com.starfishst.commands.jda.result.ResultType;
-import com.starfishst.core.annotations.Multiple;
-import com.starfishst.core.annotations.Required;
-import com.starfishst.core.objects.JoinedStrings;
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;
+
+import com.github.chevyself.starbox.annotations.Command;
+import com.github.chevyself.starbox.annotations.Required;
+import com.github.chevyself.starbox.arguments.ArgumentBehaviour;
+import com.github.chevyself.starbox.jda.context.CommandContext;
+import com.github.chevyself.starbox.jda.context.GuildCommandContext;
+import com.github.chevyself.starbox.result.Result;
 import lombok.NonNull;
 import me.googas.bot.api.Guido;
 
@@ -55,7 +54,7 @@ public class EvalCommand {
   @Command(aliases = "eval", node = "user:guido.admin", description = "eval.desc")
   public Result eval(
       CommandContext context,
-      @Multiple @Required(name = "eval.code", description = "eval.code.desc")
+      @Required(name = "eval.code", description = "eval.code.desc", behaviour = ArgumentBehaviour.CONTINUOUS)
           JoinedStrings strings) {
     this.engine.put("message", context.getMessage());
     this.engine.put("channel", context.getChannel());

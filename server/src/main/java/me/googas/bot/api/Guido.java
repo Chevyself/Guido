@@ -1,27 +1,26 @@
 package me.googas.bot.api;
 
-import com.starfishst.commands.jda.CommandManager;
+import java.util.Objects;
 import java.util.logging.Logger;
+
+import com.github.chevyself.starbox.CommandManager;
 import lombok.Getter;
 import lombok.NonNull;
-import me.googas.annotations.Nullable;
 import me.googas.bot.GuidoBot;
 import me.googas.bot.GuidoHandlerRegistry;
 import me.googas.bot.GuidoJdaConnection;
 import me.googas.bot.api.server.BotServer;
-import me.googas.commons.Validate;
-import me.googas.commons.cache.MemoryCache;
-import me.googas.commons.events.ListenerManager;
-import me.googas.commons.fallback.Fallback;
-import me.googas.commons.scheduler.Scheduler;
+import me.googas.net.cache.MemoryCache;
+import me.googas.starbox.events.ListenerManager;
+import me.googas.starbox.scheduler.Scheduler;
 
 public class Guido {
 
-  @Nullable @Getter private static GuidoBot instance;
+  @Getter private static GuidoBot instance;
 
   @NonNull
   public static GuidoBot validated() {
-    return Validate.notNull(Guido.instance, "Bot might not have been initialized");
+    return Objects.requireNonNull(Guido.instance, "Bot might not have been initialized");
   }
 
   @NonNull
@@ -45,10 +44,6 @@ public class Guido {
     return Guido.validated().getCache();
   }
 
-  public static @NonNull Fallback getFallback() {
-    return Guido.validated().getFallback();
-  }
-
   public static @NonNull GuidoJdaConnection getConnection() {
     return Guido.validated().getConnection();
   }
@@ -67,7 +62,7 @@ public class Guido {
 
   @NonNull
   public static CommandManager getCommandManager() {
-    return Validate.notNull(
+    return Objects.requireNonNull(
         Guido.validated().getCommandManager(), "Command manager might not have been initialized");
   }
 

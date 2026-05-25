@@ -1,11 +1,9 @@
 package me.googas.bot.core.handlers.responsive.queue;
 
-import com.starfishst.commands.jda.CommandManager;
-import com.starfishst.commands.jda.listener.CommandListener;
-import com.starfishst.commands.jda.result.Result;
-import com.starfishst.commands.jda.utils.embeds.EmbedFactory;
-import com.starfishst.commands.jda.utils.embeds.EmbedQuery;
 import java.util.Collection;
+
+import com.github.chevyself.starbox.CommandManager;
+import com.github.chevyself.starbox.jda.listener.CommandListener;
 import lombok.NonNull;
 import me.googas.api.matches.ladder.Ladder;
 import me.googas.api.matches.queue.Queue;
@@ -14,9 +12,7 @@ import me.googas.bot.api.Guido;
 import me.googas.bot.core.discord.GuidoGuild;
 import me.googas.bot.core.handlers.queue.QueueHandler;
 import me.googas.bot.core.handlers.responsive.command.SimpleCommandReactionResponse;
-import me.googas.commons.Lots;
-import me.googas.commons.Strings;
-import me.googas.commons.maps.Maps;
+import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.events.message.react.MessageReactionAddEvent;
 
@@ -48,12 +44,12 @@ public class JoinQueueReactionResponse extends SimpleCommandReactionResponse {
    * @param guild the guild requesting the message
    * @return the built message
    */
-  public EmbedQuery buildMessage(@NonNull Guild guild) {
+  public EmbedBuilder buildMessage(@NonNull Guild guild) {
     CommandManager manager = Guido.getCommandManager();
     CommandListener listener = manager.getListener();
-    EmbedQuery query = EmbedFactory.fromResult(new Result(""), listener, null);
+    EmbedBuilder builder = new EmbedBuilder();
 
-    StringBuilder participants = Strings.getBuilder();
+    StringBuilder participants = new StringBuilder();
     GuidoGuild guildData = Guido.getHandlers().getDiscordLoader().getGuild(guild.getIdLong());
     Ladder ladder = guildData.getLadder(this.ladder);
     if (ladder != null) {

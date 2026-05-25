@@ -1,7 +1,5 @@
 package me.googas.bot;
 
-import com.starfishst.commands.jda.CommandManager;
-import com.starfishst.commands.jda.ManagerOptions;
 import java.util.Set;
 import lombok.NonNull;
 import me.googas.bot.api.Guido;
@@ -25,8 +23,6 @@ import me.googas.bot.core.commands.administrative.StopCommand;
 import me.googas.bot.core.commands.administrative.TokenCommands;
 import me.googas.bot.core.commands.administrative.VoiceChannelCommands;
 import me.googas.bot.core.util.Colors;
-import me.googas.commons.Lots;
-import me.googas.commons.ProgramArguments;
 import net.dv8tion.jda.api.JDA;
 
 public class GuidoCommandManager extends CommandManager {
