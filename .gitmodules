@@ -1,3 +1,6 @@
 [submodule "legacy-starbox"]
 	path = legacy-starbox
 	url = git@github.com:Chevyself/legacy-starbox.git
+[submodule "PGM"]
+	path = PGM
+	url = https://github.com/GoogasDev/PGM

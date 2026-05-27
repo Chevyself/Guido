@@ -2,7 +2,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import me.googas.api.links.Linkable;
 import me.googas.api.links.LinkableType;
-import me.googas.commons.maps.Maps;
+import me.googas.api.utility.Maps;
 
 public class CompareTest {
 

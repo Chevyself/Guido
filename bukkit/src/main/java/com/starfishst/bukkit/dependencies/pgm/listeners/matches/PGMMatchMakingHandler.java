@@ -1,5 +1,8 @@
 package com.starfishst.bukkit.dependencies.pgm.listeners.matches;
 
+import com.github.chevyself.starbox.bukkit.commands.BukkitAnnotatedCommand;
+import com.github.chevyself.starbox.bukkit.commands.BukkitCommand;
+import com.github.chevyself.starbox.bukkit.utils.BukkitUtils;
 import com.starfishst.bukkit.Guido;
 import com.starfishst.bukkit.dependencies.pgm.PGMHostedMatch;
 import com.starfishst.bukkit.dependencies.pgm.commands.ReadyCommand;
@@ -11,14 +14,7 @@ import com.starfishst.bukkit.modules.GuidoModule;
 import com.starfishst.bukkit.util.ServerUtil;
 import com.starfishst.bukkit.util.Tasks;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.ExecutionException;
 import lombok.Getter;
 import lombok.NonNull;
@@ -26,6 +22,8 @@ import me.googas.api.Requests;
 import me.googas.api.matches.AbstractMatch;
 import me.googas.api.matches.MatchStatus;
 import me.googas.api.matches.ladder.Ladder;
+import me.googas.api.utility.Maps;
+import me.googas.api.utility.RandomUtils;
 import me.googas.net.api.exception.MessengerListenFailException;
 import me.googas.net.sockets.json.ParamName;
 import me.googas.net.sockets.json.Receptor;
@@ -84,9 +82,8 @@ public class PGMMatchMakingHandler implements GuidoModule {
     JsonClient connection = Guido.getClient().getConnection();
     if (this.check(type, pgmMatch) && connection != null) {
       try {
-        Ladder ladder = Requests.Matches.getLadder(ladderName).send(connection);
-        if (ladder == null) return false;
-        return !this.getSuitableMaps(ladder).isEmpty();
+        Optional<Ladder> optional = Requests.Matches.getLadder(ladderName).send(connection);
+        return optional.map(ladder -> !this.getSuitableMaps(ladder).isEmpty()).orElse(false);
       } catch (MessengerListenFailException e) {
         e.printStackTrace();
       }
@@ -153,8 +150,9 @@ public class PGMMatchMakingHandler implements GuidoModule {
     if (!type.equalsIgnoreCase("PGM") && ladderName == null) return null;
     try {
       JsonClient connection = Guido.getClient().validatedConnection();
-      Ladder ladder = Requests.Matches.getLadder(ladderName).send(connection);
-      if (ladder == null) return null;
+      Optional<Ladder> optional = Requests.Matches.getLadder(ladderName).send(connection);
+      if (optional.isEmpty()) return null;
+      Ladder ladder = optional.get();
       List<MapInfo> maps = this.getSuitableMaps(ladder);
       if (maps.isEmpty()) return null;
       MapInfo random = RandomUtils.getRandom(maps);
@@ -308,9 +306,11 @@ public class PGMMatchMakingHandler implements GuidoModule {
 
   /** Clear all the teams that are ready. This is used so the command /ready can be used */
   public void clearTeamsReady() {
-    for (AnnotatedCommand command : Guido.getCommandManager().getCommands()) {
-      if (command.getClazz() instanceof ReadyCommand) {
-        ((ReadyCommand) command.getClazz()).clear();
+    for (BukkitCommand command : Guido.getCommandManager().getCommands()) {
+      if (!(command instanceof BukkitAnnotatedCommand)) continue;
+      BukkitAnnotatedCommand annotated = (BukkitAnnotatedCommand) command;
+      if (annotated.getObject() instanceof ReadyCommand) {
+        ((ReadyCommand) annotated.getObject()).clear();
         break;
       }
     }
@@ -353,7 +353,10 @@ public class PGMMatchMakingHandler implements GuidoModule {
    */
   @Deprecated
   public void wakeUpServer() {
-    Bukkit.getScheduler().runTask(Guido.getPlugin(), () -> BukkitUtils.dispatch("suspend false"));
+    Bukkit.getScheduler()
+        .runTask(
+            Guido.getPlugin(),
+            () -> BukkitUtils.dispatch(Bukkit.getConsoleSender(), "suspend false"));
   }
 
   /**

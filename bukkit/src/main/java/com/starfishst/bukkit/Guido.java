@@ -11,6 +11,7 @@ import com.starfishst.bukkit.lang.BukkitLanguageHandler;
 import java.util.Objects;
 import lombok.NonNull;
 import me.googas.starbox.modules.ModuleRegistry;
+import me.googas.starbox.scheduler.Scheduler;
 import org.bukkit.Bukkit;
 
 /** Static utilities for guido */
@@ -105,5 +106,10 @@ public class Guido {
   @NonNull
   public static CommandManager<CommandContext, BukkitCommand> getCommandManager() {
     return Guido.getPlugin().getCommandManager();
+  }
+
+  @NonNull
+  public static Scheduler getScheduler() {
+    return Guido.getPlugin().getScheduler();
   }
 }

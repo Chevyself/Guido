@@ -21,17 +21,23 @@ public class RandomUtils {
     return stringBuilder.toString();
   }
 
-  public static <E> E getRandom(List<E> list) {
-    if (list.isEmpty()) throw new IllegalArgumentException("Collection cannot be empty");
-    return list.get(RANDOM.nextInt(list.size()));
+  public static <E> E getRandom(Collection<E> collection) {
+    if (collection.isEmpty()) throw new IllegalArgumentException("Collection cannot be empty");
+    int index = RANDOM.nextInt(collection.size());
+    int i = 0;
+    for (E element : collection) {
+      if (i == index) return element;
+      i++;
+    }
+    throw new IllegalStateException("This should never happen");
   }
 
-  public static <E> List<E> getRandom(List<E> list, int amount) {
-    if (list.isEmpty()) throw new IllegalArgumentException("Collection cannot be empty");
+  public static <E> List<E> getRandom(Collection<E> collection, int amount) {
+    if (collection.isEmpty()) throw new IllegalArgumentException("Collection cannot be empty");
     if (amount < 0) throw new IllegalArgumentException("Amount cannot be negative");
-    if (amount > list.size())
+    if (amount > collection.size())
       throw new IllegalArgumentException("Amount cannot be bigger than the collection size");
-    return list.stream().sorted((a, b) -> RANDOM.nextInt(3) - 1).limit(amount).toList();
+    return collection.stream().sorted((a, b) -> RANDOM.nextInt(3) - 1).limit(amount).toList();
   }
 
   public static @NonNull Random getRandom() {

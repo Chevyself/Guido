@@ -3,7 +3,6 @@ package com.starfishst.bukkit.dependencies.pgm;
 import com.starfishst.bukkit.matches.HostedPlayer;
 import java.lang.ref.SoftReference;
 import java.util.Objects;
-
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.experimental.Delegate;

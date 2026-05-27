@@ -19,7 +19,7 @@ public class HostedMatch implements Informative {
   @NonNull @Getter private final Set<HostedPlayer> participants;
 
   /** The ladder which is being played */
-   @Getter private final String ladder;
+  @Getter private final String ladder;
 
   /** The details of the match */
   @NonNull @Getter private final Map<String, Map<String, Object>> information;
@@ -27,7 +27,7 @@ public class HostedMatch implements Informative {
   public HostedMatch(
       @NonNull String id,
       @NonNull Set<HostedPlayer> participants,
-       String ladder,
+      String ladder,
       @NonNull Map<String, Map<String, Object>> information) {
     this.id = id;
     this.participants = participants;

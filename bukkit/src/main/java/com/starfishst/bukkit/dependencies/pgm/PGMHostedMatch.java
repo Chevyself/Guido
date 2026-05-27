@@ -36,7 +36,7 @@ public class PGMHostedMatch extends HostedMatch {
   public PGMHostedMatch(
       @NonNull String id,
       @NonNull Set<HostedPlayer> participants,
-       String ladder,
+      String ladder,
       @NonNull Map<String, Map<String, Object>> details,
       @NonNull MapInfo map,
       @NonNull String pgm) {
@@ -45,7 +45,6 @@ public class PGMHostedMatch extends HostedMatch {
     this.pgm = pgm;
   }
 
-  
   public static Team getTeam(@NonNull Match match, @NonNull String id) {
     for (Party party : match.getParties()) {
       if (party instanceof Team && ((Team) party).getId().equals(id)) return (Team) party;
@@ -73,7 +72,7 @@ public class PGMHostedMatch extends HostedMatch {
    * @param pgmTeam the id of the pgm team
    * @return the id of the team that matches the pgm team
    */
-  public int getTeamId( String pgmTeam) {
+  public int getTeamId(String pgmTeam) {
     if (pgmTeam == null) return -1;
     MatchTeam matchTeam = this.teams.get(pgmTeam);
     if (matchTeam != null) return matchTeam.getId();
@@ -85,7 +84,6 @@ public class PGMHostedMatch extends HostedMatch {
    *
    * @return the match if the id matches null otherwise
    */
-  
   public Match toPGM() {
     Iterator<Match> matches = PGM.get().getMatchManager().getMatches();
     while (matches.hasNext()) {
@@ -95,7 +93,6 @@ public class PGMHostedMatch extends HostedMatch {
     return null;
   }
 
-  
   public Team getParty(@NonNull UUID uuid) {
     Match match = this.toPGM();
     if (match == null) return null;
@@ -116,11 +113,6 @@ public class PGMHostedMatch extends HostedMatch {
 
   @Override
   public String toString() {
-    return "PGMHostedMatch{" +
-            "teams=" + teams +
-            ", map=" + map +
-            ", pgm='" + pgm + '\'' +
-            '}';
+    return "PGMHostedMatch{" + "teams=" + teams + ", map=" + map + ", pgm='" + pgm + '\'' + '}';
   }
-}
 }

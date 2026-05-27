@@ -27,7 +27,6 @@ import me.googas.api.utility.Lots;
 import me.googas.api.utility.Maps;
 import me.googas.api.utility.RandomUtils;
 import me.googas.net.sockets.json.client.JsonClient;
-import me.googas.starbox.Starbox;
 import me.googas.starbox.builders.Builder;
 import me.googas.starbox.scheduler.Countdown;
 import me.googas.starbox.time.Time;
@@ -348,12 +347,12 @@ public class PickTeamSelection implements TeamCreation {
     UUID uuid = this.getUuid(leader.getLink());
     this.currently.put(id, uuid);
     Countdown countdown =
-        Starbox.getScheduler()
+        Guido.getScheduler()
             .countdown(
                 PickTeamSelection.timeToPick,
                 (left) -> {
                   if (!this.isPicking(id, leader)) return;
-                  long secondsLeft = left.getValue(Unit.SECONDS);
+                  double secondsLeft = left.get(Unit.SECONDS);
                   if (secondsLeft <= 10 || secondsLeft % 5 == 0) {
                     Player player = this.getPlayer(leader.getLink());
                     if (player != null) {
@@ -361,9 +360,7 @@ public class PickTeamSelection implements TeamCreation {
                       player.sendMessage(
                           locale.get(
                               "match-making.pick.time-left",
-                              Maps.builder(
-                                      "time",
-                                      Time.of(secondsLeft, Unit.SECONDS).toString())
+                              Maps.builder("time", Time.of(secondsLeft, Unit.SECONDS).toString())
                                   .append("picks", Lots.pretty(this.getParticipantsNames(id)))));
                     }
                   }

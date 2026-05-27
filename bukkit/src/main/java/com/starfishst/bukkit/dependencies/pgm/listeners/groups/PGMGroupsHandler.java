@@ -45,7 +45,6 @@ public class PGMGroupsHandler implements Module {
    */
   @NonNull
   public PGMConfig.Group toPGM(@NonNull Group group) {
-    Map<String, Object> preferences = group.getInformation("global");
     return new PGMConfig.Group(
         group.getName().toLowerCase().replace(" ", "-"),
         new PGMConfig.Flair(

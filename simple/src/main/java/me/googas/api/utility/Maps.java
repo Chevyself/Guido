@@ -13,6 +13,10 @@ public class Maps {
     return new MapBuilder<K, V>().append(key, value);
   }
 
+  public static @NonNull <K> MapBuilder<K, Object> objects(@NonNull K key, Object value) {
+    return new MapBuilder<K, Object>().append(key, value);
+  }
+
   public static @NonNull <K, V> Map<K, V> singleton(@NonNull K key, V value) {
     return builder(key, value).build();
   }

@@ -16,15 +16,17 @@ import com.starfishst.bukkit.commands.TestCommands;
 import com.starfishst.bukkit.configuration.GuidoConfiguration;
 import com.starfishst.bukkit.dependencies.GuidoCompatibilities;
 import com.starfishst.bukkit.lang.BukkitLanguageHandler;
-import com.starfishst.bukkit.modules.StartMoneyModule;
 import java.io.IOException;
 import java.util.Set;
 import lombok.Getter;
 import lombok.NonNull;
 import me.googas.api.utility.Lots;
+import me.googas.starbox.BukkitYamlLanguage;
 import me.googas.starbox.Starbox;
 import me.googas.starbox.modules.ModuleRegistry;
 import me.googas.starbox.modules.language.LanguageModule;
+import me.googas.starbox.scheduler.Scheduler;
+import me.googas.starbox.time.StarboxBukkitScheduler;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -45,10 +47,10 @@ public class GuidoPlugin extends JavaPlugin {
   /** The command manager that the implementation is using to register commands */
   @Getter
   private final @NonNull CommandManager<CommandContext, BukkitCommand> manager =
-          new CommandManagerBuilder<>(new BukkitAdapter(this, true))
-                  .setMessagesProvider(this.bukkitLanguageHandler)
-                  // TODO add providers registry
-                  .build();
+      new CommandManagerBuilder<>(new BukkitAdapter(this, true))
+          .setMessagesProvider(this.bukkitLanguageHandler)
+          // TODO add providers registry
+          .build();
   /** The set of commands that the implementation is using */
   @NonNull
   private final Set<GuidoCommand> commands =
@@ -69,6 +71,8 @@ public class GuidoPlugin extends JavaPlugin {
   private final BukkitClient client = new BukkitClient("none", "66.11.113.47", 3000);
   /** The guidoConfiguration that the implementation is using */
   @NonNull @Getter private GuidoConfiguration configuration = new GuidoConfiguration();
+  /** Starbox scheduler */
+  @NonNull @Getter private final Scheduler scheduler = new StarboxBukkitScheduler(this);
 
   /** Register the commands of the bot */
   private void registerCommands() {
@@ -116,18 +120,21 @@ public class GuidoPlugin extends JavaPlugin {
   }
 
   public void setupStarbox() {
-    LanguageModule languageModule = Starbox.getModules().get(LanguageModule.class).orElseGet(() -> {
-      LanguageModule fallback = new LanguageModule();
-      Starbox.getModules().engage(fallback);
-        return fallback;
-    });
-    languageModule.registerAll(this, GuidoLanguage.loadAll(this, "en"));
+    LanguageModule languageModule =
+        Starbox.getModules()
+            .get(LanguageModule.class)
+            .orElseGet(
+                () -> {
+                  LanguageModule fallback = new LanguageModule();
+                  Starbox.getModules().engage(fallback);
+                  return fallback;
+                });
+    languageModule.register(this, BukkitYamlLanguage.of(this, "en"));
   }
 
   @Override
   public void onEnable() {
     this.compatibilities.check();
-    this.moduleRegistry.engage(new StartMoneyModule());
     this.setupStarbox();
     this.loadConfiguration();
     this.registerCommands();
