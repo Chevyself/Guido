@@ -1,14 +1,16 @@
 package me.googas.bot.core.handlers.responsive.roles;
 
-import com.starfishst.commands.jda.utils.responsive.ReactionResponse;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
+import java.util.stream.Collectors;
 import lombok.NonNull;
 import me.googas.bot.api.types.messages.ResponsiveMesage;
 import me.googas.bot.core.util.Discord;
-import net.dv8tion.jda.api.entities.Emote;
+import me.googas.starbox.jda.responsive.ReactionResponse;
+import me.googas.starbox.jda.responsive.ResponsiveMessage;
 import net.dv8tion.jda.api.entities.Message;
+import net.dv8tion.jda.api.entities.emoji.Emoji;
+import net.dv8tion.jda.api.entities.emoji.RichCustomEmoji;
+import net.dv8tion.jda.api.entities.emoji.UnicodeEmoji;
 
 /** This responsive message gives roles to the user that reacts to the message */
 public class GiveRoleResponsiveMessage implements ResponsiveMesage {
@@ -54,11 +56,6 @@ public class GiveRoleResponsiveMessage implements ResponsiveMesage {
     return this.id;
   }
 
-  @Override
-  public @NonNull Set<ReactionResponse> getReactions() {
-    return new HashSet<>(this.responses);
-  }
-
   /**
    * The type of responsive message
    *
@@ -70,22 +67,37 @@ public class GiveRoleResponsiveMessage implements ResponsiveMesage {
   }
 
   @Override
+  public Collection<ReactionResponse> getReactions(String unicode) {
+    return this.responses.stream()
+        .filter(response -> response.getUnicode().equals(unicode))
+        .collect(Collectors.toSet());
+  }
+
+  @Override
+  public ResponsiveMessage addReactionResponse(ReactionResponse response) {
+    return null;
+  }
+
+  @Override
   public void addReactionResponse(@NonNull ReactionResponse response, @NonNull Message message) {
     if (!(response instanceof GiveRoleReactionResponse))
       throw new UnsupportedOperationException(
           "Reaction must be a " + GiveRoleReactionResponse.class);
     this.responses.add((GiveRoleReactionResponse) response);
-    String unicode = response.getUnicode();
+    Optional<String> optional = response.getUnicode();
+    if (optional.isEmpty()) return;
+    String unicode = optional.get();
     if (!unicode.startsWith("U+") && !unicode.startsWith("u+")) {
-      List<Emote> emotes = message.getGuild().getEmotesByName(unicode, true);
+      List<RichCustomEmoji> emotes = message.getGuild().getEmojisByName(unicode, true);
       if (emotes.isEmpty()) {
         throw new IllegalStateException("There's no emotes with the name " + unicode);
       }
-      for (Emote emote : emotes) {
+      for (RichCustomEmoji emote : emotes) {
         message.addReaction(emote).queue(ignored -> {}, Discord.exceptionConsumer());
       }
     } else {
-      message.addReaction(unicode).queue(ignored -> {}, Discord.exceptionConsumer());
+      UnicodeEmoji emoji = Emoji.fromUnicode(unicode);
+      message.addReaction(emoji).queue(ignored -> {}, Discord.exceptionConsumer());
     }
   }
 }

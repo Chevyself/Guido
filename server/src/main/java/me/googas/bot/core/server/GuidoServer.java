@@ -6,6 +6,7 @@ import lombok.CustomLog;
 import lombok.NonNull;
 import me.googas.api.Requests;
 import me.googas.api.loader.Loader;
+import me.googas.api.messaging.Message;
 import me.googas.api.server.GuidoAuthenticator;
 import me.googas.api.server.receptors.BankReceptors;
 import me.googas.api.server.receptors.GroupReceptors;
@@ -24,10 +25,9 @@ import me.googas.bungee.receptors.BungeeConnectionReceptors;
 import me.googas.bungee.receptors.BungeeMessagingReceptors;
 import me.googas.bungee.receptors.BungeeQueueReceptors;
 import me.googas.bungee.receptors.BungeeReceptors;
-import me.googas.messaging.api.Message;
-import me.googas.messaging.json.adapters.MessageDeserializer;
-import me.googas.messaging.json.server.JsonClientThread;
-import me.googas.messaging.json.server.JsonSocketServer;
+import me.googas.net.sockets.json.adapters.MessageDeserializer;
+import me.googas.net.sockets.json.server.JsonClientThread;
+import me.googas.net.sockets.json.server.JsonSocketServer;
 
 /** A server for implementations connections */
 @CustomLog
@@ -55,19 +55,9 @@ public class GuidoServer extends JsonSocketServer implements BotServer {
     this.authenticator = new GuidoAuthenticator(loader);
     this.setAuthenticator(this.authenticator);
     this.addReceptors(
-        new BankReceptors(),
-        new GroupReceptors(loader.getGroups()),
-        new GuidoServerReceptors(this.authenticator),
-        new LinkReceptors(loader.getLinks()),
-        new MatchReceptors(loader.getMatches()),
-        new PunishmentReceptors(loader.getPunishments()),
-        this.authenticator);
+        );
     if (GuidoBungee.isBungee()) {
       this.addReceptors(
-          new BungeeConnectionReceptors(),
-          new BungeeMessagingReceptors(),
-          new BungeeQueueReceptors(),
-          new BungeeReceptors());
     }
   }
 

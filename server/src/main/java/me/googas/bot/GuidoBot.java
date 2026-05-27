@@ -1,8 +1,12 @@
 package me.googas.bot;
 
 import com.github.chevyself.starbox.CommandManager;
+import com.github.chevyself.starbox.CommandManagerBuilder;
+import com.github.chevyself.starbox.jda.JdaAdapter;
 import com.github.chevyself.starbox.jda.commands.JdaCommand;
 import com.github.chevyself.starbox.jda.context.CommandContext;
+import com.github.chevyself.starbox.registry.MiddlewareRegistry;
+import com.github.chevyself.starbox.registry.ProvidersRegistry;
 import java.io.IOException;
 import java.lang.ref.SoftReference;
 import java.util.Timer;
@@ -17,12 +21,23 @@ import me.googas.api.API;
 import me.googas.api.GuidoCatchable;
 import me.googas.api.GuidoInstance;
 import me.googas.api.loader.Loader;
+import me.googas.api.server.GuidoAuthenticator;
+import me.googas.api.server.receptors.*;
 import me.googas.bot.api.Guido;
 import me.googas.bot.api.server.BotServer;
+import me.googas.bot.core.commands.*;
+import me.googas.bot.core.commands.administrative.*;
+import me.googas.bot.core.commands.providers.*;
 import me.googas.bot.core.server.GuidoFallbackServer;
 import me.googas.bot.core.server.GuidoServer;
+import me.googas.bungee.GuidoBungee;
+import me.googas.bungee.receptors.BungeeConnectionReceptors;
+import me.googas.bungee.receptors.BungeeMessagingReceptors;
+import me.googas.bungee.receptors.BungeeQueueReceptors;
+import me.googas.bungee.receptors.BungeeReceptors;
 import me.googas.net.cache.Catchable;
 import me.googas.net.cache.MemoryCache;
+import me.googas.net.sockets.json.server.JsonSocketServer;
 import me.googas.starbox.ProgramArguments;
 import me.googas.starbox.events.ListenerManager;
 import me.googas.starbox.logging.CustomFormatter;
@@ -101,11 +116,62 @@ public class GuidoBot implements GuidoInstance {
     bot.getScheduler().repeat(time, time, bot.getCache());
     JDA jda = bot.getConnection().createConnection(arguments.getProperty("token", "none"));
     jda.setEventManager(new AnnotatedEventManager());
-    bot.getHandlerRegistry().setupDiscordLoader().setupLoader(arguments).register(jda);
-    bot.setCommandManager(
-        new GuidoCommandManager(jda, arguments, bot.getHandlerRegistry()).register());
+    GuidoHandlerRegistry registry = bot.getHandlerRegistry();
+    registry.setupDiscordLoader().setupLoader(arguments).register(jda);
+    MiddlewareRegistry<CommandContext> middlewareRegistry =
+        new MiddlewareRegistry<CommandContext>()
+            .addGlobalMiddleware(
+                new GuidoPermissionChecker(
+                    registry.getLanguageHandler(),
+                    registry.getLoader(),
+                    registry.getDiscordLoader()));
+    ProvidersRegistry<CommandContext> providersRegistry =
+        new ProvidersRegistry<CommandContext>()
+            .addProviders(
+                new AuthLevelProvider(),
+                new DiscordLinkableProvider(),
+                new GroupProvider(),
+                new GuidoUserProvider(),
+                new GuildDataProvider(),
+                new LadderProvider(),
+                new LinkableArrayProvider(),
+                new LinkableProvider(),
+                new LocaleFileProvider(),
+                new MatchProvider(),
+                new MinecraftLinkableProvider(),
+                new MultipleTeamProvider(),
+                new UserDataSenderProvider(),
+                new UserDataSenderProvider());
+    CommandManager<CommandContext, JdaCommand> commandManager =
+        new CommandManagerBuilder<>(new JdaAdapter(jda, new GuidoListenerOptions()))
+            .setMessagesProvider(registry.getLanguageHandler())
+            .setMiddlewareRegistry(middlewareRegistry)
+            .setProvidersRegistry(providersRegistry)
+            .setCommandMetadataParser(new GuidoMetadataParser())
+            .build();
+    commandManager.parseAndRegisterAll(
+        new AdministrationCommands(),
+        new CacheCommands(),
+        new CategoryCommands(),
+        new ChannelCommands(),
+        new EvalCommand(),
+        new StopCommand(),
+        new VoiceChannelCommands(),
+        new HelpCommand(),
+        new GroupManagementCommands(),
+        new LadderCommands(),
+        new LangCommands(),
+        new LeaderboardCommands(),
+        new MatchCommands(),
+        new QueueCommands(),
+        new RangesCommand(),
+        new SeasonCommands(),
+        new TeamCommands(),
+        new TokenCommands(),
+        new UserCommands());
+    bot.setCommandManager(commandManager);
     BotServer server = GuidoBot.createServer(arguments, bot);
-    if (server != null) bot.setServer(server.registerHandlers(bot.getHandlerRegistry()));
+    if (server != null) bot.setServer(server.registerHandlers(registry));
     GuidoBot.log.info("Bot is ready to use");
   }
 
@@ -114,13 +180,32 @@ public class GuidoBot implements GuidoInstance {
    *
    * @param args the map to getId the port and timeout of the server
    */
-  public static BotServer createServer(@NonNull ProgramArguments args, @NonNull GuidoBot bot) {
+  public static JsonSocketServer createServer(@NonNull ProgramArguments args, @NonNull GuidoBot bot) {
     try {
       int port = Integer.parseInt(args.getProperty("port", "3000"));
       long timeout = Long.parseLong(args.getProperty("timeout", "3000"));
-      BotServer server = new GuidoServer(port, timeout, bot.getHandlerRegistry().getLoader());
-      server.start();
-      return server;
+      Loader loader = bot.getLoader();
+      GuidoAuthenticator authenticator = new GuidoAuthenticator(bot.getHandlerRegistry().getLoader());
+      JsonSocketServer.ServerBuilder serverBuilder = JsonSocketServer
+              .listen(port)
+              .maxWait(timeout)
+              .addReceptors(
+                      new BankReceptors(),
+                      new GroupReceptors(loader.getGroups()),
+                      new GuidoServerReceptors(authenticator),
+                      new LinkReceptors(loader.getLinks()),
+                      new MatchReceptors(loader.getMatches()),
+                      new PunishmentReceptors(loader.getPunishments()),
+                      authenticator
+              );
+      if (GuidoBungee.isBungee()) {
+        serverBuilder.addReceptors(
+                new BungeeConnectionReceptors(),
+                new BungeeMessagingReceptors(),
+                new BungeeQueueReceptors(),
+                new BungeeReceptors());
+      }
+      return serverBuilder.start();
     } catch (IOException | NumberFormatException e) {
       e.printStackTrace();
     }

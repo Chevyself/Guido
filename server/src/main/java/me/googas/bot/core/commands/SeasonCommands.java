@@ -1,28 +1,30 @@
 package me.googas.bot.core.commands;
 
-import com.starfishst.commands.jda.annotations.Command;
-import com.starfishst.commands.jda.result.Result;
-import com.starfishst.core.annotations.Optional;
-import com.starfishst.core.annotations.Parent;
+import com.github.chevyself.starbox.annotations.Command;
+import com.github.chevyself.starbox.annotations.Free;
+import com.github.chevyself.starbox.annotations.Parent;
+import com.github.chevyself.starbox.result.Result;
 import java.util.Collection;
 import me.googas.api.links.Linkable;
 import me.googas.api.links.LinkableInfo;
 import me.googas.bot.api.Guido;
 import me.googas.bot.core.discord.GuidoGuild;
 import me.googas.bot.core.handlers.matches.MatchEloCalculator;
+import me.googas.bungee.commands.middleware.GuidoJdaPermission;
 
 public class SeasonCommands {
 
   @Parent
-  @Command(aliases = "season", description = "Manage the season", node = "guido.season")
+  @GuidoJdaPermission("guido.season")
+  @Command(aliases = "season", description = "Manage the season")
   public Result season() {
-    return new Result("Please use a subcommand");
+    return Result.of("Please use a subcommand");
   }
 
-  @Command(aliases = "reset", description = "Resets the season", node = "guido.season.reset")
+  @Command(aliases = "reset", description = "Resets the season")
   public Result season(
       GuidoGuild guild,
-      @Optional(
+      @Free(
               name = "Reset",
               description = "Reset wins and loses",
               suggestions = {"false", "true"})
@@ -36,6 +38,6 @@ public class SeasonCommands {
           .setNewSeasonElo(data, guild.getLadders());
       if (reset) data.resetWinsAndLoses(guild.getLadders());
     }
-    return new Result("Season has been reset");
+    return Result.of("Season has been reset");
   }
 }

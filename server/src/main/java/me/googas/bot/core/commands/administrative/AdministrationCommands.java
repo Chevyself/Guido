@@ -1,24 +1,25 @@
 package me.googas.bot.core.commands.administrative;
 
-import com.starfishst.commands.jda.annotations.Command;
-import com.starfishst.commands.jda.result.Result;
-import com.starfishst.commands.jda.result.ResultType;
-import com.starfishst.core.annotations.Optional;
-import com.starfishst.core.annotations.Required;
+import com.github.chevyself.starbox.annotations.Command;
+import com.github.chevyself.starbox.annotations.Free;
+import com.github.chevyself.starbox.annotations.Required;
+import com.github.chevyself.starbox.result.Result;
+import me.googas.api.utility.Lots;
 import me.googas.bot.api.types.messages.ResponsiveMesage;
 import me.googas.bot.core.discord.GuidoGuild;
 import me.googas.bot.core.handlers.responsive.roles.GiveRoleReactionResponse;
 import me.googas.bot.core.handlers.responsive.roles.GiveRoleResponsiveMessage;
 import me.googas.bot.core.util.Discord;
-import me.googas.commons.Lots;
+import me.googas.bungee.commands.middleware.GuidoJdaPermission;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.Role;
-import net.dv8tion.jda.api.entities.TextChannel;
+import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 
 /** Commands given for administrators */
 public class AdministrationCommands {
 
-  @Command(aliases = "giver", description = "Make the message given a role", node = "guido.giver")
+  @GuidoJdaPermission("guido.giver")
+  @Command(aliases = "giver", description = "Make the message given a role")
   public Result giver(
       Message message,
       GuidoGuild guild,
@@ -26,20 +27,19 @@ public class AdministrationCommands {
       @Required(name = "id", description = "The id of the message thatt will give the role")
           long id,
       @Required(name = "role", description = "The role to give") Role role,
-      @Optional(
+      @Free(
               name = "unicode",
               description = "The unicode which the user has to react to oin the queue")
           String unicode) {
     String unicodeToUse;
-    if (message.getEmotes().isEmpty()) {
+    if (message.getReactions().isEmpty()) {
       if (unicode == null) {
-        return new Result(
-            ResultType.USAGE, "If you are not using an emote please include an unicode");
+        return Result.of("If you are not using an emote please include an unicode");
       } else {
         unicodeToUse = unicode;
       }
     } else {
-      unicodeToUse = message.getEmotes().get(0).getName();
+      unicodeToUse = message.getReactions().get(0).getEmoji().getName();
     }
     channel
         .retrieveMessageById(id)
@@ -59,6 +59,6 @@ public class AdministrationCommands {
               }
             },
             Discord.exceptionConsumer());
-    return new Result("Creating...");
+    return Result.of("Creating...");
   }
 }

@@ -1,25 +1,21 @@
 package me.googas.bot.core.commands;
 
-import com.starfishst.commands.jda.annotations.Command;
-import com.starfishst.commands.jda.result.Result;
-import com.starfishst.commands.jda.result.ResultType;
-import com.starfishst.core.annotations.Optional;
-import com.starfishst.core.annotations.Required;
+import com.github.chevyself.starbox.annotations.Command;
+import com.github.chevyself.starbox.annotations.Free;
+import com.github.chevyself.starbox.annotations.Required;
+import com.github.chevyself.starbox.result.Result;
 import java.util.Collection;
 import me.googas.api.lang.LocaleFile;
 import me.googas.api.matches.ladder.Ladder;
 import me.googas.api.matches.queue.QueueResult;
 import me.googas.api.matches.queue.Queueable;
 import me.googas.api.user.UserData;
+import me.googas.api.utility.Maps;
 import me.googas.bot.api.Guido;
 import me.googas.bot.core.discord.GuidoGuild;
 import me.googas.bot.core.handlers.matches.MatchMakingHandler;
 import me.googas.bot.core.handlers.queue.QueueHandler;
-import me.googas.bot.core.handlers.responsive.queue.JoinQueueReactionResponse;
-import me.googas.bot.core.handlers.responsive.queue.JoinQueueResponsiveMessage;
-import me.googas.commons.Lots;
-import me.googas.commons.Strings;
-import me.googas.commons.maps.Maps;
+import me.googas.bungee.commands.middleware.GuidoJdaPermission;
 import net.dv8tion.jda.api.entities.GuildVoiceState;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
@@ -46,26 +42,23 @@ public class QueueCommands {
       Member member,
       @Required(name = "queue.ladder", description = "queue.ladder.desc") Ladder ladder) {
     if (Guido.getHandlers().getHandler(MatchMakingHandler.class).isPlaying(data)) {
-      return new Result(ResultType.USAGE, locale.get("queue.already-playing"));
+      return Result.of(locale.get("queue.already-playing"));
     } else {
       GuildVoiceState state = member.getVoiceState();
       if (state == null || state.getChannel() == null) {
-        return new Result(ResultType.USAGE, locale.get("queue.join-voice"));
+        return Result.of(locale.get("queue.join-voice"));
       } else {
         QueueHandler queues = Guido.getHandlers().getHandler(QueueHandler.class);
         if (queues.isWaiting(guild, member, ladder)) {
-          return new Result(ResultType.USAGE, locale.get("queue.already"));
+          return Result.of(locale.get("queue.already"));
         } else {
           QueueResult join = queues.joinQueue(guild, member, ladder);
-          if (join.isCancelled()) return new Result(ResultType.ERROR, join.getReason());
-          return new Result(locale.get("queue.success"));
+          if (join.isCancelled()) return Result.of(join.getReason());
+          return Result.of(locale.get("queue.success"));
         }
       }
     }
   }
-
-  @Command(aliases = "queues", node = "guido.queues")
-  public void queues() {}
 
   /**
    * See the people that is in queue
@@ -83,14 +76,14 @@ public class QueueCommands {
     Collection<Queueable> waiting =
         Guido.getHandlers().getHandler(QueueHandler.class).getQueue(guild, ladder).getWaiting();
     if (waiting.isEmpty()) {
-      return new Result(locale.get("iq.empty", Maps.singleton("ladder", ladder.getName())));
+      return Result.of(locale.get("iq.empty", Maps.singleton("ladder", ladder.getName())));
     } else {
-      StringBuilder builder = Strings.getBuilder();
+      StringBuilder builder = new StringBuilder();
       builder.append(locale.get("iq.title", Maps.singleton("ladder", ladder.getName())));
       for (Queueable queueable : waiting) {
         builder.append("\n - ").append(queueable.getSingle());
       }
-      return new Result(builder.toString());
+      return Result.of(builder.toString());
     }
   }
 
@@ -103,30 +96,30 @@ public class QueueCommands {
    * @param unicode the unicode to react and join
    * @return a result with the created message
    */
+  @GuidoJdaPermission("guido.queue-msg")
   @Command(
       aliases = {"queueMsg", "qMsg"},
-      description = "Create a message to easily join a queue",
-      node = "guido.queue-msg")
+      description = "Create a message to easily join a queue")
   public Result queueMsg(
       GuidoGuild guild,
       Message message,
       @Required(name = "ladder", description = "The ladder to create the queue join message for")
           Ladder ladder,
-      @Optional(
+      @Free(
               name = "unicode",
               description = "The unicode which the user has to react to oin the queue")
           String unicode) {
     String unicodeToUse;
-    if (message.getEmotes().isEmpty()) {
+    if (message.getReactions().isEmpty()) {
       if (unicode == null) {
-        return new Result(
-            ResultType.USAGE, "If you are not using an emote please include an unicode");
+        return Result.of("If you are not using an emote please include an unicode");
       } else {
         unicodeToUse = unicode;
       }
     } else {
-      unicodeToUse = message.getEmotes().get(0).getName();
+      unicodeToUse = message.getReactions().get(0).getEmoji().getName();
     }
+    /*TODO
     return new Result(
         "Be the first to join the queue for " + ladder.getName(),
         msg -> {
@@ -139,5 +132,7 @@ public class QueueCommands {
                   reactionResponse.buildMessage(guild.toDiscord()).getAsMessageQuery().build())
               .queue();
         });
+     */
+    return null;
   }
 }

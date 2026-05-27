@@ -4,3 +4,6 @@
 [submodule "PGM"]
 	path = PGM
 	url = git@github.com:GoogasDev/PGM.git
+[submodule "Events"]
+	path = Events
+	url = git@github.com:GoogasDev/Events.git

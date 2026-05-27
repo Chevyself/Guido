@@ -1,27 +1,22 @@
 package me.googas.bot.core.commands;
 
-import com.starfishst.commands.jda.annotations.Command;
-import com.starfishst.commands.jda.context.CommandContext;
-import com.starfishst.commands.jda.result.Result;
-import com.starfishst.commands.jda.result.ResultType;
-import com.starfishst.commands.jda.utils.embeds.EmbedFactory;
-import com.starfishst.commands.jda.utils.embeds.EmbedQuery;
-import com.starfishst.core.annotations.Optional;
-import com.starfishst.core.annotations.Required;
+import com.github.chevyself.starbox.annotations.Command;
+import com.github.chevyself.starbox.annotations.Free;
+import com.github.chevyself.starbox.annotations.Required;
+import com.github.chevyself.starbox.jda.context.CommandContext;
+import com.github.chevyself.starbox.result.Result;
+import java.time.Duration;
 import java.util.Collection;
-import lombok.NonNull;
 import me.googas.api.lang.LocaleFile;
 import me.googas.api.links.Linkable;
 import me.googas.api.links.LinkableInfo;
 import me.googas.api.links.LinkableType;
 import me.googas.api.user.UserData;
-import me.googas.api.utility.SortedStats;
+import me.googas.api.utility.Maps;
 import me.googas.bot.api.Guido;
 import me.googas.bot.core.discord.GuidoGuild;
 import me.googas.bot.core.handlers.link.LinkHandler;
 import me.googas.bot.core.loader.GuidoLoader;
-import me.googas.commons.Strings;
-import me.googas.commons.maps.Maps;
 
 /** Commands that users can use */
 public class UserCommands {
@@ -34,11 +29,11 @@ public class UserCommands {
    * @param that the other user to see the links
    * @return the links of the user
    */
-  @Command(aliases = "links", description = "links.desc", time = "5s")
+  @Command(aliases = "links", description = "links.desc")
   public Result links(
       LocaleFile locale,
       UserData sender,
-      @Optional(name = "links.user", description = "links.user.desc") UserData that) {
+      @Free(name = "links.user", description = "links.user.desc") UserData that) {
     UserData toSee;
     if (that != null) {
       toSee = that;
@@ -48,14 +43,14 @@ public class UserCommands {
     GuidoLoader loader = Guido.getHandlers().getLoader();
     Collection<Linkable> links = loader.getLinks().getLinks(toSee);
     if (links.isEmpty()) {
-      return new Result(locale.get("links.empty", Maps.singleton("id", toSee.getId())));
+      return Result.of(locale.get("links.empty", Maps.singleton("id", toSee.getId())));
     } else {
-      StringBuilder builder = Strings.getBuilder();
+      StringBuilder builder = new StringBuilder();
       builder.append(locale.get("links.title", Maps.singleton("id", toSee.getId())));
       for (Linkable link : links) {
         builder.append("\n - ").append(link.getSingle());
       }
-      return new Result(builder.toString());
+      return Result.of(builder.toString(), Duration.ofSeconds(5));
     }
   }
 
@@ -77,21 +72,20 @@ public class UserCommands {
     if (info != null) {
       Linkable link = loader.getLinks().getLink(user, info.getType());
       if (link != null) {
-        return new Result(
-            ResultType.ERROR,
+        return Result.of(
             locale.get(
                 "link.only-one", Maps.singleton("type", info.getType().toString().toLowerCase())));
       } else {
         Linkable data = loader.getLinks().getLink(info.getType(), info.getIdentification());
         if (data != null) {
           data.setLinkedUser(user);
-          return new Result(locale.get("link.added", Maps.singleton("readable", data.getSingle())));
+          return Result.of(locale.get("link.added", Maps.singleton("readable", data.getSingle())));
         } else {
-          return new Result(ResultType.UNKNOWN, locale.get("link.data-not-found"));
+          return Result.of(locale.get("link.data-not-found"));
         }
       }
     } else {
-      return new Result(ResultType.USAGE, locale.get("link.code-not-match"));
+      return Result.of(locale.get("link.code-not-match"));
     }
   }
 
@@ -101,7 +95,7 @@ public class UserCommands {
       GuidoGuild guild,
       LocaleFile locale,
       UserData data,
-      @Optional(name = "stats.name", description = "stats.name.desc") String nickname) {
+      @Free(name = "stats.name", description = "stats.name.desc") String nickname) {
     GuidoLoader loader = Guido.getHandlers().getLoader();
     Linkable link = loader.getLinks().getLink(data, LinkableType.MINECRAFT);
     if (nickname != null) {
@@ -110,19 +104,23 @@ public class UserCommands {
               .getLinks()
               .getLinkByRecognition(LinkableType.MINECRAFT, Maps.singleton("nickname", nickname));
       if (link != null) {
-        return new Result(this.buildStats(guild, locale, context, link));
+        // return Result.of(this.buildStats(guild, locale, context, link));
+        // TODO return result that handles embed query
+        return null;
       } else {
-        return new Result(locale.get("stats.player-not-found", Maps.singleton("nick", nickname)));
+        return Result.of(locale.get("stats.player-not-found", Maps.singleton("nick", nickname)));
       }
     } else {
       if (link != null) {
-        return new Result(this.buildStats(guild, locale, context, link));
+        // return Result.of(this.buildStats(guild, locale, context, link));
+        return null;
       } else {
-        return new Result(locale.get("stats.not-linked"));
+        return Result.of(locale.get("stats.not-linked"));
       }
     }
   }
 
+  /*
   private EmbedQuery buildStats(
       GuidoGuild guild,
       @NonNull LocaleFile locale,
@@ -155,7 +153,7 @@ public class UserCommands {
               query.addField(statContext.replace("_", " "), builder.toString(), true);
             });
     return query;
-  }
+  }*/
 }
 
 /*

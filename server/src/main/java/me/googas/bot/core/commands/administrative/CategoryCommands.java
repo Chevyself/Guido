@@ -1,30 +1,31 @@
 package me.googas.bot.core.commands.administrative;
 
-import com.starfishst.commands.jda.annotations.Command;
-import com.starfishst.commands.jda.result.Result;
-import com.starfishst.core.annotations.Parent;
-import com.starfishst.core.annotations.Required;
+import com.github.chevyself.starbox.annotations.Command;
+import com.github.chevyself.starbox.annotations.Parent;
+import com.github.chevyself.starbox.annotations.Required;
+import com.github.chevyself.starbox.result.Result;
 import java.util.Map;
 import me.googas.api.lang.LocaleFile;
+import me.googas.api.utility.Maps;
 import me.googas.bot.core.discord.GuidoGuild;
-import me.googas.commons.Strings;
-import me.googas.commons.maps.Maps;
-import net.dv8tion.jda.api.entities.Category;
+import me.googas.bungee.commands.middleware.GuidoJdaPermission;
 import net.dv8tion.jda.api.entities.Guild;
-import net.dv8tion.jda.api.entities.TextChannel;
+import net.dv8tion.jda.api.entities.channel.concrete.Category;
+import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 
 /** Commands for changing the categories in a guild */
 public class CategoryCommands {
 
   @Parent
-  @Command(aliases = "categories", description = "categories.desc", node = "guido.categories")
+  @GuidoJdaPermission("guido.categories")
+  @Command(aliases = "categories", description = "categories.desc")
   public Result categories(LocaleFile locale, Guild guild, GuidoGuild botGuild) {
     Map<String, String> placeholders = Maps.singleton("name", guild.getName());
     Map<String, Long> categories = botGuild.getCategories();
     if (categories.isEmpty()) {
-      return new Result(locale.get("categories.empty", placeholders));
+      return Result.of(locale.get("categories.empty", placeholders));
     } else {
-      StringBuilder builder = Strings.getBuilder();
+      StringBuilder builder = new StringBuilder();
       builder.append(locale.get("categories.title", placeholders));
       categories.forEach(
           (key, categoryId) -> {
@@ -33,29 +34,30 @@ public class CategoryCommands {
                 locale.get(
                     "categories.category",
                     Maps.builder("key", key)
-                        .append(
+                        .put(
                             "name",
                             category == null ? String.valueOf(categoryId) : category.getName())));
           });
-      return new Result(builder.toString());
+      return Result.of(builder.toString());
     }
   }
 
-  @Command(aliases = "set", description = "categories.set.desc", node = "guido.categories.set")
+  @GuidoJdaPermission("guido.categories.set")
+  @Command(aliases = "set", description = "categories.set.desc")
   public Result set(
       LocaleFile locale,
       GuidoGuild guild,
       TextChannel channel,
       @Required(name = "categories.set.key", description = "categories.set.key.desc") String key) {
-    Category parent = channel.getParent();
+    Category parent = channel.getParentCategory();
     if (parent == null) {
       guild.getCategories().remove(key);
-      return new Result(locale.get("categories.set.unset", Maps.singleton("key", key)));
+      return Result.of(locale.get("categories.set.unset", Maps.singleton("key", key)));
     } else {
       guild.getCategories().put(key, parent.getIdLong());
-      return new Result(
+      return Result.of(
           locale.get(
-              "categories.set.success", Maps.builder("key", key).append("name", parent.getName())));
+              "categories.set.success", Maps.builder("key", key).put("name", parent.getName())));
     }
   }
 }

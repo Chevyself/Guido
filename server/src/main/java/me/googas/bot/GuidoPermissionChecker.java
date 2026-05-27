@@ -3,7 +3,7 @@ package me.googas.bot;
 import com.github.chevyself.starbox.jda.context.CommandContext;
 import com.github.chevyself.starbox.jda.context.GuildCommandContext;
 import com.github.chevyself.starbox.jda.messages.JdaMessagesProvider;
-import com.github.chevyself.starbox.messages.MessagesProvider;
+import com.github.chevyself.starbox.metadata.CommandMetadata;
 import com.github.chevyself.starbox.middleware.Middleware;
 import com.github.chevyself.starbox.result.Result;
 import java.util.Optional;
@@ -13,6 +13,7 @@ import me.googas.api.links.Linkable;
 import me.googas.api.links.LinkableType;
 import me.googas.api.links.ref.DiscordLinkable;
 import me.googas.api.utility.Lots;
+import me.googas.api.utility.Maps;
 import me.googas.bot.api.DiscordLoader;
 import me.googas.bot.core.discord.GuidoRole;
 import me.googas.bot.core.loader.GuidoLoader;
@@ -59,22 +60,18 @@ public class GuidoPermissionChecker implements Middleware<CommandContext> {
    * @param perm the permission to check
    * @return if this is true the user has the permission
    */
-  public boolean checkMemberPermission(
-      @NonNull GuildCommandContext context, @NonNull JdaPermission perm) {
+  public boolean checkMemberPermission(@NonNull GuildCommandContext context, @NonNull String perm) {
     Member discordMember = context.getMember();
     Guild guild = context.getGuild();
     // discordMember.getIdLong(), guild.getIdLong()
     DiscordLinkable member = Discord.getUser(discordMember);
-    if (member.hasPermission(perm.getNode(), "discord")
-        || discordMember.hasPermission(Permission.ADMINISTRATOR)
-        || (perm.getPermission() != Permission.UNKNOWN
-            && discordMember.hasPermission(perm.getPermission()))) {
+    if (member.hasPermission(perm, "discord")
+        || discordMember.hasPermission(Permission.ADMINISTRATOR)) {
       return true;
     }
     for (Role role : discordMember.getRoles()) {
       GuidoRole roleData = this.discordLoader.getRole(role.getIdLong());
-      if (roleData.hasPermission(perm.getNode(), "discord")
-          || role.hasPermission(Permission.ADMINISTRATOR)) {
+      if (roleData.hasPermission(perm, "discord") || role.hasPermission(Permission.ADMINISTRATOR)) {
         return true;
       }
     }
@@ -82,37 +79,28 @@ public class GuidoPermissionChecker implements Middleware<CommandContext> {
   }
 
   @Override
-  public Result checkPermission(@NonNull CommandContext context, @NonNull JdaPermission perm) {
-    if (!perm.getNode().isEmpty()) {
-      if (this.developers.contains(context.getSender().getIdLong())) {
-        return null;
+  public @NonNull Optional<Result> next(@NonNull CommandContext context) {
+    CommandMetadata metadata = context.getCommand().getMetadata();
+    if (!metadata.has(GuidoMetadataParser.PERMISSION_KEY)) return Optional.empty();
+    String permissionNode = metadata.get(GuidoMetadataParser.PERMISSION_KEY);
+    if (permissionNode.isEmpty()) return Optional.empty();
+    if (this.developers.contains(context.getSender().getIdLong())) return Optional.empty();
+    if (context instanceof GuildCommandContext) {
+      if (this.checkMemberPermission((GuildCommandContext) context, permissionNode)) {
+        return Optional.empty();
       }
-      if (context instanceof GuildCommandContext) {
-        if (this.checkMemberPermission((GuildCommandContext) context, perm)) {
-          return null;
-        }
-      } else {
-        String node =
-            perm.getNode().startsWith("user:") ? perm.getNode().substring(5) : perm.getNode();
-        Linkable userData =
-            this.dataLoader
-                .getLinks()
-                .getLink(
-                    LinkableType.DISCORD, Maps.singleton("id", context.getSender().getIdLong()));
-        if (userData != null && userData.hasPermission(node, "discord")) {
-          return null;
-        }
+    } else {
+      String node =
+          permissionNode.startsWith("user:") ? permissionNode.substring(5) : permissionNode;
+      Linkable userData =
+          this.dataLoader
+              .getLinks()
+              .getLink(LinkableType.DISCORD, Maps.singleton("id", context.getSender().getIdLong()));
+      if (userData != null && userData.hasPermission(node, "discord")) {
+        return Optional.empty();
       }
-      return new Result(ResultType.PERMISSION, this.messagesProvider.notAllowed(context));
     }
-    return null;
+    Result result = Result.of(this.messagesProvider.notAllowed(context));
+    return Optional.of(result);
   }
-
-  @Override
-  public @NonNull MessagesProvider getMessagesProvider() {
-    return this.messagesProvider;
-  }
-
-  @Override
-  public @NonNull Optional<Result> next(@NonNull CommandContext context) {}
 }
