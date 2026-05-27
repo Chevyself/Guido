@@ -361,7 +361,7 @@ public class PickTeamSelection implements TeamCreation {
                           locale.get(
                               "match-making.pick.time-left",
                               Maps.builder("time", Time.of(secondsLeft, Unit.SECONDS).toString())
-                                  .append("picks", Lots.pretty(this.getParticipantsNames(id)))));
+                                  .put("picks", Lots.pretty(this.getParticipantsNames(id)))));
                     }
                   }
                 },

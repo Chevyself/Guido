@@ -1,14 +1,14 @@
 package me.googas.bot.core.commands.providers;
 
-import com.starfishst.commands.jda.context.CommandContext;
-import com.starfishst.commands.jda.providers.type.JdaArgumentProvider;
-import com.starfishst.core.exceptions.ArgumentProviderException;
+import com.github.chevyself.starbox.exceptions.ArgumentProviderException;
+import com.github.chevyself.starbox.jda.context.CommandContext;
+import com.github.chevyself.starbox.jda.providers.type.JdaArgumentProvider;
 import lombok.NonNull;
 import me.googas.api.loader.GroupLoader;
 import me.googas.api.permissions.Group;
+import me.googas.api.utility.Maps;
 import me.googas.bot.api.Guido;
 import me.googas.bot.core.util.Lang;
-import me.googas.commons.maps.Maps;
 
 public class GroupProvider implements JdaArgumentProvider<Group> {
   @Override

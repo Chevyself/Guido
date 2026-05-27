@@ -1,8 +1,8 @@
 package me.googas.bot.core.commands;
 
-import com.starfishst.commands.jda.annotations.Command;
-import com.starfishst.commands.jda.context.CommandContext;
-import com.starfishst.commands.jda.result.Result;
+import com.github.chevyself.starbox.annotations.Command;
+import com.github.chevyself.starbox.jda.context.CommandContext;
+import com.github.chevyself.starbox.result.Result;
 import lombok.NonNull;
 import me.googas.bot.api.Guido;
 import me.googas.bot.core.handlers.responsive.GuidoMessagesController;

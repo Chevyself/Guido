@@ -1,14 +1,14 @@
 package me.googas.bot.core.commands.providers;
 
-import com.starfishst.commands.jda.context.CommandContext;
-import com.starfishst.commands.jda.providers.type.JdaArgumentProvider;
-import com.starfishst.core.exceptions.ArgumentProviderException;
+import com.github.chevyself.starbox.exceptions.ArgumentProviderException;
+import com.github.chevyself.starbox.jda.context.CommandContext;
+import com.github.chevyself.starbox.jda.providers.type.JdaArgumentProvider;
 import lombok.NonNull;
 import me.googas.api.links.Linkable;
 import me.googas.api.links.ref.DiscordLinkable;
 import me.googas.api.links.ref.MinecraftLinkable;
+import me.googas.api.utility.Maps;
 import me.googas.bot.core.util.Lang;
-import me.googas.commons.maps.Maps;
 
 public class LinkableProvider implements JdaArgumentProvider<Linkable> {
   @Override
@@ -20,15 +20,20 @@ public class LinkableProvider implements JdaArgumentProvider<Linkable> {
   public @NonNull Linkable fromString(@NonNull String s, @NonNull CommandContext commandContext)
       throws ArgumentProviderException {
     try {
-      MinecraftLinkable minecraft = commandContext.get(s, MinecraftLinkable.class, commandContext);
-      if (minecraft != null) return minecraft.validated();
+      MinecraftLinkable minecraft =
+          commandContext
+              .getProvidersRegistry()
+              .fromString(s, MinecraftLinkable.class, commandContext);
+      return minecraft.validated();
 
     } catch (ArgumentProviderException ignored) {
     }
     try {
       DiscordLinkable discordLinkable =
-          commandContext.get(s, DiscordLinkable.class, commandContext);
-      if (discordLinkable != null) return discordLinkable.validated();
+          commandContext
+              .getProvidersRegistry()
+              .fromString(s, DiscordLinkable.class, commandContext);
+      return discordLinkable.validated();
     } catch (ArgumentProviderException ignored) {
 
     }

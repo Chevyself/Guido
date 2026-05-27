@@ -3,8 +3,7 @@ package me.googas.bot.api.events.server;
 import lombok.Getter;
 import lombok.NonNull;
 import me.googas.bot.core.server.GuidoServer;
-import me.googas.commons.builder.ToStringBuilder;
-import me.googas.messaging.json.server.JsonClientThread;
+import me.googas.net.sockets.json.server.JsonClientThread;
 
 /** An event called when a connection to the server is made */
 public class GuidoServerConnectionEvent extends GuidoServerEvent {
@@ -25,6 +24,6 @@ public class GuidoServerConnectionEvent extends GuidoServerEvent {
 
   @Override
   public String toString() {
-    return new ToStringBuilder(this).append("client", this.client).build();
+    return "GuidoServerConnectionEvent{" + "client=" + client + '}';
   }
 }

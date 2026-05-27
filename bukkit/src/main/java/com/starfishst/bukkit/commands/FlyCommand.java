@@ -29,7 +29,7 @@ public class FlyCommand implements GuidoCommand {
                 locale.get(
                     "fly.else.disabled",
                     Maps.builder("name", player.getName())
-                        .append("display", player.getDisplayName())));
+                        .put("display", player.getDisplayName())));
           } else {
             optional.sendMessage(locale.get("fly.disabled"));
           }
@@ -41,7 +41,7 @@ public class FlyCommand implements GuidoCommand {
                 locale.get(
                     "fly.else.enabled",
                     Maps.builder("name", player.getName())
-                        .append("display", player.getDisplayName())));
+                        .put("display", player.getDisplayName())));
           } else {
             optional.sendMessage(locale.get("fly.enabled"));
           }

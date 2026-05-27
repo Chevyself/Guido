@@ -1,6 +1,6 @@
 package me.googas.bot.adapters.schemes;
 
-import me.googas.commons.builder.Builder;
+import me.googas.starbox.builders.Builder;
 
 /**
  * An scheme is a builder for the latest version of the object. Legacy schemes are the ones that do

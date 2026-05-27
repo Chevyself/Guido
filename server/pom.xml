@@ -65,6 +65,13 @@
             <resource>
                 <directory>src/main/resources</directory>
                 <filtering>true</filtering>
+                <excludes>
+                    <exclude>lang/**/*.properties</exclude>
+                </excludes>
+            </resource>
+            <resource>
+                <directory>src/main/resources/lang</directory>
+                <filtering>false</filtering>
             </resource>
         </resources>
     </build>
@@ -118,6 +125,12 @@
             <groupId>org.mongodb</groupId>
             <artifactId>mongo-java-driver</artifactId>
             <version>3.12.7</version>
+        </dependency>
+        <!-- Starbox JDA -->
+        <dependency>
+            <groupId>me.googas.starbox</groupId>
+            <artifactId>jda</artifactId>
+            <version>1.0.0</version>
         </dependency>
         <!--<dependency>
             <groupId>net.sf.trove4j</groupId>

@@ -49,7 +49,7 @@ public class Matches {
    * @return the information of the abstractMatch as a embed query
    */
   @NonNull
-  public static EmbedQuery getInformation(
+  public static EmbedBuilder getInformation(
       @NonNull AbstractMatch abstractMatch, @NonNull LocaleFile locale) {
     EmbedBuilder builder = new EmbedBuilder();
     String thumbnail = abstractMatch.getString(null, "thumbnail", "");

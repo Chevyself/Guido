@@ -1,20 +1,25 @@
 package me.googas.bungee;
 
-import com.starfishst.commands.bungee.CommandManager;
+import com.github.chevyself.starbox.CommandManager;
+import com.github.chevyself.starbox.CommandManagerBuilder;
+import com.github.chevyself.starbox.bungee.BungeeAdapter;
+import com.github.chevyself.starbox.bungee.commands.BungeeCommand;
+import com.github.chevyself.starbox.bungee.context.CommandContext;
 import java.io.File;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.util.List;
 import lombok.Getter;
 import lombok.NonNull;
+import me.googas.api.utility.Lots;
 import me.googas.bot.GuidoBot;
+import me.googas.bot.core.commands.providers.*;
 import me.googas.bungee.commands.GuidoCommands;
 import me.googas.bungee.commands.LinkCommand;
 import me.googas.bungee.commands.PermissionCommands;
 import me.googas.bungee.commands.PunishmentCommands;
 import me.googas.bungee.commands.ServerCommands;
 import me.googas.bungee.commands.StatsCommand;
-import me.googas.bungee.commands.providers.GuidoProvidersRegistry;
 import me.googas.bungee.configuration.BungeeConfiguration;
 import me.googas.bungee.configuration.GuidoBungeeConfiguration;
 import me.googas.bungee.configuration.GuidoServer;
@@ -26,8 +31,7 @@ import me.googas.bungee.listeners.PermissionsListener;
 import me.googas.bungee.listeners.PunishmentsListener;
 import me.googas.bungee.listeners.TipsListener;
 import me.googas.bungee.utility.Proxy;
-import me.googas.commons.CoreFiles;
-import me.googas.commons.Lots;
+import me.googas.starbox.CoreFiles;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.config.ServerInfo;
 import net.md_5.bungee.api.plugin.Plugin;
@@ -44,10 +48,11 @@ public class GuidoPlugin extends Plugin {
       new BungeeLanguageHandler().loadResources(this, "en");
 
   /** The command manager */
-  @NonNull @Getter
-  private final CommandManager manager =
-      new CommandManager(
-          this, this.languageHandler, new GuidoProvidersRegistry(this.languageHandler));
+  @Getter
+  private final @NonNull CommandManager<CommandContext, BungeeCommand> manager =
+      new CommandManagerBuilder<>(new BungeeAdapter(this))
+          .setMessagesProvider(this.languageHandler)
+          .build();
   /** The listeners being used by the plugin */
   @NonNull @Getter
   private final List<GuidoListener> listeners =
@@ -124,12 +129,12 @@ public class GuidoPlugin extends Plugin {
       listener.register(this);
       listener.onEnable();
     }
-    this.manager.registerCommand(new GuidoCommands());
-    this.manager.registerCommand(new LinkCommand());
-    this.manager.registerCommand(new PermissionCommands());
-    this.manager.registerCommand(new PunishmentCommands());
-    this.manager.registerCommand(new ServerCommands());
-    this.manager.registerCommand(new StatsCommand());
+    this.manager.parseAndRegisterAll(new GuidoCommands());
+    this.manager.parseAndRegisterAll(new LinkCommand());
+    this.manager.parseAndRegisterAll(new PermissionCommands());
+    this.manager.parseAndRegisterAll(new PunishmentCommands());
+    this.manager.parseAndRegisterAll(new ServerCommands());
+    this.manager.parseAndRegisterAll(new StatsCommand());
     this.loadServers();
     super.onEnable();
   }

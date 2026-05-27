@@ -1,24 +1,27 @@
 package me.googas.bot.core.commands.providers;
 
-import com.starfishst.commands.jda.context.CommandContext;
-import com.starfishst.commands.jda.providers.type.JdaMultiArgumentProvider;
-import com.starfishst.core.exceptions.ArgumentProviderException;
+import com.github.chevyself.starbox.exceptions.ArgumentProviderException;
+import com.github.chevyself.starbox.jda.context.CommandContext;
+import com.github.chevyself.starbox.jda.providers.type.JdaArgumentProvider;
 import lombok.NonNull;
 import me.googas.api.links.Linkable;
 
-public class LinkableArrayProvider implements JdaMultiArgumentProvider<Linkable[]> {
+public class LinkableArrayProvider implements JdaArgumentProvider<Linkable[]> {
   @Override
   public @NonNull Class<Linkable[]> getClazz() {
     return Linkable[].class;
   }
 
   @Override
-  public Linkable @NonNull [] fromStrings(
-      @NonNull String[] strings, @NonNull CommandContext commandContext)
+  public @NonNull Linkable[] fromString(@NonNull String s, @NonNull CommandContext commandContext)
       throws ArgumentProviderException {
+    String[] strings = s.split(" ");
     Linkable[] links = new Linkable[strings.length];
     for (int i = 0; i < strings.length; i++) {
-      links[i] = commandContext.get(strings[i], Linkable.class, commandContext);
+      links[i] =
+          commandContext
+              .getProvidersRegistry()
+              .fromString(strings[i], Linkable.class, commandContext);
     }
     return links;
   }

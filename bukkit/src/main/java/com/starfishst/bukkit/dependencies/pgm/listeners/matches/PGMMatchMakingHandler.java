@@ -56,7 +56,7 @@ public class PGMMatchMakingHandler implements GuidoModule {
   @NonNull
   private final Map<String, TeamCreation> creator =
       Maps.builder("random", (TeamCreation) new RandomTeamCreation())
-          .append("pick", new PickTeamSelection())
+          .put("pick", new PickTeamSelection())
           .build();
 
   /** The list of matches hosted by the server */

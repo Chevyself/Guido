@@ -1,15 +1,11 @@
 package me.googas.bot.adapters.matches.ladder;
 
-import com.google.gson.JsonDeserializationContext;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonParseException;
-import com.google.gson.JsonSerializationContext;
+import com.google.gson.*;
 import java.lang.reflect.Type;
 import me.googas.api.matches.ladder.Ladder;
 import me.googas.bot.core.matches.ladder.GuidoLadder;
-import me.googas.commons.gson.adapters.JsonAdapter;
 
-public class LadderAdapter implements JsonAdapter<Ladder> {
+public class LadderAdapter implements JsonSerializer<Ladder>, JsonDeserializer<Ladder> {
   @Override
   public JsonElement serialize(Ladder src, Type typeOfSrc, JsonSerializationContext context) {
     return context.serialize(src, GuidoLadder.class);

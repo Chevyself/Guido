@@ -3,8 +3,7 @@ package me.googas.bot.api.events.server;
 import lombok.Getter;
 import lombok.NonNull;
 import me.googas.bot.core.server.GuidoServer;
-import me.googas.commons.builder.ToStringBuilder;
-import me.googas.messaging.json.server.JsonClientThread;
+import me.googas.net.sockets.json.server.JsonClientThread;
 
 /**
  * Called when a client is disconnected and the server removes it from the server this means that
@@ -29,6 +28,6 @@ public class GuidoServerDisconnectionEvent extends GuidoServerEvent {
 
   @Override
   public String toString() {
-    return new ToStringBuilder(this).append("client", this.client).build();
+    return "GuidoServerDisconnectionEvent{" + "client=" + client + '}';
   }
 }

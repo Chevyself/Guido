@@ -15,9 +15,9 @@ import me.googas.bot.api.events.data.role.BotRoleUnloadedEvent;
 import me.googas.bot.core.discord.GuidoGuild;
 import me.googas.bot.core.discord.GuidoRole;
 import me.googas.bot.core.util.Mongo;
-import me.googas.commons.CoreFiles;
-import me.googas.commons.events.ListenPriority;
-import me.googas.commons.events.Listener;
+import me.googas.starbox.CoreFiles;
+import me.googas.starbox.events.ListenPriority;
+import me.googas.starbox.events.Listener;
 
 public class GuidoDiscordFileLoader implements DiscordLoader {
 

@@ -1,23 +1,20 @@
 package me.googas.bot.core.commands.providers;
 
-import com.starfishst.commands.jda.context.CommandContext;
-import com.starfishst.commands.jda.providers.type.JdaMultiArgumentProvider;
-import com.starfishst.core.exceptions.ArgumentProviderException;
-import com.starfishst.core.objects.JoinedStrings;
+import com.github.chevyself.starbox.exceptions.ArgumentProviderException;
+import com.github.chevyself.starbox.jda.context.CommandContext;
+import com.github.chevyself.starbox.jda.providers.type.JdaArgumentProvider;
 import lombok.NonNull;
 import me.googas.api.matches.team.Team;
 
-public class MultipleTeamProvider implements JdaMultiArgumentProvider<Team> {
+public class MultipleTeamProvider implements JdaArgumentProvider<Team> {
   @Override
   public @NonNull Class<Team> getClazz() {
     return Team.class;
   }
 
   @Override
-  public @NonNull Team fromStrings(@NonNull String[] strings, @NonNull CommandContext context)
+  public @NonNull Team fromString(@NonNull String s, @NonNull CommandContext commandContext)
       throws ArgumentProviderException {
-    JoinedStrings joinedStrings = new JoinedStrings(strings);
-    String string = joinedStrings.getString();
-    return context.get(string, Team.class, context);
+    return commandContext.getProvidersRegistry().fromString(s, Team.class, commandContext);
   }
 }

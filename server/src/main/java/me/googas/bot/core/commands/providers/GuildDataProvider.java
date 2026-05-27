@@ -1,9 +1,9 @@
 package me.googas.bot.core.commands.providers;
 
-import com.starfishst.commands.jda.context.CommandContext;
-import com.starfishst.commands.jda.context.GuildCommandContext;
-import com.starfishst.commands.jda.providers.type.JdaExtraArgumentProvider;
-import com.starfishst.core.exceptions.ArgumentProviderException;
+import com.github.chevyself.starbox.exceptions.ArgumentProviderException;
+import com.github.chevyself.starbox.jda.context.CommandContext;
+import com.github.chevyself.starbox.jda.context.GuildCommandContext;
+import com.github.chevyself.starbox.jda.providers.type.JdaExtraArgumentProvider;
 import lombok.NonNull;
 import me.googas.bot.api.Guido;
 import me.googas.bot.core.discord.GuidoGuild;

@@ -1,30 +1,29 @@
 package me.googas.bot;
 
-import com.starfishst.commands.jda.context.CommandContext;
-import com.starfishst.commands.jda.context.GuildCommandContext;
-import com.starfishst.commands.jda.messages.MessagesProvider;
-import com.starfishst.commands.jda.permissions.JdaPermission;
-import com.starfishst.commands.jda.permissions.PermissionChecker;
-import com.starfishst.commands.jda.result.Result;
-import com.starfishst.commands.jda.result.ResultType;
+import com.github.chevyself.starbox.jda.context.CommandContext;
+import com.github.chevyself.starbox.jda.context.GuildCommandContext;
+import com.github.chevyself.starbox.jda.messages.JdaMessagesProvider;
+import com.github.chevyself.starbox.messages.MessagesProvider;
+import com.github.chevyself.starbox.middleware.Middleware;
+import com.github.chevyself.starbox.result.Result;
+import java.util.Optional;
 import java.util.Set;
 import lombok.NonNull;
 import me.googas.api.links.Linkable;
 import me.googas.api.links.LinkableType;
 import me.googas.api.links.ref.DiscordLinkable;
+import me.googas.api.utility.Lots;
 import me.googas.bot.api.DiscordLoader;
 import me.googas.bot.core.discord.GuidoRole;
 import me.googas.bot.core.loader.GuidoLoader;
 import me.googas.bot.core.util.Discord;
-import me.googas.commons.Lots;
-import me.googas.commons.maps.Maps;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Role;
 
 /** Checks the permissions for the guido bot */
-public class GuidoPermissionChecker implements PermissionChecker {
+public class GuidoPermissionChecker implements Middleware<CommandContext> {
 
   /**
    * The set of developers which are allowed to use any command without having the respective
@@ -32,7 +31,7 @@ public class GuidoPermissionChecker implements PermissionChecker {
    */
   @NonNull private final Set<Long> developers = Lots.set(86321059636203520L);
 
-  @NonNull private final MessagesProvider messagesProvider;
+  @NonNull private final JdaMessagesProvider messagesProvider;
   @NonNull private final GuidoLoader dataLoader;
   @NonNull private final DiscordLoader discordLoader;
 
@@ -44,7 +43,7 @@ public class GuidoPermissionChecker implements PermissionChecker {
    * @param discordLoader the loader to getId roles
    */
   public GuidoPermissionChecker(
-      @NonNull MessagesProvider messagesProvider,
+      @NonNull JdaMessagesProvider messagesProvider,
       @NonNull GuidoLoader dataLoader,
       @NonNull DiscordLoader discordLoader) {
     this.messagesProvider = messagesProvider;
@@ -113,4 +112,7 @@ public class GuidoPermissionChecker implements PermissionChecker {
   public @NonNull MessagesProvider getMessagesProvider() {
     return this.messagesProvider;
   }
+
+  @Override
+  public @NonNull Optional<Result> next(@NonNull CommandContext context) {}
 }

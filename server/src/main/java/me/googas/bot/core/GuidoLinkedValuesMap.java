@@ -4,7 +4,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import lombok.NonNull;
 import me.googas.api.ValuesMap;
-import me.googas.commons.maps.Maps;
+import me.googas.api.utility.Maps;
 
 /** A guido linked values map uses {@link LinkedHashMap} instead of a hash map */
 public class GuidoLinkedValuesMap extends GuidoValuesMap {

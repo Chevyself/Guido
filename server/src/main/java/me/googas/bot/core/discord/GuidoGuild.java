@@ -9,7 +9,6 @@ import java.util.Set;
 import java.util.concurrent.atomic.AtomicReference;
 import lombok.Getter;
 import lombok.NonNull;
-import me.googas.annotations.Nullable;
 import me.googas.api.GuidoCatchable;
 import me.googas.api.matches.ladder.GlobalLadder;
 import me.googas.api.matches.ladder.Ladder;
@@ -17,14 +16,12 @@ import me.googas.api.ranks.RankRange;
 import me.googas.bot.api.Guido;
 import me.googas.bot.api.events.data.guild.GuidoGuildUnloadedEvent;
 import me.googas.bot.api.types.messages.ResponsiveMesage;
-import me.googas.commons.Validate;
-import me.googas.commons.builder.ToStringBuilder;
-import me.googas.commons.time.Time;
-import me.googas.commons.time.Unit;
-import net.dv8tion.jda.api.entities.Category;
+import me.googas.starbox.time.Time;
+import me.googas.starbox.time.unit.Unit;
 import net.dv8tion.jda.api.entities.Guild;
-import net.dv8tion.jda.api.entities.TextChannel;
-import net.dv8tion.jda.api.entities.VoiceChannel;
+import net.dv8tion.jda.api.entities.channel.concrete.Category;
+import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
+import net.dv8tion.jda.api.entities.channel.concrete.VoiceChannel;
 
 /** This object represents the data for a guild that is using this bot */
 public class GuidoGuild implements GuidoCatchable {
@@ -138,10 +135,9 @@ public class GuidoGuild implements GuidoCatchable {
 
   @Override
   public @NonNull Time getToRemove() {
-    return new Time(10, Unit.MINUTES);
+    return Time.of(10, Unit.MINUTES);
   }
 
-  @Nullable
   public RankRange getRange(long id) {
     for (RankRange range : this.getRanges()) {
       Long rangeId = range.get(null, "id", Long.class);
@@ -225,7 +221,7 @@ public class GuidoGuild implements GuidoCatchable {
    */
   @NonNull
   public Guild toDiscord() {
-    return Validate.notNull(
+    return Objects.requireNonNull(
         Guido.getConnection().validatedJda().getGuildById(this.getId()),
         "Seems like the guild with the id " + this.getId() + " no longer exists");
   }
@@ -237,15 +233,25 @@ public class GuidoGuild implements GuidoCatchable {
 
   @Override
   public String toString() {
-    return new ToStringBuilder(this)
-        .append("id", this.id)
-        .append("ladders", this.ladders)
-        .append("ranges", this.ranges)
-        .append("channels", this.channels)
-        .append("voiceChannels", this.voiceChannels)
-        .append("categories", this.categories)
-        .append("messages", this.messages)
-        .build();
+    return "GuidoGuild{"
+        + "version='"
+        + version
+        + '\''
+        + ", id="
+        + id
+        + ", ladders="
+        + ladders
+        + ", ranges="
+        + ranges
+        + ", channels="
+        + channels
+        + ", voiceChannels="
+        + voiceChannels
+        + ", categories="
+        + categories
+        + ", messages="
+        + messages
+        + '}';
   }
 
   @Override

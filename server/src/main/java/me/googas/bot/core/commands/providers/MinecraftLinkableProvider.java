@@ -1,18 +1,18 @@
 package me.googas.bot.core.commands.providers;
 
-import com.starfishst.commands.jda.context.CommandContext;
-import com.starfishst.commands.jda.providers.type.JdaArgumentProvider;
-import com.starfishst.core.exceptions.ArgumentProviderException;
+import com.github.chevyself.starbox.exceptions.ArgumentProviderException;
+import com.github.chevyself.starbox.jda.context.CommandContext;
+import com.github.chevyself.starbox.jda.providers.type.JdaArgumentProvider;
 import lombok.NonNull;
 import me.googas.api.links.Linkable;
 import me.googas.api.links.LinkableType;
 import me.googas.api.links.ref.DiscordLinkable;
 import me.googas.api.links.ref.MinecraftLinkable;
 import me.googas.api.user.UserData;
+import me.googas.api.utility.Maps;
 import me.googas.bot.api.Guido;
 import me.googas.bot.core.loader.GuidoLoader;
 import me.googas.bot.core.util.Lang;
-import me.googas.commons.maps.Maps;
 
 public class MinecraftLinkableProvider implements JdaArgumentProvider<MinecraftLinkable> {
 
@@ -36,13 +36,12 @@ public class MinecraftLinkableProvider implements JdaArgumentProvider<MinecraftL
     linkable = loader.getLinks().getLink(LinkableType.MINECRAFT, Maps.singleton("uuid", s));
     if (linkable != null) return new MinecraftLinkable(linkable);
     try {
-      DiscordLinkable discord = context.get(s, DiscordLinkable.class, context);
-      if (discord != null) {
-        UserData user = discord.getLinkedUser();
-        if (user != null) {
-          Linkable link = user.getLink(LinkableType.MINECRAFT);
-          if (link != null) return link.requireMinecraftRef();
-        }
+      DiscordLinkable discord =
+          context.getProvidersRegistry().fromString(s, DiscordLinkable.class, context);
+      UserData user = discord.getLinkedUser();
+      if (user != null) {
+        Linkable link = user.getLink(LinkableType.MINECRAFT);
+        if (link != null) return link.requireMinecraftRef();
       }
     } catch (ArgumentProviderException ignored) {
     }

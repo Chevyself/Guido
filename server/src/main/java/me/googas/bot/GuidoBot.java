@@ -1,5 +1,8 @@
 package me.googas.bot;
 
+import com.github.chevyself.starbox.CommandManager;
+import com.github.chevyself.starbox.jda.commands.JdaCommand;
+import com.github.chevyself.starbox.jda.context.CommandContext;
 import java.io.IOException;
 import java.lang.ref.SoftReference;
 import java.util.Timer;
@@ -18,8 +21,12 @@ import me.googas.bot.api.Guido;
 import me.googas.bot.api.server.BotServer;
 import me.googas.bot.core.server.GuidoFallbackServer;
 import me.googas.bot.core.server.GuidoServer;
+import me.googas.net.cache.Catchable;
 import me.googas.net.cache.MemoryCache;
+import me.googas.starbox.ProgramArguments;
 import me.googas.starbox.events.ListenerManager;
+import me.googas.starbox.logging.CustomFormatter;
+import me.googas.starbox.logging.LoggerFactory;
 import me.googas.starbox.scheduler.Scheduler;
 import me.googas.starbox.scheduler.TimerScheduler;
 import me.googas.starbox.time.Time;
@@ -37,7 +44,8 @@ public class GuidoBot implements GuidoInstance {
 
   @NonNull @Getter
   public static final Logger log =
-      LoggerFactory.start("GuidoBungee", LoggerFactory.getConsoleHandler(GuidoBot.formatter));
+      LoggerFactory.start(
+          "GuidoBungee", false, LoggerFactory.createConsoleHandler(GuidoBot.formatter));
 
   @NonNull @Getter private final API.Messenger messenger = new GuidoMessenger();
   @NonNull @Getter private final MemoryCache cache = new MemoryCache();
@@ -47,7 +55,7 @@ public class GuidoBot implements GuidoInstance {
   @NonNull @Getter private final GuidoHandlerRegistry handlerRegistry = new GuidoHandlerRegistry();
   // TODO what's up with this class with the new authenticator
   @NonNull @Getter @Setter private BotServer server = new GuidoFallbackServer();
-  @Setter @Getter private CommandManager commandManager;
+  @Setter @Getter private CommandManager<CommandContext, JdaCommand> commandManager;
 
   /**
    * The main method of the bot. x
@@ -79,7 +87,7 @@ public class GuidoBot implements GuidoInstance {
     Guido.setInstance(bot);
     try {
       GuidoBot.log.addHandler(
-          LoggerFactory.getFileHandler(
+          LoggerFactory.createFileHandler(
               GuidoBot.getFormatter(),
               IOUtil.currentDirectory() + "/logs/",
               System.currentTimeMillis() + ".txt"));
@@ -89,7 +97,7 @@ public class GuidoBot implements GuidoInstance {
     ProgramArguments arguments = ProgramArguments.construct(args);
     Thread.setDefaultUncaughtExceptionHandler(
         (thread, exception) -> GuidoBot.log.log(Level.SEVERE, exception, () -> ""));
-    Time time = new Time(1, Unit.SECONDS);
+    Time time = Time.of(1, Unit.SECONDS);
     bot.getScheduler().repeat(time, time, bot.getCache());
     JDA jda = bot.getConnection().createConnection(arguments.getProperty("token", "none"));
     jda.setEventManager(new AnnotatedEventManager());
@@ -106,7 +114,6 @@ public class GuidoBot implements GuidoInstance {
    *
    * @param args the map to getId the port and timeout of the server
    */
-  @Nullable
   public static BotServer createServer(@NonNull ProgramArguments args, @NonNull GuidoBot bot) {
     try {
       int port = Integer.parseInt(args.getProperty("port", "3000"));
@@ -122,7 +129,7 @@ public class GuidoBot implements GuidoInstance {
 
   @NonNull
   public GuidoBot clearCache() {
-    for (SoftReference<Catchable> reference : this.cache.copy()) {
+    for (SoftReference<Catchable> reference : this.cache.keySetCopy()) {
       Catchable catchable = reference.get();
       if (catchable instanceof GuidoCatchable) {
         try {

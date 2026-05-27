@@ -1,6 +1,8 @@
 package me.googas.bot.api;
 
 import com.github.chevyself.starbox.CommandManager;
+import com.github.chevyself.starbox.jda.commands.JdaCommand;
+import com.github.chevyself.starbox.jda.context.CommandContext;
 import java.util.Objects;
 import java.util.logging.Logger;
 import lombok.Getter;
@@ -60,7 +62,7 @@ public class Guido {
   }
 
   @NonNull
-  public static CommandManager getCommandManager() {
+  public static CommandManager<CommandContext, JdaCommand> getCommandManager() {
     return Objects.requireNonNull(
         Guido.validated().getCommandManager(), "Command manager might not have been initialized");
   }

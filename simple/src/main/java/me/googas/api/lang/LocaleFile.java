@@ -2,8 +2,8 @@ package me.googas.api.lang;
 
 import java.util.Map;
 import lombok.NonNull;
-import me.googas.api.utility.MapBuilder;
 import me.googas.starbox.Strings;
+import me.googas.starbox.builders.MapBuilder;
 
 /** The file of localized messages */
 public interface LocaleFile {

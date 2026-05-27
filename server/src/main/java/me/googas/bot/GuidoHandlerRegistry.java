@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Set;
 import lombok.Getter;
 import lombok.NonNull;
+import me.googas.api.utility.Lots;
 import me.googas.bot.api.DiscordLoader;
 import me.googas.bot.core.handlers.GuidoHandler;
 import me.googas.bot.core.handlers.deploy.DeployHandler;
@@ -23,8 +24,7 @@ import me.googas.bot.core.lang.GuidoLanguageHandler;
 import me.googas.bot.core.loader.GuidoFallbackLoader;
 import me.googas.bot.core.loader.GuidoLoader;
 import me.googas.bot.core.loader.jsongo.JsongoLoader;
-import me.googas.commons.Lots;
-import me.googas.commons.ProgramArguments;
+import me.googas.starbox.ProgramArguments;
 import net.dv8tion.jda.api.JDA;
 
 public class GuidoHandlerRegistry {

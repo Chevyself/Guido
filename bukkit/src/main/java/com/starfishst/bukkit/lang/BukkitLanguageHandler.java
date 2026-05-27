@@ -13,8 +13,8 @@ import java.util.List;
 import java.util.Map;
 import lombok.NonNull;
 import me.googas.api.utility.Lots;
-import me.googas.api.utility.MapBuilder;
 import me.googas.api.utility.Maps;
+import me.googas.starbox.builders.MapBuilder;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
@@ -61,9 +61,9 @@ public class BukkitLanguageHandler implements GuidoModule, BukkitMessagesProvide
   @NonNull
   private MapBuilder<String, String> getCommandPlaceholders(@NonNull BukkitCommand cmd) {
     return Maps.builder("name", cmd.getName())
-        .append("aliases", Lots.pretty(cmd.getAliases()))
-        .append("description", cmd.getExecutor().getDescription())
-        .append("permission", cmd.getPermission());
+        .put("aliases", Lots.pretty(cmd.getAliases()))
+        .put("description", cmd.getExecutor().getDescription())
+        .put("permission", cmd.getPermission());
   }
 
   /**
@@ -161,7 +161,7 @@ public class BukkitLanguageHandler implements GuidoModule, BukkitMessagesProvide
 
   @Override
   public @NonNull String invalidDuration(
-      @NonNull String s, @org.jspecify.annotations.NonNull CommandContext commandContext) {
+      @NonNull String s, @NonNull CommandContext commandContext) {
     return this.getFile(commandContext).get("invalid.duration", Maps.singleton("string", s));
   }
 
@@ -171,9 +171,7 @@ public class BukkitLanguageHandler implements GuidoModule, BukkitMessagesProvide
     return this.getFile(context)
         .get(
             "missing-argument",
-            Maps.builder("name", s1)
-                .append("description", s1)
-                .append("position", String.valueOf(i)));
+            Maps.builder("name", s1).put("description", s1).put("position", String.valueOf(i)));
   }
 
   @Override
@@ -203,8 +201,8 @@ public class BukkitLanguageHandler implements GuidoModule, BukkitMessagesProvide
         .get(
             "help-topic.plugin.short",
             Maps.builder("name", plugin.getName())
-                .append("description", plugin.getDescription().getDescription())
-                .append("version", plugin.getDescription().getVersion()));
+                .put("description", plugin.getDescription().getDescription())
+                .put("version", plugin.getDescription().getVersion()));
   }
 
   @Override
@@ -214,10 +212,10 @@ public class BukkitLanguageHandler implements GuidoModule, BukkitMessagesProvide
         .get(
             "help-topic.plugin.full",
             Maps.builder("name", plugin.getName())
-                .append("description", plugin.getDescription().getDescription())
-                .append("version", plugin.getDescription().getVersion())
-                .append("short", s)
-                .append("commands", s1));
+                .put("description", plugin.getDescription().getDescription())
+                .put("version", plugin.getDescription().getVersion())
+                .put("short", s)
+                .put("commands", s1));
   }
 
   @Override
@@ -241,9 +239,7 @@ public class BukkitLanguageHandler implements GuidoModule, BukkitMessagesProvide
   @Override
   public @NonNull String commandFullText(@NonNull BukkitCommand BukkitCommand, @NonNull String s) {
     return this.getDefault()
-        .get(
-            "help-topic.command.full",
-            this.getCommandPlaceholders(BukkitCommand).append("usage", s));
+        .get("help-topic.command.full", this.getCommandPlaceholders(BukkitCommand).put("usage", s));
   }
 
   @Override
@@ -253,7 +249,7 @@ public class BukkitLanguageHandler implements GuidoModule, BukkitMessagesProvide
         .get(
             "help-topic.plugin.child",
             this.getCommandPlaceholders(BukkitCommand)
-                .append("parent-name", BukkitCommand1.getName()));
+                .put("parent-name", BukkitCommand1.getName()));
   }
 
   @Override

@@ -4,7 +4,6 @@ import lombok.Getter;
 import lombok.NonNull;
 import me.googas.api.events.GuidoEvent;
 import me.googas.bot.core.server.GuidoServer;
-import me.googas.commons.builder.ToStringBuilder;
 
 /** An event that involves the guido server */
 public class GuidoServerEvent implements GuidoEvent {
@@ -23,6 +22,6 @@ public class GuidoServerEvent implements GuidoEvent {
 
   @Override
   public String toString() {
-    return new ToStringBuilder(this).append("server", this.server).build();
+    return "GuidoServerEvent{" + "server=" + server + '}';
   }
 }
