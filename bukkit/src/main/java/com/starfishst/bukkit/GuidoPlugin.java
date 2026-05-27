@@ -15,18 +15,12 @@ import com.starfishst.bukkit.configuration.GuidoConfiguration;
 import com.starfishst.bukkit.dependencies.GuidoCompatibilities;
 import com.starfishst.bukkit.lang.BukkitLanguageHandler;
 import com.starfishst.bukkit.modules.StartMoneyModule;
-import com.starfishst.commands.bukkit.CommandManager;
-import com.starfishst.commands.bukkit.CommandManagerOptions;
 import java.io.IOException;
 import java.util.Set;
 import lombok.Getter;
 import lombok.NonNull;
-import me.googas.commons.Lots;
-import me.googas.starbox.Starbox;
-import me.googas.starbox.compatibilities.vault.VaultImplementation;
+import me.googas.commands.bukkit.CommandManager;
 import me.googas.starbox.modules.ModuleRegistry;
-import me.googas.starbox.modules.data.DataModule;
-import me.googas.starbox.modules.language.LanguageModule;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -48,10 +42,7 @@ public class GuidoPlugin extends JavaPlugin {
   @NonNull @Getter
   private final CommandManager manager =
       new CommandManager(
-          this,
-          new CommandManagerOptions(false),
-          this.bukkitLanguageHandler,
-          new GuidoProvidersRegistry(this.bukkitLanguageHandler));
+          this, new GuidoProvidersRegistry(this.bukkitLanguageHandler), this.bukkitLanguageHandler);
   /** The set of commands that the implementation is using */
   @NonNull
   private final Set<GuidoCommand> commands =

@@ -64,6 +64,11 @@
             <id>spigot-repo</id>
             <url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
         </repository>
+        <!-- Commands -->
+        <repository>
+            <id>jitpack.io</id>
+            <url>https://jitpack.io</url>
+        </repository>
     </repositories>
 
     <dependencies>
@@ -73,6 +78,18 @@
             <artifactId>spigot-api</artifactId>
             <version>1.8.8-R0.1-SNAPSHOT</version>
             <scope>provided</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>net.md-5</groupId>
+                    <artifactId>bungeecord-chat</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <!-- Command framework -->
+        <dependency>
+            <groupId>com.github.Chevyself.starbox-commands</groupId>
+            <artifactId>bukkit</artifactId>
+            <version>1f35b847fb</version>
         </dependency>
         <!-- Dependency on simple -->
         <dependency>
@@ -83,7 +100,7 @@
         <!-- Starbox -->
         <dependency>
             <groupId>me.googas.starbox</groupId>
-            <artifactId>core</artifactId>
+            <artifactId>bukkit</artifactId>
             <version>1.0.0</version>
             <scope>provided</scope>
         </dependency>
@@ -102,5 +119,4 @@
             <scope>provided</scope>
         </dependency>
     </dependencies>
-
 </project>

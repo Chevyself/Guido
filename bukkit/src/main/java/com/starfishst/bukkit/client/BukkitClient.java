@@ -2,9 +2,9 @@ package com.starfishst.bukkit.client;
 
 import lombok.NonNull;
 import me.googas.api.client.Client;
-import me.googas.commons.time.Time;
-import me.googas.commons.time.Unit;
 import me.googas.starbox.Starbox;
+import me.googas.starbox.time.Time;
+import me.googas.starbox.time.unit.Unit;
 
 /** Extension for client */
 public class BukkitClient extends Client {
@@ -15,7 +15,7 @@ public class BukkitClient extends Client {
 
   @NonNull
   public BukkitClient startTask() {
-    Time time = new Time(30, Unit.SECONDS);
+    Time time = Time.of(30, Unit.SECONDS);
     Starbox.getScheduler().repeat(time, time, new BukkitHeartBeatTimerTask(this));
     return this;
   }

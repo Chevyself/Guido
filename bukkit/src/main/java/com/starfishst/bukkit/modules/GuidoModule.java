@@ -3,6 +3,7 @@ package com.starfishst.bukkit.modules;
 import com.starfishst.bukkit.Guido;
 import com.starfishst.bukkit.configuration.ModuleSettings;
 import lombok.NonNull;
+import me.googas.starbox.modules.Module;
 
 public interface GuidoModule extends Module {
 

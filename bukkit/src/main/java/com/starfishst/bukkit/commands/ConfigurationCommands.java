@@ -1,20 +1,22 @@
 package com.starfishst.bukkit.commands;
 
+import com.github.chevyself.starbox.annotations.Command;
+import com.github.chevyself.starbox.common.Async;
+import com.github.chevyself.starbox.common.CommandPermission;
+import com.github.chevyself.starbox.result.Result;
 import com.starfishst.bukkit.Guido;
 import com.starfishst.bukkit.lang.BukkitLocaleFile;
 import com.starfishst.bukkit.modules.GroupsHandler;
-import com.starfishst.commands.bukkit.annotations.Command;
-import com.starfishst.commands.bukkit.result.Result;
-import com.starfishst.core.annotations.Settings;
 import lombok.NonNull;
-import me.googas.commons.maps.Maps;
+import me.googas.api.utility.Maps;
 import org.bukkit.command.CommandSender;
 
 /** Commands for configuration */
 public class ConfigurationCommands implements GuidoCommand {
 
-  @Settings("async")
-  @Command(aliases = "groups", description = "groups.desc", permission = "guido.config.groups")
+  @Async
+  @CommandPermission("guido.config.async")
+  @Command(aliases = "groups", description = "groups.desc")
   public Result groups(BukkitLocaleFile locale, CommandSender sender) {
     Guido.getModuleRegistry()
         .require(GroupsHandler.class)
@@ -26,7 +28,7 @@ public class ConfigurationCommands implements GuidoCommand {
                         "groups.reload", Maps.singleton("amount", String.valueOf(loaded.size()))));
               }
             });
-    return new Result();
+    return null;
   }
 
   @Override

@@ -94,7 +94,7 @@ public class PGMMatchMakingHandler implements GuidoModule {
     return false;
   }
 
-  public boolean check( String type,  Match pgmMatch) {
+  public boolean check(String type, Match pgmMatch) {
     return type != null
         && type.equalsIgnoreCase("pgm")
         && PGM.get().isEnabled()
@@ -225,7 +225,6 @@ public class PGMMatchMakingHandler implements GuidoModule {
    *
    * @param sender the sender to getId the match
    */
-  
   public PGMHostedMatch getMatch(@NonNull CommandSender sender) {
     for (PGMHostedMatch match : this.matches) {
       if (match.isParticipating(sender)) return match;

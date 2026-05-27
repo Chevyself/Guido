@@ -1,11 +1,6 @@
 package com.starfishst.bukkit.lang;
 
 import com.starfishst.bukkit.modules.GuidoModule;
-import com.starfishst.commands.bukkit.AnnotatedCommand;
-import com.starfishst.commands.bukkit.ParentCommand;
-import com.starfishst.commands.bukkit.context.CommandContext;
-import com.starfishst.commands.bukkit.messages.MessagesProvider;
-import com.starfishst.core.arguments.Argument;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -13,9 +8,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import lombok.NonNull;
-import me.googas.commons.Lots;
-import me.googas.commons.maps.MapBuilder;
-import me.googas.commons.maps.Maps;
+import me.googas.api.utility.Lots;
+import me.googas.api.utility.MapBuilder;
+import me.googas.api.utility.Maps;
+import me.googas.commands.bukkit.StarboxBukkitCommand;
+import me.googas.commands.bukkit.context.CommandContext;
+import me.googas.commands.bukkit.messages.MessagesProvider;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
@@ -60,7 +58,7 @@ public class BukkitLanguageHandler implements GuidoModule, MessagesProvider {
    * @return the placeholders as a builder
    */
   @NonNull
-  private MapBuilder<String, String> getCommandPlaceholders(@NonNull AnnotatedCommand cmd) {
+  private MapBuilder<String, String> getCommandPlaceholders(@NonNull StarboxBukkitCommand cmd) {
     return Maps.builder("name", cmd.getName())
         .append("aliases", Lots.pretty(cmd.getAliases()))
         .append("description", cmd.getDescription())
@@ -81,19 +79,6 @@ public class BukkitLanguageHandler implements GuidoModule, MessagesProvider {
       }
     }
     return this.getFile("en");
-  }
-
-  /**
-   * Get the placeholders for an argument
-   *
-   * @param argument the argument to getId the placeholders to
-   * @return the placeholders
-   */
-  @NonNull
-  private MapBuilder<String, String> getArgumentPlaceholders(@NonNull Argument<?> argument) {
-    return Maps.builder("name", argument.getName())
-        .append("description", argument.getDescription())
-        .append("position", String.valueOf(argument.getPosition()));
   }
 
   /**
@@ -244,94 +229,41 @@ public class BukkitLanguageHandler implements GuidoModule, MessagesProvider {
   }
 
   @Override
-  public @NonNull String helpTopicCommand(@NonNull AnnotatedCommand cmd) {
-    return this.getDefault().get("help-topic.plugin.command", this.getCommandPlaceholders(cmd));
-  }
-
-  @Override
-  public @NonNull String commandShortText(@NonNull AnnotatedCommand cmd) {
-    return this.getDefault().get("help-topic.command.short", this.getCommandPlaceholders(cmd));
-  }
-
-  @Override
-  public @NonNull String commandName(AnnotatedCommand cmd) {
-    return this.getDefault().get("help-topic.command.name", this.getCommandPlaceholders(cmd));
-  }
-
-  @Override
-  public @NonNull String parentCommandFull(
-      @NonNull ParentCommand parentCommand,
-      @NonNull String s,
-      @NonNull String s1,
-      @NonNull String s2) {
+  public @NonNull String helpTopicCommand(@NonNull StarboxBukkitCommand starboxBukkitCommand) {
     return this.getDefault()
-        .get(
-            "help-topic.parent.full",
-            this.getCommandPlaceholders(parentCommand)
-                .append("short", s)
-                .append("children", s1)
-                .append("arguments", s2));
+        .get("help-topic.plugin.command", this.getCommandPlaceholders(starboxBukkitCommand));
   }
 
   @Override
-  public @NonNull String parentCommandShort(
-      @NonNull ParentCommand parentCommand, @NonNull String s) {
+  public @NonNull String commandShortText(@NonNull StarboxBukkitCommand starboxBukkitCommand) {
     return this.getDefault()
-        .get("help-topic.parent.short", this.getCommandPlaceholders(parentCommand));
+        .get("help-topic.command.short", this.getCommandPlaceholders(starboxBukkitCommand));
   }
 
   @Override
-  public @NonNull String commandFull(
-      @NonNull AnnotatedCommand annotatedCommand, @NonNull String s, @NonNull String s1) {
+  public @NonNull String commandName(StarboxBukkitCommand starboxBukkitCommand, String s) {
+    return this.getDefault()
+        .get("help-topic.command.name", this.getCommandPlaceholders(starboxBukkitCommand));
+  }
+
+  @Override
+  public @NonNull String commandFullText(
+      @NonNull StarboxBukkitCommand starboxBukkitCommand, @NonNull String s) {
     return this.getDefault()
         .get(
             "help-topic.command.full",
-            this.getCommandPlaceholders(annotatedCommand).append("short", s).append("usage", s1));
-  }
-
-  @Override
-  public @NonNull String childCommandName(
-      @NonNull AnnotatedCommand cmd, @NonNull ParentCommand parentCommand) {
-    return this.getDefault().get("help-topic.parent.child.name", this.getCommandPlaceholders(cmd));
-  }
-
-  @Override
-  public @NonNull String childCommandShort(
-      @NonNull AnnotatedCommand annotatedCommand, @NonNull ParentCommand parentCommand) {
-    return this.getDefault()
-        .get("help-topic.parent.child.short", this.getCommandPlaceholders(annotatedCommand));
-  }
-
-  @Override
-  public @NonNull String childCommandFull(
-      @NonNull AnnotatedCommand annotatedCommand,
-      @NonNull ParentCommand parentCommand,
-      @NonNull String s,
-      @NonNull String s1) {
-    return this.getDefault()
-        .get("help-topic.parent.child.full", this.getCommandPlaceholders(annotatedCommand));
-  }
-
-  @Override
-  public @NonNull String requiredArgumentHelp(@NonNull Argument<?> argument) {
-    return this.getDefault()
-        .get("help-topic.arguments.required", this.getArgumentPlaceholders(argument));
-  }
-
-  @Override
-  public @NonNull String optionalArgumentHelp(@NonNull Argument<?> argument) {
-    return this.getDefault()
-        .get("help-topic.arguments.optional", this.getArgumentPlaceholders(argument));
+            this.getCommandPlaceholders(starboxBukkitCommand).append("usage", s));
   }
 
   @Override
   public @NonNull String childCommand(
-      @NonNull AnnotatedCommand annotatedCommand, @NonNull ParentCommand parentCommand) {
+      @NonNull StarboxBukkitCommand starboxBukkitCommand,
+      @NonNull StarboxBukkitCommand starboxBukkitCommand1) {
     return this.getDefault()
         .get(
             "help-topic.plugin.child",
-            this.getCommandPlaceholders(annotatedCommand)
-                .append("parent-name", parentCommand.getName()));
+            this.getCommandPlaceholders(starboxBukkitCommand)
+                .append("parent-name", starboxBukkitCommand1.getName()));
   }
 
   @Override

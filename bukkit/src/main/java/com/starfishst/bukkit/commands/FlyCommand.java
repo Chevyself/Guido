@@ -1,11 +1,12 @@
 package com.starfishst.bukkit.commands;
 
-import com.starfishst.commands.bukkit.annotations.Command;
-import com.starfishst.commands.bukkit.result.Result;
-import com.starfishst.core.annotations.Optional;
+import com.github.chevyself.starbox.annotations.Command;
+import com.github.chevyself.starbox.annotations.Free;
+import com.github.chevyself.starbox.common.CommandPermission;
+import com.github.chevyself.starbox.result.Result;
 import lombok.NonNull;
 import me.googas.api.lang.LocaleFile;
-import me.googas.commons.maps.Maps;
+import me.googas.api.utility.Maps;
 import org.bukkit.entity.Player;
 
 /** Commands used for flight */
@@ -13,11 +14,12 @@ public class FlyCommand implements GuidoCommand {
 
   private boolean enabled = false;
 
-  @Command(aliases = "fly", description = "Toggle your fly status", permission = "guido.fly")
+  @CommandPermission("guido.fly")
+  @Command(aliases = "fly", description = "Toggle your fly status")
   public Result fly(
       Player player,
       LocaleFile locale,
-      @Optional(name = "player", description = "The player to toggle fly to") Player optional) {
+      @Free(name = "player", description = "The player to toggle fly to") Player optional) {
     if (optional != null && optional != player) {
       if (player.hasPermission("guido.fly.else")) {
         if (optional.getAllowFlight()) {
@@ -31,7 +33,7 @@ public class FlyCommand implements GuidoCommand {
           } else {
             optional.sendMessage(locale.get("fly.disabled"));
           }
-          return new Result("&eFly for " + optional.getName() + "  has been disabled");
+          return Result.of("&eFly for " + optional.getName() + "  has been disabled");
         } else {
           optional.setAllowFlight(true);
           if (optional.hasPermission("guido.fly")) {
@@ -43,18 +45,18 @@ public class FlyCommand implements GuidoCommand {
           } else {
             optional.sendMessage(locale.get("fly.enabled"));
           }
-          return new Result("&eFly for " + optional.getName() + "  has been enabled");
+          return Result.of("&eFly for " + optional.getName() + "  has been enabled");
         }
       } else {
-        return new Result(locale.get("fly.else.not-allowed"));
+        return Result.of(locale.get("fly.else.not-allowed"));
       }
     } else {
       if (player.getAllowFlight()) {
         player.setAllowFlight(false);
-        return new Result(locale.get("fly.disabled"));
+        return Result.of(locale.get("fly.disabled"));
       } else {
         player.setAllowFlight(true);
-        return new Result(locale.get("fly.enabled"));
+        return Result.of(locale.get("fly.enabled"));
       }
     }
   }

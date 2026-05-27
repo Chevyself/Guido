@@ -1,0 +1,3 @@
+[submodule "legacy-starbox"]
+	path = legacy-starbox
+	url = git@github.com:Chevyself/legacy-starbox.git

@@ -5,10 +5,11 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import lombok.Getter;
 import lombok.NonNull;
-import me.googas.commons.builder.ToStringBuilder;
-import me.googas.starbox.modules.language.Language;
+import me.googas.starbox.Language;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -62,15 +63,35 @@ public class GuidoLanguage implements Language {
   }
 
   @Override
+  public @NonNull Optional<?> getRaw(@NonNull String s) {
+    return Optional.ofNullable(this.section.get(s));
+  }
+
+  @Override
   public @NonNull String get(@NonNull String s) {
     return this.section.getString(s, s);
   }
 
   @Override
+  public @NonNull Object get(@NonNull String s, @NonNull Map<String, String> map) {
+    String str = this.get(s);
+    for (Map.Entry<String, String> entry : map.entrySet()) {
+      str = str.replace("%" + entry.getKey() + "%", entry.getValue());
+    }
+    return str;
+  }
+
+  @Override
+  public @NonNull Object get(@NonNull String s, Object... objects) {
+    String str = this.get(s);
+    for (int i = 0; i < objects.length; i++) {
+      str = str.replace("%" + i + "%", String.valueOf(objects[i]));
+    }
+    return str;
+  }
+
+  @Override
   public String toString() {
-    return new ToStringBuilder(this)
-        .append("locale", this.locale)
-        .append("section", this.section)
-        .build();
+    return "GuidoLanguage{" + "locale='" + locale + '\'' + ", section=" + section + '}';
   }
 }

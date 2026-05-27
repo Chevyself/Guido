@@ -15,7 +15,7 @@ public class MapBuilder<K, V> {
     this.map = new HashMap<>();
   }
 
-  public MapBuilder<K, V> put(K key, V value) {
+  public MapBuilder<K, V> append(K key, V value) {
     this.map.put(key, value);
     return this;
   }

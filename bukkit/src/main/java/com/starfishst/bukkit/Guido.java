@@ -5,9 +5,9 @@ import com.starfishst.bukkit.configuration.GuidoConfiguration;
 import com.starfishst.bukkit.dependencies.GuidoCompatibilities;
 import com.starfishst.bukkit.events.GuidoEvent;
 import com.starfishst.bukkit.lang.BukkitLanguageHandler;
-import com.starfishst.commands.bukkit.CommandManager;
+import java.util.Objects;
 import lombok.NonNull;
-import me.googas.commons.Validate;
+import me.googas.commands.bukkit.CommandManager;
 import me.googas.starbox.modules.ModuleRegistry;
 import org.bukkit.Bukkit;
 
@@ -24,7 +24,7 @@ public class Guido {
    */
   @NonNull
   public static GuidoPlugin getPlugin() {
-    return Validate.notNull(Guido.plugin, "Guido might not have been initialized");
+    return Objects.requireNonNull(Guido.plugin, "Guido might not have been initialized");
   }
 
   public static @NonNull GuidoCompatibilities getCompatibilities() {
@@ -103,9 +103,5 @@ public class Guido {
   @NonNull
   public static CommandManager getCommandManager() {
     return Guido.getPlugin().getCommandManager();
-  }
-
-  public static boolean isBungee() {
-    return Bukkit.spigot().getSpigotConfig().getBoolean("setting.bungeecord", false);
   }
 }
