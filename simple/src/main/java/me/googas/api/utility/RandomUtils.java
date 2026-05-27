@@ -1,5 +1,7 @@
 package me.googas.api.utility;
 
+import java.util.Collection;
+import java.util.List;
 import java.util.Random;
 import lombok.NonNull;
 
@@ -17,6 +19,19 @@ public class RandomUtils {
       stringBuilder.append(ALPHANUMERIC.charAt(index));
     }
     return stringBuilder.toString();
+  }
+
+  public static <E> E getRandom(List<E> list) {
+    if (list.isEmpty()) throw new IllegalArgumentException("Collection cannot be empty");
+    return list.get(RANDOM.nextInt(list.size()));
+  }
+
+  public static <E> List<E> getRandom(List<E> list, int amount) {
+    if (list.isEmpty()) throw new IllegalArgumentException("Collection cannot be empty");
+    if (amount < 0) throw new IllegalArgumentException("Amount cannot be negative");
+    if (amount > list.size())
+      throw new IllegalArgumentException("Amount cannot be bigger than the collection size");
+    return list.stream().sorted((a, b) -> RANDOM.nextInt(3) - 1).limit(amount).toList();
   }
 
   public static @NonNull Random getRandom() {

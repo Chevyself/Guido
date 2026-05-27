@@ -1,5 +1,8 @@
 package com.starfishst.bukkit;
 
+import com.github.chevyself.starbox.CommandManager;
+import com.github.chevyself.starbox.bukkit.commands.BukkitCommand;
+import com.github.chevyself.starbox.bukkit.context.CommandContext;
 import com.starfishst.bukkit.client.BukkitClient;
 import com.starfishst.bukkit.configuration.GuidoConfiguration;
 import com.starfishst.bukkit.dependencies.GuidoCompatibilities;
@@ -7,7 +10,6 @@ import com.starfishst.bukkit.events.GuidoEvent;
 import com.starfishst.bukkit.lang.BukkitLanguageHandler;
 import java.util.Objects;
 import lombok.NonNull;
-import me.googas.commands.bukkit.CommandManager;
 import me.googas.starbox.modules.ModuleRegistry;
 import org.bukkit.Bukkit;
 
@@ -82,7 +84,7 @@ public class Guido {
   }
 
   @NonNull
-  public static CommandManager getManager() {
+  public static CommandManager<CommandContext, BukkitCommand> getManager() {
     return Guido.getPlugin().getManager();
   }
 
@@ -101,7 +103,7 @@ public class Guido {
   }
 
   @NonNull
-  public static CommandManager getCommandManager() {
+  public static CommandManager<CommandContext, BukkitCommand> getCommandManager() {
     return Guido.getPlugin().getCommandManager();
   }
 }

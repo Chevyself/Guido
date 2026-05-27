@@ -85,12 +85,6 @@
                 </exclusion>
             </exclusions>
         </dependency>
-        <!-- Command framework -->
-        <dependency>
-            <groupId>com.github.Chevyself.starbox-commands</groupId>
-            <artifactId>bukkit</artifactId>
-            <version>1f35b847fb</version>
-        </dependency>
         <!-- Dependency on simple -->
         <dependency>
             <groupId>com.starfishst.guido</groupId>
@@ -99,10 +93,9 @@
         </dependency>
         <!-- Starbox -->
         <dependency>
-            <groupId>me.googas.starbox</groupId>
+            <groupId>com.github.chevyself.legacy-starbox</groupId>
             <artifactId>bukkit</artifactId>
-            <version>1.0.0</version>
-            <scope>provided</scope>
+            <version>546a2fdcf3</version>
         </dependency>
         <!-- PGM -->
         <dependency>

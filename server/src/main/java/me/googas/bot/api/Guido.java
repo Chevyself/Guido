@@ -1,9 +1,8 @@
 package me.googas.bot.api;
 
+import com.github.chevyself.starbox.CommandManager;
 import java.util.Objects;
 import java.util.logging.Logger;
-
-import com.github.chevyself.starbox.CommandManager;
 import lombok.Getter;
 import lombok.NonNull;
 import me.googas.bot.GuidoBot;

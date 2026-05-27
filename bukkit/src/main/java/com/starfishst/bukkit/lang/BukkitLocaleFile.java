@@ -1,10 +1,10 @@
 package com.starfishst.bukkit.lang;
 
+import com.github.chevyself.starbox.bukkit.utils.BukkitUtils;
 import java.util.Map;
 import lombok.NonNull;
 import me.googas.api.lang.LocaleFile;
 import me.googas.api.utility.MapBuilder;
-import me.googas.commands.bukkit.utils.BukkitUtils;
 import org.bukkit.configuration.ConfigurationSection;
 
 /** An implementation of locale file for bukkit */

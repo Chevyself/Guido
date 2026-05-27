@@ -1,9 +1,13 @@
 package com.starfishst.bukkit.lang;
 
+import com.github.chevyself.starbox.bukkit.commands.BukkitCommand;
+import com.github.chevyself.starbox.bukkit.context.CommandContext;
+import com.github.chevyself.starbox.bukkit.messages.BukkitMessagesProvider;
 import com.starfishst.bukkit.modules.GuidoModule;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -11,9 +15,6 @@ import lombok.NonNull;
 import me.googas.api.utility.Lots;
 import me.googas.api.utility.MapBuilder;
 import me.googas.api.utility.Maps;
-import me.googas.commands.bukkit.StarboxBukkitCommand;
-import me.googas.commands.bukkit.context.CommandContext;
-import me.googas.commands.bukkit.messages.MessagesProvider;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
@@ -23,7 +24,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
 /** Handles the language for messages */
-public class BukkitLanguageHandler implements GuidoModule, MessagesProvider {
+public class BukkitLanguageHandler implements GuidoModule, BukkitMessagesProvider {
 
   /** The loaded locale files */
   @NonNull private final List<BukkitLocaleFile> files = new ArrayList<>();
@@ -58,11 +59,11 @@ public class BukkitLanguageHandler implements GuidoModule, MessagesProvider {
    * @return the placeholders as a builder
    */
   @NonNull
-  private MapBuilder<String, String> getCommandPlaceholders(@NonNull StarboxBukkitCommand cmd) {
+  private MapBuilder<String, String> getCommandPlaceholders(@NonNull BukkitCommand cmd) {
     return Maps.builder("name", cmd.getName())
         .append("aliases", Lots.pretty(cmd.getAliases()))
-        .append("description", cmd.getDescription())
-        .append("permission", cmd.getDescription());
+        .append("description", cmd.getExecutor().getDescription())
+        .append("permission", cmd.getPermission());
   }
 
   /**
@@ -159,8 +160,9 @@ public class BukkitLanguageHandler implements GuidoModule, MessagesProvider {
   }
 
   @Override
-  public @NonNull String invalidTime(@NonNull String s, @NonNull CommandContext context) {
-    return this.getFile(context).get("invalid.time", Maps.singleton("string", s));
+  public @NonNull String invalidDuration(
+      @NonNull String s, @org.jspecify.annotations.NonNull CommandContext commandContext) {
+    return this.getFile(commandContext).get("invalid.duration", Maps.singleton("string", s));
   }
 
   @Override
@@ -175,19 +177,9 @@ public class BukkitLanguageHandler implements GuidoModule, MessagesProvider {
   }
 
   @Override
-  public @NonNull String missingStrings(
-      @NonNull String s,
-      @NonNull String s1,
-      int i,
-      int i1,
-      int i2,
-      @NonNull CommandContext context) {
-    return this.getFile(context)
-        .get(
-            "missing-argument",
-            Maps.builder("name", s1)
-                .append("description", s1)
-                .append("position", String.valueOf(i)));
+  public @NonNull String cooldown(
+      @NonNull CommandContext commandContext, @NonNull Duration duration) {
+    return this.getFile(commandContext).get("cooldown");
   }
 
   @Override
@@ -196,8 +188,8 @@ public class BukkitLanguageHandler implements GuidoModule, MessagesProvider {
   }
 
   @Override
-  public @NonNull String playersOnly(@NonNull CommandContext commandContext) {
-    return this.getFile(commandContext).get("player-only");
+  public @NonNull String onlyPlayers(@NonNull CommandContext commandContext) {
+    return this.getFile(commandContext).get("only-players");
   }
 
   @Override
@@ -229,41 +221,39 @@ public class BukkitLanguageHandler implements GuidoModule, MessagesProvider {
   }
 
   @Override
-  public @NonNull String helpTopicCommand(@NonNull StarboxBukkitCommand starboxBukkitCommand) {
+  public @NonNull String helpTopicCommand(@NonNull BukkitCommand BukkitCommand) {
     return this.getDefault()
-        .get("help-topic.plugin.command", this.getCommandPlaceholders(starboxBukkitCommand));
+        .get("help-topic.plugin.command", this.getCommandPlaceholders(BukkitCommand));
   }
 
   @Override
-  public @NonNull String commandShortText(@NonNull StarboxBukkitCommand starboxBukkitCommand) {
+  public @NonNull String commandShortText(@NonNull BukkitCommand BukkitCommand) {
     return this.getDefault()
-        .get("help-topic.command.short", this.getCommandPlaceholders(starboxBukkitCommand));
+        .get("help-topic.command.short", this.getCommandPlaceholders(BukkitCommand));
   }
 
   @Override
-  public @NonNull String commandName(StarboxBukkitCommand starboxBukkitCommand, String s) {
+  public @NonNull String commandName(BukkitCommand BukkitCommand, String s) {
     return this.getDefault()
-        .get("help-topic.command.name", this.getCommandPlaceholders(starboxBukkitCommand));
+        .get("help-topic.command.name", this.getCommandPlaceholders(BukkitCommand));
   }
 
   @Override
-  public @NonNull String commandFullText(
-      @NonNull StarboxBukkitCommand starboxBukkitCommand, @NonNull String s) {
+  public @NonNull String commandFullText(@NonNull BukkitCommand BukkitCommand, @NonNull String s) {
     return this.getDefault()
         .get(
             "help-topic.command.full",
-            this.getCommandPlaceholders(starboxBukkitCommand).append("usage", s));
+            this.getCommandPlaceholders(BukkitCommand).append("usage", s));
   }
 
   @Override
   public @NonNull String childCommand(
-      @NonNull StarboxBukkitCommand starboxBukkitCommand,
-      @NonNull StarboxBukkitCommand starboxBukkitCommand1) {
+      @NonNull BukkitCommand BukkitCommand, @NonNull BukkitCommand BukkitCommand1) {
     return this.getDefault()
         .get(
             "help-topic.plugin.child",
-            this.getCommandPlaceholders(starboxBukkitCommand)
-                .append("parent-name", starboxBukkitCommand1.getName()));
+            this.getCommandPlaceholders(BukkitCommand)
+                .append("parent-name", BukkitCommand1.getName()));
   }
 
   @Override

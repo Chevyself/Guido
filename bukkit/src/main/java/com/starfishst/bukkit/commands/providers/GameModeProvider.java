@@ -1,14 +1,14 @@
 package com.starfishst.bukkit.commands.providers;
 
-import com.starfishst.commands.bukkit.context.CommandContext;
-import com.starfishst.commands.bukkit.providers.type.BukkitArgumentProvider;
-import com.starfishst.commands.bukkit.utils.BukkitUtils;
-import com.starfishst.core.exceptions.ArgumentProviderException;
+import com.github.chevyself.starbox.bukkit.context.CommandContext;
+import com.github.chevyself.starbox.bukkit.providers.type.BukkitArgumentProvider;
+import com.github.chevyself.starbox.bukkit.utils.BukkitUtils;
+import com.github.chevyself.starbox.exceptions.ArgumentProviderException;
 import java.util.List;
 import java.util.Set;
 import lombok.NonNull;
 import me.googas.api.utility.Enums;
-import me.googas.commons.Lots;
+import me.googas.api.utility.Lots;
 import org.bukkit.GameMode;
 
 /** Provides the command manager with {@link GameMode} */
@@ -27,7 +27,7 @@ public class GameModeProvider implements BukkitArgumentProvider<GameMode> {
     if (guidoGameMode != null) {
       return guidoGameMode.getBukkit();
     } else {
-      throw new ArgumentProviderException(BukkitUtils.build("&e" + s + " &cis not a gamemode!"));
+      throw new ArgumentProviderException(BukkitUtils.format("&e" + s + " &cis not a gamemode!"));
     }
   }
 

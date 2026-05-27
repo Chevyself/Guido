@@ -1,15 +1,14 @@
 package me.googas.bot.core.commands.administrative;
 
-import javax.script.ScriptEngine;
-import javax.script.ScriptEngineManager;
-import javax.script.ScriptException;
-
 import com.github.chevyself.starbox.annotations.Command;
 import com.github.chevyself.starbox.annotations.Required;
 import com.github.chevyself.starbox.arguments.ArgumentBehaviour;
 import com.github.chevyself.starbox.jda.context.CommandContext;
 import com.github.chevyself.starbox.jda.context.GuildCommandContext;
 import com.github.chevyself.starbox.result.Result;
+import javax.script.ScriptEngine;
+import javax.script.ScriptEngineManager;
+import javax.script.ScriptException;
 import lombok.NonNull;
 import me.googas.bot.api.Guido;
 
@@ -54,7 +53,10 @@ public class EvalCommand {
   @Command(aliases = "eval", node = "user:guido.admin", description = "eval.desc")
   public Result eval(
       CommandContext context,
-      @Required(name = "eval.code", description = "eval.code.desc", behaviour = ArgumentBehaviour.CONTINUOUS)
+      @Required(
+              name = "eval.code",
+              description = "eval.code.desc",
+              behaviour = ArgumentBehaviour.CONTINUOUS)
           JoinedStrings strings) {
     this.engine.put("message", context.getMessage());
     this.engine.put("channel", context.getChannel());

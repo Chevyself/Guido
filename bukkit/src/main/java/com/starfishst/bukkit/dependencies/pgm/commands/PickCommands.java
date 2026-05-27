@@ -1,5 +1,8 @@
 package com.starfishst.bukkit.dependencies.pgm.commands;
 
+import com.github.chevyself.starbox.annotations.Command;
+import com.github.chevyself.starbox.annotations.Required;
+import com.github.chevyself.starbox.result.Result;
 import com.starfishst.bukkit.Guido;
 import com.starfishst.bukkit.commands.GuidoCommand;
 import com.starfishst.bukkit.dependencies.pgm.PGMHostedMatch;
@@ -9,11 +12,8 @@ import com.starfishst.bukkit.dependencies.pgm.listeners.matches.PGMMatchMakingHa
 import com.starfishst.bukkit.dependencies.pgm.listeners.matches.creation.PickTeamSelection;
 import com.starfishst.bukkit.dependencies.pgm.listeners.matches.creation.TeamCreation;
 import com.starfishst.bukkit.lang.BukkitLocaleFile;
-import com.starfishst.commands.bukkit.annotations.Command;
-import com.starfishst.commands.bukkit.result.Result;
-import com.starfishst.core.annotations.Required;
 import lombok.NonNull;
-import me.googas.commons.maps.Maps;
+import me.googas.api.utility.Maps;
 
 public class PickCommands implements GuidoCommand {
 
@@ -28,14 +28,14 @@ public class PickCommands implements GuidoCommand {
     if (creation instanceof PickTeamSelection) {
       if (((PickTeamSelection) creation).isPicking(match.getId(), leader.validated())) {
         ((PickTeamSelection) creation).pick(match.getId(), leader.validated(), player.validated());
-        return new Result(
+        return Result.of(
             locale.get(
                 "pick.success", Maps.singleton("name", player.getRecogString("nickname", ""))));
       } else {
-        return new Result(locale.get("pick.not-picking"));
+        return Result.of(locale.get("pick.not-picking"));
       }
     }
-    return new Result(locale.get("pick.not-match"));
+    return Result.of(locale.get("pick.not-match"));
   }
 
   /**

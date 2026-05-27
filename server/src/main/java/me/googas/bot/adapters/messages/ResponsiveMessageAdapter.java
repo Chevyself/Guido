@@ -1,7 +1,6 @@
 package me.googas.bot.adapters.messages;
 
 import com.google.gson.*;
-
 import java.lang.reflect.Type;
 import java.util.HashMap;
 import java.util.Map;
@@ -11,7 +10,8 @@ import me.googas.bot.core.handlers.responsive.command.ExecuteCommandResponsiveMe
 import me.googas.bot.core.handlers.responsive.queue.JoinQueueResponsiveMessage;
 import me.googas.bot.core.handlers.responsive.roles.GiveRoleResponsiveMessage;
 
-public class ResponsiveMessageAdapter implements JsonSerializer<ResponsiveMesage>, JsonDeserializer<ResponsiveMesage> {
+public class ResponsiveMessageAdapter
+    implements JsonSerializer<ResponsiveMesage>, JsonDeserializer<ResponsiveMesage> {
 
   /** The type of message and the class of it */
   @NonNull private final Map<String, Class<? extends ResponsiveMesage>> types = new HashMap<>();

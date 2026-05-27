@@ -1,16 +1,18 @@
 package com.starfishst.bukkit;
 
+import com.github.chevyself.starbox.CommandManager;
+import com.github.chevyself.starbox.CommandManagerBuilder;
+import com.github.chevyself.starbox.bukkit.BukkitAdapter;
+import com.github.chevyself.starbox.bukkit.commands.BukkitCommand;
+import com.github.chevyself.starbox.bukkit.context.CommandContext;
 import com.starfishst.bukkit.client.BukkitClient;
 import com.starfishst.bukkit.commands.ConfigurationCommands;
 import com.starfishst.bukkit.commands.FlyCommand;
 import com.starfishst.bukkit.commands.GameModeCommand;
 import com.starfishst.bukkit.commands.GuidoCommand;
-import com.starfishst.bukkit.commands.PingCommand;
 import com.starfishst.bukkit.commands.SudoCommand;
 import com.starfishst.bukkit.commands.TeleportCommand;
 import com.starfishst.bukkit.commands.TestCommands;
-import com.starfishst.bukkit.commands.economy.BalanceCommand;
-import com.starfishst.bukkit.commands.economy.PayCommand;
 import com.starfishst.bukkit.configuration.GuidoConfiguration;
 import com.starfishst.bukkit.dependencies.GuidoCompatibilities;
 import com.starfishst.bukkit.lang.BukkitLanguageHandler;
@@ -19,8 +21,10 @@ import java.io.IOException;
 import java.util.Set;
 import lombok.Getter;
 import lombok.NonNull;
-import me.googas.commands.bukkit.CommandManager;
+import me.googas.api.utility.Lots;
+import me.googas.starbox.Starbox;
 import me.googas.starbox.modules.ModuleRegistry;
+import me.googas.starbox.modules.language.LanguageModule;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -39,20 +43,19 @@ public class GuidoPlugin extends JavaPlugin {
 
   // TODO separate command manager and commands to a class such as handler registry
   /** The command manager that the implementation is using to register commands */
-  @NonNull @Getter
-  private final CommandManager manager =
-      new CommandManager(
-          this, new GuidoProvidersRegistry(this.bukkitLanguageHandler), this.bukkitLanguageHandler);
+  @Getter
+  private final @NonNull CommandManager<CommandContext, BukkitCommand> manager =
+          new CommandManagerBuilder<>(new BukkitAdapter(this, true))
+                  .setMessagesProvider(this.bukkitLanguageHandler)
+                  // TODO add providers registry
+                  .build();
   /** The set of commands that the implementation is using */
   @NonNull
   private final Set<GuidoCommand> commands =
       Lots.set(
-          new BalanceCommand(),
-          new PayCommand(),
           new ConfigurationCommands(),
           new FlyCommand(),
           new GameModeCommand(),
-          new PingCommand(),
           new SudoCommand(),
           new TeleportCommand(),
           new TestCommands());
@@ -79,10 +82,9 @@ public class GuidoPlugin extends JavaPlugin {
         }
       }
       if (command.isEnabled()) {
-        this.manager.registerCommand(command);
+        this.manager.parseAndRegisterAll(command);
       }
     }
-    this.manager.registerPlugin();
   }
 
   /** Load the config.yml. This can be used also to reload the guidoConfiguration */
@@ -106,7 +108,7 @@ public class GuidoPlugin extends JavaPlugin {
 
   @Override
   public void onDisable() {
-    this.manager.unregister();
+    this.manager.close();
     this.moduleRegistry.disengage();
     this.client.disconnect();
     Guido.setPlugin(null);
@@ -114,22 +116,12 @@ public class GuidoPlugin extends JavaPlugin {
   }
 
   public void setupStarbox() {
-    DataModule module = Starbox.getModuleRegistry().get(DataModule.class);
-    if (module == null) {
-      module = new DataModule();
-      Starbox.getModuleRegistry().engage(module);
-    }
-    module.getPlayersHandler().getProfileProviders().add(new GuidoProfileProvider().startTask());
-    module.getEconomyHandler().setBankProvider(new GuidoBankProvider().startTask());
-    if (Starbox.isVaultEnabled()) {
-      VaultImplementation.register(this, module);
-    }
-    LanguageModule languageModule = Starbox.getModuleRegistry().get(LanguageModule.class);
-    if (languageModule == null) {
-      languageModule = new LanguageModule();
-      Starbox.getModuleRegistry().engage(languageModule);
-    }
-    languageModule.addAll(GuidoLanguage.loadAll(this, "en"));
+    LanguageModule languageModule = Starbox.getModules().get(LanguageModule.class).orElseGet(() -> {
+      LanguageModule fallback = new LanguageModule();
+      Starbox.getModules().engage(fallback);
+        return fallback;
+    });
+    languageModule.registerAll(this, GuidoLanguage.loadAll(this, "en"));
   }
 
   @Override
@@ -159,7 +151,7 @@ public class GuidoPlugin extends JavaPlugin {
    * @return the command manager
    */
   @NonNull
-  public CommandManager getCommandManager() {
+  public CommandManager<CommandContext, BukkitCommand> getCommandManager() {
     return this.manager;
   }
 }

@@ -1,9 +1,8 @@
 package me.googas.bot.core.handlers.responsive.queue;
 
-import java.util.Collection;
-
 import com.github.chevyself.starbox.CommandManager;
 import com.github.chevyself.starbox.jda.listener.CommandListener;
+import java.util.Collection;
 import lombok.NonNull;
 import me.googas.api.matches.ladder.Ladder;
 import me.googas.api.matches.queue.Queue;

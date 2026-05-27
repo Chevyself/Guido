@@ -1,7 +1,6 @@
 package com.starfishst.bukkit.modules;
 
 import com.starfishst.bukkit.Guido;
-import com.starfishst.bukkit.GuidoRank;
 import com.starfishst.bukkit.dependencies.pgm.listeners.groups.PGMGroupsHandler;
 import com.starfishst.bukkit.util.Permissions;
 import java.util.ArrayList;
@@ -10,10 +9,9 @@ import java.util.function.Consumer;
 import lombok.NonNull;
 import me.googas.api.Requests;
 import me.googas.api.permissions.Group;
-import me.googas.commons.Lots;
-import me.googas.messaging.json.client.JsonClient;
+import me.googas.api.utility.Lots;
+import me.googas.net.sockets.json.client.JsonClient;
 import me.googas.starbox.modules.Module;
-import me.googas.starbox.modules.data.type.Rank;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.permissions.Permission;
@@ -143,15 +141,6 @@ public class GroupsHandler implements Module {
   @NonNull
   private PGMGroupsHandler PGM() {
     return Guido.getModuleRegistry().require(PGMGroupsHandler.class);
-  }
-
-  @NonNull
-  public List<Rank> getParentsAsRanks(@NonNull Group group) {
-    List<Rank> ranks = new ArrayList<>();
-    for (Group parent : this.getParents(group)) {
-      ranks.add(new GuidoRank(parent));
-    }
-    return ranks;
   }
 
   @Override

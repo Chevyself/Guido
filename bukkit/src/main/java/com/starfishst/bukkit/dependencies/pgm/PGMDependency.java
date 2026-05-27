@@ -1,5 +1,9 @@
 package com.starfishst.bukkit.dependencies.pgm;
 
+import com.github.chevyself.starbox.bukkit.commands.BukkitCommand;
+import com.github.chevyself.starbox.bukkit.context.CommandContext;
+import com.github.chevyself.starbox.parsers.CommandParser;
+import com.github.chevyself.starbox.providers.StarboxContextualProvider;
 import com.starfishst.bukkit.Guido;
 import com.starfishst.bukkit.dependencies.pgm.commands.PickCommands;
 import com.starfishst.bukkit.dependencies.pgm.commands.ReadyCommand;
@@ -10,13 +14,12 @@ import com.starfishst.bukkit.dependencies.pgm.commands.provider.PartyProvider;
 import com.starfishst.bukkit.dependencies.pgm.listeners.PGMStatsHandler;
 import com.starfishst.bukkit.dependencies.pgm.listeners.groups.PGMGroupsHandler;
 import com.starfishst.bukkit.dependencies.pgm.listeners.matches.PGMMatchMakingHandler;
-import com.starfishst.commands.bukkit.context.CommandContext;
-import com.starfishst.core.providers.type.IContextualProvider;
 import java.util.Collection;
+import java.util.Optional;
+import java.util.stream.Collectors;
 import lombok.NonNull;
-import me.googas.commons.Lots;
-import me.googas.messaging.json.client.JsonClient;
-import me.googas.starbox.StarboxCommand;
+import me.googas.api.utility.Lots;
+import me.googas.net.sockets.json.client.JsonClient;
 import me.googas.starbox.compatibilities.Compatibility;
 import me.googas.starbox.modules.Module;
 import org.bukkit.plugin.Plugin;
@@ -48,8 +51,14 @@ public class PGMDependency implements Compatibility {
    * @return the collection of commands to register
    */
   @Override
-  public @NonNull Collection<StarboxCommand> getCommands() {
-    return Lots.list(new ReadyCommand(), new PickCommands());
+  public @NonNull Collection<BukkitCommand> getCommands() {
+    // return Lots.list(new ReadyCommand(), new PickCommands());
+    CommandParser<CommandContext, BukkitCommand> commandParser =
+        Guido.getPlugin().getCommandManager().getCommandParser();
+    return Lots.list(new ReadyCommand(), new PickCommands()).stream()
+        .map(commandParser::parseAllCommandsFrom)
+        .flatMap(Collection::stream)
+        .collect(Collectors.toList());
   }
 
   /**
@@ -58,7 +67,7 @@ public class PGMDependency implements Compatibility {
    * @return the providers
    */
   @Override
-  public Collection<IContextualProvider<?, CommandContext>> getProviders() {
+  public Collection<StarboxContextualProvider<?, CommandContext>> getProviders() {
     return Lots.list(
         new PartyProvider(),
         new PGMHostedMatchProvider(),
@@ -73,9 +82,10 @@ public class PGMDependency implements Compatibility {
 
   @Override
   public void onEnable() {
-    PGMMatchMakingHandler listener = Guido.getModuleRegistry().get(PGMMatchMakingHandler.class);
+    Optional<PGMMatchMakingHandler> optional =
+        Guido.getModuleRegistry().get(PGMMatchMakingHandler.class);
     JsonClient connection = Guido.getClient().getConnection();
-    if (listener == null || !listener.isEnabled() || connection == null) return;
-    listener.readyToHost(connection);
+    if (optional.isEmpty() || !optional.get().isEnabled() || connection == null) return;
+    optional.get().readyToHost(connection);
   }
 }
