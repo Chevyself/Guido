@@ -16,8 +16,8 @@ import me.googas.bot.core.discord.GuidoGuild;
 import me.googas.bot.core.handlers.GuidoHandler;
 import me.googas.bot.core.util.Discord;
 import net.dv8tion.jda.api.entities.Member;
-import net.dv8tion.jda.api.entities.VoiceChannel;
-import net.dv8tion.jda.api.events.guild.voice.GuildVoiceJoinEvent;
+import net.dv8tion.jda.api.entities.channel.unions.AudioChannelUnion;
+import net.dv8tion.jda.api.events.guild.voice.GuildVoiceUpdateEvent;
 import net.dv8tion.jda.api.hooks.SubscribeEvent;
 
 /** Handles the queue */
@@ -34,7 +34,8 @@ public class QueueHandler implements GuidoHandler {
    * @param member the member that joined the channel
    */
   public void joinQueueFromVoice(
-      long guildId, @NonNull VoiceChannel channelJoined, @NonNull Member member) {
+          long guildId, AudioChannelUnion channelJoined, @NonNull Member member) {
+    if (channelJoined == null) return;
     GuidoGuild guild = Guido.getHandlers().getDiscordLoader().getGuild(guildId);
     String key = guild.getVoiceChannel(channelJoined.getIdLong());
     if (key != null && key.startsWith("join-")) {
@@ -54,7 +55,7 @@ public class QueueHandler implements GuidoHandler {
   }
 
   @SubscribeEvent
-  public void onGuildVoiceJoinEvent(@NonNull GuildVoiceJoinEvent event) {
+  public void onGuildVoiceJoinEvent(@NonNull GuildVoiceUpdateEvent event) {
     this.joinQueueFromVoice(
         event.getGuild().getIdLong(), event.getChannelJoined(), event.getMember());
   }

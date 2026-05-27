@@ -13,14 +13,14 @@ import me.googas.bot.api.Guido;
 import me.googas.bot.core.discord.GuidoGuild;
 import me.googas.bot.core.handlers.GuidoHandler;
 import me.googas.bot.core.util.Discord;
-import me.googas.commons.events.ListenPriority;
-import me.googas.commons.events.Listener;
+import me.googas.starbox.events.ListenPriority;
+import me.googas.starbox.events.Listener;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.GuildVoiceState;
 import net.dv8tion.jda.api.entities.Member;
-import net.dv8tion.jda.api.entities.VoiceChannel;
-import net.dv8tion.jda.api.events.guild.voice.GuildVoiceLeaveEvent;
-import net.dv8tion.jda.api.events.guild.voice.GuildVoiceMoveEvent;
+import net.dv8tion.jda.api.entities.channel.concrete.VoiceChannel;
+import net.dv8tion.jda.api.entities.channel.unions.AudioChannelUnion;
+import net.dv8tion.jda.api.events.guild.voice.GuildVoiceUpdateEvent;
 import net.dv8tion.jda.api.hooks.SubscribeEvent;
 
 /** Handles the queue channels */
@@ -36,18 +36,7 @@ public class QueueChannelsHandler implements GuidoHandler {
    * @param event the event of a member leaving a voice channel
    */
   @SubscribeEvent
-  public void onGuildVoiceLeave(@NonNull GuildVoiceLeaveEvent event) {
-    this.checkRemoveQueue(event.getChannelLeft(), event.getGuild(), event.getMember());
-  }
-
-  /**
-   * Check when a member leaves a voice channel. If the voice channel is the queues waiting channel
-   * then remove them from the queue
-   *
-   * @param event the event of a member leaving a voice channel
-   */
-  @SubscribeEvent
-  public void onGuildVoiceMove(@NonNull GuildVoiceMoveEvent event) {
+  public void onGuildVoiceMove(@NonNull GuildVoiceUpdateEvent event) {
     this.checkRemoveQueue(event.getChannelLeft(), event.getGuild(), event.getMember());
     this.queues()
         .joinQueueFromVoice(
@@ -62,7 +51,7 @@ public class QueueChannelsHandler implements GuidoHandler {
    * @param discordMember the event that left the queue
    */
   public void checkRemoveQueue(
-      @NonNull VoiceChannel channelLeft, @NonNull Guild guild, @NonNull Member discordMember) {
+          @NonNull AudioChannelUnion channelLeft, @NonNull Guild guild, @NonNull Member discordMember) {
     long guildId = guild.getIdLong();
     long channelId = this.waiting.getOrDefault(guildId, -1L);
     if (channelId == channelLeft.getIdLong()) {
@@ -80,7 +69,7 @@ public class QueueChannelsHandler implements GuidoHandler {
    * @param channel the channel which is being checked whether to delete it
    * @param guildId the id of the guild
    */
-  private void checkDeletion(@NonNull VoiceChannel channel, long guildId) {
+  private void checkDeletion(@NonNull AudioChannelUnion channel, long guildId) {
     List<Member> members = channel.getMembers();
     if (members.isEmpty()) {
       this.waiting.remove(guildId);
@@ -115,7 +104,7 @@ public class QueueChannelsHandler implements GuidoHandler {
       if (member != null) {
         GuildVoiceState voiceState = member.getVoiceState();
         if (voiceState != null) {
-          VoiceChannel channel = voiceState.getChannel();
+          AudioChannelUnion channel = voiceState.getChannel();
           if (channel != null
               && channel.getIdLong()
                   == this.waiting.getOrDefault(event.getQueue().getGuildId(), -1L)) {

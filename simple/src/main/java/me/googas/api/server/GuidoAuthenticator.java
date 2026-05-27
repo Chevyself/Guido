@@ -15,7 +15,7 @@ import me.googas.net.sockets.json.server.JsonClientThread;
 import org.jetbrains.annotations.NotNull;
 
 /** The implementation for authentication in guido */
-public class GuidoAuthenticator implements Authenticator {
+public class GuidoAuthenticator implements Authenticator<JsonClientThread> {
 
   /** Each client and its authentication level */
   @NonNull @Getter private final HashMap<Messenger, AuthLevel> levels = new HashMap<>();
@@ -67,7 +67,7 @@ public class GuidoAuthenticator implements Authenticator {
   }
 
   @Override
-  public boolean isAuthenticated(@NotNull Messenger messenger, @NonNull Request request) {
+  public boolean isAuthenticated(@NotNull JsonClientThread messenger, @NonNull Request request) {
     if (this.levels.containsKey(messenger)) {
       AuthLevel authLevel = this.levels.get(messenger);
       AuthLevel required =

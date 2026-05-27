@@ -6,14 +6,14 @@ import me.googas.api.events.permissible.PermissiblePermissionAddedEvent;
 import me.googas.api.events.permissible.PermissiblePermissionRemovedEvent;
 import me.googas.api.links.Linkable;
 import me.googas.api.permissions.Permissible;
+import me.googas.api.utility.Maps;
 import me.googas.bot.api.Guido;
 import me.googas.bot.api.events.data.links.LinkableRankUpdatedEvent;
 import me.googas.bot.core.handlers.GuidoHandler;
 import me.googas.bot.core.handlers.ranks.RanksHandler;
 import me.googas.bot.core.util.Ranks;
-import me.googas.commons.events.ListenPriority;
-import me.googas.commons.events.Listener;
-import me.googas.commons.maps.Maps;
+import me.googas.starbox.events.ListenPriority;
+import me.googas.starbox.events.Listener;
 
 /**
  * The deploy handler is in charge to inform other services on changes such a punishment being done
@@ -29,16 +29,16 @@ public class DeployHandler implements GuidoHandler {
           .sendLocalized(
               "elo.updated.winner",
               Maps.builder("old", String.valueOf(event.getPrevious()))
-                  .append("new", String.valueOf(event.getNewElo()))
-                  .append("ladder", event.getLadder().getName()));
+                  .put("new", String.valueOf(event.getNewElo()))
+                  .put("ladder", event.getLadder().getName()));
     } else {
       event
           .getData()
           .sendLocalized(
               "elo.updated.loser",
               Maps.builder("old", String.valueOf(event.getPrevious()))
-                  .append("new", String.valueOf(event.getNewElo()))
-                  .append("ladder", event.getLadder().getName()));
+                  .put("new", String.valueOf(event.getNewElo()))
+                  .put("ladder", event.getLadder().getName()));
     }
   }
 
@@ -50,7 +50,7 @@ public class DeployHandler implements GuidoHandler {
         .sendLocalized(
             "elo.rank.updated",
             Maps.builder("applied", Ranks.getRanksToken(update.getApplied()))
-                .append("removed", Ranks.getRanksToken(update.getRemoved())));
+                .put("removed", Ranks.getRanksToken(update.getRemoved())));
   }
 
   @Listener(priority = ListenPriority.HIGHEST)

@@ -34,7 +34,7 @@ import me.googas.net.sockets.json.server.JsonSocketServer;
 public class GuidoServer extends JsonSocketServer implements BotServer {
 
   /** The authentication system for the guido server */
-  @NonNull private final GuidoAuthenticator authenticator;
+  @NonNull private final GuidoAuthenticator guidoAuthenticator;
 
   /**
    * Creates the guido socket server
@@ -52,24 +52,34 @@ public class GuidoServer extends JsonSocketServer implements BotServer {
         null,
         Mongo.builderGson().registerTypeAdapter(Message.class, new MessageDeserializer()).create(),
         timeout);
-    this.authenticator = new GuidoAuthenticator(loader);
-    this.setAuthenticator(this.authenticator);
+    this.guidoAuthenticator = new GuidoAuthenticator(loader);
+    this.setAuthenticator(this.guidoAuthenticator);
     this.addReceptors(
-        );
+        new BankReceptors(),
+        new GroupReceptors(loader.getGroups()),
+        new GuidoServerReceptors(this.guidoAuthenticator),
+        new LinkReceptors(loader.getLinks()),
+        new MatchReceptors(loader.getMatches()),
+        new PunishmentReceptors(loader.getPunishments()),
+        this.guidoAuthenticator);
     if (GuidoBungee.isBungee()) {
       this.addReceptors(
+          new BungeeConnectionReceptors(),
+          new BungeeMessagingReceptors(),
+          new BungeeQueueReceptors(),
+          new BungeeReceptors());
     }
   }
 
   @Override
   protected void onRemove(@NonNull JsonClientThread client) {
-    this.authenticator.remove(client);
+    this.guidoAuthenticator.remove(client);
     new GuidoServerDisconnectionEvent(this, client).call();
   }
 
   @Override
   protected void onConnection(@NonNull JsonClientThread client) {
-    this.authenticator.add(client);
+    this.guidoAuthenticator.add(client);
     new GuidoServerConnectionEvent(this, client).call();
   }
 
@@ -85,11 +95,5 @@ public class GuidoServer extends JsonSocketServer implements BotServer {
       if (handler.hasReceptors()) this.addReceptors(handler);
     }
     return this;
-  }
-
-  @NonNull
-  @Override
-  public GuidoAuthenticator getAuthenticator() {
-    return this.authenticator;
   }
 }

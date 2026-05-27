@@ -10,9 +10,9 @@ import me.googas.bot.core.discord.GuidoGuild;
 import me.googas.bot.core.handlers.GuidoHandler;
 import me.googas.bot.core.util.Discord;
 import net.dv8tion.jda.api.entities.Member;
-import net.dv8tion.jda.api.entities.VoiceChannel;
-import net.dv8tion.jda.api.events.guild.voice.GuildVoiceLeaveEvent;
-import net.dv8tion.jda.api.events.guild.voice.GuildVoiceMoveEvent;
+import net.dv8tion.jda.api.entities.channel.concrete.VoiceChannel;
+import net.dv8tion.jda.api.entities.channel.unions.AudioChannelUnion;
+import net.dv8tion.jda.api.events.guild.voice.GuildVoiceUpdateEvent;
 import net.dv8tion.jda.api.hooks.SubscribeEvent;
 
 public class MatchMakingChannelsHandler implements GuidoHandler {
@@ -52,7 +52,7 @@ public class MatchMakingChannelsHandler implements GuidoHandler {
    *
    * @param channel the channel to check
    */
-  public void checkDeletePreGame(@NonNull VoiceChannel channel) {
+  public void checkDeletePreGame(@NonNull AudioChannelUnion channel) {
     String id = this.preMatch.get(channel.getIdLong());
     if (id == null) return;
     if (channel.getMembers().isEmpty()) {
@@ -67,7 +67,7 @@ public class MatchMakingChannelsHandler implements GuidoHandler {
    * @param event the event of a member moving from voice channel
    */
   @SubscribeEvent
-  public void onGuildVoiceMove(@NonNull GuildVoiceMoveEvent event) {
+  public void onGuildVoiceMove(@NonNull GuildVoiceUpdateEvent event) {
     this.checkDeletePreGame(event.getChannelLeft());
   }
 
@@ -77,7 +77,7 @@ public class MatchMakingChannelsHandler implements GuidoHandler {
    * @param event the event of a member leaving a voice channel
    */
   @SubscribeEvent
-  public void onGuildVoiceLeave(@NonNull GuildVoiceLeaveEvent event) {
+  public void onGuildVoiceLeave(@NonNull GuildVoiceUpdateEvent event) {
     this.checkDeletePreGame(event.getChannelLeft());
   }
 

@@ -12,8 +12,8 @@ import me.googas.api.matches.MatchTeam;
 import me.googas.api.matches.ladder.Ladder;
 import me.googas.api.matches.team.TeamMember;
 import me.googas.bot.core.handlers.GuidoHandler;
-import me.googas.commons.events.ListenPriority;
-import me.googas.commons.events.Listener;
+import me.googas.starbox.events.ListenPriority;
+import me.googas.starbox.events.Listener;
 
 /**
  * This handler listens to the end of a match and gives the winners the respective elo also gives

@@ -1,20 +1,13 @@
 package me.googas.bot.core.handlers.responsive.command;
 
-import com.starfishst.commands.jda.AnnotatedCommand;
-import com.starfishst.commands.jda.CommandManager;
-import com.starfishst.commands.jda.context.GuildCommandContext;
-import com.starfishst.commands.jda.listener.CommandListener;
-import com.starfishst.commands.jda.result.Result;
-import com.starfishst.commands.jda.utils.embeds.EmbedFactory;
-import com.starfishst.commands.jda.utils.responsive.ReactionResponse;
-import gnu.trove.set.hash.TLongHashSet;
 import java.util.concurrent.TimeUnit;
+
+import com.github.chevyself.starbox.CommandManager;
+import com.github.chevyself.starbox.jda.listener.CommandListener;
 import lombok.NonNull;
 import me.googas.bot.api.Guido;
-import me.googas.commons.Strings;
-import me.googas.commons.Validate;
+import me.googas.starbox.jda.responsive.ReactionResponse;
 import net.dv8tion.jda.api.entities.Message;
-import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.events.message.react.MessageReactionAddEvent;
 import net.dv8tion.jda.internal.entities.ReceivedMessage;
 

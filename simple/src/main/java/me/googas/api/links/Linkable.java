@@ -22,6 +22,7 @@ import me.googas.api.matches.team.Team;
 import me.googas.api.permissions.Permissible;
 import me.googas.api.permissions.PermissionStack;
 import me.googas.api.user.UserData;
+import me.googas.starbox.builders.MapBuilder;
 
 /** This object represents data that can been linked to an user */
 public class Linkable
@@ -241,6 +242,10 @@ public class Linkable
   @Override
   public void sendLocalized(@NonNull String key, @NonNull Map<String, String> placeholders) {
     API.getMessenger().sendLocalized(this, key, placeholders);
+  }
+
+  public void sendLocalized(@NonNull String key, @NonNull MapBuilder<String, String> builder) {
+    this.sendLocalized(key, builder.build());
   }
 
   @Override

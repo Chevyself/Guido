@@ -5,9 +5,11 @@ import lombok.NonNull;
 import me.googas.api.server.GuidoAuthenticator;
 import me.googas.bot.GuidoHandlerRegistry;
 import me.googas.net.api.Server;
+import me.googas.net.api.auth.Authenticator;
+import me.googas.net.sockets.json.server.JsonClientThread;
 
 /** An extension of server */
-public interface BotServer extends Server {
+public interface BotServer extends Server<JsonClientThread> {
 
   @NonNull
   BotServer registerHandlers(@NonNull GuidoHandlerRegistry registry);
@@ -17,6 +19,5 @@ public interface BotServer extends Server {
    *
    * @return the guido authenticator
    */
-  @NonNull
   Optional<GuidoAuthenticator> getAuthenticator();
 }

@@ -1,14 +1,16 @@
 package me.googas.bot.core.commands.administrative;
 
-import com.starfishst.commands.jda.annotations.Command;
-import com.starfishst.commands.jda.result.Result;
+import com.github.chevyself.starbox.annotations.Command;
+import com.github.chevyself.starbox.result.Result;
 import me.googas.bot.api.Guido;
+import me.googas.bungee.commands.middleware.GuidoJdaPermission;
 
 public class StopCommand {
 
-  @Command(aliases = "stop", description = "stop.desc", node = "user:guido.admin")
+  @GuidoJdaPermission("user:guido.admin")
+  @Command(aliases = "stop", description = "stop.desc")
   public Result stop() {
     Guido.stop();
-    return new Result("Bot has been stopped");
+    return Result.of("Bot has been stopped");
   }
 }

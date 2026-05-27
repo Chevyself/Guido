@@ -7,11 +7,12 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.function.BiConsumer;
 import lombok.NonNull;
-import me.googas.api.server.GuidoAuthenticator;
 import me.googas.bot.GuidoHandlerRegistry;
 import me.googas.bot.api.server.BotServer;
 import me.googas.messaging.Request;
 import me.googas.messaging.api.Messenger;
+import me.googas.net.api.auth.Authenticator;
+import me.googas.net.sockets.json.server.JsonClientThread;
 import org.jetbrains.annotations.NotNull;
 
 /** A fallback server in case {@link GuidoServer does not work} */
@@ -23,7 +24,7 @@ public class GuidoFallbackServer implements BotServer {
   }
 
   @Override
-  public @NonNull GuidoAuthenticator getAuthenticator() {
+  public Optional<Authenticator<JsonClientThread>> getAuthenticator() {
     throw new UnsupportedOperationException("There's no authentication for fallback server");
   }
 

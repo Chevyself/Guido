@@ -7,13 +7,13 @@ import lombok.NonNull;
 import me.googas.api.Requests;
 import me.googas.api.links.Linkable;
 import me.googas.api.links.LinkableInfo;
+import me.googas.api.utility.RandomUtils;
 import me.googas.bot.api.Guido;
 import me.googas.bot.core.handlers.GuidoHandler;
-import me.googas.commons.RandomUtils;
-import me.googas.commons.time.Time;
-import me.googas.commons.time.Unit;
-import me.googas.messaging.json.ParamName;
-import me.googas.messaging.json.Receptor;
+import me.googas.net.sockets.json.ParamName;
+import me.googas.net.sockets.json.Receptor;
+import me.googas.starbox.time.Time;
+import me.googas.starbox.time.unit.Unit;
 
 /** Handles linking for accounts */
 public class LinkHandler implements GuidoHandler {
@@ -38,7 +38,7 @@ public class LinkHandler implements GuidoHandler {
       LinkQuery linkQuery = new LinkQuery(code, info);
       this.queries.add(linkQuery);
       Guido.getScheduler()
-          .countdown(new Time(3, Unit.MINUTES), second -> {}, () -> this.queries.remove(linkQuery));
+          .countdown(Time.of(3, Unit.MINUTES), second -> {}, () -> this.queries.remove(linkQuery));
       return code;
     } else {
       return null;
