@@ -1,13 +1,15 @@
 package me.googas.bot.core.handlers.responsive.lang;
 
-import com.starfishst.commands.jda.utils.responsive.ReactionResponse;
-import com.starfishst.commands.jda.utils.responsive.ResponsiveMessage;
 import lombok.NonNull;
 import me.googas.api.links.ref.DiscordLinkable;
 import me.googas.bot.api.Guido;
 import me.googas.bot.core.handlers.responsive.GuidoMessagesController;
 import me.googas.bot.core.util.Discord;
+import me.googas.starbox.jda.responsive.ReactionResponse;
+import me.googas.starbox.jda.responsive.ResponsiveMessage;
 import net.dv8tion.jda.api.events.message.react.MessageReactionAddEvent;
+
+import java.util.Optional;
 
 /** The response to change the language from an user */
 public class LangChangeReactionResponse implements ReactionResponse {
@@ -36,10 +38,12 @@ public class LangChangeReactionResponse implements ReactionResponse {
           Guido.getHandlers().getLanguageHandler().getFileFromUnicode(this.unicode).getLang();
       DiscordLinkable userData = Discord.getUser(event.getUserIdLong());
       userData.setString(null, "lang", lang);
-      ResponsiveMessage responsiveMessage =
+      Optional<? extends ResponsiveMessage> optional =
           Guido.getHandlers()
               .getHandler(GuidoMessagesController.class)
               .getResponsiveMessage(null, event.getMessageIdLong());
+      if (optional.isEmpty()) return true;
+      ResponsiveMessage responsiveMessage = optional.get();
       if (responsiveMessage instanceof LangChangeResponsiveMessage) {
         try {
           ((LangChangeResponsiveMessage) responsiveMessage).unload(true);
@@ -52,7 +56,7 @@ public class LangChangeReactionResponse implements ReactionResponse {
   }
 
   @Override
-  public @NonNull String getUnicode() {
-    return this.unicode;
+  public boolean hasUnicode(@NonNull String unicode) {
+    return this.unicode.equals(unicode);
   }
 }

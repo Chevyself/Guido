@@ -1,7 +1,6 @@
 package me.googas.bot.core.handlers.matches;
 
 import java.util.*;
-
 import lombok.NonNull;
 import me.googas.api.Requests;
 import me.googas.api.events.match.MatchLoadedEvent;

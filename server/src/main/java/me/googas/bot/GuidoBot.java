@@ -29,7 +29,6 @@ import me.googas.bot.core.commands.*;
 import me.googas.bot.core.commands.administrative.*;
 import me.googas.bot.core.commands.providers.*;
 import me.googas.bot.core.server.GuidoFallbackServer;
-import me.googas.bot.core.server.GuidoServer;
 import me.googas.bungee.GuidoBungee;
 import me.googas.bungee.receptors.BungeeConnectionReceptors;
 import me.googas.bungee.receptors.BungeeMessagingReceptors;
@@ -180,30 +179,31 @@ public class GuidoBot implements GuidoInstance {
    *
    * @param args the map to getId the port and timeout of the server
    */
-  public static JsonSocketServer createServer(@NonNull ProgramArguments args, @NonNull GuidoBot bot) {
+  public static JsonSocketServer createServer(
+      @NonNull ProgramArguments args, @NonNull GuidoBot bot) {
     try {
       int port = Integer.parseInt(args.getProperty("port", "3000"));
       long timeout = Long.parseLong(args.getProperty("timeout", "3000"));
       Loader loader = bot.getLoader();
-      GuidoAuthenticator authenticator = new GuidoAuthenticator(bot.getHandlerRegistry().getLoader());
-      JsonSocketServer.ServerBuilder serverBuilder = JsonSocketServer
-              .listen(port)
+      GuidoAuthenticator authenticator =
+          new GuidoAuthenticator(bot.getHandlerRegistry().getLoader());
+      JsonSocketServer.ServerBuilder serverBuilder =
+          JsonSocketServer.listen(port)
               .maxWait(timeout)
               .addReceptors(
-                      new BankReceptors(),
-                      new GroupReceptors(loader.getGroups()),
-                      new GuidoServerReceptors(authenticator),
-                      new LinkReceptors(loader.getLinks()),
-                      new MatchReceptors(loader.getMatches()),
-                      new PunishmentReceptors(loader.getPunishments()),
-                      authenticator
-              );
+                  new BankReceptors(),
+                  new GroupReceptors(loader.getGroups()),
+                  new GuidoServerReceptors(authenticator),
+                  new LinkReceptors(loader.getLinks()),
+                  new MatchReceptors(loader.getMatches()),
+                  new PunishmentReceptors(loader.getPunishments()),
+                  authenticator);
       if (GuidoBungee.isBungee()) {
         serverBuilder.addReceptors(
-                new BungeeConnectionReceptors(),
-                new BungeeMessagingReceptors(),
-                new BungeeQueueReceptors(),
-                new BungeeReceptors());
+            new BungeeConnectionReceptors(),
+            new BungeeMessagingReceptors(),
+            new BungeeQueueReceptors(),
+            new BungeeReceptors());
       }
       return serverBuilder.start();
     } catch (IOException | NumberFormatException e) {

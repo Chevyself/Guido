@@ -2,6 +2,8 @@ package me.googas.bot.core.matches.queue;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+
 import lombok.NonNull;
 import me.googas.api.events.queue.QueueJoinEvent;
 import me.googas.api.events.queue.QueuePreJoinEvent;
@@ -11,8 +13,6 @@ import me.googas.api.matches.queue.Queue;
 import me.googas.api.matches.queue.QueueResult;
 import me.googas.api.matches.queue.Queueable;
 import me.googas.bot.api.Guido;
-import me.googas.commons.Validate;
-import me.googas.commons.builder.ToStringBuilder;
 
 /** An implementation for queue */
 // TODO there's many localization that needs to be done in this class
@@ -40,7 +40,7 @@ public class GuidoQueue implements Queue {
    */
   @NonNull
   public Ladder getLadder() {
-    return Validate.notNull(
+    return Objects.requireNonNull(
         Guido.getHandlers().getDiscordLoader().getGuild(this.guildId).getLadder(this.ladder),
         "Ladder was deleted?");
   }
@@ -89,10 +89,10 @@ public class GuidoQueue implements Queue {
 
   @Override
   public String toString() {
-    return new ToStringBuilder(this)
-        .append("guildId", this.guildId)
-        .append("ladder", this.ladder)
-        .append("waiting", this.waiting)
-        .build();
+    return "GuidoQueue{" +
+            "guildId=" + guildId +
+            ", ladder='" + ladder + '\'' +
+            ", waiting=" + waiting +
+            '}';
   }
 }

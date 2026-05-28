@@ -1,11 +1,13 @@
 package me.googas.bot.core.handlers.responsive.command;
 
-import com.starfishst.commands.jda.utils.responsive.ReactionResponse;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.stream.Collectors;
 import lombok.NonNull;
 import me.googas.bot.api.types.messages.ResponsiveMesage;
+import me.googas.starbox.jda.responsive.ReactionResponse;
+import me.googas.starbox.jda.responsive.ResponsiveMessage;
 import net.dv8tion.jda.api.entities.Message;
 
 /** A responsive message that its reactions execute commands */
@@ -57,12 +59,22 @@ public class ExecuteCommandResponsiveMessage implements ResponsiveMesage {
   }
 
   @Override
-  public long getId() {
-    return this.id;
+  public @NonNull Collection<ReactionResponse> getReactions(@NonNull String unicode) {
+    return this.responses.stream()
+        .filter(response -> response.getUnicode().equals(unicode))
+        .collect(Collectors.toSet());
   }
 
   @Override
-  public @NonNull Set<ReactionResponse> getReactions() {
-    return new HashSet<>(this.responses);
+  public @NonNull ResponsiveMessage addReactionResponse(@NonNull ReactionResponse response) {
+    if (response instanceof SimpleCommandReactionResponse) {
+      this.responses.add((SimpleCommandReactionResponse) response);
+    }
+    return this;
+  }
+
+  @Override
+  public long getId() {
+    return this.id;
   }
 }

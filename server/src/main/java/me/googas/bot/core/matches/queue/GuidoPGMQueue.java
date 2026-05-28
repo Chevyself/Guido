@@ -1,10 +1,7 @@
 package me.googas.bot.core.matches.queue;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
+
 import lombok.NonNull;
 import me.googas.api.Requests;
 import me.googas.api.lang.LocaleFile;
@@ -21,12 +18,11 @@ import me.googas.api.matches.queue.Queueable;
 import me.googas.api.matches.team.TeamMember;
 import me.googas.api.matches.team.TeamRole;
 import me.googas.api.user.UserData;
+import me.googas.api.utility.Lots;
 import me.googas.bot.api.Guido;
 import me.googas.bot.core.util.Lang;
-import me.googas.commons.Lots;
-import me.googas.commons.Validate;
-import me.googas.messaging.api.MessengerListenFailException;
-import me.googas.messaging.json.server.JsonClientThread;
+import me.googas.net.api.exception.MessengerListenFailException;
+import me.googas.net.sockets.json.server.JsonClientThread;
 
 /** A queue that uses pgm */
 public class GuidoPGMQueue extends GuidoQueue {
@@ -73,7 +69,7 @@ public class GuidoPGMQueue extends GuidoQueue {
 
   @Override
   public QueueResult join(@NonNull Queueable queueable) {
-    JsonClientThread bungee = Guido.getServer().getAuthenticator().getBungee();
+    JsonClientThread bungee = Guido.getServer().getAuthenticator().get().getBungee();
     LocaleFile locale = Lang.getLocale(queueable);
     if (bungee == null) return new QueueResult(locale.get("pgm-queue.no-bungee"));
     if (!(queueable instanceof LinkableInfo))
@@ -86,9 +82,9 @@ public class GuidoPGMQueue extends GuidoQueue {
     Linkable link = user.getLink(LinkableType.MINECRAFT);
     if (link == null) return new QueueResult(locale.get("pgm-queue.link-first"));
     MinecraftLinkable toPlay =
-        Validate.notNull(link.toMinecraftRef(), "Does not have a linked minecraft account");
+        Objects.requireNonNull(link.toMinecraftRef(), "Does not have a linked minecraft account");
     try {
-      if (Validate.notNullOr(Requests.Bungee.isOnline(toPlay.getUuid()).send(bungee), false)) {
+      if (Requests.Bungee.isOnline(toPlay.getUuid()).send(bungee).orElse(false))  {
         QueueResult join = super.join(toPlay.getInfo());
         if (join.isCancelled()) return join;
         Requests.Bungee.addQueue(toPlay.getUuid()).queue(bungee);
@@ -106,7 +102,7 @@ public class GuidoPGMQueue extends GuidoQueue {
     QueueResult leave = super.leave(queueable);
     if (leave.isCancelled()) return leave;
     if (!(queueable instanceof LinkableInfo)) return new QueueResult("Queueable must be a link");
-    JsonClientThread bungee = Guido.getServer().getAuthenticator().getBungee();
+    JsonClientThread bungee = Guido.getServer().getAuthenticator().get().getBungee();
     Linkable linked = ((LinkableInfo) queueable).getLink();
     if (bungee != null && linked != null && linked.getType() == LinkableType.MINECRAFT) {
       Requests.Bungee.removeQueue(linked.requireMinecraftRef().getUuid()).queue(bungee);

@@ -68,8 +68,7 @@ public class EvalCommand {
       this.engine.put("guild", ((GuildCommandContext) context).getGuild());
       this.engine.put("member", ((GuildCommandContext) context).getMember());
     }
-    final String script =
-        "(function() {" + "with (imports) {" + string + "}" + "})();";
+    final String script = "(function() {" + "with (imports) {" + string + "}" + "})();";
 
     final Object out;
     try {

@@ -3,7 +3,7 @@ package me.googas.bot.core.handlers.test;
 import lombok.NonNull;
 import me.googas.api.events.GuidoEvent;
 import me.googas.bot.core.handlers.GuidoHandler;
-import me.googas.commons.events.Listener;
+import me.googas.starbox.events.Listener;
 
 /** A handler for testing purposes */
 public class TestHandler implements GuidoHandler {

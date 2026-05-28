@@ -51,7 +51,7 @@ public class QueueChannelsHandler implements GuidoHandler {
    * @param discordMember the event that left the queue
    */
   public void checkRemoveQueue(
-          @NonNull AudioChannelUnion channelLeft, @NonNull Guild guild, @NonNull Member discordMember) {
+      @NonNull AudioChannelUnion channelLeft, @NonNull Guild guild, @NonNull Member discordMember) {
     long guildId = guild.getIdLong();
     long channelId = this.waiting.getOrDefault(guildId, -1L);
     if (channelId == channelLeft.getIdLong()) {

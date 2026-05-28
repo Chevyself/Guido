@@ -34,7 +34,7 @@ public class QueueHandler implements GuidoHandler {
    * @param member the member that joined the channel
    */
   public void joinQueueFromVoice(
-          long guildId, AudioChannelUnion channelJoined, @NonNull Member member) {
+      long guildId, AudioChannelUnion channelJoined, @NonNull Member member) {
     if (channelJoined == null) return;
     GuidoGuild guild = Guido.getHandlers().getDiscordLoader().getGuild(guildId);
     String key = guild.getVoiceChannel(channelJoined.getIdLong());

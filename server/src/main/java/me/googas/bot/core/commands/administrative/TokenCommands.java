@@ -1,11 +1,10 @@
 package me.googas.bot.core.commands.administrative;
 
-import java.util.Collection;
-
 import com.github.chevyself.starbox.annotations.Command;
 import com.github.chevyself.starbox.annotations.Parent;
 import com.github.chevyself.starbox.annotations.Required;
 import com.github.chevyself.starbox.result.Result;
+import java.util.Collection;
 import me.googas.api.lang.LocaleFile;
 import me.googas.api.token.AuthLevel;
 import me.googas.api.token.AuthToken;
@@ -21,8 +20,7 @@ public class TokenCommands {
   @GuidoJdaPermission("user:guido.token")
   @Command(
       aliases = {"tokens", "token"},
-      description = "tokens.desc"
-      )
+      description = "tokens.desc")
   public Result token(LocaleFile locale, UserData sender) {
     Collection<? extends AuthToken> tokens =
         Guido.getHandlers().getLoader().getTokens().getTokens(sender);

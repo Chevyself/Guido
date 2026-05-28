@@ -5,7 +5,6 @@ import lombok.NonNull;
 import me.googas.api.server.GuidoAuthenticator;
 import me.googas.bot.GuidoHandlerRegistry;
 import me.googas.net.api.Server;
-import me.googas.net.api.auth.Authenticator;
 import me.googas.net.sockets.json.server.JsonClientThread;
 
 /** An extension of server */

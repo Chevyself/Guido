@@ -1,11 +1,10 @@
 package me.googas.bot.core.commands.administrative;
 
-import java.util.Map;
-
 import com.github.chevyself.starbox.annotations.Command;
 import com.github.chevyself.starbox.annotations.Parent;
 import com.github.chevyself.starbox.annotations.Required;
 import com.github.chevyself.starbox.result.Result;
+import java.util.Map;
 import me.googas.api.lang.LocaleFile;
 import me.googas.api.utility.Maps;
 import me.googas.bot.core.discord.GuidoGuild;
@@ -31,8 +30,7 @@ public class VoiceChannelCommands {
   @GuidoJdaPermission("guido.channels")
   @Command(
       aliases = {"voiceChannels", "vc"},
-      description = "vc.desc"
-      )
+      description = "vc.desc")
   public Result categories(LocaleFile locale, Guild guild, GuidoGuild botGuild) {
     Map<String, String> placeholders = Maps.singleton("name", guild.getName());
     Map<String, Long> voiceChannels = botGuild.getVoiceChannels();
@@ -69,8 +67,7 @@ public class VoiceChannelCommands {
       if (channel != null) {
         guild.getVoiceChannels().put(key, channel.getIdLong());
         return Result.of(
-            locale.get(
-                "vc.set.success", Maps.builder("key", key).put("name", channel.getName())));
+            locale.get("vc.set.success", Maps.builder("key", key).put("name", channel.getName())));
       }
     }
     return Result.of(locale.get("vc.set.connect"));
