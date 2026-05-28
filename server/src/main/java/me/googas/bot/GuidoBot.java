@@ -28,6 +28,7 @@ import me.googas.bot.api.server.BotServer;
 import me.googas.bot.core.commands.*;
 import me.googas.bot.core.commands.administrative.*;
 import me.googas.bot.core.commands.providers.*;
+import me.googas.bot.core.handlers.GuidoHandler;
 import me.googas.bot.core.server.GuidoFallbackServer;
 import me.googas.bungee.GuidoBungee;
 import me.googas.bungee.receptors.BungeeConnectionReceptors;
@@ -169,8 +170,12 @@ public class GuidoBot implements GuidoInstance {
         new TokenCommands(),
         new UserCommands());
     bot.setCommandManager(commandManager);
-    BotServer server = GuidoBot.createServer(arguments, bot);
-    if (server != null) bot.setServer(server.registerHandlers(registry));
+    JsonSocketServer server = GuidoBot.createServer(arguments, bot);
+    if (server != null) {
+      for (GuidoHandler handler : registry.getRegistered()) {
+        if (handler.hasReceptors()) server.addReceptors(handler);
+      }
+    }
     GuidoBot.log.info("Bot is ready to use");
   }
 

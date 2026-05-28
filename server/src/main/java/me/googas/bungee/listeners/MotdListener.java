@@ -1,6 +1,7 @@
 package me.googas.bungee.listeners;
 
-import com.starfishst.commands.bungee.utils.BungeeUtils;
+import com.github.chevyself.starbox.bungee.utils.BungeeUtils;
+import com.github.chevyself.starbox.common.Components;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
@@ -8,9 +9,9 @@ import java.util.UUID;
 import javax.imageio.ImageIO;
 import lombok.NonNull;
 import me.googas.IOUtil;
+import me.googas.api.utility.RandomUtils;
 import me.googas.bungee.events.GuidoListener;
-import me.googas.commons.CoreFiles;
-import me.googas.commons.RandomUtils;
+import me.googas.starbox.CoreFiles;
 import net.md_5.bungee.api.Favicon;
 import net.md_5.bungee.api.ServerPing;
 import net.md_5.bungee.api.chat.BaseComponent;
@@ -82,8 +83,8 @@ public class MotdListener implements GuidoListener {
    */
   @NonNull
   public BaseComponent getDescription() {
-    return BungeeUtils.getComponent(
-        BungeeUtils.build(
+    return Components.getComponent(
+        BungeeUtils.format(
             RandomUtils.getRandom(this.getSettings().getListSetting("descriptions"))))[0];
   }
 
@@ -107,7 +108,7 @@ public class MotdListener implements GuidoListener {
     List<String> players = this.getPlayers();
     ServerPing.PlayerInfo[] info = new ServerPing.PlayerInfo[players.size()];
     for (int i = 0; i < players.size(); i++) {
-      info[i] = new ServerPing.PlayerInfo(BungeeUtils.build(players.get(i)), UUID.randomUUID());
+      info[i] = new ServerPing.PlayerInfo(BungeeUtils.format(players.get(i)), UUID.randomUUID());
     }
     return info;
   }

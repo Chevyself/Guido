@@ -5,6 +5,7 @@ import com.github.chevyself.starbox.CommandManagerBuilder;
 import com.github.chevyself.starbox.bungee.BungeeAdapter;
 import com.github.chevyself.starbox.bungee.commands.BungeeCommand;
 import com.github.chevyself.starbox.bungee.context.CommandContext;
+import com.github.chevyself.starbox.registry.ProvidersRegistry;
 import java.io.File;
 import java.io.IOException;
 import java.net.InetSocketAddress;
@@ -20,6 +21,8 @@ import me.googas.bungee.commands.PermissionCommands;
 import me.googas.bungee.commands.PunishmentCommands;
 import me.googas.bungee.commands.ServerCommands;
 import me.googas.bungee.commands.StatsCommand;
+import me.googas.bungee.commands.providers.BungeeLocaleFileProvider;
+import me.googas.bungee.commands.providers.ProxiedOfflinePlayerProvider;
 import me.googas.bungee.configuration.BungeeConfiguration;
 import me.googas.bungee.configuration.GuidoBungeeConfiguration;
 import me.googas.bungee.configuration.GuidoServer;
@@ -52,6 +55,9 @@ public class GuidoPlugin extends Plugin {
   private final @NonNull CommandManager<CommandContext, BungeeCommand> manager =
       new CommandManagerBuilder<>(new BungeeAdapter(this))
           .setMessagesProvider(this.languageHandler)
+          .setProvidersRegistry(
+              new ProvidersRegistry<CommandContext>()
+                  .addProviders(new BungeeLocaleFileProvider(), new ProxiedOfflinePlayerProvider()))
           .build();
   /** The listeners being used by the plugin */
   @NonNull @Getter

@@ -194,8 +194,8 @@ public class GuidoLanguageHandler implements JdaMessagesProvider, GuidoHandler {
         .get(
             "missing-argument",
             Maps.builder("name", this.getFile(context).get(s))
-                .append("description", this.getFile(context).get(s1))
-                .append("position", String.valueOf(i)));
+                .put("description", this.getFile(context).get(s1))
+                .put("position", String.valueOf(i)));
   }
 
   @Override

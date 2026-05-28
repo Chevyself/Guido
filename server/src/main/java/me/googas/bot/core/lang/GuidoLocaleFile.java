@@ -9,7 +9,6 @@ import java.util.Objects;
 import java.util.Properties;
 import lombok.NonNull;
 import me.googas.api.lang.LocaleFile;
-import me.googas.bot.api.Guido;
 import me.googas.starbox.CoreFiles;
 
 /** The locale file for the guido bot. It is loaded using {@link Properties} */
@@ -45,8 +44,7 @@ public class GuidoLocaleFile implements LocaleFile {
         }
       }
     } catch (IOException e) {
-      Guido.getFallback()
-          .process(e, "IOException: The defaults for " + this + " could not be saved");
+      e.printStackTrace();
     }
   }
 

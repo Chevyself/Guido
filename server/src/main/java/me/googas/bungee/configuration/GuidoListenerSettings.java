@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import lombok.NonNull;
-import me.googas.commons.Validate;
 
 /** The settings for a listener */
 public interface GuidoListenerSettings {
@@ -53,7 +52,8 @@ public interface GuidoListenerSettings {
    */
   @NonNull
   default <T> T getSettingOr(@NonNull String name, @NonNull Class<T> clazz, @NonNull T def) {
-    return Validate.notNullOr(this.getSetting(name, clazz), def);
+    T setting = this.getSetting(name, clazz);
+    return setting != null ? setting : def;
   }
 
   /**

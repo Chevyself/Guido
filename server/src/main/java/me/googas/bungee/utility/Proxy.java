@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import lombok.NonNull;
-import me.googas.annotations.Nullable;
 import me.googas.bungee.GuidoBungee;
 import me.googas.bungee.configuration.GuidoServer;
 import net.md_5.bungee.api.ProxyServer;
@@ -28,7 +27,6 @@ public class Proxy {
     safeToDelete.forEach(name -> Proxy.instance().getServers().remove(name));
   }
 
-  @Nullable
   public static ServerInfo getServer(@NonNull String ip) {
     for (GuidoServer server : GuidoBungee.getConfiguration().getServers()) {
       GuidoBungee.getLogger().info(ip);

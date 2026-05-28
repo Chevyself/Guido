@@ -6,8 +6,8 @@ import java.util.UUID;
 import lombok.NonNull;
 import me.googas.api.Requests;
 import me.googas.bot.api.Guido;
-import me.googas.messaging.json.ParamName;
-import me.googas.messaging.json.Receptor;
+import me.googas.net.sockets.json.ParamName;
+import me.googas.net.sockets.json.Receptor;
 import net.md_5.bungee.api.event.PlayerDisconnectEvent;
 import net.md_5.bungee.event.EventHandler;
 

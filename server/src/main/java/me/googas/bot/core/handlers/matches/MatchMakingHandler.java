@@ -20,6 +20,7 @@ import me.googas.api.matches.MatchTeam;
 import me.googas.api.matches.team.TeamMember;
 import me.googas.api.user.UserData;
 import me.googas.api.utility.Lots;
+import me.googas.api.utility.Maps;
 import me.googas.bot.api.Guido;
 import me.googas.bot.core.discord.GuidoGuild;
 import me.googas.bot.core.handlers.GuidoHandler;
@@ -30,6 +31,7 @@ import me.googas.bot.core.util.Matches;
 import me.googas.net.sockets.json.Receptor;
 import me.googas.starbox.events.ListenPriority;
 import me.googas.starbox.events.Listener;
+import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.GuildVoiceState;
 import net.dv8tion.jda.api.entities.Member;
@@ -58,13 +60,13 @@ public class MatchMakingHandler implements GuidoHandler {
         Guido.getHandlers().getDiscordLoader().getGuild(abstractMatch.getGuildId());
     TextChannel channel = guildData.getTextChannel("matches");
     LocaleFile locale = Guido.getHandlers().getLanguageHandler().getDefault();
-    EmbedQuery information = Matches.getInformation(abstractMatch, locale);
+    EmbedBuilder information = Matches.getInformation(abstractMatch, locale);
     if (event.getStatus() == MatchStatus.FINISHED) {
       information.setTitle(
           locale.get("match.announce.title", Maps.singleton("id", abstractMatch.getId())));
       this.channels().deleteVoices(abstractMatch);
     }
-    information.send(channel);
+    channel.sendMessageEmbeds(information.build()).queue();
   }
 
   /**

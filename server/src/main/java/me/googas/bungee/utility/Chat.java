@@ -1,12 +1,12 @@
 package me.googas.bungee.utility;
 
-import com.starfishst.commands.bungee.context.CommandContext;
-import com.starfishst.core.exceptions.ArgumentProviderException;
+import com.github.chevyself.starbox.bungee.context.CommandContext;
+import com.github.chevyself.starbox.exceptions.ArgumentProviderException;
 import java.util.Map;
 import lombok.NonNull;
 import me.googas.bungee.GuidoBungee;
 import me.googas.bungee.lang.BungeeLocaleFile;
-import me.googas.commons.maps.MapBuilder;
+import me.googas.starbox.builders.MapBuilder;
 import net.md_5.bungee.api.CommandSender;
 
 /** Dependencies for chat */

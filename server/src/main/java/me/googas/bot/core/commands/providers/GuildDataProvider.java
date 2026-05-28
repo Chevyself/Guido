@@ -3,6 +3,7 @@ package me.googas.bot.core.commands.providers;
 import com.github.chevyself.starbox.exceptions.ArgumentProviderException;
 import com.github.chevyself.starbox.jda.context.CommandContext;
 import com.github.chevyself.starbox.jda.context.GuildCommandContext;
+import com.github.chevyself.starbox.jda.messages.JdaMessagesProvider;
 import com.github.chevyself.starbox.jda.providers.type.JdaExtraArgumentProvider;
 import lombok.NonNull;
 import me.googas.bot.api.Guido;
@@ -27,6 +28,7 @@ public class GuildDataProvider implements JdaExtraArgumentProvider<GuidoGuild> {
           .getDiscordLoader()
           .getGuild(((GuildCommandContext) context).getGuild().getIdLong());
     }
-    throw new ArgumentProviderException(context.getMessagesProvider().guildOnly(context));
+    String message = ((JdaMessagesProvider) context.getMessagesProvider()).guildOnly(context);
+    throw new ArgumentProviderException(message);
   }
 }

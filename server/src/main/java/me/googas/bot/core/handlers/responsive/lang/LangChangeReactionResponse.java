@@ -1,5 +1,6 @@
 package me.googas.bot.core.handlers.responsive.lang;
 
+import java.util.Optional;
 import lombok.NonNull;
 import me.googas.api.links.ref.DiscordLinkable;
 import me.googas.bot.api.Guido;
@@ -8,8 +9,6 @@ import me.googas.bot.core.util.Discord;
 import me.googas.starbox.jda.responsive.ReactionResponse;
 import me.googas.starbox.jda.responsive.ResponsiveMessage;
 import net.dv8tion.jda.api.events.message.react.MessageReactionAddEvent;
-
-import java.util.Optional;
 
 /** The response to change the language from an user */
 public class LangChangeReactionResponse implements ReactionResponse {

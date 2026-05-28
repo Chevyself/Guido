@@ -1,14 +1,15 @@
 package me.googas.bungee.commands;
 
-import com.starfishst.commands.bungee.annotations.Command;
-import com.starfishst.commands.bungee.result.Result;
-import com.starfishst.commands.bungee.utils.BungeeUtils;
-import com.starfishst.core.annotations.Optional;
-import com.starfishst.core.annotations.Required;
-import com.starfishst.core.annotations.Settings;
+import com.github.chevyself.starbox.annotations.Command;
+import com.github.chevyself.starbox.annotations.Free;
+import com.github.chevyself.starbox.annotations.Required;
+import com.github.chevyself.starbox.bungee.utils.BungeeUtils;
+import com.github.chevyself.starbox.common.Async;
+import com.github.chevyself.starbox.common.CommandPermission;
+import com.github.chevyself.starbox.result.Result;
 import me.googas.api.Requests;
 import me.googas.bungee.data.ProxiedOfflinePlayer;
-import me.googas.messaging.json.client.JsonClient;
+import me.googas.net.sockets.json.client.JsonClient;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
@@ -23,14 +24,13 @@ public class StatsCommand {
    * @param player the player to see the stats
    * @return the stats of the command
    */
-  @Settings("async")
-  @Command(
-      aliases = {"globalStats", "gStats"},
-      permission = "guido.stats")
+  @Async
+  @CommandPermission("guido.stats")
+  @Command(aliases = {"globalStats", "gStats"})
   public Result stats(
       CommandSender sender,
       JsonClient client,
-      @Optional(name = "player", description = "The player to see the stats from")
+      @Free(name = "player", description = "The player to see the stats from")
           ProxiedOfflinePlayer player) {
     final ProxiedOfflinePlayer toSee;
     if (sender.hasPermission("guido.stats.else") && player != null) {
@@ -39,10 +39,10 @@ public class StatsCommand {
       if (sender instanceof ProxiedPlayer) {
         toSee = new ProxiedOfflinePlayer(((ProxiedPlayer) sender).getUniqueId(), sender.getName());
       } else {
-        return new Result("&cYou must be a player to use this command");
+        return Result.of("&cYou must be a player to use this command");
       }
     } else {
-      return new Result("&cYou are not allowed to see someone else's stats");
+      return Result.of("&cYou are not allowed to see someone else's stats");
     }
     Requests.Links.stats(toSee.getLink())
         .send(
@@ -75,11 +75,12 @@ public class StatsCommand {
                 () -> {
                   // TODO could not obtain stats
                 }));
-    return new Result();
+    return null;
   }
 
-  @Settings("async")
-  @Command(aliases = "statsReset", permission = "guido.stats.reset")
+  @Async
+  @CommandPermission("guido.stats.reset")
+  @Command(aliases = "statsReset")
   public void statsReset(
       CommandSender sender,
       JsonClient client,
@@ -95,7 +96,7 @@ public class StatsCommand {
                   if (reset) {
                     message = "&aStats for &e" + player.getNickname() + "&a have been reset";
                   }
-                  sender.sendMessage(new TextComponent(BungeeUtils.build(message)));
+                  sender.sendMessage(new TextComponent(BungeeUtils.format(message)));
                 },
                 () -> {
                   // TODO could not reset

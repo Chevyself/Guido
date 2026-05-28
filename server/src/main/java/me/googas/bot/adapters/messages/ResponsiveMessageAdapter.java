@@ -6,8 +6,6 @@ import java.util.HashMap;
 import java.util.Map;
 import lombok.NonNull;
 import me.googas.bot.api.types.messages.ResponsiveMesage;
-import me.googas.bot.core.handlers.responsive.command.ExecuteCommandResponsiveMessage;
-import me.googas.bot.core.handlers.responsive.queue.JoinQueueResponsiveMessage;
 import me.googas.bot.core.handlers.responsive.roles.GiveRoleResponsiveMessage;
 
 public class ResponsiveMessageAdapter
@@ -18,8 +16,6 @@ public class ResponsiveMessageAdapter
 
   /** Create the responsive messages adapter */
   public ResponsiveMessageAdapter() {
-    this.types.put("queue", JoinQueueResponsiveMessage.class);
-    this.types.put("execute", ExecuteCommandResponsiveMessage.class);
     this.types.put("give-role", GiveRoleResponsiveMessage.class);
   }
 

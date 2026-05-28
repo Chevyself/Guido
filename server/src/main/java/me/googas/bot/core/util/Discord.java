@@ -77,8 +77,9 @@ public class Discord {
    * @param ignored the permissions to ignore removing and will be allowed if not
    */
   public static void removeEveryonePermissions(
-          @NonNull GuildChannel channel, @NonNull Permission... ignored) {
-    PermissionOverride override = channel.getPermissionContainer().getPermissionOverride(channel.getGuild().getPublicRole());
+      @NonNull GuildChannel channel, @NonNull Permission... ignored) {
+    PermissionOverride override =
+        channel.getPermissionContainer().getPermissionOverride(channel.getGuild().getPublicRole());
     if (override != null) {
       Set<Permission> toRemove = Lots.set(Permission.values());
       Set<Permission> toAllow = new HashSet<>();
@@ -167,8 +168,8 @@ public class Discord {
               Discord.exceptionConsumer());
     } else {
       channel
-              .getPermissionContainer()
-              .upsertPermissionOverride(holder)
+          .getPermissionContainer()
+          .upsertPermissionOverride(holder)
           .queue(
               newOverride ->
                   newOverride
@@ -195,10 +196,15 @@ public class Discord {
 
   @NonNull
   public static DiscordLinkable getUser(long id) {
-    Linkable linkable = Optional.ofNullable(Guido.getHandlers()
+    Linkable linkable =
+        Optional.ofNullable(
+                Guido.getHandlers()
                     .getLoader()
                     .getLinks()
-                    .getLink(LinkableType.DISCORD, Maps.singleton("id", id))).orElseGet(() -> new Linkable(
+                    .getLink(LinkableType.DISCORD, Maps.singleton("id", id)))
+            .orElseGet(
+                () ->
+                    new Linkable(
                             LinkableType.DISCORD,
                             Maps.singleton("id", id),
                             new HashMap<>(),
@@ -207,8 +213,8 @@ public class Discord {
                             new HashMap<>(),
                             new HashMap<>(),
                             new UserData(new HashMap<>()).cache().getId())
-                            .cache());
-      return linkable.requireDiscordRef();
+                        .cache());
+    return linkable.requireDiscordRef();
   }
 
   @NonNull

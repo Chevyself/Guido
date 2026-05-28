@@ -18,7 +18,6 @@ import lombok.NonNull;
 import me.googas.api.GuidoCatchable;
 import me.googas.api.links.LinkableType;
 import me.googas.api.matches.ladder.Ladder;
-import me.googas.api.permissions.AbstractPermission;
 import me.googas.bot.adapters.LongMongoAdapter;
 import me.googas.bot.adapters.MapDeserializer;
 import me.googas.bot.adapters.matches.ladder.LadderAdapter;

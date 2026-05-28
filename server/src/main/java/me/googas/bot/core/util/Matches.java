@@ -1,6 +1,5 @@
 package me.googas.bot.core.util;
 
-import com.starfishst.commands.jda.utils.embeds.EmbedQuery;
 import java.awt.*;
 import java.util.Collection;
 import java.util.Map;
@@ -10,10 +9,10 @@ import me.googas.api.lang.LocaleFile;
 import me.googas.api.matches.AbstractMatch;
 import me.googas.api.matches.MatchStatus;
 import me.googas.api.matches.MatchTeam;
+import me.googas.api.utility.Lots;
+import me.googas.api.utility.Maps;
 import me.googas.bot.api.Guido;
 import me.googas.bot.core.discord.GuidoGuild;
-import me.googas.commons.Lots;
-import me.googas.commons.maps.Maps;
 import net.dv8tion.jda.api.EmbedBuilder;
 
 public class Matches {
@@ -25,11 +24,11 @@ public class Matches {
   @NonNull
   private static final Map<MatchStatus, Color> colors =
       Maps.builder(MatchStatus.WAITING, Colors.getColor("#f9313b"))
-          .append(MatchStatus.READY, Colors.getColor("#efd004"))
-          .append(MatchStatus.STARTING, Colors.getColor("#47db30"))
-          .append(MatchStatus.PLAYING, Colors.getColor("#f99613"))
-          .append(MatchStatus.VOIDED, Colors.getColor("#1e1e1e"))
-          .append(MatchStatus.FINISHED, Colors.getColor("#f9313b"))
+          .put(MatchStatus.READY, Colors.getColor("#efd004"))
+          .put(MatchStatus.STARTING, Colors.getColor("#47db30"))
+          .put(MatchStatus.PLAYING, Colors.getColor("#f99613"))
+          .put(MatchStatus.VOIDED, Colors.getColor("#1e1e1e"))
+          .put(MatchStatus.FINISHED, Colors.getColor("#f9313b"))
           .build();
 
   /**
@@ -63,7 +62,7 @@ public class Matches {
     }
     Matches.appendDetails(abstractMatch, locale, builder);
     Matches.appendTeams(abstractMatch, builder);
-    return new EmbedQuery(builder);
+    return builder;
   }
 
   public static void appendTeams(

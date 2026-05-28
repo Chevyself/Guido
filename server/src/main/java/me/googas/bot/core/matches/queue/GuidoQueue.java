@@ -3,7 +3,6 @@ package me.googas.bot.core.matches.queue;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-
 import lombok.NonNull;
 import me.googas.api.events.queue.QueueJoinEvent;
 import me.googas.api.events.queue.QueuePreJoinEvent;
@@ -89,10 +88,14 @@ public class GuidoQueue implements Queue {
 
   @Override
   public String toString() {
-    return "GuidoQueue{" +
-            "guildId=" + guildId +
-            ", ladder='" + ladder + '\'' +
-            ", waiting=" + waiting +
-            '}';
+    return "GuidoQueue{"
+        + "guildId="
+        + guildId
+        + ", ladder='"
+        + ladder
+        + '\''
+        + ", waiting="
+        + waiting
+        + '}';
   }
 }

@@ -7,7 +7,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import lombok.NonNull;
-import me.googas.annotations.Nullable;
 import me.googas.bungee.configuration.GuidoListenerSettings;
 import me.googas.bungee.configuration.GuidoServer;
 import me.googas.bungee.configuration.SimpleGuidoListenerSettings;
@@ -19,7 +18,7 @@ import net.md_5.bungee.config.Configuration;
 public class Config {
 
   @NonNull
-  public static List<GuidoServer> parseServers(@Nullable Configuration config) {
+  public static List<GuidoServer> parseServers(Configuration config) {
     List<GuidoServer> servers = new ArrayList<>();
     if (config == null) return servers;
     for (String name : config.getKeys()) {
@@ -34,7 +33,7 @@ public class Config {
   }
 
   @NonNull
-  public static Set<GuidoListenerSettings> parseSettings(@Nullable Configuration config) {
+  public static Set<GuidoListenerSettings> parseSettings(Configuration config) {
     Set<GuidoListenerSettings> parsedSettings = new HashSet<>();
     if (config == null) return parsedSettings;
     for (String name : config.getKeys()) {

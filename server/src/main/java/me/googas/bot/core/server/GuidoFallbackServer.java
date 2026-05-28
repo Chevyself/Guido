@@ -21,27 +21,24 @@ public class GuidoFallbackServer implements BotServer {
   }
 
   @Override
-  public void close() throws IOException {
-
-  }
+  public void close() throws IOException {}
 
   @Override
-  public <T> void sendRequest(@NonNull StarboxRequest<T> request, BiConsumer<JsonClientThread, Optional<T>> consumer) {
-
-  }
+  public <T> void sendRequest(
+      @NonNull StarboxRequest<T> request, BiConsumer<JsonClientThread, Optional<T>> consumer) {}
 
   @Override
-  public @NonNull <T> Map<JsonClientThread, Optional<T>> sendRequest(@NonNull StarboxRequest<T> request) {
+  public @NonNull <T> Map<JsonClientThread, Optional<T>> sendRequest(
+      @NonNull StarboxRequest<T> request) {
     return Map.of();
   }
 
   @Override
-  public void start() {
-
-  }
+  public void start() {}
 
   @Override
-  public @NonNull Server<JsonClientThread> setAuthenticator(@NonNull Authenticator<JsonClientThread> authenticator) {
+  public @NonNull Server<JsonClientThread> setAuthenticator(
+      @NonNull Authenticator<JsonClientThread> authenticator) {
     return this;
   }
 

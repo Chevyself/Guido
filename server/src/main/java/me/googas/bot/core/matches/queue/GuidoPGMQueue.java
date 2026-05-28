@@ -1,7 +1,6 @@
 package me.googas.bot.core.matches.queue;
 
 import java.util.*;
-
 import lombok.NonNull;
 import me.googas.api.Requests;
 import me.googas.api.lang.LocaleFile;
@@ -84,7 +83,7 @@ public class GuidoPGMQueue extends GuidoQueue {
     MinecraftLinkable toPlay =
         Objects.requireNonNull(link.toMinecraftRef(), "Does not have a linked minecraft account");
     try {
-      if (Requests.Bungee.isOnline(toPlay.getUuid()).send(bungee).orElse(false))  {
+      if (Requests.Bungee.isOnline(toPlay.getUuid()).send(bungee).orElse(false)) {
         QueueResult join = super.join(toPlay.getInfo());
         if (join.isCancelled()) return join;
         Requests.Bungee.addQueue(toPlay.getUuid()).queue(bungee);

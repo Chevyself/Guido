@@ -7,9 +7,9 @@ import me.googas.api.API;
 import me.googas.api.links.Linkable;
 import me.googas.api.links.LinkableInfo;
 import me.googas.api.links.LinkableType;
+import me.googas.api.utility.Maps;
 import me.googas.bungee.events.GuidoListener;
-import me.googas.commons.UUIDUtils;
-import me.googas.commons.maps.Maps;
+import me.googas.starbox.UUIDUtils;
 import net.md_5.bungee.api.connection.PendingConnection;
 import net.md_5.bungee.api.event.LoginEvent;
 import net.md_5.bungee.api.event.PlayerDisconnectEvent;
@@ -37,7 +37,7 @@ public class MinecraftDataListener implements GuidoListener {
       new Linkable(
               LinkableType.MINECRAFT,
               link.getIdentification(),
-              Maps.objects("nickname", nickname).append("ip", ip).build(),
+              Maps.objects("nickname", nickname).put("ip", ip).build(),
               new HashMap<>(),
               new HashSet<>(),
               new HashMap<>(),

@@ -1,10 +1,11 @@
 package me.googas.bungee.lang;
 
-import com.starfishst.commands.bungee.utils.BungeeUtils;
+import com.github.chevyself.starbox.bungee.utils.BungeeUtils;
+import com.github.chevyself.starbox.common.Components;
 import java.util.Map;
 import lombok.NonNull;
 import me.googas.api.lang.LocaleFile;
-import me.googas.commons.maps.MapBuilder;
+import me.googas.starbox.builders.MapBuilder;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.config.Configuration;
 
@@ -30,7 +31,7 @@ public class BungeeLocaleFile implements LocaleFile {
    * @return the component from the given key
    */
   public @NonNull BaseComponent[] getComponent(@NonNull String key) {
-    return BungeeUtils.getComponent(BungeeUtils.build(this.get(key)));
+    return Components.getComponent(BungeeUtils.format(this.get(key)));
   }
 
   /**
@@ -42,7 +43,7 @@ public class BungeeLocaleFile implements LocaleFile {
    */
   public @NonNull BaseComponent[] getComponent(
       @NonNull String key, @NonNull Map<String, String> placeholders) {
-    return BungeeUtils.getComponent(BungeeUtils.build(this.get(key, placeholders)));
+    return Components.getComponent(BungeeUtils.format(this.get(key, placeholders)));
   }
 
   /**
@@ -54,7 +55,7 @@ public class BungeeLocaleFile implements LocaleFile {
    */
   public @NonNull BaseComponent[] getComponent(
       @NonNull String key, @NonNull MapBuilder<String, String> placeholders) {
-    return BungeeUtils.getComponent(BungeeUtils.build(this.get(key, placeholders)));
+    return Components.getComponent(BungeeUtils.format(this.get(key, placeholders)));
   }
 
   @Override

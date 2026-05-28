@@ -3,10 +3,9 @@ import java.util.Map;
 import me.googas.api.messaging.Message;
 import me.googas.bot.adapters.MapDeserializer;
 import me.googas.bot.core.util.Mongo;
-import me.googas.commons.maps.Maps;
-import me.googas.messaging.ReceivedRequest;
-import me.googas.messaging.Request;
-import me.googas.messaging.json.adapters.MessageDeserializer;
+import me.googas.net.api.messages.Request;
+import me.googas.net.sockets.json.ReceivedJsonRequest;
+import me.googas.net.sockets.json.adapters.MessageDeserializer;
 
 public class DeserializerTest {
 
@@ -18,12 +17,12 @@ public class DeserializerTest {
             .create();
     String json =
         gson.toJson(
-            new Request<>(
-                Boolean.class,
-                "auth",
-                Maps.objects("token", "a token").append("test", 2.0).build()));
+            Request.builder(Boolean.class, "auth")
+                .put("token", "a token")
+                .put("test", 2.0)
+                .build());
     System.out.println("json = " + json);
-    ReceivedRequest request = gson.fromJson(json, ReceivedRequest.class);
+    ReceivedJsonRequest request = gson.fromJson(json, ReceivedJsonRequest.class);
     System.out.println("request = " + request);
   }
 }
