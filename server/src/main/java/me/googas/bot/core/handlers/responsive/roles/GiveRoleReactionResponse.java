@@ -1,7 +1,7 @@
 package me.googas.bot.core.handlers.responsive.roles;
 
-import com.starfishst.commands.jda.utils.responsive.ReactionResponse;
 import lombok.NonNull;
+import me.googas.starbox.jda.responsive.ReactionResponse;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.events.message.react.MessageReactionAddEvent;
@@ -36,7 +36,7 @@ public class GiveRoleReactionResponse implements ReactionResponse {
   }
 
   @Override
-  public @NonNull String getUnicode() {
-    return this.unicode;
+  public boolean hasUnicode(String unicode) {
+    return this.unicode.equals(unicode);
   }
 }

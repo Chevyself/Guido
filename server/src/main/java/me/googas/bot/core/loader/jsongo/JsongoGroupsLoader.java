@@ -4,7 +4,6 @@ import com.mongodb.client.MongoCollection;
 import java.util.Collection;
 import java.util.regex.Pattern;
 import lombok.NonNull;
-import me.googas.annotations.Nullable;
 import me.googas.api.loader.GroupLoader;
 import me.googas.api.permissions.Group;
 import me.googas.api.permissions.GroupInfo;
@@ -28,7 +27,6 @@ public class JsongoGroupsLoader extends SimpleJsongoLoader implements GroupLoade
         Group.class, this.groups(), new Document("id", id), group -> group.getId().equals(id));
   }
 
-  @Nullable
   @Override
   public Group getGroupByBane(@NonNull String name) {
     return Mongo.get(

@@ -1,18 +1,17 @@
 package me.googas.bot.core.commands.administrative;
 
-import com.starfishst.commands.jda.annotations.Command;
-import com.starfishst.commands.jda.context.CommandContext;
-import com.starfishst.commands.jda.context.GuildCommandContext;
-import com.starfishst.commands.jda.result.Result;
-import com.starfishst.commands.jda.result.ResultType;
-import com.starfishst.core.annotations.Multiple;
-import com.starfishst.core.annotations.Required;
-import com.starfishst.core.objects.JoinedStrings;
+import com.github.chevyself.starbox.annotations.Command;
+import com.github.chevyself.starbox.annotations.Required;
+import com.github.chevyself.starbox.arguments.ArgumentBehaviour;
+import com.github.chevyself.starbox.jda.context.CommandContext;
+import com.github.chevyself.starbox.jda.context.GuildCommandContext;
+import com.github.chevyself.starbox.result.Result;
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;
 import lombok.NonNull;
 import me.googas.bot.api.Guido;
+import me.googas.bungee.commands.middleware.GuidoJdaPermission;
 
 /** Commands made for the developer */
 public class EvalCommand {
@@ -49,32 +48,35 @@ public class EvalCommand {
    * <p>event the event message the message args the arguments of the command api the api of the bot
    *
    * @param context the context of the command
-   * @param strings the code to analyze
+   * @param string the code to analyze
    * @return the result of the code
    */
-  @Command(aliases = "eval", node = "user:guido.admin", description = "eval.desc")
+  @GuidoJdaPermission("user:guido.admin")
+  @Command(aliases = "eval", description = "eval.desc")
   public Result eval(
       CommandContext context,
-      @Multiple @Required(name = "eval.code", description = "eval.code.desc")
-          JoinedStrings strings) {
+      @Required(
+              name = "eval.code",
+              description = "eval.code.desc",
+              behaviour = ArgumentBehaviour.CONTINUOUS)
+          String string) {
     this.engine.put("message", context.getMessage());
     this.engine.put("channel", context.getChannel());
-    this.engine.put("args", context.getStrings());
+    this.engine.put("args", string);
     this.engine.put("api", Guido.getConnection().getJda());
     if (context instanceof GuildCommandContext) {
       this.engine.put("guild", ((GuildCommandContext) context).getGuild());
       this.engine.put("member", ((GuildCommandContext) context).getMember());
     }
-    final String script =
-        "(function() {" + "with (imports) {" + strings.getString() + "}" + "})();";
+    final String script = "(function() {" + "with (imports) {" + string + "}" + "})();";
 
     final Object out;
     try {
       out = this.engine.eval(script);
     } catch (final ScriptException e) {
-      return new Result(ResultType.ERROR, e.getMessage());
+      return Result.of(e.getMessage());
     }
 
-    return new Result("Script has been executed " + (out == null ? "" : out.toString()));
+    return Result.of("Script has been executed " + (out == null ? "" : out.toString()));
   }
 }

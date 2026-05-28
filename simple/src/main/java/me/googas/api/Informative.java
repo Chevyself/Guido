@@ -3,8 +3,6 @@ package me.googas.api;
 import java.util.HashMap;
 import java.util.Map;
 import lombok.NonNull;
-import me.googas.annotations.Nullable;
-import me.googas.commons.Validate;
 
 /**
  * When objects are able to contain information this should be implemented by it as it provides many
@@ -21,8 +19,7 @@ public interface Informative {
    * @param <T> the type of the value
    * @return the value if found and the type can cast the value
    */
-  @Nullable
-  default <T> T get(@Nullable String context, @NonNull String key, @NonNull Class<T> typeOfT) {
+  default <T> T get(String context, @NonNull String key, @NonNull Class<T> typeOfT) {
     Map<String, Object> info = this.getInformation(context);
     Object t = info.get(key);
     if (t == null) return null;
@@ -41,8 +38,9 @@ public interface Informative {
    */
   @NonNull
   default <T> T getOr(
-      @Nullable String context, @NonNull String key, @NonNull T def, @NonNull Class<T> typeOfT) {
-    return Validate.notNullOr(this.get(context, key, typeOfT), def);
+      String context, @NonNull String key, @NonNull T def, @NonNull Class<T> typeOfT) {
+    T t = this.get(context, key, typeOfT);
+    return t != null ? t : def;
   }
 
   /**
@@ -52,7 +50,7 @@ public interface Informative {
    * @param key the key to set the value
    * @param value the value that will be assigned to the key
    */
-  default void set(@Nullable String context, @NonNull String key, @Nullable Object value) {
+  default void set(String context, @NonNull String key, Object value) {
     if (context == null) {
       context = "global";
     }
@@ -63,7 +61,7 @@ public interface Informative {
     }
   }
 
-  default String getString(@Nullable String context, @NonNull String key, @NonNull String def) {
+  default String getString(String context, @NonNull String key, @NonNull String def) {
     return this.getOr(context, key, def, String.class);
   }
 
@@ -74,7 +72,7 @@ public interface Informative {
    * @return the map of the given context
    */
   @NonNull
-  default Map<String, Object> getInformation(@Nullable String context) {
+  default Map<String, Object> getInformation(String context) {
     if (context == null) {
       context = "global";
     }
@@ -83,31 +81,31 @@ public interface Informative {
     return map;
   }
 
-  default void setString(@Nullable String context, @NonNull String key, @Nullable String value) {
+  default void setString(String context, @NonNull String key, String value) {
     this.set(context, key, value);
   }
 
-  default boolean getBoolean(@Nullable String context, @NonNull String key, boolean def) {
+  default boolean getBoolean(String context, @NonNull String key, boolean def) {
     return this.getOr(context, key, def, Boolean.class);
   }
 
-  default long getLong(@Nullable String context, @NonNull String key, long def) {
+  default long getLong(String context, @NonNull String key, long def) {
     return this.getNumber(context, key, def).longValue();
   }
 
-  default Number getNumber(@Nullable String context, @NonNull String key, @NonNull Number def) {
+  default Number getNumber(String context, @NonNull String key, @NonNull Number def) {
     return this.getOr(context, key, def, Number.class);
   }
 
-  default int getInt(@Nullable String context, @NonNull String key, int def) {
+  default int getInt(String context, @NonNull String key, int def) {
     return this.getNumber(context, key, def).intValue();
   }
 
-  default float getFloat(@Nullable String context, @NonNull String key, float def) {
+  default float getFloat(String context, @NonNull String key, float def) {
     return this.getNumber(context, key, def).floatValue();
   }
 
-  default void setBoolean(@Nullable String context, @NonNull String key, boolean value) {
+  default void setBoolean(String context, @NonNull String key, boolean value) {
     this.set(context, key, value);
   }
 

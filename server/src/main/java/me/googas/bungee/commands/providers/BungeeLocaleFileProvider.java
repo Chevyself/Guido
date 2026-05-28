@@ -1,7 +1,7 @@
 package me.googas.bungee.commands.providers;
 
-import com.starfishst.commands.bungee.context.CommandContext;
-import com.starfishst.commands.bungee.providers.type.BungeeExtraArgumentProvider;
+import com.github.chevyself.starbox.bungee.context.CommandContext;
+import com.github.chevyself.starbox.bungee.providers.type.BungeeExtraArgumentProvider;
 import lombok.NonNull;
 import me.googas.bungee.GuidoBungee;
 import me.googas.bungee.lang.BungeeLocaleFile;

@@ -14,7 +14,7 @@ public interface GuidoHandler {
    */
   default GuidoHandler register(@NonNull JDA jda) {
     jda.addEventListener(this);
-    Guido.getListenerManager().registerListeners(this);
+    Guido.getListenerManager().parseAndRegister(this);
     return this;
   }
 

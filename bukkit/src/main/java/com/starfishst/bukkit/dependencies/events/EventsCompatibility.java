@@ -1,11 +1,11 @@
 package com.starfishst.bukkit.dependencies.events;
 
-import com.starfishst.commands.bukkit.context.CommandContext;
-import com.starfishst.core.providers.type.IContextualProvider;
+import com.github.chevyself.starbox.bukkit.commands.BukkitCommand;
+import com.github.chevyself.starbox.bukkit.context.CommandContext;
+import com.github.chevyself.starbox.providers.StarboxContextualProvider;
 import java.util.ArrayList;
 import java.util.Collection;
 import lombok.NonNull;
-import me.googas.starbox.StarboxCommand;
 import me.googas.starbox.compatibilities.Compatibility;
 import me.googas.starbox.modules.Module;
 import org.bukkit.plugin.Plugin;
@@ -15,7 +15,7 @@ public class EventsCompatibility implements Compatibility {
   private boolean enabled = false;
 
   @Override
-  public Collection<IContextualProvider<?, CommandContext>> getProviders() {
+  public Collection<StarboxContextualProvider<?, CommandContext>> getProviders() {
     return new ArrayList<>();
   }
 
@@ -33,7 +33,7 @@ public class EventsCompatibility implements Compatibility {
   }
 
   @Override
-  public @NonNull Collection<StarboxCommand> getCommands() {
+  public @NonNull Collection<BukkitCommand> getCommands() {
     return new ArrayList<>();
   }
 

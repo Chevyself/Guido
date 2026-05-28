@@ -1,13 +1,13 @@
 package me.googas.api.links.ref;
 
 import java.lang.ref.SoftReference;
+import java.util.Objects;
 import java.util.UUID;
 import lombok.NonNull;
 import lombok.experimental.Delegate;
 import me.googas.api.links.Linkable;
 import me.googas.api.links.LinkableType;
-import me.googas.commons.UUIDUtils;
-import me.googas.commons.Validate;
+import me.googas.starbox.UUIDUtils;
 
 /** This class represents a soft reference done to a linkable from minecraft */
 public class MinecraftLinkable {
@@ -30,7 +30,7 @@ public class MinecraftLinkable {
   @NonNull
   @Delegate
   public Linkable validated() {
-    return Validate.notNull(this.reference.get(), "Reference is no longer in memory");
+    return Objects.requireNonNull(this.reference.get(), "Reference is no longer in memory");
   }
 
   @NonNull

@@ -1,19 +1,19 @@
 package me.googas.bungee.commands;
 
-import com.starfishst.commands.bungee.annotations.Command;
-import com.starfishst.commands.bungee.utils.BungeeUtils;
-import com.starfishst.core.annotations.Optional;
-import com.starfishst.core.annotations.Parent;
-import com.starfishst.core.annotations.Required;
-import com.starfishst.core.annotations.Settings;
+import com.github.chevyself.starbox.annotations.Command;
+import com.github.chevyself.starbox.annotations.Free;
+import com.github.chevyself.starbox.annotations.Parent;
+import com.github.chevyself.starbox.annotations.Required;
+import com.github.chevyself.starbox.bungee.utils.BungeeUtils;
+import com.github.chevyself.starbox.common.Async;
+import com.github.chevyself.starbox.common.CommandPermission;
 import java.util.ArrayList;
 import me.googas.api.Requests;
 import me.googas.api.permissions.AbstractPermission;
 import me.googas.bungee.data.ProxiedOfflinePlayer;
-import me.googas.commons.Pagination;
-import me.googas.commons.Strings;
-import me.googas.commons.time.Time;
-import me.googas.messaging.json.client.JsonClient;
+import me.googas.net.sockets.json.client.JsonClient;
+import me.googas.starbox.Pagination;
+import me.googas.starbox.time.Time;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.chat.TextComponent;
 
@@ -21,24 +21,23 @@ import net.md_5.bungee.api.chat.TextComponent;
 // TODO localization should shorten this class
 public class PermissionCommands {
 
-  @Settings("async")
+  @Async
   @Parent
-  @Command(
-      aliases = {"permissions", "perms", "perm"},
-      permission = "guido.perms")
+  @CommandPermission("guido.perms")
+  @Command(aliases = {"permissions", "perms", "perm"})
   public void perms(
       CommandSender sender,
       JsonClient client,
       @Required(name = "player", description = "The proxied player to add the permission to")
           ProxiedOfflinePlayer player,
-      @Optional(
+      @Free(
               name = "context",
               description = "The context to see the permissions",
               suggestions = "bungee")
           String context,
-      @Optional(name = "page", description = "The page to see the permissions", suggestions = "1")
+      @Free(name = "page", description = "The page to see the permissions", suggestions = "1")
           int page,
-      @Optional(
+      @Free(
               name = "global",
               description = "Whether to see the permissions with the global permissions appended",
               suggestions = {"true", "false"})
@@ -55,7 +54,7 @@ public class PermissionCommands {
                     if (finalPage < 1 || page > pagination.maxPage()) {
                       finalPage = 1;
                     }
-                    StringBuilder builder = Strings.getBuilder();
+                    StringBuilder builder = new StringBuilder();
                     builder
                         .append("&7Permissions in &a")
                         .append(context)
@@ -73,11 +72,11 @@ public class PermissionCommands {
                       }
                       builder.append(abstractPermission.getNode()).append("\n");
                     }
-                    sender.sendMessage(new TextComponent(BungeeUtils.build(builder.toString())));
+                    sender.sendMessage(new TextComponent(BungeeUtils.format(builder.toString())));
                   } else {
                     sender.sendMessage(
                         new TextComponent(
-                            BungeeUtils.build(
+                            BungeeUtils.format(
                                 "&e"
                                     + player.getNickname()
                                     + "&c permissions in context: &e"
@@ -90,10 +89,9 @@ public class PermissionCommands {
                 }));
   }
 
-  @Settings("async")
-  @Command(
-      aliases = {"add", "give"},
-      permission = "guido.perms.add")
+  @Async
+  @CommandPermission("guido.perms.add")
+  @Command(aliases = {"add", "give"})
   public void add(
       CommandSender sender,
       JsonClient client,
@@ -102,12 +100,12 @@ public class PermissionCommands {
       @Required(name = "node", description = "The node of the permission") String node,
       @Required(name = "enabled", description = "Whether the permission is enabled")
           boolean enabled,
-      @Optional(
+      @Free(
               name = "context",
               description = "The context to add the permission on",
               suggestions = "global")
           String context,
-      @Optional(
+      @Free(
               name = "getExpires",
               description = "When does the permission expire",
               suggestions = "0s")
@@ -118,7 +116,7 @@ public class PermissionCommands {
             new AbstractPermission(
                 node,
                 enabled,
-                time.millis() == 0 ? -1 : System.currentTimeMillis() + time.millis()))
+                time.toMillisRound() == 0 ? -1 : System.currentTimeMillis() + time.toMillisRound()))
         .send(
             client,
             Requests.ifPresentElse(
@@ -127,7 +125,7 @@ public class PermissionCommands {
                   if (added) {
                     message =
                         new TextComponent(
-                            BungeeUtils.build(
+                            BungeeUtils.format(
                                 "&aPermission &e"
                                     + node
                                     + "&a in the status &e"
@@ -138,7 +136,7 @@ public class PermissionCommands {
                                     + player.getNickname()));
                   } else {
                     message =
-                        new TextComponent(BungeeUtils.build("&cPermission could not be given"));
+                        new TextComponent(BungeeUtils.format("&cPermission could not be given"));
                   }
                   sender.sendMessage(message);
                 },
@@ -147,17 +145,16 @@ public class PermissionCommands {
                 }));
   }
 
-  @Settings("async")
-  @Command(
-      aliases = {"remove", "revoke"},
-      permission = "guido.perms.remove")
+  @Async
+  @CommandPermission("guido.perms.remove")
+  @Command(aliases = {"remove", "revoke"})
   public void add(
       CommandSender sender,
       JsonClient client,
       @Required(name = "player", description = "The proxied player to revoke the permission from ")
           ProxiedOfflinePlayer player,
       @Required(name = "node", description = "The node of the permission") String node,
-      @Optional(
+      @Free(
               name = "context",
               description = "The context to add the permission on",
               suggestions = "bungee")
@@ -171,7 +168,7 @@ public class PermissionCommands {
                   if (removed) {
                     message =
                         new TextComponent(
-                            BungeeUtils.build(
+                            BungeeUtils.format(
                                 "&aPermission &e"
                                     + node
                                     + "&a from the context &e"
@@ -180,7 +177,7 @@ public class PermissionCommands {
                                     + player.getNickname()));
                   } else {
                     message =
-                        new TextComponent(BungeeUtils.build("&cPermission could not be revoked"));
+                        new TextComponent(BungeeUtils.format("&cPermission could not be revoked"));
                   }
                   sender.sendMessage(message);
                 },

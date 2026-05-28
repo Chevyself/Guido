@@ -1,20 +1,20 @@
 package me.googas.bot.core.commands;
 
-import com.starfishst.commands.jda.annotations.Command;
-import com.starfishst.commands.jda.context.CommandContext;
-import com.starfishst.commands.jda.result.Result;
-import com.starfishst.core.annotations.Optional;
+import com.github.chevyself.starbox.annotations.Command;
+import com.github.chevyself.starbox.annotations.Free;
+import com.github.chevyself.starbox.jda.context.CommandContext;
+import com.github.chevyself.starbox.result.Result;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.NonNull;
+import me.googas.api.utility.Maps;
+import me.googas.api.utility.RandomUtils;
 import me.googas.bot.api.Guido;
 import me.googas.bot.core.lang.GuidoLanguageHandler;
 import me.googas.bot.core.util.Discord;
-import me.googas.commons.RandomUtils;
-import me.googas.commons.maps.Maps;
 import net.dv8tion.jda.api.entities.GuildVoiceState;
 import net.dv8tion.jda.api.entities.Member;
-import net.dv8tion.jda.api.entities.VoiceChannel;
+import net.dv8tion.jda.api.entities.channel.unions.AudioChannelUnion;
 
 /** Commands for team creation */
 public class TeamCommands {
@@ -37,7 +37,7 @@ public class TeamCommands {
   public Result teams(CommandContext context, Member sender) {
     GuildVoiceState voiceState = sender.getVoiceState();
     if (voiceState != null && voiceState.getChannel() != null) {
-      VoiceChannel channel = voiceState.getChannel();
+      AudioChannelUnion channel = voiceState.getChannel();
       List<Member> members = channel.getMembers();
       if (members.size() % 2 == 0) {
         List<Member> team1 = RandomUtils.getRandom(members, members.size() / 2);
@@ -47,18 +47,18 @@ public class TeamCommands {
             team2.add(member);
           }
         }
-        return new Result(
+        return Result.of(
             this.handler
                 .getFile(context)
                 .get(
                     "teams.result",
                     Maps.builder("team1", Discord.pretty(team1))
-                        .append("team2", Discord.pretty(team2))));
+                        .put("team2", Discord.pretty(team2))));
       } else {
-        return new Result(this.handler.getFile(context).get("teams.not-even"));
+        return Result.of(this.handler.getFile(context).get("teams.not-even"));
       }
     } else {
-      return new Result(this.handler.getFile(context).get("teams.not-connected"));
+      return Result.of(this.handler.getFile(context).get("teams.not-connected"));
     }
   }
 
@@ -78,26 +78,26 @@ public class TeamCommands {
   public Result capitanes(
       CommandContext context,
       Member sender,
-      @Optional(name = "leaders.number", description = "leaders.number.desc", suggestions = "2")
+      @Free(name = "leaders.number", description = "leaders.number.desc", suggestions = "2")
           int number) {
     GuildVoiceState voiceState = sender.getVoiceState();
     if (voiceState != null && voiceState.getChannel() != null) {
-      VoiceChannel channel = voiceState.getChannel();
+      AudioChannelUnion channel = voiceState.getChannel();
       List<Member> members = channel.getMembers();
       if (members.size() >= number) {
         List<Member> random = RandomUtils.getRandom(members, number);
-        return new Result(
+        return Result.of(
             this.handler
                 .getFile(context)
                 .get("leaders.result", Maps.singleton("leaders", Discord.pretty(random))));
       } else {
-        return new Result(
+        return Result.of(
             this.handler
                 .getFile(context)
                 .get("leaders.not-enough", Maps.singleton("number", String.valueOf(number))));
       }
     } else {
-      return new Result(
+      return Result.of(
           this.handler
               .getFile(context)
               .get("leaders.not-connected", Maps.singleton("number", String.valueOf(number))));

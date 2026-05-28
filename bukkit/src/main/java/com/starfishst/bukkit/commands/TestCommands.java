@@ -1,7 +1,7 @@
 package com.starfishst.bukkit.commands;
 
-import com.starfishst.commands.bukkit.annotations.Command;
-import com.starfishst.commands.bukkit.result.Result;
+import com.github.chevyself.starbox.annotations.Command;
+import com.github.chevyself.starbox.result.Result;
 import lombok.NonNull;
 
 /** Commands for testing */
@@ -9,7 +9,7 @@ public class TestCommands implements GuidoCommand {
 
   @Command(aliases = "test")
   public Result test() {
-    return new Result();
+    return Result.of("");
   }
 
   @Override

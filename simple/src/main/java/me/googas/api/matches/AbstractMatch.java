@@ -8,7 +8,6 @@ import java.util.Map;
 import java.util.Set;
 import lombok.Getter;
 import lombok.NonNull;
-import me.googas.annotations.Nullable;
 import me.googas.api.API;
 import me.googas.api.GuidoCatchable;
 import me.googas.api.Informative;
@@ -23,7 +22,7 @@ import me.googas.api.links.LinkableInfo;
 import me.googas.api.links.LinkableType;
 import me.googas.api.matches.ladder.Ladder;
 import me.googas.api.matches.team.TeamMember;
-import me.googas.commons.RandomUtils;
+import me.googas.api.utility.RandomUtils;
 
 /** This object represents a match which was played by one ore more teams */
 public class AbstractMatch implements GuidoCatchable, Informative {
@@ -32,7 +31,7 @@ public class AbstractMatch implements GuidoCatchable, Informative {
   @NonNull @Getter private final Map<String, Map<String, Object>> information;
   @NonNull @Getter private final Set<MatchTeam> teams;
   @NonNull @Getter private MatchStatus status;
-  @Nullable @Getter private MatchTeam winners;
+  @Getter private MatchTeam winners;
 
   /**
    * Create the match
@@ -48,7 +47,7 @@ public class AbstractMatch implements GuidoCatchable, Informative {
       @NonNull Map<String, Map<String, Object>> information,
       @NonNull Set<MatchTeam> teams,
       @NonNull MatchStatus status,
-      @Nullable MatchTeam winners) {
+      MatchTeam winners) {
     this.id = id;
     this.information = information;
     this.teams = teams;
@@ -65,7 +64,7 @@ public class AbstractMatch implements GuidoCatchable, Informative {
       @NonNull Map<String, Map<String, Object>> information,
       @NonNull Set<MatchTeam> teams,
       @NonNull MatchStatus status,
-      @Nullable MatchTeam winners) {
+      MatchTeam winners) {
     this(API.getLoader().getMatches().nextMatchId(), information, teams, status, winners);
   }
 
@@ -172,7 +171,7 @@ public class AbstractMatch implements GuidoCatchable, Informative {
   }
 
   @NonNull
-  public AbstractMatch setWinners(@Nullable MatchTeam winners) {
+  public AbstractMatch setWinners(MatchTeam winners) {
     this.winners = winners;
     new MatchWinnersSetEvent(this, winners).call();
     return this;
@@ -201,7 +200,6 @@ public class AbstractMatch implements GuidoCatchable, Informative {
    *
    * @return the ladder where the match was played
    */
-  @Nullable
   public Ladder getLadder() {
     return API.getLoader().getLadders().getLadder(this.getString(null, "ladder", ""));
   }

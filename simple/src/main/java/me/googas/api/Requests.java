@@ -25,7 +25,7 @@ import me.googas.api.punishment.Punishment;
 import me.googas.api.punishment.PunishmentStatus;
 import me.googas.api.punishment.PunishmentType;
 import me.googas.api.utility.SortedStats;
-import me.googas.messaging.RequestBuilder;
+import me.googas.net.api.messages.RequestBuilder;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 

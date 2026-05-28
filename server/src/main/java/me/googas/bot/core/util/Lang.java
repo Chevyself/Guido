@@ -1,7 +1,7 @@
 package me.googas.bot.core.util;
 
-import com.starfishst.commands.jda.context.CommandContext;
-import com.starfishst.core.exceptions.ArgumentProviderException;
+import com.github.chevyself.starbox.exceptions.ArgumentProviderException;
+import com.github.chevyself.starbox.jda.context.CommandContext;
 import java.util.Map;
 import lombok.NonNull;
 import me.googas.api.lang.LocaleFile;
@@ -9,7 +9,7 @@ import me.googas.api.lang.Localized;
 import me.googas.api.matches.queue.Queueable;
 import me.googas.bot.api.Guido;
 import me.googas.bot.core.lang.GuidoLanguageHandler;
-import me.googas.commons.maps.MapBuilder;
+import me.googas.starbox.builders.MapBuilder;
 
 /** Static utilities for language */
 public class Lang {

@@ -1,11 +1,10 @@
 package me.googas.bot.core.commands;
 
-import com.starfishst.commands.jda.annotations.Command;
-import com.starfishst.commands.jda.result.Result;
-import com.starfishst.commands.jda.result.ResultType;
-import com.starfishst.core.annotations.Optional;
-import com.starfishst.core.annotations.Parent;
-import com.starfishst.core.annotations.Required;
+import com.github.chevyself.starbox.annotations.Command;
+import com.github.chevyself.starbox.annotations.Free;
+import com.github.chevyself.starbox.annotations.Parent;
+import com.github.chevyself.starbox.annotations.Required;
+import com.github.chevyself.starbox.result.Result;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -14,13 +13,13 @@ import java.util.Map;
 import lombok.NonNull;
 import me.googas.api.lang.LocaleFile;
 import me.googas.api.matches.ladder.Ladder;
+import me.googas.api.utility.Lots;
+import me.googas.api.utility.Maps;
 import me.googas.bot.core.discord.GuidoGuild;
 import me.googas.bot.core.matches.ladder.GuidoLadder;
-import me.googas.commons.Lots;
-import me.googas.commons.Pagination;
-import me.googas.commons.Strings;
-import me.googas.commons.maps.MapBuilder;
-import me.googas.commons.maps.Maps;
+import me.googas.bungee.commands.middleware.GuidoJdaPermission;
+import me.googas.starbox.Pagination;
+import me.googas.starbox.builders.MapBuilder;
 
 /** Commands for ladders */
 public class LadderCommands {
@@ -40,10 +39,9 @@ public class LadderCommands {
   public Result ladders(
       LocaleFile locale,
       GuidoGuild guild,
-      @Optional(name = "ladders.page", description = "ladders.page.desc", suggestions = "1")
-          int page) {
+      @Free(name = "ladders.page", description = "ladders.page.desc", suggestions = "1") int page) {
     if (guild.getLadders().isEmpty()) {
-      return new Result(locale.get("ladders.empty"));
+      return Result.of(locale.get("ladders.empty"));
     } else {
       Pagination<Ladder> pagination = new Pagination<>(new ArrayList<>(guild.getLadders()), 10);
       if (page < 1) {
@@ -52,28 +50,28 @@ public class LadderCommands {
         page = pagination.maxPage();
       }
       List<Ladder> ladders = pagination.getPage(page);
-      StringBuilder builder = Strings.getBuilder();
+      StringBuilder builder = new StringBuilder();
       builder.append(
           locale.get(
               "ladders.title",
               Maps.builder("page", String.valueOf(page))
-                  .append("max", String.valueOf(pagination.maxPage()))));
+                  .put("max", String.valueOf(pagination.maxPage()))));
       for (Ladder ladder : ladders) {
         builder.append(
             locale.get(
                 "ladders.ladder",
                 Maps.builder("name", ladder.getName())
-                    .append("base", String.valueOf(ladder.baseValue()))
-                    .append("players", String.valueOf(ladder.playersPerTeam()))));
+                    .put("base", String.valueOf(ladder.baseValue()))
+                    .put("players", String.valueOf(ladder.playersPerTeam()))));
       }
-      return new Result(builder.toString());
+      return Result.of(builder.toString());
     }
   }
 
+  @GuidoJdaPermission("guido.ladders.make")
   @Command(
       aliases = {"create", "make"},
-      description = "ladders.make.desc",
-      node = "guido.ladders.make")
+      description = "ladders.make.desc")
   public Result create(
       LocaleFile locale,
       GuidoGuild guild,
@@ -83,56 +81,59 @@ public class LadderCommands {
       @Required(name = "ladders.make.base", description = "ladders.make.base.desc") int base) {
     MapBuilder<String, String> placeholders =
         Maps.builder("name", name)
-            .append("players", String.valueOf(players))
-            .append("base", String.valueOf(base));
+            .put("players", String.valueOf(players))
+            .put("base", String.valueOf(base));
     if (guild.getLadder(name) != null) {
-      return new Result(ResultType.USAGE, locale.get("ladders.make.exists", placeholders));
+      return Result.of(locale.get("ladders.make.exists", placeholders));
     } else {
       guild.getLadders().add(new GuidoLadder(name, players, base, 2, new HashMap<>()));
-      return new Result(locale.get("ladders.make.success", placeholders));
+      return Result.of(locale.get("ladders.make.success", placeholders));
     }
   }
 
+  @GuidoJdaPermission("guido.ladders.del")
   @Command(
       aliases = {"delete", "del"},
-      description = "ladders.del.desc",
-      node = "guido.ladders.del")
+      description = "ladders.del.desc")
   public Result delete(
       LocaleFile locale,
       GuidoGuild guild,
       @Required(name = "ladders.del.name", description = "ladders.del.name.desc") String name) {
     Map<String, String> placeholder = Maps.singleton("name", name);
     if (guild.getLadder(name) == null) {
-      return new Result(locale.get("ladders.del.not-exists", placeholder));
+      return Result.of(locale.get("ladders.del.not-exists", placeholder));
     } else {
       guild.getLadders().removeIf(ladder -> ladder.getName().equalsIgnoreCase(name));
-      return new Result(locale.get("ladders.del.success", placeholder));
+      return Result.of(locale.get("ladders.del.success", placeholder));
     }
   }
 
-  @Command(aliases = "string", description = "ladder.edit.string", node = "guido.ladders.edit")
+  @GuidoJdaPermission("guido.ladders.edit")
+  @Command(aliases = "string", description = "ladder.edit.string")
   public Result string(
       LocaleFile locale,
       @Required(name = "ladder.edit.ladder", description = "ladder.edit.ladder.desc") Ladder ladder,
-      @Optional(name = "ladder.edit.key", description = "ladder.edit.key.desc") String key,
+      @Free(name = "ladder.edit.key", description = "ladder.edit.key.desc") String key,
       @Required(name = "ladder.edit.value", description = "ladder.edit.value.desc") String value) {
     return this.setValue(locale, ladder, key, value);
   }
 
-  @Command(aliases = "integer", description = "ladder.edit.integer", node = "guido.ladders.edit")
+  @GuidoJdaPermission("guido.ladders.edit")
+  @Command(aliases = "integer", description = "ladder.edit.integer")
   public Result integer(
       LocaleFile locale,
       @Required(name = "ladder.edit.ladder", description = "ladder.edit.ladder.desc") Ladder ladder,
-      @Optional(name = "ladder.edit.key", description = "ladder.edit.key.desc") String key,
+      @Free(name = "ladder.edit.key", description = "ladder.edit.key.desc") String key,
       @Required(name = "ladder.edit.value", description = "ladder.edit.value.desc") int value) {
     return this.setValue(locale, ladder, key, value);
   }
 
-  @Command(aliases = "double", description = "ladder.edit.double", node = "guido.ladders.edit")
+  @GuidoJdaPermission("guido.ladders.edit")
+  @Command(aliases = "double", description = "ladder.edit.double")
   public Result integer(
       LocaleFile locale,
       @Required(name = "ladder.edit.ladder", description = "ladder.edit.ladder.desc") Ladder ladder,
-      @Optional(name = "ladder.edit.key", description = "ladder.edit.key.desc") String key,
+      @Free(name = "ladder.edit.key", description = "ladder.edit.key.desc") String key,
       @Required(name = "ladder.edit.value", description = "ladder.edit.value.desc") double value) {
     return this.setValue(locale, ladder, key, value);
   }
@@ -163,7 +164,7 @@ public class LadderCommands {
     } else {
       valueString = "null";
     }
-    return new Result(
-        locale.get("ladder.edit.result", Maps.builder("key", key).append("value", valueString)));
+    return Result.of(
+        locale.get("ladder.edit.result", Maps.builder("key", key).put("value", valueString)));
   }
 }

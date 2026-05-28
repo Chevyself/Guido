@@ -1,5 +1,8 @@
 package com.starfishst.bukkit.dependencies.pgm.commands.provider;
 
+import com.github.chevyself.starbox.bukkit.context.CommandContext;
+import com.github.chevyself.starbox.bukkit.providers.type.BukkitArgumentProvider;
+import com.github.chevyself.starbox.exceptions.ArgumentProviderException;
 import com.starfishst.bukkit.Guido;
 import com.starfishst.bukkit.dependencies.pgm.PGMHostedMatch;
 import com.starfishst.bukkit.dependencies.pgm.PGMHostedPlayer;
@@ -8,13 +11,10 @@ import com.starfishst.bukkit.dependencies.pgm.listeners.matches.creation.PickTea
 import com.starfishst.bukkit.dependencies.pgm.listeners.matches.creation.TeamCreation;
 import com.starfishst.bukkit.lang.BukkitLocaleFile;
 import com.starfishst.bukkit.matches.HostedPlayer;
-import com.starfishst.commands.bukkit.context.CommandContext;
-import com.starfishst.commands.bukkit.providers.type.BukkitArgumentProvider;
-import com.starfishst.core.exceptions.ArgumentProviderException;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.NonNull;
-import me.googas.commons.maps.Maps;
+import me.googas.api.utility.Maps;
 
 public class PGMHostedPlayerProvider implements BukkitArgumentProvider<PGMHostedPlayer> {
   @Override

@@ -6,8 +6,8 @@ import me.googas.api.Requests;
 import me.googas.api.economy.AbstractBank;
 import me.googas.api.economy.AbstractRecord;
 import me.googas.api.links.LinkableInfo;
-import me.googas.messaging.json.ParamName;
-import me.googas.messaging.json.Receptor;
+import me.googas.net.sockets.json.ParamName;
+import me.googas.net.sockets.json.Receptor;
 
 public class BankReceptors {
 

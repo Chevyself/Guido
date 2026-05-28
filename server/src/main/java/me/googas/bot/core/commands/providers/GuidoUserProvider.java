@@ -1,13 +1,13 @@
 package me.googas.bot.core.commands.providers;
 
-import com.starfishst.commands.jda.context.CommandContext;
-import com.starfishst.commands.jda.providers.type.JdaArgumentProvider;
-import com.starfishst.core.exceptions.ArgumentProviderException;
+import com.github.chevyself.starbox.exceptions.ArgumentProviderException;
+import com.github.chevyself.starbox.jda.context.CommandContext;
+import com.github.chevyself.starbox.jda.providers.type.JdaArgumentProvider;
 import lombok.NonNull;
 import me.googas.api.user.UserData;
+import me.googas.api.utility.Maps;
 import me.googas.bot.core.util.Discord;
 import me.googas.bot.core.util.Lang;
-import me.googas.commons.maps.Maps;
 import net.dv8tion.jda.api.entities.User;
 
 /** Provides bot users in the arguments of a command */
@@ -21,7 +21,7 @@ public class GuidoUserProvider implements JdaArgumentProvider<UserData> {
   @Override
   public UserData fromString(@NonNull String s, @NonNull CommandContext context)
       throws ArgumentProviderException {
-    User user = context.get(s, User.class, context);
+    User user = context.getProvidersRegistry().fromString(s, User.class, context);
     UserData userData = Discord.getUser(user).getLinkedUser();
     if (userData != null) {
       return userData;

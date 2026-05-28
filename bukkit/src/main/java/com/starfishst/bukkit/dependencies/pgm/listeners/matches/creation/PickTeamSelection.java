@@ -23,15 +23,14 @@ import me.googas.api.matches.MatchStatus;
 import me.googas.api.matches.MatchTeam;
 import me.googas.api.matches.team.TeamMember;
 import me.googas.api.matches.team.TeamRole;
-import me.googas.commons.Lots;
-import me.googas.commons.RandomUtils;
-import me.googas.commons.builder.Builder;
-import me.googas.commons.maps.Maps;
-import me.googas.commons.scheduler.Countdown;
-import me.googas.commons.time.Time;
-import me.googas.commons.time.Unit;
-import me.googas.messaging.json.client.JsonClient;
-import me.googas.starbox.Starbox;
+import me.googas.api.utility.Lots;
+import me.googas.api.utility.Maps;
+import me.googas.api.utility.RandomUtils;
+import me.googas.net.sockets.json.client.JsonClient;
+import me.googas.starbox.builders.Builder;
+import me.googas.starbox.scheduler.Countdown;
+import me.googas.starbox.time.Time;
+import me.googas.starbox.time.unit.Unit;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import tc.oc.pgm.api.match.Match;
@@ -43,7 +42,7 @@ import tc.oc.pgm.teams.Team;
 public class PickTeamSelection implements TeamCreation {
 
   /** The time for a leader to pick */
-  private static final Time timeToPick = Time.fromString("1m");
+  private static final Time timeToPick = Time.parse("1m", true);
 
   /** The map of the match and it's players left to select */
   @NonNull private final Map<String, Set<HostedPlayer>> playersLeft = new HashMap<>();
@@ -348,12 +347,12 @@ public class PickTeamSelection implements TeamCreation {
     UUID uuid = this.getUuid(leader.getLink());
     this.currently.put(id, uuid);
     Countdown countdown =
-        Starbox.getScheduler()
+        Guido.getScheduler()
             .countdown(
                 PickTeamSelection.timeToPick,
                 (left) -> {
                   if (!this.isPicking(id, leader)) return;
-                  long secondsLeft = left.getValue(Unit.SECONDS);
+                  double secondsLeft = left.get(Unit.SECONDS);
                   if (secondsLeft <= 10 || secondsLeft % 5 == 0) {
                     Player player = this.getPlayer(leader.getLink());
                     if (player != null) {
@@ -361,10 +360,8 @@ public class PickTeamSelection implements TeamCreation {
                       player.sendMessage(
                           locale.get(
                               "match-making.pick.time-left",
-                              Maps.builder(
-                                      "time",
-                                      new Time(secondsLeft, Unit.SECONDS).toEffectiveString())
-                                  .append("picks", Lots.pretty(this.getParticipantsNames(id)))));
+                              Maps.builder("time", Time.of(secondsLeft, Unit.SECONDS).toString())
+                                  .put("picks", Lots.pretty(this.getParticipantsNames(id)))));
                     }
                   }
                 },

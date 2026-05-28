@@ -1,11 +1,6 @@
 package me.googas.bot.core.util;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.function.Consumer;
 import java.util.logging.Level;
 import lombok.CustomLog;
@@ -14,17 +9,16 @@ import me.googas.api.links.Linkable;
 import me.googas.api.links.LinkableType;
 import me.googas.api.links.ref.DiscordLinkable;
 import me.googas.api.user.UserData;
+import me.googas.api.utility.Lots;
+import me.googas.api.utility.Maps;
 import me.googas.bot.api.Guido;
-import me.googas.commons.Lots;
-import me.googas.commons.Validate;
-import me.googas.commons.maps.Maps;
 import net.dv8tion.jda.api.Permission;
-import net.dv8tion.jda.api.entities.GuildChannel;
 import net.dv8tion.jda.api.entities.IMentionable;
 import net.dv8tion.jda.api.entities.IPermissionHolder;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.PermissionOverride;
 import net.dv8tion.jda.api.entities.User;
+import net.dv8tion.jda.api.entities.channel.middleman.GuildChannel;
 
 /** y Static utilities for mentions */
 @CustomLog
@@ -84,7 +78,8 @@ public class Discord {
    */
   public static void removeEveryonePermissions(
       @NonNull GuildChannel channel, @NonNull Permission... ignored) {
-    PermissionOverride override = channel.getPermissionOverride(channel.getGuild().getPublicRole());
+    PermissionOverride override =
+        channel.getPermissionContainer().getPermissionOverride(channel.getGuild().getPublicRole());
     if (override != null) {
       Set<Permission> toRemove = Lots.set(Permission.values());
       Set<Permission> toAllow = new HashSet<>();
@@ -100,12 +95,12 @@ public class Discord {
       }
       override
           .getManager()
-          .setDeny(toRemove)
+          .setDenied(toRemove)
           .queue(
               permissionOverride ->
                   permissionOverride
                       .getManager()
-                      .setAllow(toAllow)
+                      .setAllowed(toAllow)
                       .queue(ignoredOverride -> {}, Discord.exceptionConsumer()),
               Discord.exceptionConsumer());
     }
@@ -119,7 +114,7 @@ public class Discord {
    */
   public static void removeAllPermission(
       @NonNull GuildChannel channel, @NonNull Permission... ignored) {
-    for (PermissionOverride override : channel.getPermissionOverrides()) {
+    for (PermissionOverride override : channel.getPermissionContainer().getPermissionOverrides()) {
       if (override.getPermissionHolder() != null
           && !override.getPermissionHolder().equals(channel.getGuild().getPublicRole())) {
         override.delete().queue(aVoid -> {}, Discord.exceptionConsumer());
@@ -159,11 +154,11 @@ public class Discord {
       @NonNull IPermissionHolder holder,
       @NonNull Collection<Permission> permissions,
       Consumer<Void> success) {
-    PermissionOverride override = channel.getPermissionOverride(holder);
+    PermissionOverride override = channel.getPermissionContainer().getPermissionOverride(holder);
     if (override != null) {
       override
           .getManager()
-          .setAllow(permissions)
+          .setAllowed(permissions)
           .queue(
               permOverride -> {
                 if (success != null) {
@@ -173,12 +168,13 @@ public class Discord {
               Discord.exceptionConsumer());
     } else {
       channel
-          .createPermissionOverride(holder)
+          .getPermissionContainer()
+          .upsertPermissionOverride(holder)
           .queue(
               newOverride ->
                   newOverride
                       .getManager()
-                      .setAllow(permissions)
+                      .setAllowed(permissions)
                       .queue(
                           permOverride -> {
                             if (success != null) {
@@ -201,24 +197,24 @@ public class Discord {
   @NonNull
   public static DiscordLinkable getUser(long id) {
     Linkable linkable =
-        Validate.notNullOrGet(
-            Guido.getHandlers()
-                .getLoader()
-                .getLinks()
-                .getLink(LinkableType.DISCORD, Maps.singleton("id", id)),
-            () ->
-                new Linkable(
-                        LinkableType.DISCORD,
-                        Maps.singleton("id", id),
-                        new HashMap<>(),
-                        new HashMap<>(),
-                        new HashSet<>(),
-                        new HashMap<>(),
-                        new HashMap<>(),
-                        new UserData(new HashMap<>()).cache().getId())
-                    .cache());
-    if (linkable != null) return linkable.requireDiscordRef();
-    throw new IllegalStateException("Could not getId linkable for user " + id);
+        Optional.ofNullable(
+                Guido.getHandlers()
+                    .getLoader()
+                    .getLinks()
+                    .getLink(LinkableType.DISCORD, Maps.singleton("id", id)))
+            .orElseGet(
+                () ->
+                    new Linkable(
+                            LinkableType.DISCORD,
+                            Maps.singleton("id", id),
+                            new HashMap<>(),
+                            new HashMap<>(),
+                            new HashSet<>(),
+                            new HashMap<>(),
+                            new HashMap<>(),
+                            new UserData(new HashMap<>()).cache().getId())
+                        .cache());
+    return linkable.requireDiscordRef();
   }
 
   @NonNull

@@ -4,7 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 import lombok.NonNull;
 import me.googas.api.ValuesMap;
-import me.googas.commons.maps.Maps;
+import me.googas.api.utility.Maps;
 
 /** An implementation of {@link ValuesMap} */
 public class GuidoValuesMap implements ValuesMap {

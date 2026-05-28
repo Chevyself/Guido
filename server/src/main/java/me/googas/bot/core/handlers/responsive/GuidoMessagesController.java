@@ -1,16 +1,16 @@
 package me.googas.bot.core.handlers.responsive;
 
-import com.starfishst.commands.jda.utils.responsive.ResponsiveMessage;
-import com.starfishst.commands.jda.utils.responsive.controller.ResponsiveMessageController;
-import java.util.Collection;
 import java.util.HashSet;
+import java.util.Optional;
 import java.util.Set;
 import lombok.NonNull;
 import me.googas.bot.api.Guido;
 import me.googas.bot.api.events.responsive.ResponsiveMessageUnloadedEvent;
 import me.googas.bot.core.handlers.GuidoHandler;
-import me.googas.commons.events.ListenPriority;
-import me.googas.commons.events.Listener;
+import me.googas.starbox.events.ListenPriority;
+import me.googas.starbox.events.Listener;
+import me.googas.starbox.jda.responsive.ResponsiveMessage;
+import me.googas.starbox.jda.responsive.ResponsiveMessageController;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.events.message.react.MessageReactionAddEvent;
@@ -54,17 +54,22 @@ public class GuidoMessagesController implements ResponsiveMessageController, Gui
   }
 
   @Override
-  public boolean acceptBots() {
-    return false;
+  public @NonNull Optional<? extends ResponsiveMessage> getResponsiveMessage(
+      Guild guild, long messageId) {
+    if (guild != null) {
+      ResponsiveMessage message =
+          Guido.getHandlers().getDiscordLoader().getGuild(guild.getIdLong()).getMessage(messageId);
+      return Optional.of(message);
+    } else {
+      return this.messages.stream().filter(message -> message.getId() == messageId).findFirst();
+    }
   }
 
   @Override
-  public @NonNull Collection<ResponsiveMessage> getResponsiveMessages(Guild guild) {
-    if (guild != null) {
-      return new HashSet<>(
-          Guido.getHandlers().getDiscordLoader().getGuild(guild.getIdLong()).getMessages());
-    } else {
-      return this.messages;
-    }
+  public void removeMessage(Guild guild, @NonNull ResponsiveMessage message) {}
+
+  @Override
+  public boolean acceptBots() {
+    return false;
   }
 }

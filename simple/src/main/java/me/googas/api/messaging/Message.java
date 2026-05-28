@@ -5,7 +5,7 @@ import me.googas.api.Informative;
 import me.googas.api.links.Linkable;
 import me.googas.api.links.LinkableInfo;
 import me.googas.api.matches.team.Team;
-import me.googas.commons.cache.Catchable;
+import me.googas.net.cache.Catchable;
 
 /**
  * A message is a notification a chat message and more. It can be, for example, an invitation for a

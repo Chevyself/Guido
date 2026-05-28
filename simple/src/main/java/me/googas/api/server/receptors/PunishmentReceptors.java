@@ -9,8 +9,8 @@ import me.googas.api.loader.PunishmentLoader;
 import me.googas.api.punishment.Punishment;
 import me.googas.api.punishment.PunishmentStatus;
 import me.googas.api.punishment.PunishmentType;
-import me.googas.messaging.json.ParamName;
-import me.googas.messaging.json.Receptor;
+import me.googas.net.sockets.json.ParamName;
+import me.googas.net.sockets.json.Receptor;
 
 public class PunishmentReceptors {
 

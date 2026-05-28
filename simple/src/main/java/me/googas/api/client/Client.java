@@ -1,28 +1,29 @@
 package me.googas.api.client;
 
 import java.io.IOException;
-import java.net.Socket;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.Set;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.Setter;
 import lombok.experimental.Delegate;
-import me.googas.annotations.Nullable;
 import me.googas.api.Requests;
 import me.googas.api.client.receptors.SimpleReceptors;
 import me.googas.api.utility.Adapters;
-import me.googas.commons.Lots;
-import me.googas.messaging.json.client.JsonClient;
+import me.googas.net.sockets.json.client.JsonClient;
 
 /** The client used by implementation to connect with Guido */
 public class Client {
 
   /** An static instance of client to use */
-  @Nullable @Getter @Setter private static Client instance;
+  @Getter @Setter private static Client instance;
 
   /** The receptors that the client is using */
-  @NonNull @Setter private Set<Object> receptors = Lots.set(new SimpleReceptors(this));
+  @NonNull @Setter
+  private Set<Object> receptors =
+      new HashSet<>(Collections.singletonList(new SimpleReceptors(this)));
 
   /** The ip of the server of the bot */
   @NonNull @Getter @Setter private String ip;
@@ -46,9 +47,6 @@ public class Client {
 
   /** The port of the server ofo the bot */
   @Getter @Setter private int port;
-  /** The handler for throwable */
-  @NonNull @Getter @Setter
-  private SimpleThrowableHandler handler = new SimpleThrowableHandler(this);
   /** The token that will give access to read or writing */
   @NonNull @Getter @Setter private String token;
   /** The client to connect with the bot */
@@ -67,6 +65,18 @@ public class Client {
     this.port = port;
   }
 
+  private void connect() throws IOException {
+    if (this.connection != null && !this.connection.isClosed()) {
+      this.connection.close();
+      this.connection = null;
+    }
+    this.connection =
+        JsonClient.join(this.ip, this.port)
+            .setGson(Adapters.buildClient())
+            .addReceptors(this.receptors)
+            .start();
+  }
+
   /**
    * Connects the client with the bot
    *
@@ -75,10 +85,7 @@ public class Client {
    */
   @NonNull
   public JsonClient startConnection() throws IOException {
-    this.connection =
-        new JsonClient(new Socket(this.ip, this.port), this.handler, Adapters.buildClient(), 5000);
-    this.connection.addReceptors(this.receptors.toArray());
-    this.connection.start();
+    connect();
     Requests.Server.auth(this.token)
         .send(
             this.connection,
@@ -128,7 +135,6 @@ public class Client {
     void addReceptors(Object... receptors);
   }
 
-  @Nullable
   public JsonClient getConnection() {
     if (this.connection != null && this.connection.isClosed()) {
       this.connection = null;
@@ -143,8 +149,11 @@ public class Client {
    */
   public void addReceptors(@NonNull Object... receptors) {
     this.receptors.addAll(Arrays.asList(receptors));
-    JsonClient connection = this.getConnection();
-    if (connection != null) connection.addReceptors(receptors);
+    try {
+      this.connect();
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
   }
 
   /** Disconnects the client */

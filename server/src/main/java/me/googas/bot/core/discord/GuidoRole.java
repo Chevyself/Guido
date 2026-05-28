@@ -8,8 +8,8 @@ import me.googas.api.GuidoCatchable;
 import me.googas.api.permissions.Permissible;
 import me.googas.api.permissions.PermissionStack;
 import me.googas.bot.api.events.data.role.BotRoleUnloadedEvent;
-import me.googas.commons.time.Time;
-import me.googas.commons.time.Unit;
+import me.googas.starbox.time.Time;
+import me.googas.starbox.time.unit.Unit;
 
 /**
  * This object represents the data for a role. Roles can be permissible which makes them have their
@@ -48,7 +48,7 @@ public class GuidoRole implements GuidoCatchable, Permissible {
 
   @Override
   public @NonNull Time getToRemove() {
-    return new Time(3, Unit.MINUTES);
+    return Time.of(3, Unit.MINUTES);
   }
 
   @Override

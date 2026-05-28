@@ -1,8 +1,8 @@
 package me.googas.bot.core.commands.providers;
 
-import com.starfishst.commands.jda.context.CommandContext;
-import com.starfishst.commands.jda.providers.type.JdaArgumentProvider;
-import com.starfishst.core.exceptions.ArgumentProviderException;
+import com.github.chevyself.starbox.exceptions.ArgumentProviderException;
+import com.github.chevyself.starbox.jda.context.CommandContext;
+import com.github.chevyself.starbox.jda.providers.type.JdaArgumentProvider;
 import lombok.NonNull;
 import me.googas.api.links.ref.DiscordLinkable;
 import me.googas.bot.core.util.Discord;
@@ -18,7 +18,7 @@ public class DiscordLinkableProvider implements JdaArgumentProvider<DiscordLinka
   @Override
   public @NonNull DiscordLinkable fromString(
       @NonNull String s, @NonNull CommandContext commandContext) throws ArgumentProviderException {
-    User user = commandContext.get(s, User.class, commandContext);
+    User user = commandContext.getProvidersRegistry().fromString(s, User.class, commandContext);
     return Discord.getUser(user);
   }
 }

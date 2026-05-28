@@ -1,7 +1,6 @@
 package me.googas.api.matches;
 
 import lombok.NonNull;
-import me.googas.annotations.Nullable;
 import me.googas.api.API;
 
 /** This object represents the information of a match */
@@ -29,7 +28,6 @@ public class MatchInfo {
    * @deprecated use {@link #getMatch()}
    * @return the match
    */
-  @Nullable
   public AbstractMatch toMatch() {
     return this.getMatch();
   }
@@ -49,7 +47,6 @@ public class MatchInfo {
    *
    * @return the match if found null otherwise
    */
-  @Nullable
   public AbstractMatch getMatch() {
     return API.getLoader().getMatches().getMatch(this.id);
   }

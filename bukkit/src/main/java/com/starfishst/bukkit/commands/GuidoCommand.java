@@ -1,10 +1,9 @@
 package com.starfishst.bukkit.commands;
 
 import lombok.NonNull;
-import me.googas.starbox.StarboxCommand;
 
 /** A command of guido */
-public interface GuidoCommand extends StarboxCommand {
+public interface GuidoCommand {
 
   /**
    * Set whether the command is enabled

@@ -1,8 +1,8 @@
 package com.starfishst.bukkit.dependencies.pgm.listeners.groups;
 
+import com.github.chevyself.starbox.bukkit.utils.BukkitUtils;
 import com.starfishst.bukkit.Guido;
 import com.starfishst.bukkit.modules.GroupsHandler;
-import com.starfishst.commands.bukkit.utils.BukkitUtils;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -11,7 +11,7 @@ import lombok.NonNull;
 import me.googas.api.permissions.AbstractPermission;
 import me.googas.api.permissions.Group;
 import me.googas.api.permissions.PermissionStack;
-import me.googas.commons.Lots;
+import me.googas.api.utility.Lots;
 import me.googas.starbox.modules.Module;
 import org.bukkit.Bukkit;
 import org.bukkit.permissions.Permission;
@@ -45,7 +45,6 @@ public class PGMGroupsHandler implements Module {
    */
   @NonNull
   public PGMConfig.Group toPGM(@NonNull Group group) {
-    Map<String, Object> preferences = group.getInformation("global");
     return new PGMConfig.Group(
         group.getName().toLowerCase().replace(" ", "-"),
         new PGMConfig.Flair(
@@ -71,7 +70,7 @@ public class PGMGroupsHandler implements Module {
   public String getComponent(@NonNull Group group, @NonNull String key) {
     String string = group.getString(null, key, "");
     if (string == null || string.isEmpty()) return null;
-    return BukkitUtils.build(string);
+    return BukkitUtils.format(string);
   }
 
   /**

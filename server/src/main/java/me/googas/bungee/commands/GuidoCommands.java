@@ -1,35 +1,37 @@
 package me.googas.bungee.commands;
 
-import com.starfishst.commands.bungee.annotations.Command;
-import com.starfishst.commands.bungee.context.CommandContext;
-import com.starfishst.commands.bungee.result.Result;
-import com.starfishst.core.annotations.Parent;
+import com.github.chevyself.starbox.annotations.Command;
+import com.github.chevyself.starbox.annotations.Parent;
+import com.github.chevyself.starbox.bungee.context.CommandContext;
+import com.github.chevyself.starbox.common.CommandPermission;
+import com.github.chevyself.starbox.result.Result;
 import me.googas.bungee.GuidoBungee;
 
 /** Commands for reloading guido */
 public class GuidoCommands {
 
   @Parent
-  @Command(aliases = "guido", permission = "guido.reload")
+  @CommandPermission("guido.reload")
+  @Command(aliases = "guido")
   public Result guido(CommandContext context) {
     this.config();
     this.servers(context);
-    return new Result("&aEverything has been reloaded");
+    return Result.of("&aEverything has been reloaded");
   }
 
-  @Command(aliases = "config", permission = "guido.reload.config")
+  @Command(aliases = "config")
   public Result config() {
     GuidoBungee.validated().loadConfiguration();
-    return new Result("&aConfiguration has been reloaded");
+    return Result.of("&aConfiguration has been reloaded");
   }
 
-  @Command(aliases = "server", permission = "guido.reload.server")
+  @Command(aliases = "server")
   public Result servers(CommandContext context) {
     if (context.hasFlag("-c")) {
       this.config();
-      return new Result("&aConfiguration and servers have been reloaded");
+      return Result.of("&aConfiguration and servers have been reloaded");
     }
     GuidoBungee.validated().loadServers();
-    return new Result("&aServers have been reloaded");
+    return Result.of("&aServers have been reloaded");
   }
 }

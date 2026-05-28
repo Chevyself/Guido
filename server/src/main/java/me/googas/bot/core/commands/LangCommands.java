@@ -1,12 +1,10 @@
 package me.googas.bot.core.commands;
 
-import com.starfishst.commands.jda.annotations.Command;
-import com.starfishst.commands.jda.context.CommandContext;
-import com.starfishst.commands.jda.result.Result;
+import com.github.chevyself.starbox.annotations.Command;
+import com.github.chevyself.starbox.jda.context.CommandContext;
+import com.github.chevyself.starbox.result.Result;
 import lombok.NonNull;
 import me.googas.bot.api.Guido;
-import me.googas.bot.core.handlers.responsive.GuidoMessagesController;
-import me.googas.bot.core.handlers.responsive.lang.LangChangeResponsiveMessage;
 import me.googas.bot.core.lang.GuidoLanguageHandler;
 import net.dv8tion.jda.api.entities.User;
 
@@ -18,14 +16,15 @@ public class LangCommands {
 
   @Command(aliases = "lang", description = "lang.desc")
   public Result lang(CommandContext context, User user) {
-    return new Result(
-        this.handler.getFile(context).get("lang.change"),
-        msg -> {
-          LangChangeResponsiveMessage responsiveMessage =
-              new LangChangeResponsiveMessage(user, msg);
-          Guido.getHandlers()
-              .getHandler(GuidoMessagesController.class)
-              .addMessage(responsiveMessage);
-        });
+    /*return Result.of(
+    this.handler.getFile(context).get("lang.change"),
+    msg -> {
+      LangChangeResponsiveMessage responsiveMessage =
+          new LangChangeResponsiveMessage(user, msg);
+      Guido.getHandlers()
+          .getHandler(GuidoMessagesController.class)
+          .addMessage(responsiveMessage);
+    });*/
+    return null; // TODO support msg callback
   }
 }

@@ -6,17 +6,16 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 import lombok.NonNull;
-import me.googas.annotations.Nullable;
 import me.googas.api.permissions.AbstractPermission;
 import me.googas.api.permissions.Group;
 import me.googas.api.permissions.PermissionStack;
-import me.googas.commons.Lots;
+import me.googas.api.utility.Lots;
 
 public class Permissions {
 
   @NonNull
   public static Map<String, Boolean> getChildren(
-      @NonNull Group group, @Nullable Collection<Group> parents, @NonNull String context) {
+      @NonNull Group group, Collection<Group> parents, @NonNull String context) {
     parents = parents == null ? new ArrayList<>() : parents;
     Map<String, Boolean> children = new HashMap<>();
     Set<PermissionStack> stacks =

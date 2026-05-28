@@ -4,7 +4,6 @@ import lombok.Getter;
 import lombok.NonNull;
 import me.googas.api.events.GuidoEvent;
 import me.googas.api.punishment.Punishment;
-import me.googas.commons.builder.ToStringBuilder;
 
 /** An event which has a punishment related to it */
 public class PunishmentEvent implements GuidoEvent {
@@ -17,6 +16,6 @@ public class PunishmentEvent implements GuidoEvent {
 
   @Override
   public String toString() {
-    return new ToStringBuilder(this).append("punishment", this.punishment).build();
+    return "PunishmentEvent{" + "punishment=" + punishment + '}';
   }
 }

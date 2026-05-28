@@ -10,8 +10,7 @@ import java.util.HashMap;
 import java.util.List;
 import lombok.Getter;
 import lombok.NonNull;
-import me.googas.annotations.Nullable;
-import me.googas.commons.CoreFiles;
+import me.googas.starbox.CoreFiles;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -25,7 +24,6 @@ public class GuidoConfiguration {
   /** The token to connect with the bot */
   @NonNull @Getter private final String token;
 
-  @NonNull @Getter private final GuidoCurrency currency;
   /** The set of enabled commands */
   @NonNull @Getter private final List<String> commands;
   /** The listener settings of the bot */
@@ -34,27 +32,24 @@ public class GuidoConfiguration {
   public GuidoConfiguration(
       @NonNull String context,
       @NonNull String token,
-      @NonNull GuidoCurrency currency,
       @NonNull List<String> commands,
       @NonNull List<ModuleSettings> modulesSettings) {
     this.context = context;
     this.token = token;
-    this.currency = currency;
     this.commands = commands;
     this.modulesSettings = modulesSettings;
   }
 
   public GuidoConfiguration() {
-    this("", "", new GuidoCurrency(), new ArrayList<>(), new ArrayList<>());
+    this("", "", new ArrayList<>(), new ArrayList<>());
   }
 
   @NonNull
-  public static GuidoConfiguration load(@Nullable ConfigurationSection section) {
+  public static GuidoConfiguration load(ConfigurationSection section) {
     if (section == null) return new GuidoConfiguration();
     return new GuidoConfiguration(
         section.getString("context", "Bukkit"),
         section.getString("token", "none"),
-        GuidoCurrency.load(section.getConfigurationSection("currency")),
         section.getStringList("commands"),
         ModuleSettings.loadAll(section.getConfigurationSection("modules")));
   }

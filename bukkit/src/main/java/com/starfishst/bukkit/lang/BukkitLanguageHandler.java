@@ -1,21 +1,20 @@
 package com.starfishst.bukkit.lang;
 
+import com.github.chevyself.starbox.bukkit.commands.BukkitCommand;
+import com.github.chevyself.starbox.bukkit.context.CommandContext;
+import com.github.chevyself.starbox.bukkit.messages.BukkitMessagesProvider;
 import com.starfishst.bukkit.modules.GuidoModule;
-import com.starfishst.commands.bukkit.AnnotatedCommand;
-import com.starfishst.commands.bukkit.ParentCommand;
-import com.starfishst.commands.bukkit.context.CommandContext;
-import com.starfishst.commands.bukkit.messages.MessagesProvider;
-import com.starfishst.core.arguments.Argument;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import lombok.NonNull;
-import me.googas.commons.Lots;
-import me.googas.commons.maps.MapBuilder;
-import me.googas.commons.maps.Maps;
+import me.googas.api.utility.Lots;
+import me.googas.api.utility.Maps;
+import me.googas.starbox.builders.MapBuilder;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
@@ -25,7 +24,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
 /** Handles the language for messages */
-public class BukkitLanguageHandler implements GuidoModule, MessagesProvider {
+public class BukkitLanguageHandler implements GuidoModule, BukkitMessagesProvider {
 
   /** The loaded locale files */
   @NonNull private final List<BukkitLocaleFile> files = new ArrayList<>();
@@ -60,11 +59,11 @@ public class BukkitLanguageHandler implements GuidoModule, MessagesProvider {
    * @return the placeholders as a builder
    */
   @NonNull
-  private MapBuilder<String, String> getCommandPlaceholders(@NonNull AnnotatedCommand cmd) {
+  private MapBuilder<String, String> getCommandPlaceholders(@NonNull BukkitCommand cmd) {
     return Maps.builder("name", cmd.getName())
-        .append("aliases", Lots.pretty(cmd.getAliases()))
-        .append("description", cmd.getDescription())
-        .append("permission", cmd.getDescription());
+        .put("aliases", Lots.pretty(cmd.getAliases()))
+        .put("description", cmd.getExecutor().getDescription())
+        .put("permission", cmd.getPermission());
   }
 
   /**
@@ -81,19 +80,6 @@ public class BukkitLanguageHandler implements GuidoModule, MessagesProvider {
       }
     }
     return this.getFile("en");
-  }
-
-  /**
-   * Get the placeholders for an argument
-   *
-   * @param argument the argument to getId the placeholders to
-   * @return the placeholders
-   */
-  @NonNull
-  private MapBuilder<String, String> getArgumentPlaceholders(@NonNull Argument<?> argument) {
-    return Maps.builder("name", argument.getName())
-        .append("description", argument.getDescription())
-        .append("position", String.valueOf(argument.getPosition()));
   }
 
   /**
@@ -174,8 +160,9 @@ public class BukkitLanguageHandler implements GuidoModule, MessagesProvider {
   }
 
   @Override
-  public @NonNull String invalidTime(@NonNull String s, @NonNull CommandContext context) {
-    return this.getFile(context).get("invalid.time", Maps.singleton("string", s));
+  public @NonNull String invalidDuration(
+      @NonNull String s, @NonNull CommandContext commandContext) {
+    return this.getFile(commandContext).get("invalid.duration", Maps.singleton("string", s));
   }
 
   @Override
@@ -184,25 +171,13 @@ public class BukkitLanguageHandler implements GuidoModule, MessagesProvider {
     return this.getFile(context)
         .get(
             "missing-argument",
-            Maps.builder("name", s1)
-                .append("description", s1)
-                .append("position", String.valueOf(i)));
+            Maps.builder("name", s1).put("description", s1).put("position", String.valueOf(i)));
   }
 
   @Override
-  public @NonNull String missingStrings(
-      @NonNull String s,
-      @NonNull String s1,
-      int i,
-      int i1,
-      int i2,
-      @NonNull CommandContext context) {
-    return this.getFile(context)
-        .get(
-            "missing-argument",
-            Maps.builder("name", s1)
-                .append("description", s1)
-                .append("position", String.valueOf(i)));
+  public @NonNull String cooldown(
+      @NonNull CommandContext commandContext, @NonNull Duration duration) {
+    return this.getFile(commandContext).get("cooldown");
   }
 
   @Override
@@ -211,8 +186,8 @@ public class BukkitLanguageHandler implements GuidoModule, MessagesProvider {
   }
 
   @Override
-  public @NonNull String playersOnly(@NonNull CommandContext commandContext) {
-    return this.getFile(commandContext).get("player-only");
+  public @NonNull String onlyPlayers(@NonNull CommandContext commandContext) {
+    return this.getFile(commandContext).get("only-players");
   }
 
   @Override
@@ -226,8 +201,8 @@ public class BukkitLanguageHandler implements GuidoModule, MessagesProvider {
         .get(
             "help-topic.plugin.short",
             Maps.builder("name", plugin.getName())
-                .append("description", plugin.getDescription().getDescription())
-                .append("version", plugin.getDescription().getVersion()));
+                .put("description", plugin.getDescription().getDescription())
+                .put("version", plugin.getDescription().getVersion()));
   }
 
   @Override
@@ -237,101 +212,44 @@ public class BukkitLanguageHandler implements GuidoModule, MessagesProvider {
         .get(
             "help-topic.plugin.full",
             Maps.builder("name", plugin.getName())
-                .append("description", plugin.getDescription().getDescription())
-                .append("version", plugin.getDescription().getVersion())
-                .append("short", s)
-                .append("commands", s1));
+                .put("description", plugin.getDescription().getDescription())
+                .put("version", plugin.getDescription().getVersion())
+                .put("short", s)
+                .put("commands", s1));
   }
 
   @Override
-  public @NonNull String helpTopicCommand(@NonNull AnnotatedCommand cmd) {
-    return this.getDefault().get("help-topic.plugin.command", this.getCommandPlaceholders(cmd));
-  }
-
-  @Override
-  public @NonNull String commandShortText(@NonNull AnnotatedCommand cmd) {
-    return this.getDefault().get("help-topic.command.short", this.getCommandPlaceholders(cmd));
-  }
-
-  @Override
-  public @NonNull String commandName(AnnotatedCommand cmd) {
-    return this.getDefault().get("help-topic.command.name", this.getCommandPlaceholders(cmd));
-  }
-
-  @Override
-  public @NonNull String parentCommandFull(
-      @NonNull ParentCommand parentCommand,
-      @NonNull String s,
-      @NonNull String s1,
-      @NonNull String s2) {
+  public @NonNull String helpTopicCommand(@NonNull BukkitCommand BukkitCommand) {
     return this.getDefault()
-        .get(
-            "help-topic.parent.full",
-            this.getCommandPlaceholders(parentCommand)
-                .append("short", s)
-                .append("children", s1)
-                .append("arguments", s2));
+        .get("help-topic.plugin.command", this.getCommandPlaceholders(BukkitCommand));
   }
 
   @Override
-  public @NonNull String parentCommandShort(
-      @NonNull ParentCommand parentCommand, @NonNull String s) {
+  public @NonNull String commandShortText(@NonNull BukkitCommand BukkitCommand) {
     return this.getDefault()
-        .get("help-topic.parent.short", this.getCommandPlaceholders(parentCommand));
+        .get("help-topic.command.short", this.getCommandPlaceholders(BukkitCommand));
   }
 
   @Override
-  public @NonNull String commandFull(
-      @NonNull AnnotatedCommand annotatedCommand, @NonNull String s, @NonNull String s1) {
+  public @NonNull String commandName(BukkitCommand BukkitCommand, String s) {
     return this.getDefault()
-        .get(
-            "help-topic.command.full",
-            this.getCommandPlaceholders(annotatedCommand).append("short", s).append("usage", s1));
+        .get("help-topic.command.name", this.getCommandPlaceholders(BukkitCommand));
   }
 
   @Override
-  public @NonNull String childCommandName(
-      @NonNull AnnotatedCommand cmd, @NonNull ParentCommand parentCommand) {
-    return this.getDefault().get("help-topic.parent.child.name", this.getCommandPlaceholders(cmd));
-  }
-
-  @Override
-  public @NonNull String childCommandShort(
-      @NonNull AnnotatedCommand annotatedCommand, @NonNull ParentCommand parentCommand) {
+  public @NonNull String commandFullText(@NonNull BukkitCommand BukkitCommand, @NonNull String s) {
     return this.getDefault()
-        .get("help-topic.parent.child.short", this.getCommandPlaceholders(annotatedCommand));
-  }
-
-  @Override
-  public @NonNull String childCommandFull(
-      @NonNull AnnotatedCommand annotatedCommand,
-      @NonNull ParentCommand parentCommand,
-      @NonNull String s,
-      @NonNull String s1) {
-    return this.getDefault()
-        .get("help-topic.parent.child.full", this.getCommandPlaceholders(annotatedCommand));
-  }
-
-  @Override
-  public @NonNull String requiredArgumentHelp(@NonNull Argument<?> argument) {
-    return this.getDefault()
-        .get("help-topic.arguments.required", this.getArgumentPlaceholders(argument));
-  }
-
-  @Override
-  public @NonNull String optionalArgumentHelp(@NonNull Argument<?> argument) {
-    return this.getDefault()
-        .get("help-topic.arguments.optional", this.getArgumentPlaceholders(argument));
+        .get("help-topic.command.full", this.getCommandPlaceholders(BukkitCommand).put("usage", s));
   }
 
   @Override
   public @NonNull String childCommand(
-      @NonNull AnnotatedCommand annotatedCommand, @NonNull ParentCommand parentCommand) {
+      @NonNull BukkitCommand BukkitCommand, @NonNull BukkitCommand BukkitCommand1) {
     return this.getDefault()
         .get(
             "help-topic.plugin.child",
-            this.getCommandPlaceholders(annotatedCommand)
-                .append("parent-name", parentCommand.getName()));
+            this.getCommandPlaceholders(BukkitCommand)
+                .put("parent-name", BukkitCommand1.getName()));
   }
 
   @Override

@@ -1,0 +1,9 @@
+[submodule "legacy-starbox"]
+	path = legacy-starbox
+	url = git@github.com:Chevyself/legacy-starbox.git
+[submodule "PGM"]
+	path = PGM
+	url = git@github.com:GoogasDev/PGM.git
+[submodule "Events"]
+	path = Events
+	url = git@github.com:GoogasDev/Events.git

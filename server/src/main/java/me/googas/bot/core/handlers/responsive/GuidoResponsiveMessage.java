@@ -1,7 +1,7 @@
 package me.googas.bot.core.handlers.responsive;
 
-import com.starfishst.commands.jda.utils.responsive.ResponsiveMessage;
 import lombok.NonNull;
+import me.googas.starbox.jda.responsive.ResponsiveMessage;
 import net.dv8tion.jda.api.JDA;
 
 /** A responsive message made for the guido bot */

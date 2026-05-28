@@ -13,34 +13,18 @@
     <artifactId>simple</artifactId>
     <version>1.0.0</version>
 
-    <repositories>
-        <!-- JDA Repository -->
-        <repository>
-            <id>jcenter</id>
-            <name>jcenter-bintray</name>
-            <url>https://jcenter.bintray.com/ </url>
-        </repository>
-    </repositories>
-
     <dependencies>
         <!-- JDA dependency -->
         <dependency>
             <groupId>net.dv8tion</groupId>
             <artifactId>JDA</artifactId>
-            <version>4.1.1_137</version>
-            <scope>provided</scope>
+            <version>6.4.1</version>
         </dependency>
-        <!-- Commons dependency -->
+        <!-- Commons -->
         <dependency>
-            <groupId>me.googas.commons</groupId>
-            <artifactId>commons</artifactId>
-            <version>1.0.0_1</version>
-        </dependency>
-        <!-- Dependency to Commons-Messaging -->
-        <dependency>
-            <groupId>me.googas.messaging</groupId>
-            <artifactId>Commons-Messaging</artifactId>
-            <version>1.0.13-SNAPSHOT</version>
+            <groupId>me.googas.starbox</groupId>
+            <artifactId>core</artifactId>
+            <version>1.0.0</version>
         </dependency>
         <!-- Gson -->
         <dependency>

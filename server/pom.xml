@@ -65,6 +65,13 @@
             <resource>
                 <directory>src/main/resources</directory>
                 <filtering>true</filtering>
+                <excludes>
+                    <exclude>lang/**/*.properties</exclude>
+                </excludes>
+            </resource>
+            <resource>
+                <directory>src/main/resources/lang</directory>
+                <filtering>false</filtering>
             </resource>
         </resources>
     </build>
@@ -76,64 +83,42 @@
             <name>jcenter-bintray</name>
             <url>https://jcenter.bintray.com/ </url>
         </repository>
+        <repository>
+            <id>jitpack.io</id>
+            <url>https://jitpack.io</url>
+        </repository>
+        <repository>
+            <id>bungeecord-repo</id>
+            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+        </repository>
     </repositories>
 
     <dependencies>
-        <!-- JDA dependency -->
-        <dependency>
-            <groupId>net.dv8tion</groupId>
-            <artifactId>JDA</artifactId>
-            <version>4.1.1_137</version>
-        </dependency>
-        <!-- Dependency to the bungee api -->
         <dependency>
             <groupId>net.md-5</groupId>
             <artifactId>bungeecord-api</artifactId>
-            <version>1.16-R0.3</version>
+            <version>1.21-R0.4</version>
             <type>jar</type>
             <scope>provided</scope>
         </dependency>
-        <!-- Dependency to the bungee chat api -->
         <dependency>
             <groupId>net.md-5</groupId>
-            <artifactId>bungeecord-chat</artifactId>
-            <version>1.16-R0.4</version>
-            <type>jar</type>
+            <artifactId>bungeecord-api</artifactId>
+            <version>1.21-R0.4</version>
+            <type>javadoc</type>
             <scope>provided</scope>
         </dependency>
         <!-- Command framework JDA -->
         <dependency>
-            <groupId>com.starfishst.commands.JDA</groupId>
+            <groupId>com.github.Chevyself.starbox-commands</groupId>
             <artifactId>jda</artifactId>
-            <version>1.0.0_1</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>me.googas.commons</groupId>
-                    <artifactId>commons</artifactId>
-                </exclusion>
-            </exclusions>
+            <version>1f35b847fb</version>
         </dependency>
         <!-- Command framework Bungee -->
         <dependency>
-            <groupId>com.starfishst.commands.bungee</groupId>
+            <groupId>com.github.Chevyself.starbox-commands</groupId>
             <artifactId>bungee</artifactId>
-            <version>1.0.0_0</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>me.googas.commons</groupId>
-                    <artifactId>commons</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>com.starfishst.commands.core</groupId>
-                    <artifactId>core</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-        <!-- Dependency to simple -->
-        <dependency>
-            <groupId>com.starfishst.guido</groupId>
-            <artifactId>simple</artifactId>
-            <version>1.0.0</version>
+            <version>1f35b847fb</version>
         </dependency>
         <!-- Mongo dependency -->
         <dependency>
@@ -141,11 +126,23 @@
             <artifactId>mongo-java-driver</artifactId>
             <version>3.12.7</version>
         </dependency>
+        <!-- Starbox JDA -->
         <dependency>
+            <groupId>me.googas.starbox</groupId>
+            <artifactId>jda</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+        <!--<dependency>
             <groupId>net.sf.trove4j</groupId>
             <artifactId>core</artifactId>
             <version>3.1.0</version>
             <scope>provided</scope>
+        </dependency>-->
+        <dependency>
+            <groupId>com.starfishst.guido</groupId>
+            <artifactId>simple</artifactId>
+            <version>1.0.0</version>
+            <scope>compile</scope>
         </dependency>
     </dependencies>
     

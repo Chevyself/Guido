@@ -8,12 +8,11 @@ import com.google.gson.JsonParseException;
 import java.lang.reflect.Type;
 import java.util.Map;
 import lombok.NonNull;
-import me.googas.annotations.Nullable;
 import me.googas.bot.adapters.schemes.Scheme;
 
 public interface SchemeDeserializer<T> extends JsonDeserializer<T> {
 
-  default @NonNull Class<? extends Scheme<T>> getScheme(@Nullable String version) {
+  default @NonNull Class<? extends Scheme<T>> getScheme(String version) {
     if (version == null || version.isEmpty()) {
       version = this.isEmptyAsLatest() ? this.getLatest() : "legacy";
     }
@@ -25,7 +24,6 @@ public interface SchemeDeserializer<T> extends JsonDeserializer<T> {
     return this.getScheme("legacy");
   }
 
-  @Nullable
   default String getVersion(JsonObject json) {
     if (json == null || json.isJsonNull()) return null;
     JsonElement versionElem = json.get("version");

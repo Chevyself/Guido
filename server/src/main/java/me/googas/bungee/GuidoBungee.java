@@ -1,18 +1,17 @@
 package me.googas.bungee;
 
+import java.util.Objects;
 import java.util.logging.Logger;
 import lombok.NonNull;
-import me.googas.annotations.Nullable;
 import me.googas.bungee.configuration.BungeeConfiguration;
 import me.googas.bungee.events.GuidoListener;
 import me.googas.bungee.lang.BungeeLanguageHandler;
-import me.googas.commons.Validate;
 
 /** Static utilities for the guido bungee plugin */
 public class GuidoBungee {
 
   /** The instance of the guido plugin */
-  @Nullable private static GuidoPlugin plugin;
+  private static GuidoPlugin plugin;
 
   /**
    * Gives the instance validated to not be null
@@ -21,7 +20,8 @@ public class GuidoBungee {
    */
   @NonNull
   public static GuidoPlugin validated() {
-    return Validate.notNull(GuidoBungee.plugin, "GuidoBungee might not have been initialized");
+    return Objects.requireNonNull(
+        GuidoBungee.plugin, "GuidoBungee might not have been initialized");
   }
 
   /**

@@ -11,22 +11,20 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.function.Predicate;
 import java.util.regex.Pattern;
 import lombok.NonNull;
-import me.googas.annotations.Nullable;
 import me.googas.api.GuidoCatchable;
-import me.googas.api.adapters.permissions.WrappedPermissionAdapter;
 import me.googas.api.links.LinkableType;
 import me.googas.api.matches.ladder.Ladder;
-import me.googas.api.permissions.AbstractPermission;
 import me.googas.bot.adapters.LongMongoAdapter;
 import me.googas.bot.adapters.MapDeserializer;
 import me.googas.bot.adapters.matches.ladder.LadderAdapter;
 import me.googas.bot.adapters.messages.ResponsiveMessageAdapter;
 import me.googas.bot.api.Guido;
 import me.googas.bot.api.types.messages.ResponsiveMesage;
-import me.googas.commons.cache.MemoryCache;
+import me.googas.net.cache.MemoryCache;
 import org.bson.Document;
 
 /** Static utilities for mongo */
@@ -45,7 +43,6 @@ public class Mongo {
         .setPrettyPrinting()
         .registerTypeAdapter(Ladder.class, new LadderAdapter())
         .registerTypeAdapter(ResponsiveMesage.class, new ResponsiveMessageAdapter())
-        .registerTypeAdapter(AbstractPermission.class, new WrappedPermissionAdapter())
         .registerTypeAdapter(long.class, new LongMongoAdapter())
         .registerTypeAdapter(Long.class, new LongMongoAdapter());
   }
@@ -63,7 +60,6 @@ public class Mongo {
     }
   }
 
-  @Nullable
   public static <T extends GuidoCatchable> T get(
       @NonNull Class<T> typeOfT,
       @NonNull MongoCollection<Document> collection,
@@ -73,7 +69,6 @@ public class Mongo {
         .getOrSupply(typeOfT, predicate, () -> Mongo.getCatchable(typeOfT, collection, query));
   }
 
-  @Nullable
   public static <T extends GuidoCatchable> T getCatchable(
       @NonNull Class<T> typeOfT,
       @NonNull MongoCollection<Document> collection,
@@ -81,8 +76,8 @@ public class Mongo {
     Document first = collection.find(query).first();
     if (first == null) return null;
     T t = Mongo.getObject(typeOfT, first);
-    T t1 = Guido.getCache().get(typeOfT, catchable -> catchable.equals(t));
-    if (t1 != null) return t1;
+    Optional<T> optional = Guido.getCache().get(typeOfT, catchable -> catchable.equals(t));
+    if (optional.isPresent()) return optional.get();
     if (t != null) t.cache();
     return t;
   }
@@ -95,7 +90,6 @@ public class Mongo {
    * @param <T> the type of the object
    * @return the object given by json
    */
-  @Nullable
   public static <T> T getObject(@NonNull Type typeOfT, @NonNull Document document) {
     try {
       return Mongo.GSON.fromJson(document.toJson(), typeOfT);
@@ -109,7 +103,7 @@ public class Mongo {
       @NonNull Class<T> typeOfT,
       @NonNull MongoCollection<Document> collection,
       @NonNull Document query,
-      @Nullable Document sort,
+      Document sort,
       int page,
       int limit) {
     List<T> list = new ArrayList<>();
@@ -229,7 +223,7 @@ public class Mongo {
       @NonNull Class<T> clazz,
       @NonNull MongoCollection<Document> collection,
       @NonNull Document query,
-      @Nullable Document sort,
+      Document sort,
       int page,
       int size,
       @NonNull Predicate<T> predicate) {
@@ -245,7 +239,6 @@ public class Mongo {
     return many;
   }
 
-  @Nullable
   public static <T> T fromJson(@NonNull Reader reader, @NonNull Type typeOfT) {
     return Mongo.GSON.fromJson(reader, typeOfT);
   }

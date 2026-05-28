@@ -3,12 +3,11 @@ package me.googas.bungee.data;
 import java.util.HashMap;
 import java.util.UUID;
 import lombok.NonNull;
-import me.googas.annotations.Nullable;
 import me.googas.api.links.LinkableInfo;
 import me.googas.api.links.LinkableType;
 import me.googas.api.links.ref.MinecraftLinkable;
-import me.googas.commons.UUIDUtils;
-import me.googas.commons.maps.Maps;
+import me.googas.api.utility.Maps;
+import me.googas.starbox.UUIDUtils;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 
@@ -40,7 +39,6 @@ public class ProxiedOfflinePlayer {
     this(ref.getUuid(), ref.getNickname());
   }
 
-  @Nullable
   public ProxiedPlayer toProxy() {
     return ProxyServer.getInstance().getPlayer(this.uuid);
   }

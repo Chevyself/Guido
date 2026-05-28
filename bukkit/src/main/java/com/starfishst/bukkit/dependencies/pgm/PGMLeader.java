@@ -1,12 +1,12 @@
 package com.starfishst.bukkit.dependencies.pgm;
 
 import java.lang.ref.SoftReference;
+import java.util.Objects;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.experimental.Delegate;
 import me.googas.api.matches.team.TeamMember;
 import me.googas.api.matches.team.TeamRole;
-import me.googas.commons.Validate;
 
 public class PGMLeader {
 
@@ -21,6 +21,6 @@ public class PGMLeader {
   @NonNull
   @Delegate
   public TeamMember validated() {
-    return Validate.notNull(this.captain.get(), "Reference to captain has expired");
+    return Objects.requireNonNull(this.captain.get(), "Reference to captain has expired");
   }
 }

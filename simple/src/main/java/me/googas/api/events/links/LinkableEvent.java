@@ -4,7 +4,6 @@ import lombok.Getter;
 import lombok.NonNull;
 import me.googas.api.events.GuidoEvent;
 import me.googas.api.links.Linkable;
-import me.googas.commons.builder.ToStringBuilder;
 
 /** An event related to linked data */
 public class LinkableEvent implements GuidoEvent {
@@ -23,6 +22,6 @@ public class LinkableEvent implements GuidoEvent {
 
   @Override
   public String toString() {
-    return new ToStringBuilder(this).append("data", this.data).build();
+    return "LinkableEvent{" + "data=" + data + '}';
   }
 }

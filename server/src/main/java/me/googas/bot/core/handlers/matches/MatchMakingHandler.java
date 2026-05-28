@@ -1,6 +1,5 @@
 package me.googas.bot.core.handlers.matches;
 
-import com.starfishst.commands.jda.utils.embeds.EmbedQuery;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Map;
@@ -20,6 +19,8 @@ import me.googas.api.matches.MatchStatus;
 import me.googas.api.matches.MatchTeam;
 import me.googas.api.matches.team.TeamMember;
 import me.googas.api.user.UserData;
+import me.googas.api.utility.Lots;
+import me.googas.api.utility.Maps;
 import me.googas.bot.api.Guido;
 import me.googas.bot.core.discord.GuidoGuild;
 import me.googas.bot.core.handlers.GuidoHandler;
@@ -27,16 +28,15 @@ import me.googas.bot.core.handlers.queue.QueueHandler;
 import me.googas.bot.core.loader.GuidoLoader;
 import me.googas.bot.core.util.Discord;
 import me.googas.bot.core.util.Matches;
-import me.googas.commons.Lots;
-import me.googas.commons.events.ListenPriority;
-import me.googas.commons.events.Listener;
-import me.googas.commons.maps.Maps;
-import me.googas.messaging.json.Receptor;
+import me.googas.net.sockets.json.Receptor;
+import me.googas.starbox.events.ListenPriority;
+import me.googas.starbox.events.Listener;
+import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.GuildVoiceState;
 import net.dv8tion.jda.api.entities.Member;
-import net.dv8tion.jda.api.entities.TextChannel;
-import net.dv8tion.jda.api.entities.VoiceChannel;
+import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
+import net.dv8tion.jda.api.entities.channel.concrete.VoiceChannel;
 
 /** This handles the match-making process for ranked matches */
 // TODO this class and QueueHandler must separate its channel handlers to a different class
@@ -60,13 +60,13 @@ public class MatchMakingHandler implements GuidoHandler {
         Guido.getHandlers().getDiscordLoader().getGuild(abstractMatch.getGuildId());
     TextChannel channel = guildData.getTextChannel("matches");
     LocaleFile locale = Guido.getHandlers().getLanguageHandler().getDefault();
-    EmbedQuery information = Matches.getInformation(abstractMatch, locale);
+    EmbedBuilder information = Matches.getInformation(abstractMatch, locale);
     if (event.getStatus() == MatchStatus.FINISHED) {
       information.setTitle(
           locale.get("match.announce.title", Maps.singleton("id", abstractMatch.getId())));
       this.channels().deleteVoices(abstractMatch);
     }
-    information.send(channel);
+    channel.sendMessageEmbeds(information.build()).queue();
   }
 
   /**

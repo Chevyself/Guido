@@ -12,8 +12,8 @@ import me.googas.api.matches.AbstractMatch;
 import me.googas.api.matches.MatchInfo;
 import me.googas.api.matches.MatchStatus;
 import me.googas.api.utility.Enums;
+import me.googas.api.utility.Lots;
 import me.googas.bot.core.util.Mongo;
-import me.googas.commons.Lots;
 import org.bson.Document;
 
 public class JsongoMatchesLoader extends SimpleJsongoLoader implements MatchLoader {

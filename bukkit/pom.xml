@@ -11,7 +11,6 @@
     </parent>
 
     <artifactId>bukkit</artifactId>
-    <version>1.2.1</version>
     <description>Implementations for bukkit</description>
     <packaging>jar</packaging>
 
@@ -60,25 +59,31 @@
     </build>
 
     <repositories>
-        <!-- ProtocolLib repository -->
+        <!-- Paper -->
         <repository>
-            <id>dmulloy2-repo</id>
-            <url>https://repo.dmulloy2.net/nexus/repository/public/</url>
+            <id>spigot-repo</id>
+            <url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
         </repository>
-        <!-- PAPI -->
+        <!-- Commands -->
         <repository>
-            <id>placeholderapi</id>
-            <url>https://repo.extendedclip.com/content/repositories/placeholderapi/</url>
+            <id>jitpack.io</id>
+            <url>https://jitpack.io</url>
         </repository>
     </repositories>
 
     <dependencies>
-        <!-- Paper -->
+        <!-- Spigot -->
         <dependency>
-            <groupId>org.github.paperspigot</groupId>
-            <artifactId>paperspigot-api</artifactId>
+            <groupId>org.spigotmc</groupId>
+            <artifactId>spigot-api</artifactId>
             <version>1.8.8-R0.1-SNAPSHOT</version>
             <scope>provided</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>net.md-5</groupId>
+                    <artifactId>bungeecord-chat</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <!-- Dependency on simple -->
         <dependency>
@@ -88,32 +93,23 @@
         </dependency>
         <!-- Starbox -->
         <dependency>
-            <groupId>me.googas.starbox</groupId>
-            <artifactId>starbox</artifactId>
-            <version>1.0.0</version>
-            <scope>provided</scope>
-        </dependency>
-        <!-- ProtocolLib -->
-        <dependency>
-            <groupId>com.comphenix.protocol</groupId>
-            <artifactId>ProtocolLib</artifactId>
-            <version>4.5.0</version>
-            <scope>provided</scope>
+            <groupId>com.github.chevyself.legacy-starbox</groupId>
+            <artifactId>bukkit</artifactId>
+            <version>546a2fdcf3</version>
         </dependency>
         <!-- PGM -->
         <dependency>
             <groupId>tc.oc.pgm</groupId>
             <artifactId>core</artifactId>
-            <version>0.11-SNAPSHOT</version>
+            <version>0.16-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
         <!-- PGM Events -->
         <dependency>
             <groupId>dev.pgm</groupId>
-            <artifactId>Events</artifactId>
+            <artifactId>events</artifactId>
             <version>1.0.0-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
     </dependencies>
-
 </project>

@@ -1,12 +1,12 @@
 package me.googas.bot;
 
+import java.util.Objects;
 import java.util.Scanner;
 import java.util.logging.Level;
 import javax.security.auth.login.LoginException;
 import lombok.CustomLog;
 import lombok.NonNull;
-import me.googas.commons.Lots;
-import me.googas.commons.Validate;
+import me.googas.api.utility.Lots;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.requests.GatewayIntent;
@@ -97,6 +97,6 @@ public class GuidoJdaConnection {
    */
   @NonNull
   public JDA validatedJda() {
-    return Validate.notNull(this.jda, "Bot is not connected with discord!");
+    return Objects.requireNonNull(this.jda, "Bot is not connected with discord!");
   }
 }

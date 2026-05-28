@@ -1,9 +1,9 @@
 package me.googas.api;
 
 import lombok.NonNull;
-import me.googas.commons.cache.Catchable;
-import me.googas.commons.time.Time;
-import me.googas.commons.time.Unit;
+import me.googas.net.cache.Catchable;
+import me.googas.starbox.time.Time;
+import me.googas.starbox.time.unit.Unit;
 
 public interface GuidoCatchable extends Catchable {
 
@@ -30,6 +30,6 @@ public interface GuidoCatchable extends Catchable {
 
   @Override
   default @NonNull Time getToRemove() {
-    return new Time(3, Unit.MINUTES);
+    return Time.of(3, Unit.MINUTES);
   }
 }

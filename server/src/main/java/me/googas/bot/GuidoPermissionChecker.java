@@ -1,30 +1,30 @@
 package me.googas.bot;
 
-import com.starfishst.commands.jda.context.CommandContext;
-import com.starfishst.commands.jda.context.GuildCommandContext;
-import com.starfishst.commands.jda.messages.MessagesProvider;
-import com.starfishst.commands.jda.permissions.JdaPermission;
-import com.starfishst.commands.jda.permissions.PermissionChecker;
-import com.starfishst.commands.jda.result.Result;
-import com.starfishst.commands.jda.result.ResultType;
+import com.github.chevyself.starbox.jda.context.CommandContext;
+import com.github.chevyself.starbox.jda.context.GuildCommandContext;
+import com.github.chevyself.starbox.jda.messages.JdaMessagesProvider;
+import com.github.chevyself.starbox.metadata.CommandMetadata;
+import com.github.chevyself.starbox.middleware.Middleware;
+import com.github.chevyself.starbox.result.Result;
+import java.util.Optional;
 import java.util.Set;
 import lombok.NonNull;
 import me.googas.api.links.Linkable;
 import me.googas.api.links.LinkableType;
 import me.googas.api.links.ref.DiscordLinkable;
+import me.googas.api.utility.Lots;
+import me.googas.api.utility.Maps;
 import me.googas.bot.api.DiscordLoader;
 import me.googas.bot.core.discord.GuidoRole;
 import me.googas.bot.core.loader.GuidoLoader;
 import me.googas.bot.core.util.Discord;
-import me.googas.commons.Lots;
-import me.googas.commons.maps.Maps;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Role;
 
 /** Checks the permissions for the guido bot */
-public class GuidoPermissionChecker implements PermissionChecker {
+public class GuidoPermissionChecker implements Middleware<CommandContext> {
 
   /**
    * The set of developers which are allowed to use any command without having the respective
@@ -32,7 +32,7 @@ public class GuidoPermissionChecker implements PermissionChecker {
    */
   @NonNull private final Set<Long> developers = Lots.set(86321059636203520L);
 
-  @NonNull private final MessagesProvider messagesProvider;
+  @NonNull private final JdaMessagesProvider messagesProvider;
   @NonNull private final GuidoLoader dataLoader;
   @NonNull private final DiscordLoader discordLoader;
 
@@ -44,7 +44,7 @@ public class GuidoPermissionChecker implements PermissionChecker {
    * @param discordLoader the loader to getId roles
    */
   public GuidoPermissionChecker(
-      @NonNull MessagesProvider messagesProvider,
+      @NonNull JdaMessagesProvider messagesProvider,
       @NonNull GuidoLoader dataLoader,
       @NonNull DiscordLoader discordLoader) {
     this.messagesProvider = messagesProvider;
@@ -60,22 +60,18 @@ public class GuidoPermissionChecker implements PermissionChecker {
    * @param perm the permission to check
    * @return if this is true the user has the permission
    */
-  public boolean checkMemberPermission(
-      @NonNull GuildCommandContext context, @NonNull JdaPermission perm) {
+  public boolean checkMemberPermission(@NonNull GuildCommandContext context, @NonNull String perm) {
     Member discordMember = context.getMember();
     Guild guild = context.getGuild();
     // discordMember.getIdLong(), guild.getIdLong()
     DiscordLinkable member = Discord.getUser(discordMember);
-    if (member.hasPermission(perm.getNode(), "discord")
-        || discordMember.hasPermission(Permission.ADMINISTRATOR)
-        || (perm.getPermission() != Permission.UNKNOWN
-            && discordMember.hasPermission(perm.getPermission()))) {
+    if (member.hasPermission(perm, "discord")
+        || discordMember.hasPermission(Permission.ADMINISTRATOR)) {
       return true;
     }
     for (Role role : discordMember.getRoles()) {
       GuidoRole roleData = this.discordLoader.getRole(role.getIdLong());
-      if (roleData.hasPermission(perm.getNode(), "discord")
-          || role.hasPermission(Permission.ADMINISTRATOR)) {
+      if (roleData.hasPermission(perm, "discord") || role.hasPermission(Permission.ADMINISTRATOR)) {
         return true;
       }
     }
@@ -83,34 +79,28 @@ public class GuidoPermissionChecker implements PermissionChecker {
   }
 
   @Override
-  public Result checkPermission(@NonNull CommandContext context, @NonNull JdaPermission perm) {
-    if (!perm.getNode().isEmpty()) {
-      if (this.developers.contains(context.getSender().getIdLong())) {
-        return null;
+  public @NonNull Optional<Result> next(@NonNull CommandContext context) {
+    CommandMetadata metadata = context.getCommand().getMetadata();
+    if (!metadata.has(GuidoMetadataParser.PERMISSION_KEY)) return Optional.empty();
+    String permissionNode = metadata.get(GuidoMetadataParser.PERMISSION_KEY);
+    if (permissionNode.isEmpty()) return Optional.empty();
+    if (this.developers.contains(context.getSender().getIdLong())) return Optional.empty();
+    if (context instanceof GuildCommandContext) {
+      if (this.checkMemberPermission((GuildCommandContext) context, permissionNode)) {
+        return Optional.empty();
       }
-      if (context instanceof GuildCommandContext) {
-        if (this.checkMemberPermission((GuildCommandContext) context, perm)) {
-          return null;
-        }
-      } else {
-        String node =
-            perm.getNode().startsWith("user:") ? perm.getNode().substring(5) : perm.getNode();
-        Linkable userData =
-            this.dataLoader
-                .getLinks()
-                .getLink(
-                    LinkableType.DISCORD, Maps.singleton("id", context.getSender().getIdLong()));
-        if (userData != null && userData.hasPermission(node, "discord")) {
-          return null;
-        }
+    } else {
+      String node =
+          permissionNode.startsWith("user:") ? permissionNode.substring(5) : permissionNode;
+      Linkable userData =
+          this.dataLoader
+              .getLinks()
+              .getLink(LinkableType.DISCORD, Maps.singleton("id", context.getSender().getIdLong()));
+      if (userData != null && userData.hasPermission(node, "discord")) {
+        return Optional.empty();
       }
-      return new Result(ResultType.PERMISSION, this.messagesProvider.notAllowed(context));
     }
-    return null;
-  }
-
-  @Override
-  public @NonNull MessagesProvider getMessagesProvider() {
-    return this.messagesProvider;
+    Result result = Result.of(this.messagesProvider.notAllowed(context));
+    return Optional.of(result);
   }
 }

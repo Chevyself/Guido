@@ -1,6 +1,6 @@
 package me.googas.bot.core.handlers.responsive.lang;
 
-import com.starfishst.commands.jda.utils.responsive.ReactionResponse;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 import lombok.NonNull;
@@ -10,12 +10,14 @@ import me.googas.bot.api.Guido;
 import me.googas.bot.core.handlers.responsive.GuidoResponsiveMessage;
 import me.googas.bot.core.lang.GuidoLocaleFile;
 import me.googas.bot.core.util.Discord;
-import me.googas.commons.time.Time;
-import me.googas.commons.time.Unit;
+import me.googas.starbox.jda.responsive.ReactionResponse;
+import me.googas.starbox.jda.responsive.ResponsiveMessage;
+import me.googas.starbox.time.Time;
+import me.googas.starbox.time.unit.Unit;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.Message;
-import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.entities.User;
+import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 
 /** A responsive message made to allow an user to change the language */
 public class LangChangeResponsiveMessage implements GuidoResponsiveMessage, GuidoCatchable {
@@ -52,7 +54,7 @@ public class LangChangeResponsiveMessage implements GuidoResponsiveMessage, Guid
 
   @Override
   public @NonNull Time getToRemove() {
-    return new Time(30, Unit.SECONDS);
+    return Time.of(30, Unit.SECONDS);
   }
 
   @Override
@@ -69,12 +71,20 @@ public class LangChangeResponsiveMessage implements GuidoResponsiveMessage, Guid
   }
 
   @Override
-  public long getId() {
-    return this.id;
+  public @NonNull Collection<ReactionResponse> getReactions(@NonNull String unicode) {
+    return this.reactions.stream()
+        .filter(response -> response.hasUnicode(unicode))
+        .collect(java.util.stream.Collectors.toSet());
   }
 
   @Override
-  public @NonNull Set<ReactionResponse> getReactions() {
-    return this.reactions;
+  public @NonNull ResponsiveMessage addReactionResponse(@NonNull ReactionResponse response) {
+    this.reactions.add(response);
+    return this;
+  }
+
+  @Override
+  public long getId() {
+    return this.id;
   }
 }

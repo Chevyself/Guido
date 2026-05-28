@@ -11,23 +11,25 @@
 <packaging>pom</packaging>
 
  <modules>
-     <module>bukkit</module>
+     <module>bukkit</module> <!-- Boostrap for bukkit servbers -->
+     <module>bukkit_commons</module> <!-- Commons for bukkit modules -->
+     <module>bukkit_pgm</module> <!-- PGM module for bukkit -->
      <module>simple</module>
      <module>server</module>
  </modules>
 
 <build>
     <plugins>
-        <!-- Java version -->
+        <!-- Java version
         <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-compiler-plugin</artifactId>
             <version>3.8.1</version>
             <configuration>
-                <source>8</source>
-                <target>8</target>
+                <source>21</source>
+                <target>21</target>
             </configuration>
-        </plugin>
+        </plugin> -->
         <!-- Maven java formatter plugin (Google format) -->
         <plugin>
             <artifactId>fmt-maven-plugin</artifactId>
@@ -47,6 +49,9 @@
 <properties>
     <!-- Character encoding -->
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+    <maven.compiler.source>21</maven.compiler.source>
+    <maven.compiler.target>21</maven.compiler.target>
 </properties>
 
 <dependencyManagement>
@@ -55,18 +60,17 @@
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
-            <version>1.18.16</version>
+            <version>1.18.30</version>
             <scope>compile</scope>
         </dependency>
     </dependencies>
 </dependencyManagement>
-
     <dependencies>
         <!-- Dependency to the Lombok annotations -->
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
-            <version>1.18.16</version>
+            <version>1.18.30</version>
             <scope>compile</scope>
         </dependency>
     </dependencies>

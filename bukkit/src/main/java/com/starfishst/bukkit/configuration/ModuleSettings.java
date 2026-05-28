@@ -6,20 +6,16 @@ import java.util.List;
 import java.util.Map;
 import lombok.Getter;
 import lombok.NonNull;
-import me.googas.annotations.Nullable;
-import me.googas.commons.Validate;
 import org.bukkit.configuration.ConfigurationSection;
 
 public class ModuleSettings {
 
   @NonNull @Getter private final String name;
   @NonNull @Getter private final Map<String, Object> map;
-  @Nullable @Getter private final ConfigurationSection section;
+  @Getter private final ConfigurationSection section;
 
   public ModuleSettings(
-      @NonNull String name,
-      @NonNull Map<String, Object> map,
-      @Nullable ConfigurationSection section) {
+      @NonNull String name, @NonNull Map<String, Object> map, ConfigurationSection section) {
     this.name = name;
     this.map = map;
     this.section = section;
@@ -30,7 +26,7 @@ public class ModuleSettings {
   }
 
   @NonNull
-  public static List<ModuleSettings> loadAll(@Nullable ConfigurationSection modules) {
+  public static List<ModuleSettings> loadAll(ConfigurationSection modules) {
     if (modules == null) return new ArrayList<>();
     List<ModuleSettings> settings = new ArrayList<>();
     for (String key : modules.getKeys(false)) {
@@ -40,7 +36,7 @@ public class ModuleSettings {
   }
 
   @NonNull
-  private static ModuleSettings load(@NonNull String name, @Nullable ConfigurationSection section) {
+  private static ModuleSettings load(@NonNull String name, ConfigurationSection section) {
     Map<String, Object> map = new HashMap<>();
     if (section != null) {
       for (String key : section.getKeys(false)) {
@@ -65,10 +61,10 @@ public class ModuleSettings {
 
   @NonNull
   private <T> T getOr(@NonNull String key, @NonNull T def, @NonNull Class<T> typeOfT) {
-    return Validate.notNullOr(this.get(key, typeOfT), def);
+    T obj = this.get(key, typeOfT);
+    return obj != null ? obj : def;
   }
 
-  @Nullable
   private <T> T get(@NonNull String key, @NonNull Class<T> typeOfT) {
     Object obj = this.map.get(key);
     if (obj == null) return null;

@@ -1,26 +1,29 @@
 package me.googas.bot.core.commands.administrative;
 
-import com.starfishst.commands.jda.annotations.Command;
-import com.starfishst.commands.jda.result.Result;
-import com.starfishst.core.annotations.Parent;
+import com.github.chevyself.starbox.annotations.Command;
+import com.github.chevyself.starbox.annotations.Parent;
+import com.github.chevyself.starbox.result.Result;
 import java.lang.ref.SoftReference;
 import me.googas.bot.api.Guido;
-import me.googas.commons.cache.Catchable;
+import me.googas.bungee.commands.middleware.GuidoJdaPermission;
+import me.googas.net.cache.Catchable;
 
 public class CacheCommands {
 
   @Parent
-  @Command(aliases = "cache", node = "guido.cache")
+  @GuidoJdaPermission("guido.cache")
+  @Command(aliases = "cache")
   public Result cache() {
-    for (SoftReference<Catchable> catchable : Guido.getCache().copy()) {
+    for (SoftReference<Catchable> catchable : Guido.getCache().keySetCopy()) {
       System.out.println("Cache element: " + catchable.get());
     }
-    return new Result("Check console for the output");
+    return Result.of("Check console for the output");
   }
 
-  @Command(aliases = "clear", node = "guido.cache.clear")
+  @GuidoJdaPermission("guido.cache.clear")
+  @Command(aliases = "clear")
   public Result cacheClear() {
     Guido.validated().clearCache();
-    return new Result("Cache emptied");
+    return Result.of("Cache emptied");
   }
 }

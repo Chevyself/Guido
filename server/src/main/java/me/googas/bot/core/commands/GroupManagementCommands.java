@@ -1,10 +1,9 @@
 package me.googas.bot.core.commands;
 
-import com.starfishst.commands.jda.annotations.Command;
-import com.starfishst.commands.jda.result.Result;
-import com.starfishst.commands.jda.result.ResultType;
-import com.starfishst.core.annotations.Parent;
-import com.starfishst.core.annotations.Required;
+import com.github.chevyself.starbox.annotations.Command;
+import com.github.chevyself.starbox.annotations.Parent;
+import com.github.chevyself.starbox.annotations.Required;
+import com.github.chevyself.starbox.result.Result;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -18,36 +17,33 @@ import me.googas.api.loader.GroupLoader;
 import me.googas.api.permissions.Group;
 import me.googas.bot.api.Guido;
 import me.googas.bot.core.util.Mongo;
-import me.googas.commons.CoreFiles;
+import me.googas.bungee.commands.middleware.GuidoJdaPermission;
+import me.googas.starbox.CoreFiles;
 
 // TODO localize
 public class GroupManagementCommands {
 
   @Parent
+  @GuidoJdaPermission("user:guido.group-manager")
   @Command(
       aliases = {"groupManager", "gm"},
-      description = "Manages groups",
-      node = "user:guido.group-manager")
+      description = "Manages groups")
   public Result groupManager() {
-    return new Result("Group manager is used to easily edit groups thru its files");
+    return Result.of("Group manager is used to easily edit groups thru its files");
   }
 
-  @Command(
-      aliases = "list",
-      description = "Lists all the ids of the groups",
-      node = "user:guido.group-manager.list")
+  @GuidoJdaPermission("user:guido.group-manager.list")
+  @Command(aliases = "list", description = "Lists all the ids of the groups")
   public Result list() {
     List<String> ids = new ArrayList<>();
     for (Group group : Guido.getHandlers().getLoader().getGroups().getGroups()) {
       ids.add(group.getId());
     }
-    return new Result(ids.toString());
+    return Result.of(ids.toString());
   }
 
-  @Command(
-      aliases = "new",
-      description = "Creates a file for a new group",
-      node = "user:guido.group-manager.new")
+  @GuidoJdaPermission("user:guido.group-manager.new")
+  @Command(aliases = "new", description = "Creates a file for a new group")
   public Result newGroup() {
     Group group =
         new Group(
@@ -61,10 +57,8 @@ public class GroupManagementCommands {
     return this.save(group);
   }
 
-  @Command(
-      aliases = "save",
-      description = "Saves the group to a file in groups/<name>.json",
-      node = "user:guido.group-manager.save")
+  @GuidoJdaPermission("user:guido.group-manager.save")
+  @Command(aliases = "save", description = "Saves the group to a file in groups/<name>.json")
   public Result save(
       @Required(name = "Group", description = "The group to save to file") Group group) {
     FileWriter writer;
@@ -76,8 +70,7 @@ public class GroupManagementCommands {
       Mongo.GSON.toJson(group, writer);
     } catch (IOException e) {
       e.printStackTrace();
-      return new Result(
-          ResultType.ERROR, group.getName() + ".json could not be created due to an IOException.");
+      return Result.of(group.getName() + ".json could not be created due to an IOException.");
     }
     boolean error = false;
     try {
@@ -90,20 +83,16 @@ public class GroupManagementCommands {
     if (error)
       message =
           message + "\n" + "**WARNING** Writer could not be properly closed, please check console.";
-    return new Result(message);
+    return Result.of(message);
   }
 
-  @Command(
-      aliases = "load",
-      description = "Loads a group and overrides it if it already exists",
-      node = "user:guido.group-manager.load")
+  @GuidoJdaPermission("user:guido.group-manager.load")
+  @Command(aliases = "load", description = "Loads a group and overrides it if it already exists")
   public Result load(
       @Required(name = "File", description = "The file to load the group of") String fileName) {
     File file = CoreFiles.getFile(CoreFiles.currentDirectory() + "/groups", fileName);
     if (file == null)
-      return new Result(
-          ResultType.ERROR,
-          "File " + fileName + " could not be found inside the `groups` directory");
+      return Result.of("File " + fileName + " could not be found inside the `groups` directory");
     FileReader reader;
     Group group;
     try {
@@ -111,7 +100,7 @@ public class GroupManagementCommands {
       group = Mongo.GSON.fromJson(reader, Group.class);
     } catch (FileNotFoundException e) {
       e.printStackTrace();
-      return new Result(ResultType.ERROR, "Could not open to read file " + fileName);
+      return Result.of("Could not open to read file " + fileName);
     }
     boolean error = false;
     boolean overridden = false;
@@ -137,6 +126,6 @@ public class GroupManagementCommands {
               + "\n"
               + "**WARNING** The writer could not be closed properly please check the console for information";
     }
-    return new Result(message);
+    return Result.of(message);
   }
 }

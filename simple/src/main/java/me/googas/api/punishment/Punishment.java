@@ -4,7 +4,6 @@ import java.util.HashMap;
 import java.util.Map;
 import lombok.Getter;
 import lombok.NonNull;
-import me.googas.annotations.Nullable;
 import me.googas.api.API;
 import me.googas.api.Expirable;
 import me.googas.api.GuidoCatchable;
@@ -20,8 +19,8 @@ public class Punishment implements GuidoCatchable, Expirable, Informative {
   @NonNull @Getter private final String id;
   @NonNull @Getter private final PunishmentType type;
   @NonNull @Getter private final Map<String, Map<String, Object>> information;
-  @Nullable @Getter private final LinkableInfo punisher;
-  @Nullable @Getter private final LinkableInfo punished;
+  @Getter private final LinkableInfo punisher;
+  @Getter private final LinkableInfo punished;
   @NonNull @Getter private PunishmentStatus status;
   @Getter private long expires;
 
@@ -40,8 +39,8 @@ public class Punishment implements GuidoCatchable, Expirable, Informative {
       @NonNull String id,
       @NonNull PunishmentType type,
       @NonNull Map<String, Map<String, Object>> information,
-      @Nullable LinkableInfo punisher,
-      @Nullable LinkableInfo punished,
+      LinkableInfo punisher,
+      LinkableInfo punished,
       @NonNull PunishmentStatus status,
       long expires) {
     this.id = id;
@@ -61,8 +60,8 @@ public class Punishment implements GuidoCatchable, Expirable, Informative {
   public Punishment(
       @NonNull PunishmentType type,
       @NonNull Map<String, Map<String, Object>> information,
-      @Nullable LinkableInfo punisher,
-      @Nullable LinkableInfo punished,
+      LinkableInfo punisher,
+      LinkableInfo punished,
       @NonNull PunishmentStatus status,
       long expires) {
     this(

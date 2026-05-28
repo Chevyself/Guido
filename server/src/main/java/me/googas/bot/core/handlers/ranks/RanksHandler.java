@@ -5,7 +5,6 @@ import java.util.Collection;
 import java.util.List;
 import lombok.Getter;
 import lombok.NonNull;
-import me.googas.annotations.Nullable;
 import me.googas.api.events.match.MatchStatusUpdatedEvent;
 import me.googas.api.links.Linkable;
 import me.googas.api.links.LinkableType;
@@ -23,8 +22,8 @@ import me.googas.bot.api.events.data.links.LinkableRankUpdatedEvent;
 import me.googas.bot.core.discord.GuidoGuild;
 import me.googas.bot.core.handlers.GuidoHandler;
 import me.googas.bot.core.util.Stats;
-import me.googas.commons.events.ListenPriority;
-import me.googas.commons.events.Listener;
+import me.googas.starbox.events.ListenPriority;
+import me.googas.starbox.events.Listener;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Role;
@@ -37,7 +36,7 @@ public class RanksHandler implements GuidoHandler {
    *
    * @return the ladders to apply the update
    */
-  public static List<Ladder> getLadders(@Nullable String ladderName, @NonNull GuidoGuild guild) {
+  public static List<Ladder> getLadders(String ladderName, @NonNull GuidoGuild guild) {
     List<Ladder> ladders = new ArrayList<>();
     Ladder ladder = ladderName == null ? null : guild.getLadder(ladderName);
     if (ladder == null) {
@@ -94,7 +93,7 @@ public class RanksHandler implements GuidoHandler {
       @NonNull Linkable linkable,
       @NonNull Collection<Ladder> ladders,
       @NonNull Collection<RankRange> ranges,
-      @Nullable GuidoGuild guild) {
+      GuidoGuild guild) {
     UpdateResult result = new UpdateResult();
     DiscordLinkable discord = linkable.toDiscordRef();
     for (Ladder ladder : ladders) {
@@ -114,10 +113,7 @@ public class RanksHandler implements GuidoHandler {
    * @param discord
    */
   public void updateDiscord(
-      @NonNull Linkable linkable,
-      @Nullable GuidoGuild guild,
-      UpdateResult result,
-      DiscordLinkable discord) {
+      @NonNull Linkable linkable, GuidoGuild guild, UpdateResult result, DiscordLinkable discord) {
     if (guild != null && discord != null) {
       Guild guildDiscord = guild.toDiscord();
       Member member = discord.getMember(guildDiscord);

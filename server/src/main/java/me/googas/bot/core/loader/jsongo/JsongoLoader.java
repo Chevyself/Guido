@@ -17,8 +17,8 @@ import me.googas.api.punishment.Punishment;
 import me.googas.bot.api.events.data.guild.GuidoGuildUnloadedEvent;
 import me.googas.bot.core.loader.GuidoLoader;
 import me.googas.bot.core.util.Mongo;
-import me.googas.commons.events.ListenPriority;
-import me.googas.commons.events.Listener;
+import me.googas.starbox.events.ListenPriority;
+import me.googas.starbox.events.Listener;
 import org.bson.Document;
 
 /**

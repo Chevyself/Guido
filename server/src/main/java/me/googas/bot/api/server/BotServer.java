@@ -1,12 +1,14 @@
 package me.googas.bot.api.server;
 
+import java.util.Optional;
 import lombok.NonNull;
 import me.googas.api.server.GuidoAuthenticator;
 import me.googas.bot.GuidoHandlerRegistry;
-import me.googas.messaging.api.Server;
+import me.googas.net.api.Server;
+import me.googas.net.sockets.json.server.JsonClientThread;
 
 /** An extension of server */
-public interface BotServer extends Server {
+public interface BotServer extends Server<JsonClientThread> {
 
   @NonNull
   BotServer registerHandlers(@NonNull GuidoHandlerRegistry registry);
@@ -16,6 +18,5 @@ public interface BotServer extends Server {
    *
    * @return the guido authenticator
    */
-  @NonNull
-  GuidoAuthenticator getAuthenticator();
+  Optional<GuidoAuthenticator> getAuthenticator();
 }

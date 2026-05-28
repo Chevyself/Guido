@@ -5,7 +5,7 @@ import java.util.Collection;
 import java.util.List;
 import lombok.NonNull;
 import me.googas.api.ranks.RankRange;
-import me.googas.commons.Lots;
+import me.googas.api.utility.Lots;
 
 /** Static utilities for ranks */
 public class Ranks {

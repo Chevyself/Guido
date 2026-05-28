@@ -5,12 +5,11 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Reader;
+import java.util.Objects;
 import java.util.Properties;
 import lombok.NonNull;
 import me.googas.api.lang.LocaleFile;
-import me.googas.bot.api.Guido;
-import me.googas.commons.CoreFiles;
-import me.googas.commons.Validate;
+import me.googas.starbox.CoreFiles;
 
 /** The locale file for the guido bot. It is loaded using {@link Properties} */
 public class GuidoLocaleFile implements LocaleFile {
@@ -45,8 +44,7 @@ public class GuidoLocaleFile implements LocaleFile {
         }
       }
     } catch (IOException e) {
-      Guido.getFallback()
-          .process(e, "IOException: The defaults for " + this + " could not be saved");
+      e.printStackTrace();
     }
   }
 
@@ -56,12 +54,12 @@ public class GuidoLocaleFile implements LocaleFile {
    * @return the unicode to differentiate this language
    */
   public @NonNull String getUnicode() {
-    return Validate.notNull(this.getRaw("unicode"), this + " has a null unicode property");
+    return Objects.requireNonNull(this.getRaw("unicode"), this + " has a null unicode property");
   }
 
   @Override
   public @NonNull String getLang() {
-    return Validate.notNull(this.getRaw("lang"), this + " has a null lang property!");
+    return Objects.requireNonNull(this.getRaw("lang"), this + " has a null lang property!");
   }
 
   @Override
@@ -71,7 +69,7 @@ public class GuidoLocaleFile implements LocaleFile {
       this.properties.store(writer, "No comments");
       writer.close();
     } catch (IOException e) {
-      Guido.getFallback().process(e, "IOException: Lang file from " + this + " could not be saved");
+      e.printStackTrace();
     }
   }
 

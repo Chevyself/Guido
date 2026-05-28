@@ -4,7 +4,6 @@ import lombok.Getter;
 import lombok.NonNull;
 import me.googas.api.events.GuidoEvent;
 import me.googas.api.permissions.Group;
-import me.googas.commons.builder.ToStringBuilder;
 
 /** An event with a group involved */
 public class GroupEvent implements GuidoEvent {
@@ -22,6 +21,6 @@ public class GroupEvent implements GuidoEvent {
 
   @Override
   public String toString() {
-    return new ToStringBuilder(this).append("group", this.group).build();
+    return "GroupEvent{" + "group=" + group + '}';
   }
 }

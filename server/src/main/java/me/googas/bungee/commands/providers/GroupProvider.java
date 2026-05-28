@@ -1,16 +1,16 @@
 package me.googas.bungee.commands.providers;
 
-import com.starfishst.commands.bungee.context.CommandContext;
-import com.starfishst.commands.bungee.providers.type.BungeeArgumentProvider;
-import com.starfishst.core.exceptions.ArgumentProviderException;
+import com.github.chevyself.starbox.bungee.context.CommandContext;
+import com.github.chevyself.starbox.bungee.providers.type.BungeeArgumentProvider;
+import com.github.chevyself.starbox.exceptions.ArgumentProviderException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import lombok.NonNull;
 import me.googas.api.API;
 import me.googas.api.permissions.Group;
+import me.googas.api.utility.Maps;
 import me.googas.bungee.utility.Chat;
-import me.googas.commons.maps.Maps;
 
 /** Provides groups in commands */
 public class GroupProvider implements BungeeArgumentProvider<Group> {
@@ -31,11 +31,14 @@ public class GroupProvider implements BungeeArgumentProvider<Group> {
   }
 
   @Override
-  public @NonNull List<String> getSuggestions(CommandContext commandContext) {
+  public @NonNull List<String> getSuggestions(
+      @NonNull String s, @NonNull CommandContext commandContext) {
     Collection<Group> groups = API.getLoader().getGroups().getGroups();
     List<String> names = new ArrayList<>();
     for (Group group : groups) {
-      names.add(group.getName());
+      if (group.getName().toLowerCase().startsWith(s.toLowerCase())) {
+        names.add(group.getName());
+      }
     }
     return names;
   }

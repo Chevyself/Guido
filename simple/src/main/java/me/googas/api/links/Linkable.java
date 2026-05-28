@@ -8,7 +8,6 @@ import java.util.Objects;
 import java.util.Set;
 import lombok.Getter;
 import lombok.NonNull;
-import me.googas.annotations.Nullable;
 import me.googas.api.API;
 import me.googas.api.GuidoCatchable;
 import me.googas.api.Identifiable;
@@ -23,8 +22,7 @@ import me.googas.api.matches.team.Team;
 import me.googas.api.permissions.Permissible;
 import me.googas.api.permissions.PermissionStack;
 import me.googas.api.user.UserData;
-import me.googas.commons.Validate;
-import me.googas.commons.builder.ToStringBuilder;
+import me.googas.starbox.builders.MapBuilder;
 
 /** This object represents data that can been linked to an user */
 public class Linkable
@@ -44,7 +42,6 @@ public class Linkable
   @NonNull @Getter private final Map<String, Map<String, Object>> information;
   @NonNull @Getter private final Map<String, Map<String, Double>> stats;
 
-  @Nullable
   @Getter
   @SerializedName(
       value = "linked-id",
@@ -59,7 +56,7 @@ public class Linkable
       @NonNull Set<PermissionStack> permissions,
       @NonNull Map<String, Map<String, Object>> information,
       @NonNull Map<String, Map<String, Double>> stats,
-      @Nullable String linkedUserId) {
+      String linkedUserId) {
     this.type = type;
     this.identification = identification;
     this.recognition = recognition;
@@ -116,7 +113,6 @@ public class Linkable
     return this.compare(data.getInfo());
   }
 
-  @Nullable
   public DiscordLinkable toDiscordRef() {
     if (this.getType() != LinkableType.DISCORD) {
       UserData user = this.getLinkedUser();
@@ -131,15 +127,14 @@ public class Linkable
 
   @NonNull
   public DiscordLinkable requireDiscordRef() {
-    return Validate.notNull(this.toDiscordRef(), "Could not getId discord ref");
+    return Objects.requireNonNull(this.toDiscordRef(), "Could not getId discord ref");
   }
 
   @NonNull
   public MinecraftLinkable requireMinecraftRef() {
-    return Validate.notNull(this.toMinecraftRef(), "Could not getId minecraft ref");
+    return Objects.requireNonNull(this.toMinecraftRef(), "Could not getId minecraft ref");
   }
 
-  @Nullable
   public MinecraftLinkable toMinecraftRef() {
     if (this.getType() != LinkableType.MINECRAFT) {
       UserData user = this.getLinkedUser();
@@ -215,7 +210,6 @@ public class Linkable
    *
    * @return the team in which it is on
    */
-  @Nullable
   public Team getTeam() {
     return API.getLoader().getTeams().getTeam(this);
   }
@@ -225,7 +219,6 @@ public class Linkable
    *
    * @return the user that is linked to this data
    */
-  @Nullable
   public UserData getLinkedUser() {
     return API.getLoader().getUsers().getUserData(this.linkedUserId);
   }
@@ -251,6 +244,10 @@ public class Linkable
     API.getMessenger().sendLocalized(this, key, placeholders);
   }
 
+  public void sendLocalized(@NonNull String key, @NonNull MapBuilder<String, String> builder) {
+    this.sendLocalized(key, builder.build());
+  }
+
   @Override
   public void setLang(@NonNull String lang) {
     this.setString(null, "lang", lang);
@@ -268,16 +265,25 @@ public class Linkable
 
   @Override
   public String toString() {
-    return new ToStringBuilder(this)
-        .append("type", this.type)
-        .append("identification", this.identification)
-        .append("recognition", this.recognition)
-        .append("accounts", this.accounts)
-        .append("permissions", this.permissions)
-        .append("information", this.information)
-        .append("stats", this.stats)
-        .append("linkedUserId", this.linkedUserId)
-        .build();
+    return "Linkable{"
+        + "type="
+        + type
+        + ", identification="
+        + identification
+        + ", recognition="
+        + recognition
+        + ", accounts="
+        + accounts
+        + ", permissions="
+        + permissions
+        + ", information="
+        + information
+        + ", stats="
+        + stats
+        + ", linkedUserId='"
+        + linkedUserId
+        + '\''
+        + '}';
   }
 
   @Override

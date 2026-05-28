@@ -5,7 +5,6 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
 import lombok.NonNull;
-import me.googas.annotations.Nullable;
 import me.googas.api.Requests;
 import me.googas.api.economy.AbstractRecord;
 import me.googas.api.links.Linkable;
@@ -16,8 +15,8 @@ import me.googas.api.permissions.AbstractPermission;
 import me.googas.api.permissions.PermissionStack;
 import me.googas.api.user.UserData;
 import me.googas.api.utility.SortedStats;
-import me.googas.messaging.json.ParamName;
-import me.googas.messaging.json.Receptor;
+import me.googas.net.sockets.json.ParamName;
+import me.googas.net.sockets.json.Receptor;
 
 public class LinkReceptors {
 
@@ -27,7 +26,6 @@ public class LinkReceptors {
     this.loader = loader;
   }
 
-  @Nullable
   private UserData getUser(@NonNull String id) {
     return this.loader.getLoader().getUsers().getUserData(id);
   }

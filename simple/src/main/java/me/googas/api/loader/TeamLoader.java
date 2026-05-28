@@ -3,7 +3,7 @@ package me.googas.api.loader;
 import lombok.NonNull;
 import me.googas.api.links.Linkable;
 import me.googas.api.matches.team.Team;
-import me.googas.commons.RandomUtils;
+import me.googas.api.utility.RandomUtils;
 
 public interface TeamLoader extends DataLoader {
 

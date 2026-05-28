@@ -4,7 +4,6 @@ import lombok.Getter;
 import lombok.NonNull;
 import me.googas.api.events.GuidoEvent;
 import me.googas.bot.core.discord.GuidoGuild;
-import me.googas.commons.builder.ToStringBuilder;
 
 /** This object represents an event which has {@link GuidoGuild} involved */
 public class GuidoGuildEvent implements GuidoEvent {
@@ -22,6 +21,6 @@ public class GuidoGuildEvent implements GuidoEvent {
 
   @Override
   public String toString() {
-    return new ToStringBuilder(this).append("data", this.data).build();
+    return "GuidoGuildEvent{" + "data=" + data + '}';
   }
 }

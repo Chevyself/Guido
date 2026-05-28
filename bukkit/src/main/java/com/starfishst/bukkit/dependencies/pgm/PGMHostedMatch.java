@@ -10,10 +10,8 @@ import java.util.UUID;
 import java.util.concurrent.atomic.AtomicReference;
 import lombok.Getter;
 import lombok.NonNull;
-import me.googas.annotations.Nullable;
 import me.googas.api.matches.MatchTeam;
 import me.googas.api.matches.team.TeamMember;
-import me.googas.commons.builder.ToStringBuilder;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import tc.oc.pgm.api.PGM;
@@ -38,7 +36,7 @@ public class PGMHostedMatch extends HostedMatch {
   public PGMHostedMatch(
       @NonNull String id,
       @NonNull Set<HostedPlayer> participants,
-      @Nullable String ladder,
+      String ladder,
       @NonNull Map<String, Map<String, Object>> details,
       @NonNull MapInfo map,
       @NonNull String pgm) {
@@ -47,7 +45,6 @@ public class PGMHostedMatch extends HostedMatch {
     this.pgm = pgm;
   }
 
-  @Nullable
   public static Team getTeam(@NonNull Match match, @NonNull String id) {
     for (Party party : match.getParties()) {
       if (party instanceof Team && ((Team) party).getId().equals(id)) return (Team) party;
@@ -75,7 +72,7 @@ public class PGMHostedMatch extends HostedMatch {
    * @param pgmTeam the id of the pgm team
    * @return the id of the team that matches the pgm team
    */
-  public int getTeamId(@Nullable String pgmTeam) {
+  public int getTeamId(String pgmTeam) {
     if (pgmTeam == null) return -1;
     MatchTeam matchTeam = this.teams.get(pgmTeam);
     if (matchTeam != null) return matchTeam.getId();
@@ -87,7 +84,6 @@ public class PGMHostedMatch extends HostedMatch {
    *
    * @return the match if the id matches null otherwise
    */
-  @Nullable
   public Match toPGM() {
     Iterator<Match> matches = PGM.get().getMatchManager().getMatches();
     while (matches.hasNext()) {
@@ -97,7 +93,6 @@ public class PGMHostedMatch extends HostedMatch {
     return null;
   }
 
-  @Nullable
   public Team getParty(@NonNull UUID uuid) {
     Match match = this.toPGM();
     if (match == null) return null;
@@ -118,10 +113,6 @@ public class PGMHostedMatch extends HostedMatch {
 
   @Override
   public String toString() {
-    return new ToStringBuilder(this)
-        .append("teams", this.teams)
-        .append("map", this.map)
-        .append("pgm", this.pgm)
-        .build();
+    return "PGMHostedMatch{" + "teams=" + teams + ", map=" + map + ", pgm='" + pgm + '\'' + '}';
   }
 }

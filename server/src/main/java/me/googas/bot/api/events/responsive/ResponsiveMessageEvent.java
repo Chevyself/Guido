@@ -1,9 +1,9 @@
 package me.googas.bot.api.events.responsive;
 
-import com.starfishst.commands.jda.utils.responsive.ResponsiveMessage;
 import lombok.Getter;
 import lombok.NonNull;
 import me.googas.api.events.GuidoEvent;
+import me.googas.starbox.jda.responsive.ResponsiveMessage;
 
 /** An event that involves a responsive message */
 public class ResponsiveMessageEvent implements GuidoEvent {

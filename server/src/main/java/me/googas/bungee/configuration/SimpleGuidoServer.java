@@ -1,7 +1,6 @@
 package me.googas.bungee.configuration;
 
 import lombok.NonNull;
-import me.googas.commons.builder.ToStringBuilder;
 
 /** An implementation for guido servers */
 public class SimpleGuidoServer implements GuidoServer {
@@ -45,10 +44,15 @@ public class SimpleGuidoServer implements GuidoServer {
 
   @Override
   public String toString() {
-    return new ToStringBuilder(this)
-        .append("name", this.name)
-        .append("address", this.address)
-        .append("restricted", this.restricted)
-        .build();
+    return "SimpleGuidoServer{"
+        + "name='"
+        + name
+        + '\''
+        + ", address='"
+        + address
+        + '\''
+        + ", restricted="
+        + restricted
+        + '}';
   }
 }

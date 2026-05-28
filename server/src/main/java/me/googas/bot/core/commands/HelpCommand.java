@@ -1,20 +1,20 @@
 package me.googas.bot.core.commands;
 
-import com.starfishst.commands.jda.AnnotatedCommand;
-import com.starfishst.commands.jda.CommandManager;
-import com.starfishst.commands.jda.ParentCommand;
-import com.starfishst.commands.jda.annotations.Command;
-import com.starfishst.commands.jda.context.CommandContext;
-import com.starfishst.commands.jda.result.Result;
-import com.starfishst.commands.jda.result.ResultType;
-import com.starfishst.core.annotations.Optional;
-import com.starfishst.core.arguments.Argument;
-import com.starfishst.core.arguments.ISimpleArgument;
+import com.github.chevyself.starbox.CommandManager;
+import com.github.chevyself.starbox.annotations.Command;
+import com.github.chevyself.starbox.annotations.Free;
+import com.github.chevyself.starbox.arguments.Argument;
+import com.github.chevyself.starbox.arguments.SingleArgument;
+import com.github.chevyself.starbox.jda.commands.JdaAnnotatedCommand;
+import com.github.chevyself.starbox.jda.commands.JdaCommand;
+import com.github.chevyself.starbox.jda.context.CommandContext;
+import com.github.chevyself.starbox.result.Result;
 import me.googas.api.lang.LocaleFile;
+import me.googas.api.utility.Lots;
+import me.googas.api.utility.Maps;
 import me.googas.bot.api.Guido;
-import me.googas.commons.Lots;
-import me.googas.commons.Strings;
-import me.googas.commons.maps.Maps;
+
+import java.util.Optional;
 
 /** Command for helping people use the bot */
 public class HelpCommand {
@@ -36,78 +36,79 @@ public class HelpCommand {
   public Result help(
       LocaleFile locale,
       CommandContext context,
-      @Optional(name = "help.cmd", description = "help.cmd.desc") String cmdName) {
-    CommandManager commandManager = Guido.getCommandManager();
+      @Free(name = "help.cmd", description = "help.cmd.desc") String cmdName) {
+    CommandManager<CommandContext, JdaCommand> commandManager = Guido.getCommandManager();
     if (cmdName != null) {
-      AnnotatedCommand command = commandManager.getCommand(cmdName);
-      if (command != null) {
-        if (command.hasPermission(context)) {
-          StringBuilder builder = Strings.getBuilder();
-          String node = command.getPermission().getNode();
+      Optional<JdaCommand> optional = commandManager.getCommand(cmdName);
+      if (optional.isPresent()) {
+        JdaCommand command = optional.get();
+        if (true/* TODO add permission check command.hasPermission(context)*/) {
+          StringBuilder builder = new StringBuilder();
+          String node = /*command.getPermission().getNode() Related to permission check*/ "";
           builder.append(
               locale.get(
                   "help.cmd.title",
                   Maps.builder("name", command.getName())
-                      .append("desc", locale.get(command.getDescription()))
-                      .append("aliases", Lots.pretty(command.getAliases()))
-                      .append("perm", node.isEmpty() ? locale.get("help.cmd.empty-node") : node)));
+                      .put("desc", locale.get(command.getDescription()))
+                      .put("aliases", Lots.pretty(command.getAliases()))
+                      .put("perm", node.isEmpty() ? locale.get("help.cmd.empty-node") : node)));
           this.argsBuilder.setLength(0);
-          for (ISimpleArgument<?> argument : command.getArguments()) {
-            if (argument instanceof Argument<?>) {
-              if (((Argument<?>) argument).isRequired()) {
+          if (command instanceof JdaAnnotatedCommand annotated) {
+              for (Argument<?> argument : annotated.getArguments()) {
+              if (!(argument instanceof SingleArgument<?> single)) continue;
+                if (single.isRequired()) {
                 this.argsBuilder.append(
-                    locale.get(
-                        "help.cmd.arg.required",
-                        Maps.builder("name", locale.get(((Argument<?>) argument).getName()))));
+                        locale.get(
+                                "help.cmd.arg.required",
+                                Maps.builder("name", locale.get(single.getName()))));
               } else {
                 this.argsBuilder.append(
-                    locale.get(
-                        "help.cmd.arg.optional",
-                        Maps.builder("name", locale.get(((Argument<?>) argument).getName()))));
+                        locale.get(
+                                "help.cmd.arg.optional",
+                                Maps.builder("name", locale.get(single.getName()))));
               }
             }
           }
+
           builder.append(
               locale.get(
                   "help.cmd.usage",
                   Maps.builder("arguments", this.argsBuilder.toString())
-                      .append("name", command.getName())));
-          if (command instanceof ParentCommand && command.hasPermission(context)) {
+                      .put("name", command.getName())));
+          if (!command.getChildren().isEmpty()) {
             this.argsBuilder.setLength(0);
-            for (AnnotatedCommand child : ((ParentCommand) command).getCommands()) {
+            for (JdaCommand child : command.getChildren()) {
               this.argsBuilder.append(
                   locale.get(
                       "help.parent-cmd.child",
                       Maps.builder("name", child.getName())
-                          .append("desc", locale.get(child.getDescription()))));
+                          .put("desc", locale.get(child.getDescription()))));
             }
             builder.append(
                 locale.get(
                     "help.parent.children",
                     Maps.singleton("children", this.argsBuilder.toString())));
           }
-          return new Result(builder.toString());
+          return Result.of(builder.toString());
         } else {
-          return new Result(
-              ResultType.PERMISSION,
+          return Result.of(
               locale.get("help.not-allowed", Maps.singleton("name", cmdName)));
         }
       } else {
-        return new Result(
-            ResultType.USAGE, locale.get("help.unknown-cmd", Maps.singleton("name", cmdName)));
+        return Result.of(locale.get("help.unknown-cmd", Maps.singleton("name", cmdName)));
       }
     }
-    StringBuilder builder = Strings.getBuilder();
+    StringBuilder builder = new StringBuilder();
     builder.append(locale.get("help.cmds.title"));
-    for (AnnotatedCommand command : commandManager.getCommands()) {
-      if (command.hasPermission(context)) {
+    for (JdaCommand command : commandManager.getCommands()) {
+      if (/*command.hasPermission(context) TODO add permission check*/ true) {
         builder.append(
             locale.get(
                 "help.cmds",
                 Maps.builder("name", command.getName())
-                    .append("desc", locale.get(command.getDescription()))));
+                    .put("desc", locale.get(command.getDescription()))));
       }
     }
-    return new Result(builder.toString());
+    return Result.of(builder.toString());
   }
 }

@@ -1,7 +1,7 @@
 package me.googas.bot.api.events.responsive;
 
-import com.starfishst.commands.jda.utils.responsive.ResponsiveMessage;
 import lombok.NonNull;
+import me.googas.starbox.jda.responsive.ResponsiveMessage;
 
 /** Called when a responsive message gets unloaded */
 public class ResponsiveMessageUnloadedEvent extends ResponsiveMessageEvent {

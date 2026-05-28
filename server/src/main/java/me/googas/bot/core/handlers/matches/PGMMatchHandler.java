@@ -1,10 +1,6 @@
 package me.googas.bot.core.handlers.matches;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 import lombok.NonNull;
 import me.googas.api.Requests;
 import me.googas.api.events.match.MatchLoadedEvent;
@@ -14,12 +10,11 @@ import me.googas.api.matches.AbstractMatch;
 import me.googas.api.matches.MatchStatus;
 import me.googas.bot.api.Guido;
 import me.googas.bot.api.server.BotServer;
-import me.googas.commons.UUIDUtils;
-import me.googas.commons.Validate;
-import me.googas.commons.events.ListenPriority;
-import me.googas.commons.events.Listener;
-import me.googas.messaging.json.JsonMessenger;
-import me.googas.messaging.json.server.JsonClientThread;
+import me.googas.net.sockets.json.JsonMessenger;
+import me.googas.net.sockets.json.server.JsonClientThread;
+import me.googas.starbox.UUIDUtils;
+import me.googas.starbox.events.ListenPriority;
+import me.googas.starbox.events.Listener;
 
 /** Handles matches for PGM */
 // TODO fix this handler and PGM queue
@@ -77,7 +72,7 @@ public class PGMMatchHandler implements MatchHandler {
       return;
     }
     BotServer server = Guido.getServer();
-    JsonClientThread bungee = server.getAuthenticator().getBungee();
+    JsonClientThread bungee = server.getAuthenticator().get().getBungee();
     if (bungee != null) {
       Requests.MatchServer.canHost(abstractMatch)
           .send(
@@ -106,7 +101,7 @@ public class PGMMatchHandler implements MatchHandler {
     for (LinkableInfo info : abstractMatch.getParticipants()) {
       String trimmed = info.getIdString("uuid", "");
       participants.add(
-          UUIDUtils.untrim(Validate.notNull(trimmed, "Queueing user does not have uuid")));
+          UUIDUtils.untrim(Objects.requireNonNull(trimmed, "Queueing user does not have uuid")));
     }
     Requests.MatchServer.host(abstractMatch)
         .send(

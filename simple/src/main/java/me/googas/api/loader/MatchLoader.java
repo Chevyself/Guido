@@ -7,7 +7,7 @@ import me.googas.api.links.LinkableType;
 import me.googas.api.matches.AbstractMatch;
 import me.googas.api.matches.MatchInfo;
 import me.googas.api.matches.MatchStatus;
-import me.googas.commons.RandomUtils;
+import me.googas.api.utility.RandomUtils;
 
 public interface MatchLoader extends DataLoader {
 

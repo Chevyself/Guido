@@ -6,7 +6,6 @@ import java.util.Map;
 import java.util.Objects;
 import lombok.Getter;
 import lombok.NonNull;
-import me.googas.annotations.Nullable;
 import me.googas.api.API;
 import me.googas.api.GuidoCatchable;
 import me.googas.api.Informative;
@@ -40,7 +39,6 @@ public class UserData implements GuidoCatchable, Localized, Informative {
    * @param type the type of the link to getId
    * @return the link if found else null
    */
-  @Nullable
   public Linkable getLink(@NonNull LinkableType type) {
     return API.getLoader().getLinks().getLink(this, type);
   }

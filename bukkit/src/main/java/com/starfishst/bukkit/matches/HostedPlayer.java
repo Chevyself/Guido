@@ -1,26 +1,18 @@
 package com.starfishst.bukkit.matches;
 
 import com.starfishst.bukkit.Guido;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 import lombok.Getter;
 import lombok.NonNull;
-import me.googas.annotations.Nullable;
 import me.googas.api.Identifiable;
 import me.googas.api.Requests;
 import me.googas.api.Stateable;
 import me.googas.api.links.Linkable;
 import me.googas.api.links.LinkableInfo;
 import me.googas.api.links.LinkableType;
-import me.googas.commons.UUIDUtils;
-import me.googas.commons.builder.ToStringBuilder;
-import me.googas.messaging.api.MessengerListenFailException;
-import me.googas.messaging.json.client.JsonClient;
+import me.googas.net.api.exception.MessengerListenFailException;
+import me.googas.net.sockets.json.client.JsonClient;
+import me.googas.starbox.UUIDUtils;
 
 /** This is basically a minecraft linkable information */
 public class HostedPlayer implements Stateable, Identifiable {
@@ -63,15 +55,13 @@ public class HostedPlayer implements Stateable, Identifiable {
     return players;
   }
 
-  @Nullable
   public static HostedPlayer parse(@NonNull LinkableInfo link) throws MessengerListenFailException {
     JsonClient connection = Guido.getClient().getConnection();
     if (connection == null) return null;
-    Linkable linkable =
+    Optional<Linkable> optional =
         Requests.Links.getLinkByIdentification(LinkableType.MINECRAFT, link.getIdentification())
             .send(connection);
-    if (linkable == null) return null;
-    return new HostedPlayer(linkable);
+    return optional.map(HostedPlayer::new).orElse(null);
   }
 
   @NonNull
@@ -100,10 +90,14 @@ public class HostedPlayer implements Stateable, Identifiable {
 
   @Override
   public String toString() {
-    return new ToStringBuilder(this)
-        .append("identification", this.identification)
-        .append("recognition", this.recognition)
-        .build();
+    return "HostedPlayer{"
+        + "identification="
+        + identification
+        + ", recognition="
+        + recognition
+        + ", stats="
+        + stats
+        + '}';
   }
 
   @Override

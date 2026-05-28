@@ -5,10 +5,10 @@ import me.googas.api.Requests;
 import me.googas.api.ValuesMap;
 import me.googas.api.server.GuidoAuthenticator;
 import me.googas.api.token.AuthToken;
-import me.googas.messaging.json.JsonMessenger;
-import me.googas.messaging.json.ParamName;
-import me.googas.messaging.json.Receptor;
-import me.googas.messaging.json.server.JsonClientThread;
+import me.googas.net.sockets.json.JsonMessenger;
+import me.googas.net.sockets.json.ParamName;
+import me.googas.net.sockets.json.Receptor;
+import me.googas.net.sockets.json.server.JsonClientThread;
 
 public class GuidoServerReceptors {
 

@@ -2,7 +2,6 @@ package me.googas.bot.core.loader.jsongo;
 
 import com.mongodb.client.MongoCollection;
 import lombok.NonNull;
-import me.googas.annotations.Nullable;
 import me.googas.api.economy.AbstractBank;
 import me.googas.api.loader.BanksLoader;
 import me.googas.bot.core.util.Mongo;
@@ -18,7 +17,6 @@ public class JsongoBanksLoader extends SimpleJsongoLoader implements BanksLoader
     return this.getCollection("banks");
   }
 
-  @Nullable
   @Override
   public AbstractBank getBank(@NonNull String id) {
     return Mongo.get(

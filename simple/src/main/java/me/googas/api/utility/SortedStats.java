@@ -6,7 +6,6 @@ import java.util.Objects;
 import lombok.Getter;
 import lombok.NonNull;
 import me.googas.api.Stateable;
-import me.googas.commons.builder.ToStringBuilder;
 
 /** This object is used to getId the stats from a {@link Stateable} is a way more organized way */
 @Deprecated
@@ -43,6 +42,6 @@ public class SortedStats {
 
   @Override
   public String toString() {
-    return new ToStringBuilder(this).append("map", this.map).build();
+    return "SortedStats{" + "map=" + map + '}';
   }
 }

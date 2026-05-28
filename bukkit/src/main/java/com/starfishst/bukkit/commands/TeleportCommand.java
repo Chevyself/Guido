@@ -1,8 +1,9 @@
 package com.starfishst.bukkit.commands;
 
-import com.starfishst.commands.bukkit.annotations.Command;
-import com.starfishst.core.annotations.Optional;
-import com.starfishst.core.annotations.Required;
+import com.github.chevyself.starbox.annotations.Command;
+import com.github.chevyself.starbox.annotations.Free;
+import com.github.chevyself.starbox.annotations.Required;
+import com.github.chevyself.starbox.common.CommandPermission;
 import lombok.NonNull;
 import org.bukkit.entity.Player;
 
@@ -10,14 +11,14 @@ public class TeleportCommand implements GuidoCommand {
 
   private boolean enabled = false;
 
+  @CommandPermission("guido.teleport")
   @Command(
       aliases = {"teleport", "tp"},
-      description = "Teleport to a player",
-      permission = "guido.teleport")
+      description = "Teleport to a player")
   public void teleport(
       Player sender,
       @Required(name = "player", description = "The player to teleport to") Player player,
-      @Optional(name = "destination", description = "The player to teleport the first player to")
+      @Free(name = "destination", description = "The player to teleport the first player to")
           Player to) {
     if (to != null) {
       if (sender.hasPermission("guido.teleport.else")) {

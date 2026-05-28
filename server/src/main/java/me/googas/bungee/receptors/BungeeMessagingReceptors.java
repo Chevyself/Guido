@@ -1,13 +1,13 @@
 package me.googas.bungee.receptors;
 
-import com.starfishst.commands.bungee.utils.BungeeUtils;
+import com.github.chevyself.starbox.common.Components;
 import java.util.Map;
 import java.util.UUID;
 import lombok.NonNull;
 import me.googas.api.Requests;
 import me.googas.bungee.GuidoBungee;
-import me.googas.messaging.json.ParamName;
-import me.googas.messaging.json.Receptor;
+import me.googas.net.sockets.json.ParamName;
+import me.googas.net.sockets.json.Receptor;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 
@@ -18,7 +18,7 @@ public class BungeeMessagingReceptors {
       @ParamName("uuid") UUID uuid, @ParamName("message") @NonNull String message) {
     ProxiedPlayer player = ProxyServer.getInstance().getPlayer(uuid);
     if (player != null) {
-      player.sendMessage(BungeeUtils.getComponent(message));
+      player.sendMessage(Components.getComponent(message));
       return true;
     }
     return false;

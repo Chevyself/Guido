@@ -1,10 +1,10 @@
 package com.starfishst.bukkit.lang;
 
-import com.starfishst.commands.bukkit.utils.BukkitUtils;
+import com.github.chevyself.starbox.bukkit.utils.BukkitUtils;
 import java.util.Map;
 import lombok.NonNull;
 import me.googas.api.lang.LocaleFile;
-import me.googas.commons.maps.MapBuilder;
+import me.googas.starbox.builders.MapBuilder;
 import org.bukkit.configuration.ConfigurationSection;
 
 /** An implementation of locale file for bukkit */
@@ -45,7 +45,7 @@ public class BukkitLocaleFile implements LocaleFile {
    */
   @Override
   public @NonNull String get(@NonNull String path) {
-    return BukkitUtils.build(LocaleFile.super.get(path));
+    return BukkitUtils.format(LocaleFile.super.get(path));
   }
 
   /**
@@ -58,7 +58,7 @@ public class BukkitLocaleFile implements LocaleFile {
    */
   @Override
   public @NonNull String get(@NonNull String path, @NonNull Map<String, String> placeholders) {
-    return BukkitUtils.build(LocaleFile.super.get(path, placeholders));
+    return BukkitUtils.format(LocaleFile.super.get(path, placeholders));
   }
 
   /**
@@ -72,6 +72,6 @@ public class BukkitLocaleFile implements LocaleFile {
   @Override
   public @NonNull String get(
       @NonNull String path, @NonNull MapBuilder<String, String> placeholders) {
-    return BukkitUtils.build(LocaleFile.super.get(path, placeholders));
+    return BukkitUtils.format(LocaleFile.super.get(path, placeholders));
   }
 }

@@ -2,7 +2,6 @@ package me.googas.api.permissions;
 
 import lombok.Getter;
 import lombok.NonNull;
-import me.googas.annotations.Nullable;
 import me.googas.api.API;
 
 /** Represents the information to getId a {@link Group} */
@@ -35,7 +34,6 @@ public class GroupInfo {
    *
    * @return the group if it is found null otherwise
    */
-  @Nullable
   public Group getGroup() {
     return API.getLoader().getGroups().getGroup(this.id);
   }

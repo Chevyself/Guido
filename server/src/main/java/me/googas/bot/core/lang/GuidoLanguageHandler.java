@@ -1,9 +1,9 @@
 package me.googas.bot.core.lang;
 
-import com.starfishst.commands.jda.context.CommandContext;
-import com.starfishst.commands.jda.messages.MessagesProvider;
-import com.starfishst.commands.jda.result.ResultType;
+import com.github.chevyself.starbox.jda.context.CommandContext;
+import com.github.chevyself.starbox.jda.messages.JdaMessagesProvider;
 import java.io.IOException;
+import java.time.Duration;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.logging.Level;
@@ -13,15 +13,14 @@ import me.googas.IOUtil;
 import me.googas.api.lang.LocaleFile;
 import me.googas.api.lang.Localized;
 import me.googas.api.loader.Loader;
+import me.googas.api.utility.Maps;
 import me.googas.bot.core.handlers.GuidoHandler;
 import me.googas.bot.core.util.Discord;
-import me.googas.commons.CoreFiles;
-import me.googas.commons.maps.Maps;
-import me.googas.commons.time.Time;
+import me.googas.starbox.CoreFiles;
 
 /** Handles the language for guido messages */
 @CustomLog
-public class GuidoLanguageHandler implements MessagesProvider, GuidoHandler {
+public class GuidoLanguageHandler implements JdaMessagesProvider, GuidoHandler {
 
   /** The files that this handler is using */
   @NonNull private final Set<GuidoLocaleFile> files = new HashSet<>();
@@ -183,8 +182,9 @@ public class GuidoLanguageHandler implements MessagesProvider, GuidoHandler {
   }
 
   @Override
-  public @NonNull String invalidTime(@NonNull String s, @NonNull CommandContext context) {
-    return this.getFile(context).get("invalid.time", Maps.singleton("string", s));
+  public @NonNull String invalidDuration(
+      @NonNull String s, @org.jspecify.annotations.NonNull CommandContext commandContext) {
+    return this.getFile(commandContext).get("invalid.duration", Maps.singleton("string", s));
   }
 
   @Override
@@ -194,44 +194,23 @@ public class GuidoLanguageHandler implements MessagesProvider, GuidoHandler {
         .get(
             "missing-argument",
             Maps.builder("name", this.getFile(context).get(s))
-                .append("description", this.getFile(context).get(s1))
-                .append("position", String.valueOf(i)));
+                .put("description", this.getFile(context).get(s1))
+                .put("position", String.valueOf(i)));
+  }
+
+  @Override
+  public @NonNull String cooldown(
+      @org.jspecify.annotations.NonNull CommandContext commandContext, @NonNull Duration duration) {
+    return this.getFile(commandContext)
+        .get(
+            "cooldown",
+            Maps.singleton("time", String.valueOf(duration.toSeconds()))); // TODO: format the time
   }
 
   @Override
   public @NonNull String commandNotFound(
       @NonNull String s, @NonNull CommandContext commandContext) {
     return this.getFile(commandContext).get("command-not-found", Maps.builder("name", s));
-  }
-
-  @Override
-  public @NonNull String footer(CommandContext commandContext) {
-    return this.getFile(commandContext).get("footer");
-  }
-
-  @Override
-  public @NonNull String getTitle(@NonNull ResultType resultType, CommandContext commandContext) {
-    GuidoLocaleFile file = this.getFile(commandContext);
-    switch (resultType) {
-      case UNKNOWN:
-        return file.get("title.unknown");
-      case PERMISSION:
-        return file.get("title.permission");
-      case GENERIC:
-        return file.get("title.generic");
-      case USAGE:
-        return file.get("title.usage");
-      case ERROR:
-        return file.get("title.error");
-    }
-    throw new IllegalArgumentException(resultType + " is not a valid result");
-  }
-
-  @Override
-  public @NonNull String response(
-      @NonNull String s, @NonNull String s1, CommandContext commandContext) {
-    return this.getFile(commandContext)
-        .get("response", Maps.builder("title", s).append("description", s1));
   }
 
   @Override
@@ -242,17 +221,6 @@ public class GuidoLanguageHandler implements MessagesProvider, GuidoHandler {
   @Override
   public @NonNull String guildOnly(@NonNull CommandContext commandContext) {
     return this.getFile(commandContext).get("guild-only");
-  }
-
-  @Override
-  public @NonNull String thumbnailUrl(CommandContext commandContext) {
-    return this.getFile(commandContext).get("thumbnail-url");
-  }
-
-  @Override
-  public @NonNull String cooldown(@NonNull Time time, CommandContext commandContext) {
-    return this.getFile(commandContext)
-        .get("cooldown", Maps.singleton("cooldown", time.toEffectiveString()));
   }
 
   @Override
@@ -276,21 +244,8 @@ public class GuidoLanguageHandler implements MessagesProvider, GuidoHandler {
   }
 
   @Override
-  public @NonNull String missingStrings(
-      @NonNull String s,
-      @NonNull String s1,
-      int i,
-      int i1,
-      int i2,
-      @NonNull CommandContext context) {
-    return this.getFile(context)
-        .get(
-            "invalid.strings",
-            Maps.builder("name", this.getFile(context).get(s))
-                .append("description", this.getFile(context).get(s1))
-                .append("position", String.valueOf(i))
-                .append("min", String.valueOf(i1))
-                .append("missing", String.valueOf(i2)));
+  public String noMessage(@NonNull CommandContext commandContext) {
+    return this.getFile(commandContext).get("no-message");
   }
 
   /** Stops the language handler */

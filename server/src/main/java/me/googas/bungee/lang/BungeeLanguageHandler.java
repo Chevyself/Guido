@@ -1,14 +1,15 @@
 package me.googas.bungee.lang;
 
-import com.starfishst.commands.bungee.context.CommandContext;
-import com.starfishst.commands.bungee.messages.MessagesProvider;
+import com.github.chevyself.starbox.bungee.context.CommandContext;
+import com.github.chevyself.starbox.bungee.messages.BungeeMessagesProvider;
 import java.io.InputStream;
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import lombok.NonNull;
+import me.googas.api.utility.Maps;
 import me.googas.bungee.events.GuidoListener;
-import me.googas.commons.maps.Maps;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.plugin.Plugin;
@@ -17,7 +18,7 @@ import net.md_5.bungee.config.ConfigurationProvider;
 import net.md_5.bungee.config.YamlConfiguration;
 
 /** The language handler for bungee */
-public class BungeeLanguageHandler implements GuidoListener, MessagesProvider {
+public class BungeeLanguageHandler implements GuidoListener, BungeeMessagesProvider {
 
   /** The loaded locale files */
   @NonNull private final List<BungeeLocaleFile> files = new ArrayList<>();
@@ -103,7 +104,7 @@ public class BungeeLanguageHandler implements GuidoListener, MessagesProvider {
   }
 
   @Override
-  public @NonNull String invalidTime(@NonNull String s, @NonNull CommandContext context) {
+  public @NonNull String invalidDuration(@NonNull String s, @NonNull CommandContext context) {
     return this.getFile(context).get("invalid.time", Maps.singleton("string", s));
   }
 
@@ -113,25 +114,17 @@ public class BungeeLanguageHandler implements GuidoListener, MessagesProvider {
     return this.getFile(context)
         .get(
             "missing-argument",
-            Maps.builder("name", s1)
-                .append("description", s1)
-                .append("position", String.valueOf(i)));
+            Maps.builder("name", s1).put("description", s1).put("position", String.valueOf(i)));
   }
 
   @Override
-  public @NonNull String missingStrings(
-      @NonNull String s,
-      @NonNull String s1,
-      int i,
-      int i1,
-      int i2,
-      @NonNull CommandContext context) {
-    return this.getFile(context)
+  public @NonNull String cooldown(
+      @NonNull CommandContext commandContext, @NonNull Duration duration) {
+    return this.getFile(commandContext)
         .get(
-            "missing-argument",
-            Maps.builder("name", s1)
-                .append("description", s1)
-                .append("position", String.valueOf(i)));
+            "cooldown",
+            Maps.singleton(
+                "time", duration.toSeconds() + " second" + (duration.toSeconds() != 1 ? "s" : "")));
   }
 
   @Override
