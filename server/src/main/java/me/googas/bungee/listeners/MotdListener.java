@@ -8,9 +8,9 @@ import java.util.List;
 import java.util.UUID;
 import javax.imageio.ImageIO;
 import lombok.NonNull;
-import me.googas.IOUtil;
 import me.googas.api.utility.RandomUtils;
 import me.googas.bungee.events.GuidoListener;
+import me.googas.server.GuidoRuntime;
 import me.googas.starbox.CoreFiles;
 import net.md_5.bungee.api.Favicon;
 import net.md_5.bungee.api.ServerPing;
@@ -26,8 +26,8 @@ public class MotdListener implements GuidoListener {
   private final Favicon favicon;
 
   /** Create the motd listener */
-  public MotdListener() {
-    this.favicon = this.readFavicon();
+  public MotdListener(@NonNull GuidoRuntime runtime) {
+    this.favicon = this.readFavicon(runtime);
   }
 
   /**
@@ -36,8 +36,8 @@ public class MotdListener implements GuidoListener {
    *
    * @return the read favicon or null if the file could not be read
    */
-  private Favicon readFavicon() {
-    File file = CoreFiles.getFile(IOUtil.currentDirectory(), "server.png");
+  private Favicon readFavicon(@NonNull GuidoRuntime runtime) {
+    File file = CoreFiles.getFile(runtime.currentDirectory().getAbsolutePath(), "server.png");
     if (file != null) {
       try {
         return Favicon.create(ImageIO.read(file));

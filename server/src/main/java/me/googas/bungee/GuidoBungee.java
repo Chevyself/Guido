@@ -47,6 +47,7 @@ public class GuidoBungee {
     GuidoBungee.plugin = plugin;
   }
 
+  @Deprecated
   public static boolean isBungee() {
     return GuidoBungee.plugin != null;
   }

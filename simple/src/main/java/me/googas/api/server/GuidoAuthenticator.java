@@ -2,6 +2,7 @@ package me.googas.api.server;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import lombok.Getter;
 import lombok.NonNull;
 import me.googas.api.ValuesMap;
@@ -57,13 +58,15 @@ public class GuidoAuthenticator implements Authenticator<JsonClientThread> {
    *
    * @return the client of the bungee
    */
-  public JsonClientThread getBungee() {
+  public Optional<JsonClientThread> getBungee() {
+    JsonClientThread bungee = null;
     for (JsonClientThread client : this.info.keySet()) {
       if (this.info.get(client).getOr("bungee", Boolean.class, false)) {
-        return client;
+        bungee = client;
+        break;
       }
     }
-    return null;
+    return Optional.ofNullable(bungee);
   }
 
   @Override
