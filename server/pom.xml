@@ -77,19 +77,13 @@
     </build>
 
     <repositories>
-        <!-- JDA Repository -->
         <repository>
-            <id>jcenter</id>
-            <name>jcenter-bintray</name>
-            <url>https://jcenter.bintray.com/ </url>
+            <id>bungeecord-repo</id>
+            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
         </repository>
         <repository>
             <id>jitpack.io</id>
             <url>https://jitpack.io</url>
-        </repository>
-        <repository>
-            <id>bungeecord-repo</id>
-            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
         </repository>
     </repositories>
 
@@ -100,19 +94,6 @@
             <version>1.21-R0.4</version>
             <type>jar</type>
             <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>net.md-5</groupId>
-            <artifactId>bungeecord-api</artifactId>
-            <version>1.21-R0.4</version>
-            <type>javadoc</type>
-            <scope>provided</scope>
-        </dependency>
-        <!-- Command framework JDA -->
-        <dependency>
-            <groupId>com.github.Chevyself.starbox-commands</groupId>
-            <artifactId>jda</artifactId>
-            <version>1f35b847fb</version>
         </dependency>
         <!-- Command framework Bungee -->
         <dependency>
@@ -126,12 +107,6 @@
             <artifactId>mongo-java-driver</artifactId>
             <version>3.12.7</version>
         </dependency>
-        <!-- Starbox JDA -->
-        <dependency>
-            <groupId>me.googas.starbox</groupId>
-            <artifactId>jda</artifactId>
-            <version>1.0.0</version>
-        </dependency>
         <!--<dependency>
             <groupId>net.sf.trove4j</groupId>
             <artifactId>core</artifactId>
@@ -142,6 +117,12 @@
             <groupId>com.starfishst.guido</groupId>
             <artifactId>simple</artifactId>
             <version>1.0.0</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.starfishst.guido</groupId>
+            <artifactId>server_bot</artifactId>
+            <version>1.2.1</version>
             <scope>compile</scope>
         </dependency>
     </dependencies>

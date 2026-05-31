@@ -14,7 +14,7 @@ import lombok.Getter;
 import lombok.NonNull;
 import me.googas.api.utility.Lots;
 import me.googas.bot.GuidoBot;
-import me.googas.bot.core.commands.providers.*;
+import me.googas.bot.api.Guido;
 import me.googas.bungee.commands.GuidoCommands;
 import me.googas.bungee.commands.LinkCommand;
 import me.googas.bungee.commands.PermissionCommands;
@@ -33,7 +33,15 @@ import me.googas.bungee.listeners.MotdListener;
 import me.googas.bungee.listeners.PermissionsListener;
 import me.googas.bungee.listeners.PunishmentsListener;
 import me.googas.bungee.listeners.TipsListener;
+import me.googas.bungee.receptors.BungeeConnectionReceptors;
+import me.googas.bungee.receptors.BungeeMessagingReceptors;
+import me.googas.bungee.receptors.BungeeQueueReceptors;
+import me.googas.bungee.receptors.BungeeReceptors;
 import me.googas.bungee.utility.Proxy;
+import me.googas.net.api.Server;
+import me.googas.net.sockets.json.server.JsonClientThread;
+import me.googas.net.sockets.json.server.JsonSocketServer;
+import me.googas.server.GuidoRuntime;
 import me.googas.starbox.CoreFiles;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.config.ServerInfo;
@@ -59,18 +67,20 @@ public class GuidoPlugin extends Plugin {
               new ProvidersRegistry<CommandContext>()
                   .addProviders(new BungeeLocaleFileProvider(), new ProxiedOfflinePlayerProvider()))
           .build();
+  /** The bungeeConfiguration that the plugin will use */
+  @NonNull @Getter private BungeeConfiguration configuration = new GuidoBungeeConfiguration();
+
+  @NonNull private GuidoRuntime runtime = new GuidoPluginRuntime(this, this.configuration);
   /** The listeners being used by the plugin */
   @NonNull @Getter
   private final List<GuidoListener> listeners =
       Lots.list(
           this.languageHandler,
           new MinecraftDataListener(),
-          new MotdListener(),
+          new MotdListener(runtime),
           new PermissionsListener(),
           new PunishmentsListener(),
           new TipsListener());
-  /** The bungeeConfiguration that the plugin will use */
-  @NonNull @Getter private BungeeConfiguration configuration = new GuidoBungeeConfiguration();
 
   /** Loads the configuration */
   public void loadConfiguration() {
@@ -128,9 +138,16 @@ public class GuidoPlugin extends Plugin {
   public void onEnable() {
     GuidoBungee.setPlugin(this);
     this.loadConfiguration();
-    this.getProxy()
-        .getScheduler()
-        .runAsync(this, () -> GuidoBot.main(this.configuration.getBotArguments().split(" ")));
+    this.getProxy().getScheduler().runAsync(this, () -> new GuidoBot(runtime).start());
+    Server<JsonClientThread> server = Guido.getServer();
+    if (server instanceof JsonSocketServer) {
+      ((JsonSocketServer) server)
+          .addReceptors(
+              new BungeeConnectionReceptors(),
+              new BungeeMessagingReceptors(),
+              new BungeeQueueReceptors(),
+              new BungeeReceptors());
+    }
     for (GuidoListener listener : this.listeners) {
       listener.register(this);
       listener.onEnable();
