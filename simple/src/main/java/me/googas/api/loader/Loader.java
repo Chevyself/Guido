@@ -6,9 +6,6 @@ import lombok.NonNull;
 public interface Loader {
 
   @NonNull
-  BanksLoader getBanks();
-
-  @NonNull
   LadderLoader getLadders();
 
   @NonNull

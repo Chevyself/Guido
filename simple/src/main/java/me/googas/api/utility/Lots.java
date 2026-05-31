@@ -6,9 +6,14 @@ import lombok.NonNull;
 public class Lots {
 
   @NonNull
-  public static String pretty(@NonNull Collection<?> collection) {
-    if (collection.isEmpty()) return "none";
+  public static String pretty(@NonNull Collection<?> collection, @NonNull String empty) {
+    if (collection.isEmpty()) return empty;
     return collection.stream().map(Object::toString).reduce((a, b) -> a + ", " + b).orElse("none");
+  }
+
+  @NonNull
+  public static String pretty(@NonNull Collection<?> collection) {
+    return pretty(collection, "none");
   }
 
   public static <E> Set<E> set(@NonNull E... elements) {

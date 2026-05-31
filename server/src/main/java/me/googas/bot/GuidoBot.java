@@ -196,7 +196,6 @@ public class GuidoBot implements GuidoInstance {
           JsonSocketServer.listen(port)
               .maxWait(timeout)
               .addReceptors(
-                  new BankReceptors(),
                   new GroupReceptors(loader.getGroups()),
                   new GuidoServerReceptors(authenticator),
                   new LinkReceptors(loader.getLinks()),

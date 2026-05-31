@@ -41,7 +41,6 @@ public class JsongoLoader implements GuidoLoader {
   @NonNull @Getter private final JsongoTokenLoader tokens = new JsongoTokenLoader(this);
   @NonNull @Getter private final JsongoUserLoader users = new JsongoUserLoader(this);
   @NonNull @Getter private final JsonLadderLoader ladders = new JsonLadderLoader(this);
-  @NonNull @Getter private final JsongoBanksLoader banks = new JsongoBanksLoader(this);
 
   /**
    * Create the mongo data loader
