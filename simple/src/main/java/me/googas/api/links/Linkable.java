@@ -13,7 +13,6 @@ import me.googas.api.GuidoCatchable;
 import me.googas.api.Identifiable;
 import me.googas.api.Informative;
 import me.googas.api.Stateable;
-import me.googas.api.economy.Record;
 import me.googas.api.events.links.LinkableUnloadedEvent;
 import me.googas.api.lang.Localized;
 import me.googas.api.links.ref.DiscordLinkable;
@@ -26,13 +25,7 @@ import me.googas.starbox.builders.MapBuilder;
 
 /** This object represents data that can been linked to an user */
 public class Linkable
-    implements Permissible,
-        Stateable,
-        GuidoCatchable,
-        Localized,
-        Informative,
-        Identifiable,
-        Record {
+    implements Permissible, Stateable, GuidoCatchable, Localized, Informative, Identifiable {
 
   @NonNull @Getter private final LinkableType type;
   @NonNull @Getter private final Map<String, Object> identification;
