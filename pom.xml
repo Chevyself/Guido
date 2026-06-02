@@ -54,6 +54,7 @@
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <maven.compiler.source>21</maven.compiler.source>
         <maven.compiler.target>21</maven.compiler.target>
+        <starbox-commands-version>1b75b68e7c</starbox-commands-version>
     </properties>
 
     <dependencyManagement>

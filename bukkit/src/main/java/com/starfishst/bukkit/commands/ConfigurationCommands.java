@@ -32,9 +32,6 @@ public class ConfigurationCommands implements GuidoCommand {
   }
 
   @Override
-  public void setEnabled(boolean bol) {}
-
-  @Override
   public @NonNull String getName() {
     return "configuration";
   }

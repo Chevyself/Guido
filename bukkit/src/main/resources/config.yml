@@ -2,28 +2,16 @@
 context: Bukkit
 # The token to authenticate in the bot
 token: none
-# The currency of the server
-currency:
-  # How is the currency called
-  name: Dollar
-  # How is the currency called in plural
-  description: Dollars
-  # How much does a player get when it joins the server?
-  start: 100
 ## The list of commands that can be enabled:
 ## - fly: allows players to fly
 ## - ping: allows players to see their ping
 ## - gamemode: allows players to change their gamemode
 ## - ready: when pgm is loaded players can /ready and /unready to start a match
 ## - sudo: TODO
-## - pay: TODO
-## - balance: TODO
 commands:
   - fly
   - ping
   - gamemode
-  - pay
-  - balance
 ## The settings for certain listeners
 modules:
   #  <---------------------------------------------------------------------------------------->
@@ -45,46 +33,6 @@ modules:
     banned:
       - tell
       - msg
-  #  <---------------------------------------------------------------------------------------->
-  #                             LISTENERS THAT REQUIRE PROTOCOLLIB
-  #  <---------------------------------------------------------------------------------------->
-  # A listener that aims to improve minecraft velocity
-  better-velocity:
-    enabled: false
-    multiplier-horizontal: 0.9
-    multiplier-vertical: 0.35
-    multiplier-vertical-air: 0.4
-    multiplier-sprint: 0.8
-    multiplier-walk: 0.4
-  # An anti cheat that ensures a better gameplay for everyone
-  anti-cheat:
-    enabled: true
-    # The delay between suspicious calls
-    delay: 5s
-    # The permissions of the players that can see calls
-    permission: guido.adminchat
-    # How is it displayed for those who posses the permission
-    # Placeholders are:
-    # %player% for the name of the player
-    # %player_display%% for the player display name
-    #  %reason% the reason why the player is suspicious
-    chat: "[&6A&r] %player_display% &6cheats &r%reason%"
-  # Detects for auto clicking
-  auto-click-detector:
-    # Whether the detector is enabled
-    enabled: true
-    # The delay to which clicks and averages reset. This means how much time should
-    # take for clicks to be measured again
-    reset-delay: 50
-    # The maximum cps until it starts warning the staff
-    max-cps: 16.0
-    # The minimum deviation to which a player might getId banned
-    # This means the difference between click speeds
-    min-deviation: 0.01
-  # Detect people using reach hacks
-  reach-detector:
-    ## Whether this detector should be enabled
-    enabled: true
   #  <---------------------------------------------------------------------------------------->
   #                             LISTENERS THAT REQUIRE PGM
   #  <---------------------------------------------------------------------------------------->

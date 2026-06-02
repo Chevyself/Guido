@@ -1,0 +1,14 @@
+services:
+  minecraft:
+    image: eclipse-temurin:25-jre
+    working_dir: /server
+    tty: true
+    stdin_open: true
+
+    ports:
+      - "25565:25565"
+
+    volumes:
+      - .:/server
+
+    command: java -jar custom.jar

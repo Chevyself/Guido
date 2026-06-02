@@ -13,7 +13,6 @@ import me.googas.net.api.Messenger;
 import me.googas.net.api.auth.Authenticator;
 import me.googas.net.api.messages.Request;
 import me.googas.net.sockets.json.server.JsonClientThread;
-import org.jetbrains.annotations.NotNull;
 
 /** The implementation for authentication in guido */
 public class GuidoAuthenticator implements Authenticator<JsonClientThread> {
@@ -70,7 +69,7 @@ public class GuidoAuthenticator implements Authenticator<JsonClientThread> {
   }
 
   @Override
-  public boolean isAuthenticated(@NotNull JsonClientThread messenger, @NonNull Request request) {
+  public boolean isAuthenticated(@NonNull JsonClientThread messenger, @NonNull Request request) {
     if (this.levels.containsKey(messenger)) {
       AuthLevel authLevel = this.levels.get(messenger);
       AuthLevel required =

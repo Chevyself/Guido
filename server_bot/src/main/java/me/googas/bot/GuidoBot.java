@@ -27,6 +27,7 @@ import me.googas.bot.core.commands.*;
 import me.googas.bot.core.commands.administrative.*;
 import me.googas.bot.core.commands.providers.*;
 import me.googas.bot.core.handlers.GuidoHandler;
+import me.googas.bot.core.loader.GuidoFallbackLoader;
 import me.googas.bot.core.server.GuidoFallbackServer;
 import me.googas.net.api.Server;
 import me.googas.net.cache.Catchable;
@@ -48,10 +49,7 @@ import net.dv8tion.jda.api.hooks.AnnotatedEventManager;
 /** The match making bot */
 public class GuidoBot implements GuidoInstance {
 
-  @NonNull @Getter
-  private static final Formatter formatter =
-      new CustomFormatter(
-          "[%level%] %day%/%month%/%year% [GuidoBot] %hour%:%minute%:%second%: %message% %stack%");
+  @NonNull @Getter private static final Formatter formatter = new CustomFormatter();
 
   @NonNull @Getter
   public static final Logger log =
@@ -66,16 +64,15 @@ public class GuidoBot implements GuidoInstance {
   // TODO what's up with this class with the new authenticator
   @NonNull @Getter private Server<JsonClientThread> server = new GuidoFallbackServer();
 
-  @NonNull @Getter
-  private GuidoAuthenticator authenticator = new GuidoAuthenticator(this.getLoader());
-
   @Setter @Getter private CommandManager<CommandContext, JdaCommand> commandManager;
   @NonNull private final GuidoRuntime runtime;
   @NonNull @Getter private final GuidoHandlerRegistry handlerRegistry;
+  @NonNull @Getter private GuidoAuthenticator authenticator;
 
   public GuidoBot(@NonNull GuidoRuntime runtime) {
     this.runtime = runtime;
     this.handlerRegistry = new GuidoHandlerRegistry(runtime);
+    this.authenticator = new GuidoAuthenticator(new GuidoFallbackLoader());
   }
 
   public void start() {
@@ -124,7 +121,7 @@ public class GuidoBot implements GuidoInstance {
                 new UserDataSenderProvider(),
                 new UserDataSenderProvider());
     CommandManager<CommandContext, JdaCommand> commandManager =
-        new CommandManagerBuilder<>(new JdaAdapter(jda, new GuidoListenerOptions()))
+        new CommandManagerBuilder<>(new JdaAdapter(jda, new GuidoListenerOptions(), false))
             .setMessagesProvider(registry.getLanguageHandler())
             .setMiddlewareRegistry(middlewareRegistry)
             .setProvidersRegistry(providersRegistry)
@@ -135,7 +132,7 @@ public class GuidoBot implements GuidoInstance {
         new CacheCommands(),
         new CategoryCommands(),
         new ChannelCommands(),
-        new EvalCommand(),
+        // new EvalCommand(),TODO engine was removed
         new StopCommand(),
         new VoiceChannelCommands(),
         new HelpCommand(),

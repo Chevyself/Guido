@@ -68,7 +68,7 @@ public class GuidoPlugin extends Plugin {
                   .addProviders(new BungeeLocaleFileProvider(), new ProxiedOfflinePlayerProvider()))
           .build();
   /** The bungeeConfiguration that the plugin will use */
-  @NonNull @Getter private BungeeConfiguration configuration = new GuidoBungeeConfiguration();
+  @NonNull @Getter private BungeeConfiguration configuration = loadConfiguration();
 
   @NonNull private GuidoRuntime runtime = new GuidoPluginRuntime(this, this.configuration);
   /** The listeners being used by the plugin */
@@ -82,8 +82,12 @@ public class GuidoPlugin extends Plugin {
           new PunishmentsListener(),
           new TipsListener());
 
-  /** Loads the configuration */
-  public void loadConfiguration() {
+  /**
+   * Loads the configuration
+   *
+   * @return
+   */
+  public GuidoBungeeConfiguration loadConfiguration() {
     this.getLogger().info("Loading configuration");
     File dataFolder = this.getDataFolder();
     if (!dataFolder.exists()) {
@@ -93,12 +97,12 @@ public class GuidoPlugin extends Plugin {
       File file =
           CoreFiles.getFileOrResource(
               dataFolder.getPath() + "/config.yml", this.getResourceAsStream("config.yml"));
-      this.configuration =
-          new GuidoBungeeConfiguration(
-              ConfigurationProvider.getProvider(YamlConfiguration.class).load(file));
+      return new GuidoBungeeConfiguration(
+          ConfigurationProvider.getProvider(YamlConfiguration.class).load(file));
     } catch (IOException e) {
       // Fallback.addError("IOException: config.yml could not be loaded");
       e.printStackTrace();
+      return new GuidoBungeeConfiguration();
     }
   }
 
@@ -138,7 +142,7 @@ public class GuidoPlugin extends Plugin {
   public void onEnable() {
     GuidoBungee.setPlugin(this);
     this.loadConfiguration();
-    this.getProxy().getScheduler().runAsync(this, () -> new GuidoBot(runtime).start());
+    new GuidoBot(runtime).start();
     Server<JsonClientThread> server = Guido.getServer();
     if (server instanceof JsonSocketServer) {
       ((JsonSocketServer) server)

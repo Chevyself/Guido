@@ -29,7 +29,7 @@ public class VoiceChannelCommands {
   @Parent
   @GuidoJdaPermission("guido.channels")
   @Command(
-      aliases = {"voiceChannels", "vc"},
+      aliases = {"voicechannels", "vc"},
       description = "vc.desc")
   public Result categories(LocaleFile locale, Guild guild, GuidoGuild botGuild) {
     Map<String, String> placeholders = Maps.singleton("name", guild.getName());

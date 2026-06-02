@@ -1,6 +1,7 @@
 package me.googas.server;
 
 import java.io.File;
+import java.io.InputStream;
 import lombok.NonNull;
 import me.googas.starbox.ProgramArguments;
 
@@ -20,4 +21,7 @@ public interface GuidoRuntime {
    */
   @NonNull
   File currentDirectory();
+
+  @NonNull
+  InputStream getResource(@NonNull String name);
 }

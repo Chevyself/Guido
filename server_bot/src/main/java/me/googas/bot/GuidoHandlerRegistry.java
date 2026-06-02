@@ -123,7 +123,7 @@ public class GuidoHandlerRegistry {
         }
       }
     }
-    this.primaryHandlers.add(new GuidoLanguageHandler(this.runtime, loader).load("en"));
+    this.primaryHandlers.add(new GuidoLanguageHandler(this.runtime, loader).load(runtime, "en"));
     this.primaryHandlers.add(loader);
     return this;
   }

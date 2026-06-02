@@ -21,6 +21,7 @@ public class GuidoCommands {
 
   @Command(aliases = "config")
   public Result config() {
+    // TODO fix reload
     GuidoBungee.validated().loadConfiguration();
     return Result.of("&aConfiguration has been reloaded");
   }

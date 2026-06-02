@@ -129,7 +129,7 @@ public class GuidoPlugin extends JavaPlugin {
                   Starbox.getModules().engage(fallback);
                   return fallback;
                 });
-    languageModule.register(this, BukkitYamlLanguage.of(this, "en"));
+    languageModule.register(this, BukkitYamlLanguage.of(this, "lang/en"));
   }
 
   @Override

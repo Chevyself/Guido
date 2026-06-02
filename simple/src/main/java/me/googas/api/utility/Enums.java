@@ -19,7 +19,6 @@ public class Enums {
 
   public static <T extends Enum<?>> List<String> getNames(T[] enums) {
     List<String> names = new ArrayList<>();
-    if (enums.length == 0) return names;
     for (T anEnum : enums) {
       names.add(anEnum.name());
     }

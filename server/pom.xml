@@ -60,20 +60,6 @@
                 </executions>
             </plugin>
         </plugins>
-        <!-- The resources of the bot -->
-        <resources>
-            <resource>
-                <directory>src/main/resources</directory>
-                <filtering>true</filtering>
-                <excludes>
-                    <exclude>lang/**/*.properties</exclude>
-                </excludes>
-            </resource>
-            <resource>
-                <directory>src/main/resources/lang</directory>
-                <filtering>false</filtering>
-            </resource>
-        </resources>
     </build>
 
     <repositories>
@@ -99,7 +85,7 @@
         <dependency>
             <groupId>com.github.Chevyself.starbox-commands</groupId>
             <artifactId>bungee</artifactId>
-            <version>1f35b847fb</version>
+            <version>${starbox-commands-version}</version>
         </dependency>
         <!-- Mongo dependency -->
         <dependency>

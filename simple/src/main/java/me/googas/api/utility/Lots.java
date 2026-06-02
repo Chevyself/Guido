@@ -16,10 +16,12 @@ public class Lots {
     return pretty(collection, "none");
   }
 
+  @SafeVarargs
   public static <E> Set<E> set(@NonNull E... elements) {
     return new HashSet<>(Arrays.asList(elements));
   }
 
+  @SafeVarargs
   public static <E> List<E> list(@NonNull E... elements) {
     return Arrays.asList(elements);
   }

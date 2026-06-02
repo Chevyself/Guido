@@ -1,10 +1,12 @@
 package me.googas.bot;
 
 import java.io.File;
+import java.io.InputStream;
 import java.nio.file.Path;
 import lombok.Getter;
 import lombok.NonNull;
 import me.googas.server.GuidoRuntime;
+import me.googas.starbox.CoreFiles;
 import me.googas.starbox.ProgramArguments;
 
 public class GuidoBotMain {
@@ -26,6 +28,11 @@ public class GuidoBotMain {
     public @NonNull File currentDirectory() {
       return this.currentDirectory.toFile();
     }
+
+    @Override
+    public @NonNull InputStream getResource(@NonNull String name) {
+      return CoreFiles.getResource(name);
+    }
   }
 
   /**
@@ -41,7 +48,7 @@ public class GuidoBotMain {
    *
    * <p>For the mongo loader you need these two:
    *
-   * <p>'uri' the connection uri for mongo
+   * <p>'uri' the connection uri for mongo.
    *
    * <p>'database' the database to use
    *

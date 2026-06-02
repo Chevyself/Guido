@@ -45,14 +45,14 @@ public class GuidoLanguageHandler implements JdaMessagesProvider, GuidoHandler {
    * @param toLoad the locale files to load
    */
   @NonNull
-  public GuidoLanguageHandler load(String... toLoad) {
+  public GuidoLanguageHandler load(@NonNull GuidoRuntime runtime, @NonNull String... toLoad) {
     for (String lang : toLoad) {
       try {
         this.files.add(
             new GuidoLocaleFile(
                 CoreFiles.getFileOrResource(
                     runtime.currentDirectory() + "/assets/lang/" + lang + ".properties",
-                    CoreFiles.getResource("lang/" + lang + ".properties"))));
+                    runtime.getResource("lang/" + lang + ".properties"))));
       } catch (IOException e) {
         GuidoLanguageHandler.log.log(
             Level.SEVERE, e, () -> "Failed to register " + lang + ".properties");

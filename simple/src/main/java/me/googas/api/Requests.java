@@ -24,8 +24,6 @@ import me.googas.api.punishment.PunishmentStatus;
 import me.googas.api.punishment.PunishmentType;
 import me.googas.api.utility.SortedStats;
 import me.googas.net.api.messages.RequestBuilder;
-import org.jetbrains.annotations.NonNls;
-import org.jetbrains.annotations.NotNull;
 
 /** Static utilities for requests */
 public class Requests {
@@ -538,7 +536,7 @@ public class Requests {
     @NonNull public static final String HOST = MatchServer.PREFIX + "host";
     @NonNull public static final String SERVER_READY = MatchServer.PREFIX + "server-ready";
 
-    @NotNull
+    @NonNull
     public static RequestBuilder<Boolean> canHost(@NonNull AbstractMatch abstractMatch) {
       return new RequestBuilder<>(Boolean.class, MatchServer.CAN_HOST)
           .put("abstractMatch", abstractMatch);
@@ -551,7 +549,7 @@ public class Requests {
           .put("abstractMatch", abstractMatch);
     }
 
-    @NonNls
+    @NonNull
     public static RequestBuilder<Boolean> serverReady() {
       return new RequestBuilder<>(Boolean.class, MatchServer.SERVER_READY);
     }
