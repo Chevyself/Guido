@@ -52,7 +52,8 @@ public class MatchMakingChannelsHandler implements GuidoHandler {
    *
    * @param channel the channel to check
    */
-  public void checkDeletePreGame(@NonNull AudioChannelUnion channel) {
+  public void checkDeletePreGame(AudioChannelUnion channel) {
+    if (channel == null) return;
     String id = this.preMatch.get(channel.getIdLong());
     if (id == null) return;
     if (channel.getMembers().isEmpty()) {
