@@ -51,7 +51,7 @@ public class QueueChannelsHandler implements GuidoHandler {
    * @param discordMember the event that left the queue
    */
   public void checkRemoveQueue(
-      @NonNull AudioChannelUnion channelLeft, @NonNull Guild guild, @NonNull Member discordMember) {
+      AudioChannelUnion channelLeft, @NonNull Guild guild, @NonNull Member discordMember) {
     long guildId = guild.getIdLong();
     long channelId = this.waiting.getOrDefault(guildId, -1L);
     if (channelId == channelLeft.getIdLong()) {
@@ -69,7 +69,8 @@ public class QueueChannelsHandler implements GuidoHandler {
    * @param channel the channel which is being checked whether to delete it
    * @param guildId the id of the guild
    */
-  private void checkDeletion(@NonNull AudioChannelUnion channel, long guildId) {
+  private void checkDeletion(AudioChannelUnion channel, long guildId) {
+    if (channel == null) return;
     List<Member> members = channel.getMembers();
     if (members.isEmpty()) {
       this.waiting.remove(guildId);

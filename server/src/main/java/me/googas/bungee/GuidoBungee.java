@@ -6,6 +6,7 @@ import lombok.NonNull;
 import me.googas.bungee.configuration.BungeeConfiguration;
 import me.googas.bungee.events.GuidoListener;
 import me.googas.bungee.lang.BungeeLanguageHandler;
+import me.googas.net.sockets.json.client.JsonClient;
 
 /** Static utilities for the guido bungee plugin */
 public class GuidoBungee {
@@ -65,5 +66,10 @@ public class GuidoBungee {
   @NonNull
   public static Logger getLogger() {
     return GuidoBungee.validated().getLogger();
+  }
+
+  @NonNull
+  public static JsonClient getClient() {
+    return GuidoBungee.validated().getClient();
   }
 }

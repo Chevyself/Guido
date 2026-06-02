@@ -67,8 +67,7 @@ public class GuidoPlugin extends JavaPlugin {
    */
   @NonNull @Getter private final GuidoCompatibilities compatibilities = new GuidoCompatibilities();
   /** The client that the plugin is using */
-  @NonNull @Getter
-  private final BukkitClient client = new BukkitClient("none", "66.11.113.47", 3000);
+  @NonNull @Getter private final BukkitClient client = new BukkitClient("none", "localhost", 3000);
   /** The guidoConfiguration that the implementation is using */
   @NonNull @Getter private GuidoConfiguration configuration = new GuidoConfiguration();
   /** Starbox scheduler */
