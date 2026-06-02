@@ -19,11 +19,3 @@ sudo chown -R $USER:$USER <dir>
 ```txt
 You've linked your account to: null
 ```
-
-- [ ] Commands do not have correctly replaced placeholders
-```txt
-Here's some help for you to complete the command correctly, you can also use .help: 
- You are missing the argument %name% in the position %position%. 
- What is it? 
- %description%
-```
