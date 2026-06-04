@@ -5,7 +5,7 @@ import java.util.Map;
 import lombok.Getter;
 import lombok.NonNull;
 import me.googas.api.matches.ladder.Ladder;
-import me.googas.api.matches.queue.Queue;
+import me.googas.api.matches.queue.MinecraftQueue;
 import me.googas.bot.core.matches.queue.GuidoPGMQueue;
 import me.googas.bot.core.matches.queue.GuidoQueue;
 
@@ -61,7 +61,7 @@ public class GuidoLadder implements Ladder {
   }
 
   @Override
-  public @NonNull Queue createQueue(long guildId) {
+  public @NonNull MinecraftQueue createQueue(long guildId) {
     String type = this.getString("global", "type", "pgm");
     switch (type) {
       case "pgm":

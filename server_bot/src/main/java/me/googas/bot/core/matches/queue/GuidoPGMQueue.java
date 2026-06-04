@@ -9,7 +9,7 @@ import me.googas.api.lang.LocaleFile;
 import me.googas.api.links.Linkable;
 import me.googas.api.links.LinkableInfo;
 import me.googas.api.links.LinkableType;
-import me.googas.api.links.ref.MinecraftLinkable;
+import me.googas.api.links.MinecraftLinkable;
 import me.googas.api.matches.AbstractMatch;
 import me.googas.api.matches.MatchStatus;
 import me.googas.api.matches.MatchTeam;
@@ -48,7 +48,7 @@ public class GuidoPGMQueue extends GuidoQueue {
       for (int i = 0; i < ladder.playersPerTeam() * 2; i++) {
         Queueable queueable = this.getWaiting().get(i);
         if (!(queueable instanceof LinkableInfo)) continue;
-        participants.add(new TeamMember((LinkableInfo) queueable, TeamRole.NORMAL));
+        participants.add(new TeamMember((LinkableInfo) queueable, TeamRole.MEMBER));
       }
       for (TeamMember participant : participants) {
         this.getWaiting().remove(participant.getLink());

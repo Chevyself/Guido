@@ -1,8 +1,7 @@
 package me.googas.api.loader;
 
-import lombok.NonNull;
+import java.util.Optional;
 import me.googas.api.user.UserData;
-import me.googas.api.utility.RandomUtils;
 
 public interface UserLoader extends DataLoader {
 
@@ -12,17 +11,5 @@ public interface UserLoader extends DataLoader {
    * @param id the id of the user
    * @return the data of the user or null if not found
    */
-  UserData getUserData(String id);
-
-  /**
-   * Get a new id for an user
-   *
-   * @return the new id for an user
-   */
-  @NonNull
-  default String nextUserId() {
-    String id = RandomUtils.nextString(6);
-    if (this.getUserData(id) != null) return this.nextUserId();
-    return id;
-  }
+  Optional<UserData> getUserData(String id);
 }

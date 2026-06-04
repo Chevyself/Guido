@@ -8,7 +8,7 @@ public interface Queueable extends Stateable {
 
   /**
    * Get as a single way to identify it. For example in the case of discord it will be the tag, for
-   * minecraft its nickname and if its a team it's name
+   * Minecraft its nickname and if it's a team its name
    *
    * @return a simple way to identify the data
    */

@@ -8,14 +8,14 @@ import me.googas.api.events.queue.QueueJoinEvent;
 import me.googas.api.events.queue.QueuePreJoinEvent;
 import me.googas.api.matches.AbstractMatch;
 import me.googas.api.matches.ladder.Ladder;
-import me.googas.api.matches.queue.Queue;
+import me.googas.api.matches.queue.MinecraftQueue;
 import me.googas.api.matches.queue.QueueResult;
 import me.googas.api.matches.queue.Queueable;
 import me.googas.bot.api.Guido;
 
 /** An implementation for queue */
 // TODO there's many localization that needs to be done in this class
-public class GuidoQueue implements Queue {
+public class GuidoQueue implements MinecraftQueue {
 
   private final long guildId;
   private final String ladder;

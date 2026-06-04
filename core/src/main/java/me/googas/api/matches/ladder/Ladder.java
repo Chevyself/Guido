@@ -2,7 +2,7 @@ package me.googas.api.matches.ladder;
 
 import lombok.NonNull;
 import me.googas.api.Informative;
-import me.googas.api.matches.queue.Queue;
+import me.googas.api.matches.queue.MinecraftQueue;
 
 /** A ladder is a ranked system that users may use to climb */
 public interface Ladder extends Informative {
@@ -35,7 +35,7 @@ public interface Ladder extends Informative {
    * @return the created queue
    */
   @NonNull
-  Queue createQueue(long guildId);
+  MinecraftQueue createQueue(long guildId);
 
   /**
    * Get the name of the ladder

@@ -10,19 +10,13 @@ import java.util.function.Consumer;
 import lombok.NonNull;
 import me.googas.api.client.SimpleClientLadder;
 import me.googas.api.links.Linkable;
-import me.googas.api.links.LinkableInfo;
 import me.googas.api.links.LinkableType;
-import me.googas.api.matches.AbstractMatch;
 import me.googas.api.matches.MatchStatus;
-import me.googas.api.matches.MatchTeam;
+import me.googas.api.matches.minecraft.MinecraftMatchTeam;
 import me.googas.api.permissions.AbstractPermission;
 import me.googas.api.permissions.Group;
 import me.googas.api.permissions.GroupInfo;
 import me.googas.api.permissions.PermissionStack;
-import me.googas.api.punishment.Punishment;
-import me.googas.api.punishment.PunishmentStatus;
-import me.googas.api.punishment.PunishmentType;
-import me.googas.api.utility.SortedStats;
 import me.googas.net.api.messages.RequestBuilder;
 
 /** Static utilities for requests */
@@ -176,7 +170,8 @@ public class Requests {
     @NonNull public static final String DISCONNECT = "disconnect";
     @NonNull public static final String CLIENT_INFO = "client-info";
     @NonNull public static final String AUTH = "auth";
-    @NonNull public static final String LINK_CODE = "link-code";
+    @NonNull public static final String MINECRAFT_LINK_CODE = "minecraft-link-code";
+    @NonNull public static final String MINECRAFT_LINK_CODE_ID = "id";
 
     @NonNull
     public static RequestBuilder<Boolean> disconnect() {
@@ -194,8 +189,9 @@ public class Requests {
     }
 
     @NonNull
-    public static RequestBuilder<String> linkCode(@NonNull LinkableInfo link) {
-      return new RequestBuilder<>(String.class, Server.LINK_CODE).put("link", link);
+    public static RequestBuilder<String> minecraftLinkCode(@NonNull UUID minecraftId) {
+      return new RequestBuilder<>(String.class, Server.MINECRAFT_LINK_CODE)
+          .put(Server.MINECRAFT_LINK_CODE_ID, minecraftId);
     }
   }
 
@@ -243,15 +239,6 @@ public class Requests {
     }
 
     @NonNull
-    public static RequestBuilder<LinkableInfo[]> getLinks(
-        int page, int size, @NonNull Collection<LinkableType> types) {
-      return new RequestBuilder<>(LinkableInfo[].class, Links.LINKS)
-          .put("page", page)
-          .put("size", size)
-          .put("types", types);
-    }
-
-    @NonNull
     public static RequestBuilder<Linkable> getLink(
         @NonNull LinkableType type,
         @NonNull Map<String, Object> identification,
@@ -296,106 +283,21 @@ public class Requests {
           .put("information", information)
           .put("stats", stats);
     }
+  }
 
+  public static class MinecraftLinks {
+    @NonNull public static final String PREFIX = "mclinks/";
+    @NonNull public static final String SAVE_STATS = PREFIX + "save-stats";
+    @NonNull public static final String SAVE_STATS_UUID = "uuid";
+    @NonNull public static final String SAVE_STATS_STATS = "stats";
+
+    // TODO receptor
     @NonNull
-    public static RequestBuilder<Boolean> isLinked(@NonNull LinkableInfo link) {
-      return new RequestBuilder<>(Boolean.class, Links.IS_LINKED).put("link", link);
-    }
-
-    @NonNull
-    public static RequestBuilder<Boolean> link(@NonNull LinkableInfo link, @NonNull String id) {
-      return new RequestBuilder<>(Boolean.class, Links.LINK_LINK).put("link", link).put("id", id);
-    }
-
-    @NonNull
-    public static RequestBuilder<Boolean> exists(@NonNull LinkableInfo link) {
-      return new RequestBuilder<>(Boolean.class, Links.EXISTS).put("link", link);
-    }
-
-    @NonNull
-    public static RequestBuilder<Boolean> setRecognition(
-        @NonNull LinkableInfo link, @NonNull String key, @NonNull Object value) {
-      return new RequestBuilder<>(Boolean.class, Links.SET_RECOGNITION)
-          .put("link", link)
-          .put("key", key)
-          .put("value", value);
-    }
-
-    /** @deprecated use {@link #set(LinkableInfo, String, String, Object)} */
-    @NonNull
-    public static RequestBuilder<Boolean> preference(
-        @NonNull LinkableInfo link, @NonNull String key, @NonNull Object value) {
-      return new RequestBuilder<>(Boolean.class, Links.PREFERENCE)
-          .put("link", link)
-          .put("key", key)
-          .put("value", value);
-    }
-
-    @NonNull
-    public static RequestBuilder<Boolean> removePreference(
-        @NonNull LinkableInfo link, @NonNull String key) {
-      return new RequestBuilder<>(Boolean.class, Links.REMOVE_PREFERENCE)
-          .put("link", link)
-          .put("key", key);
-    }
-
-    @NonNull
-    public static RequestBuilder<PermissionStack> permissions(
-        @NonNull LinkableInfo link, @NonNull String context, boolean global) {
-      return new RequestBuilder<>(PermissionStack.class, Links.PERMISSIONS)
-          .put("link", link)
-          .put("context", context)
-          .put("global", global);
-    }
-
-    @NonNull
-    public static RequestBuilder<Boolean> permission(
-        @NonNull LinkableInfo link,
-        @NonNull String context,
-        @NonNull AbstractPermission abstractPermission) {
-      return new RequestBuilder<>(Boolean.class, Links.PERMISSION)
-          .put("link", link)
-          .put("context", context)
-          .put("abstractPermission", abstractPermission);
-    }
-
-    @NonNull
-    public static RequestBuilder<Boolean> removePermission(
-        @NonNull LinkableInfo link, @NonNull String context, @NonNull String permission) {
-      return new RequestBuilder<>(Boolean.class, Links.REMOVE_PERMISSION)
-          .put("link", link)
-          .put("context", context)
-          .put("permission", permission);
-    }
-
-    @NonNull
-    public static RequestBuilder<SortedStats> stats(@NonNull LinkableInfo link) {
-      return new RequestBuilder<>(SortedStats.class, Links.STATS).put("link", link);
-    }
-
-    @NonNull
-    public static RequestBuilder<Boolean> saveStats(
-        @NonNull LinkableInfo link, @NonNull Map<String, Float> stats) {
-      return new RequestBuilder<>(Boolean.class, Links.SAVE_STATS)
-          .put("link", link)
-          .put("stats", stats);
-    }
-
-    @NonNull
-    public static RequestBuilder<Boolean> resetStats(@NonNull LinkableInfo link) {
-      return new RequestBuilder<>(Boolean.class, Links.PREFIX + "reset-stats").put("link", link);
-    }
-
-    public static RequestBuilder<Boolean> set(
-        @NonNull LinkableInfo link,
-        @NonNull String context,
-        @NonNull String key,
-        @NonNull Object value) {
-      return new RequestBuilder<>(Boolean.class, Links.SET_PREFERENCE)
-          .put("link", link)
-          .put("context", context)
-          .put("key", key)
-          .put("value", value);
+    public static RequestBuilder<Void> saveStats(
+        @NonNull UUID uuid, @NonNull Map<String, Float> stats) {
+      return new RequestBuilder<>(Void.class, MinecraftLinks.SAVE_STATS)
+          .put(MinecraftLinks.SAVE_STATS_UUID, uuid)
+          .put(MinecraftLinks.SAVE_STATS_STATS, stats);
     }
   }
 
@@ -412,21 +314,8 @@ public class Requests {
     @NonNull public static final String LADDER = Matches.PREFIX + "ladder";
 
     @NonNull
-    public static RequestBuilder<AbstractMatch> create(
-        @NonNull Map<String, Map<String, Object>> information, @NonNull Set<MatchTeam> teams) {
-      return new RequestBuilder<>(AbstractMatch.class, Matches.CREATE)
-          .put("information", information)
-          .put("teams", teams);
-    }
-
-    @NonNull
     public static RequestBuilder<Boolean> finish(@NonNull String id, int team) {
       return new RequestBuilder<>(Boolean.class, Matches.FINISH).put("id", id).put("team", team);
-    }
-
-    @NonNull
-    public static RequestBuilder<Integer> addTeam(@NonNull String id, @NonNull MatchTeam team) {
-      return new RequestBuilder<>(Integer.class, Matches.ADD_TEAM).put("id", id).put("team", team);
     }
 
     @NonNull
@@ -476,36 +365,6 @@ public class Requests {
     @NonNull public static final String REMOVE_DETAIL = Punishments.PREFIX + "remove-detail";
 
     @NonNull
-    public static RequestBuilder<Punishment> getPunishment(@NonNull String id) {
-      return new RequestBuilder<>(Punishment.class, Punishments.PUNISHMENT).put("id", id);
-    }
-
-    @NonNull
-    public static RequestBuilder<Punishment[]> getPunishments(
-        @NonNull LinkableInfo link, @NonNull Collection<PunishmentStatus> statuses) {
-      return new RequestBuilder<>(Punishment[].class, Punishments.PUNISHMENTS)
-          .put("link", link)
-          .put("statuses", statuses);
-    }
-
-    @NonNull
-    public static RequestBuilder<Punishment> create(
-        @NonNull PunishmentType type,
-        @NonNull PunishmentStatus status,
-        @NonNull Map<String, Map<String, Object>> information,
-        @NonNull LinkableInfo punisher,
-        @NonNull LinkableInfo punished,
-        long expires) {
-      return new RequestBuilder<>(Punishment.class, Punishments.CREATE)
-          .put("type", type)
-          .put("status", status)
-          .put("information", information)
-          .put("punisher", punisher)
-          .put("punished", punished)
-          .put("getExpires", expires);
-    }
-
-    @NonNull
     public static RequestBuilder<Boolean> expires(@NonNull String id, long expires) {
       return new RequestBuilder<>(Boolean.class, Punishments.EXPIRES)
           .put("id", id)
@@ -535,17 +394,6 @@ public class Requests {
     @NonNull public static final String CAN_HOST = MatchServer.PREFIX + "can-host";
     @NonNull public static final String HOST = MatchServer.PREFIX + "host";
     @NonNull public static final String SERVER_READY = MatchServer.PREFIX + "server-ready";
-
-    @NonNull
-    public static RequestBuilder<Boolean> canHost(@NonNull AbstractMatch abstractMatch) {
-      return new RequestBuilder<>(Boolean.class, MatchServer.CAN_HOST).put("match", abstractMatch);
-    }
-
-    // Must return the server IP
-    @NonNull
-    public static RequestBuilder<String> host(@NonNull AbstractMatch abstractMatch) {
-      return new RequestBuilder<>(String.class, MatchServer.HOST).put("match", abstractMatch);
-    }
 
     @NonNull
     public static RequestBuilder<Boolean> serverReady() {
@@ -623,30 +471,6 @@ public class Requests {
     @NonNull public static final String PREFIX = "deploy/";
     @NonNull public static final String ADD_PERMISSION = Deploy.PREFIX + "add-permission";
     @NonNull public static final String REMOVE_PERMISSION = Deploy.PREFIX + "remove-permission";
-
-    @NonNull
-    public static RequestBuilder<Boolean> addPermission(
-        @NonNull LinkableInfo link,
-        @NonNull String context,
-        @NonNull String node,
-        boolean enabled,
-        long expires) {
-      return new RequestBuilder<>(Boolean.class, Deploy.ADD_PERMISSION)
-          .put("link", link)
-          .put("context", context)
-          .put("node", node)
-          .put("enabled", enabled)
-          .put("getExpires", expires);
-    }
-
-    @NonNull
-    public static RequestBuilder<Boolean> removePermission(
-        @NonNull LinkableInfo link, @NonNull String context, @NonNull String node) {
-      return new RequestBuilder<>(Boolean.class, Deploy.REMOVE_PERMISSION)
-          .put("link", link)
-          .put("context", context)
-          .put("node", node);
-    }
   }
 
   public static class Client {
@@ -656,6 +480,49 @@ public class Requests {
     @NonNull
     public static RequestBuilder<Boolean> disconnected() {
       return new RequestBuilder<>(Boolean.class, Client.DISCONNECTED);
+    }
+  }
+
+  // TODO receptor
+  public static class MinecraftMatches {
+
+    @NonNull public static final String PREFIX = "mcmatch/";
+    @NonNull public static final String ADD_TEAM = PREFIX + "add-team";
+    @NonNull public static final String ADD_TEAM_MATCH_ID = "match-id";
+    @NonNull public static final String ADD_TEAM_TEAM = "team";
+    @NonNull public static final String UPDATE_STATUS = PREFIX + "update-status";
+    @NonNull public static final String UPDATE_STATUS_MATCH_ID = "match-id";
+    @NonNull public static final String UPDATE_STATUS_STATUS = "status";
+    @NonNull public static final String SET_MAP = PREFIX + "set-map";
+    @NonNull public static final String SET_MAP_MATCH_ID = "match-id";
+    @NonNull public static final String SET_MAP_MAP_NAME = "map_name";
+    @NonNull public static final String FINISH = PREFIX + "finish";
+    @NonNull public static final String FINISH_MATCH_ID = "match-id";
+    @NonNull public static final String FINISH_WINNERS_ID = "winners-id";
+
+    public static RequestBuilder<Integer> addTeam(@NonNull UUID matchId, MinecraftMatchTeam team) {
+      return new RequestBuilder<>(Integer.class, MinecraftMatches.ADD_TEAM)
+          .put(MinecraftMatches.ADD_TEAM_MATCH_ID, matchId)
+          .put(MinecraftMatches.ADD_TEAM_TEAM, team);
+    }
+
+    public static RequestBuilder<Void> updateStatus(
+        @NonNull UUID matchId, @NonNull MatchStatus status) {
+      return new RequestBuilder<>(Void.class, MinecraftMatches.UPDATE_STATUS)
+          .put(MinecraftMatches.UPDATE_STATUS_MATCH_ID, matchId)
+          .put(MinecraftMatches.UPDATE_STATUS_STATUS, status);
+    }
+
+    public static RequestBuilder<Void> setMap(@NonNull UUID matchId, @NonNull String mapName) {
+      return new RequestBuilder<>(Void.class, MinecraftMatches.SET_MAP)
+          .put(MinecraftMatches.SET_MAP_MATCH_ID, matchId)
+          .put(MinecraftMatches.SET_MAP_MAP_NAME, mapName);
+    }
+
+    public static RequestBuilder<Void> finish(@NonNull UUID matchId, int winnersId) {
+      return new RequestBuilder<>(Void.class, MinecraftMatches.FINISH)
+          .put(MinecraftMatches.FINISH_MATCH_ID, matchId)
+          .put(MinecraftMatches.FINISH_WINNERS_ID, winnersId);
     }
   }
 }

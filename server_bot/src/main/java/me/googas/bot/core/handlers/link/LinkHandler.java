@@ -2,6 +2,7 @@ package me.googas.bot.core.handlers.link;
 
 import java.util.HashSet;
 import java.util.Set;
+import java.util.UUID;
 import lombok.Getter;
 import lombok.NonNull;
 import me.googas.api.Requests;
@@ -122,8 +123,8 @@ public class LinkHandler implements GuidoHandler {
    * @param info the information of the link to link
    * @return the link
    */
-  @Receptor(Requests.Server.LINK_CODE)
-  public String linkCode(@ParamName("link") LinkableInfo info) {
+  @Receptor(Requests.Server.MINECRAFT_LINK_CODE)
+  public String linkCode(@ParamName(Requests.Server.MINECRAFT_LINK_CODE_ID) UUID minecraftId) {
     return Guido.getHandlers().getHandler(LinkHandler.class).createCode(info);
   }
 

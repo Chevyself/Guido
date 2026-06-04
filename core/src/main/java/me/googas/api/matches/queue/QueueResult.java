@@ -4,7 +4,9 @@ import lombok.Getter;
 import lombok.NonNull;
 import lombok.Setter;
 
-/** The result of {@link Queue#join(Queueable)} or {@link Queue#leave(Queueable)} */
+/**
+ * The result of {@link MinecraftQueue#join(Queueable)} or {@link MinecraftQueue#leave(Queueable)}
+ */
 public class QueueResult {
 
   @Getter @Setter private boolean cancelled = false;

@@ -1,11 +1,12 @@
 package me.googas.api.matches.queue;
 
 import java.util.Collection;
+import java.util.Optional;
 import lombok.NonNull;
-import me.googas.api.matches.AbstractMatch;
+import me.googas.api.matches.minecraft.MinecraftMatch;
 
 /** A queue is joined by players to start playing */
-public interface Queue {
+public interface MinecraftQueue {
 
   /**
    * Makes the linked info join the queue
@@ -38,7 +39,8 @@ public interface Queue {
    *
    * @return the match if the queue is ready
    */
-  AbstractMatch checkReady();
+  @NonNull
+  Optional<MinecraftMatch> checkReady();
 
   /**
    * Get the id of the guild where this queue is happening

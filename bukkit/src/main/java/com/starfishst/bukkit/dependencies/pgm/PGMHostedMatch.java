@@ -10,8 +10,8 @@ import java.util.UUID;
 import java.util.concurrent.atomic.AtomicReference;
 import lombok.Getter;
 import lombok.NonNull;
-import me.googas.api.matches.MatchTeam;
-import me.googas.api.matches.team.TeamMember;
+import me.googas.api.matches.minecraft.MinecraftMatchTeam;
+import me.googas.api.matches.minecraft.MinecraftMatchTeamMember;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import tc.oc.pgm.api.PGM;
@@ -26,7 +26,7 @@ public class PGMHostedMatch extends HostedMatch {
   /**
    * The id of the pgm team and the id of the team of the match. The key is the id of the pgm team
    */
-  @NonNull @Getter private final Map<String, MatchTeam> teams = new HashMap<>();
+  @NonNull @Getter private final Map<String, MinecraftMatchTeam> teams = new HashMap<>();
   /** The map which will be played in the match */
   // TODO both map and pgm match must be able to change
   @NonNull @Getter private final MapInfo map;
@@ -34,7 +34,7 @@ public class PGMHostedMatch extends HostedMatch {
   @NonNull @Getter private final String pgm;
 
   public PGMHostedMatch(
-      @NonNull String id,
+      @NonNull UUID id,
       @NonNull Set<HostedPlayer> participants,
       String ladder,
       @NonNull Map<String, Map<String, Object>> details,
@@ -61,7 +61,7 @@ public class PGMHostedMatch extends HostedMatch {
   public boolean isParticipating(@NonNull CommandSender sender) {
     if (!(sender instanceof Player)) return false;
     for (HostedPlayer participant : this.getParticipants()) {
-      if (participant.getUniqueId().equals(((Player) sender).getUniqueId())) return true;
+      if (participant.getId().equals(((Player) sender).getUniqueId())) return true;
     }
     return false;
   }
@@ -74,9 +74,7 @@ public class PGMHostedMatch extends HostedMatch {
    */
   public int getTeamId(String pgmTeam) {
     if (pgmTeam == null) return -1;
-    MatchTeam matchTeam = this.teams.get(pgmTeam);
-    if (matchTeam != null) return matchTeam.getId();
-    return -1;
+    return this.teams.get(pgmTeam).getId();
   }
 
   /**
@@ -100,8 +98,8 @@ public class PGMHostedMatch extends HostedMatch {
     this.teams.forEach(
         (id, team) -> {
           Team pgmTeam = PGMHostedMatch.getTeam(match, id);
-          for (TeamMember member : team.getMembers()) {
-            if (member.getLink().getIdUUID("uuid", true).equals(uuid)) atomicParty.set(pgmTeam);
+          for (MinecraftMatchTeamMember member : team.getMembers()) {
+            if (member.getId().equals(uuid)) atomicParty.set(pgmTeam);
           }
         });
     return atomicParty.get();

@@ -20,9 +20,9 @@ import lombok.Getter;
 import lombok.NonNull;
 import me.googas.api.Requests;
 import me.googas.api.client.SimpleClientLadder;
-import me.googas.api.matches.AbstractMatch;
 import me.googas.api.matches.MatchStatus;
 import me.googas.api.matches.ladder.Ladder;
+import me.googas.api.matches.minecraft.MinecraftMatch;
 import me.googas.api.utility.Maps;
 import me.googas.api.utility.RandomUtils;
 import me.googas.net.api.exception.MessengerListenFailException;
@@ -76,12 +76,11 @@ public class PGMMatchMakingHandler implements GuidoModule {
    * @return true if the match can be hosted
    */
   @Receptor(Requests.MatchServer.CAN_HOST)
-  public boolean canHost(@ParamName("match") AbstractMatch match) {
-    String type = match.getString(null, "type", "none");
-    String ladderName = match.getString(null, "ladder", "no-ladder");
+  public boolean canHost(@ParamName("match") MinecraftMatch match) {
+    String ladderName = match.getLadderName();
     Match pgmMatch = this.getCurrentPgm();
     JsonClient connection = Guido.getClient().getConnection();
-    if (this.check(type, pgmMatch) && connection != null) {
+    if (this.check(pgmMatch) && connection != null) {
       try {
         Optional<SimpleClientLadder> optional =
             Requests.Matches.getLadder(ladderName).send(connection);
@@ -93,10 +92,8 @@ public class PGMMatchMakingHandler implements GuidoModule {
     return false;
   }
 
-  public boolean check(String type, Match pgmMatch) {
-    return type != null
-        && type.equalsIgnoreCase("pgm")
-        && PGM.get().isEnabled()
+  public boolean check(Match pgmMatch) {
+    return PGM.get().isEnabled()
         && !RestartManager.isQueued()
         && (pgmMatch == null
             || pgmMatch.getPhase() == MatchPhase.FINISHED
@@ -144,12 +141,10 @@ public class PGMMatchMakingHandler implements GuidoModule {
    * @return the ip of the server if it can be hosted
    */
   @Receptor(Requests.MatchServer.HOST)
-  public String host(@ParamName("match") AbstractMatch match) {
+  public String host(@ParamName("match") MinecraftMatch match) {
     if (!this.canHost(match)) return null;
-    String type = match.getString(null, "type", "none");
-    String ladderName = match.getString(null, "ladder", "no-ladder");
+    String ladderName = match.getLadderName();
     PGM pgm = PGM.get();
-    if (!type.equalsIgnoreCase("PGM") && ladderName == null) return null;
     try {
       JsonClient connection = Guido.getClient().validatedConnection();
       Optional<SimpleClientLadder> optional =
@@ -172,8 +167,9 @@ public class PGMMatchMakingHandler implements GuidoModule {
               random,
               loaded.getId());
       this.matches.add(hostedMatch);
-      Requests.Matches.status(hostedMatch.getId(), MatchStatus.READY).queue(connection);
-      Requests.Matches.detail(hostedMatch.getId(), "map", random.getName()).queue(connection);
+      Requests.MinecraftMatches.updateStatus(hostedMatch.getId(), MatchStatus.READY)
+          .queue(connection);
+      Requests.MinecraftMatches.setMap(hostedMatch.getId(), random.getName()).queue(connection);
       Tasks.sync(() -> this.getTeamCreation(hostedMatch).createTeams(this, hostedMatch, loaded));
       return ServerUtil.getIp();
     } catch (MessengerListenFailException
@@ -214,7 +210,7 @@ public class PGMMatchMakingHandler implements GuidoModule {
    * @param matchId the id of the match to getId
    * @return the match if found null otherwise
    */
-  public PGMHostedMatch getMatch(@NonNull String matchId) {
+  public PGMHostedMatch getMatch(@NonNull UUID matchId) {
     for (PGMHostedMatch match : this.matches) {
       if (match.getId().equals(matchId)) return match;
     }
@@ -279,7 +275,7 @@ public class PGMMatchMakingHandler implements GuidoModule {
     if (hosted == null) return;
     int winnersId = hosted.getTeamId(this.getWinnersId(event));
     if (connection != null) {
-      Requests.Matches.finish(hosted.getId(), winnersId).queue(connection);
+      Requests.MinecraftMatches.finish(hosted.getId(), winnersId).queue(connection);
       this.readyToHost(connection);
     }
     this.matches.remove(hosted);

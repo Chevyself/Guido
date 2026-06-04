@@ -5,7 +5,7 @@ import java.util.HashSet;
 import java.util.Set;
 import lombok.NonNull;
 import me.googas.api.GuidoCatchable;
-import me.googas.api.links.ref.DiscordLinkable;
+import me.googas.api.links.DiscordLinkable;
 import me.googas.bot.api.Guido;
 import me.googas.bot.core.handlers.responsive.GuidoResponsiveMessage;
 import me.googas.bot.core.lang.GuidoLocaleFile;

@@ -3,6 +3,8 @@ package com.starfishst.bukkit.dependencies.pgm.listeners.matches.creation;
 import com.starfishst.bukkit.Guido;
 import com.starfishst.bukkit.dependencies.pgm.PGMHostedMatch;
 import com.starfishst.bukkit.dependencies.pgm.listeners.matches.PGMMatchMakingHandler;
+import com.starfishst.bukkit.dependencies.pgm.listeners.matches.PGMTeam;
+import com.starfishst.bukkit.dependencies.pgm.listeners.matches.PGMTeamMember;
 import com.starfishst.bukkit.matches.HostedPlayer;
 import java.time.Duration;
 import java.util.HashMap;
@@ -13,8 +15,6 @@ import java.util.Set;
 import lombok.NonNull;
 import me.googas.api.Requests;
 import me.googas.api.matches.MatchStatus;
-import me.googas.api.matches.MatchTeam;
-import me.googas.api.matches.team.TeamMember;
 import me.googas.api.matches.team.TeamRole;
 import me.googas.api.utility.RandomUtils;
 import me.googas.net.sockets.json.client.JsonClient;
@@ -64,24 +64,25 @@ public class RandomTeamCreation implements TeamCreation {
       Team party = this.getAvailableParty(teams, match);
       if (party == null) continue;
       List<HostedPlayer> aTeam = RandomUtils.getRandom(left, perTeam);
-      Set<TeamMember> members = new HashSet<>();
+      Set<PGMTeamMember> members = new HashSet<>();
       teams.put(party, aTeam);
       for (HostedPlayer hostedPlayer : aTeam) {
-        members.add(new TeamMember(hostedPlayer.toLink(), TeamRole.NORMAL));
+        members.add(new PGMTeamMember(hostedPlayer.getId(), TeamRole.MEMBER));
         this.setParty(hostedPlayer, party, match);
       }
       String name = "Team " + index;
       JsonClient connection = Guido.getClient().getConnection();
-      Requests.Matches.addTeam(hosted.getId(), new MatchTeam(-3, members, name))
+      Requests.MinecraftMatches.addTeam(hosted.getId(), new PGMTeam(-3, members, name))
           .send(
               connection,
               optional ->
                   optional.ifPresent(
                       id -> {
                         if (id == -4) id = RandomUtils.getRandom().nextInt();
-                        hosted.getTeams().put(party.getId(), new MatchTeam(id, members, name));
+                        hosted.getTeams().put(party.getId(), new PGMTeam(id, members, name));
                       }));
-      Requests.Matches.status(hosted.getId(), MatchStatus.STARTING).queue(connection);
+      Requests.MinecraftMatches.updateStatus(hosted.getId(), MatchStatus.STARTING)
+          .queue(connection);
       party.setName(name);
       index++;
     }

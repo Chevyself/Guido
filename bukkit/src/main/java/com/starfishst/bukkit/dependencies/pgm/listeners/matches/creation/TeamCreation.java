@@ -25,7 +25,7 @@ public interface TeamCreation {
       @NonNull Match match);
 
   default void setParty(@NonNull HostedPlayer hosted, Team party, Match match) {
-    MatchPlayer player = match.getPlayer(hosted.getUniqueId());
+    MatchPlayer player = match.getPlayer(hosted.getId());
     if (player != null) {
       Guido.getModuleRegistry().require(PGMMatchMakingHandler.class).add(match, party, player);
     }

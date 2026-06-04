@@ -2,15 +2,15 @@ package com.starfishst.bukkit.matches;
 
 import java.util.Map;
 import java.util.Set;
+import java.util.UUID;
 import lombok.Getter;
 import lombok.NonNull;
 import me.googas.api.Informative;
-import me.googas.api.matches.AbstractMatch;
 
 public class HostedMatch implements Informative {
 
-  /** This is the id that represents in {@link AbstractMatch} */
-  @NonNull @Getter private final String id;
+  /** This is the id that represents in {@link me.googas.api.matches.minecraft.MinecraftMatch} */
+  @NonNull @Getter private final UUID id;
 
   /**
    * The list of participants that are playing in the match. This list should not be modified unless
@@ -25,7 +25,7 @@ public class HostedMatch implements Informative {
   @NonNull @Getter private final Map<String, Map<String, Object>> information;
 
   public HostedMatch(
-      @NonNull String id,
+      @NonNull UUID id,
       @NonNull Set<HostedPlayer> participants,
       String ladder,
       @NonNull Map<String, Map<String, Object>> information) {

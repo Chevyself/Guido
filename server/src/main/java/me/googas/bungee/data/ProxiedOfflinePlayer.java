@@ -5,7 +5,7 @@ import java.util.UUID;
 import lombok.NonNull;
 import me.googas.api.links.LinkableInfo;
 import me.googas.api.links.LinkableType;
-import me.googas.api.links.ref.MinecraftLinkable;
+import me.googas.api.links.MinecraftLinkable;
 import me.googas.api.utility.Maps;
 import me.googas.starbox.UUIDUtils;
 import net.md_5.bungee.api.ProxyServer;

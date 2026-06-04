@@ -2,7 +2,7 @@ package me.googas.bot.core.handlers.responsive.lang;
 
 import java.util.Optional;
 import lombok.NonNull;
-import me.googas.api.links.ref.DiscordLinkable;
+import me.googas.api.links.DiscordLinkable;
 import me.googas.bot.api.Guido;
 import me.googas.bot.core.handlers.responsive.GuidoMessagesController;
 import me.googas.bot.core.util.Discord;

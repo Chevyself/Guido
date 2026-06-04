@@ -67,9 +67,9 @@ public class MatchCommands {
     for (int i = 0; i < participants.length; i++) {
       Linkable participant = participants[i];
       if (i > ladder.playersPerTeam() - 1) {
-        members2.add(new TeamMember(participant.getInfo(), TeamRole.NORMAL));
+        members2.add(new TeamMember(participant.getInfo(), TeamRole.MEMBER));
       } else {
-        members1.add(new TeamMember(participant.getInfo(), TeamRole.NORMAL));
+        members1.add(new TeamMember(participant.getInfo(), TeamRole.MEMBER));
       }
     }
     MatchTeam team1 = new MatchTeam(1, members1, "Team 1");

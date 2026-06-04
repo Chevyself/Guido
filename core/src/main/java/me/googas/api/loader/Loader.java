@@ -9,18 +9,6 @@ public interface Loader {
   GroupLoader getGroups();
 
   @NonNull
-  LinksLoader getLinks();
-
-  @NonNull
-  MatchLoader getMatches();
-
-  @NonNull
-  PunishmentLoader getPunishments();
-
-  @NonNull
-  TeamLoader getTeams();
-
-  @NonNull
   TokenLoader getTokens();
 
   @NonNull

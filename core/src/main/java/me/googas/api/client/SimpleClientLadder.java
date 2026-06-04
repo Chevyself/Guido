@@ -4,7 +4,7 @@ import java.util.Map;
 import lombok.Getter;
 import lombok.NonNull;
 import me.googas.api.matches.ladder.Ladder;
-import me.googas.api.matches.queue.Queue;
+import me.googas.api.matches.queue.MinecraftQueue;
 
 public class SimpleClientLadder implements Ladder {
 
@@ -43,7 +43,7 @@ public class SimpleClientLadder implements Ladder {
   }
 
   @Override
-  public @NonNull Queue createQueue(long guildId) {
+  public @NonNull MinecraftQueue createQueue(long guildId) {
     throw new UnsupportedOperationException("Cannot create queues from simple ladders");
   }
 }

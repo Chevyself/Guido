@@ -4,7 +4,7 @@ import lombok.Getter;
 import lombok.NonNull;
 import lombok.Setter;
 import me.googas.api.events.GuidoCancellable;
-import me.googas.api.matches.queue.Queue;
+import me.googas.api.matches.queue.MinecraftQueue;
 import me.googas.api.matches.queue.Queueable;
 
 /** Called before someone joins a queue and is not already on it */
@@ -23,7 +23,7 @@ public class QueuePreJoinEvent extends QueueEvent implements GuidoCancellable {
    * @param cancelled whether the event is cancelled
    */
   private QueuePreJoinEvent(
-      @NonNull Queue queue,
+      @NonNull MinecraftQueue queue,
       @NonNull Queueable queueable,
       @NonNull String reason,
       boolean cancelled) {
@@ -39,7 +39,7 @@ public class QueuePreJoinEvent extends QueueEvent implements GuidoCancellable {
    * @param queue the queue involved in the event
    * @param queueable the queueable that joined the queue
    */
-  public QueuePreJoinEvent(@NonNull Queue queue, @NonNull Queueable queueable) {
+  public QueuePreJoinEvent(@NonNull MinecraftQueue queue, @NonNull Queueable queueable) {
     this(queue, queueable, "No reason provided", false);
   }
 

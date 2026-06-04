@@ -3,7 +3,7 @@ package me.googas.api.matches.ladder;
 import java.util.HashMap;
 import java.util.Map;
 import lombok.NonNull;
-import me.googas.api.matches.queue.Queue;
+import me.googas.api.matches.queue.MinecraftQueue;
 
 /** The global ladder cannot be edited, this ladder calculates the global elo of the linked data */
 public class GlobalLadder implements Ladder {
@@ -32,7 +32,7 @@ public class GlobalLadder implements Ladder {
   }
 
   @Override
-  public @NonNull Queue createQueue(long guildId) {
+  public @NonNull MinecraftQueue createQueue(long guildId) {
     throw new UnsupportedOperationException("Global ladder cannot create queues");
   }
 

@@ -5,11 +5,11 @@ import java.util.HashSet;
 import java.util.Set;
 import lombok.Getter;
 import lombok.NonNull;
+import me.googas.api.links.DiscordLinkable;
 import me.googas.api.links.Linkable;
 import me.googas.api.links.LinkableInfo;
-import me.googas.api.links.ref.DiscordLinkable;
 import me.googas.api.matches.ladder.Ladder;
-import me.googas.api.matches.queue.Queue;
+import me.googas.api.matches.queue.MinecraftQueue;
 import me.googas.api.matches.queue.QueueResult;
 import me.googas.bot.api.Guido;
 import me.googas.bot.core.discord.GuidoGuild;
@@ -24,7 +24,7 @@ import net.dv8tion.jda.api.hooks.SubscribeEvent;
 public class QueueHandler implements GuidoHandler {
 
   /** The queues that are working right now in the handler */
-  @NonNull @Getter private final Set<Queue> queues = new HashSet<>();
+  @NonNull @Getter private final Set<MinecraftQueue> queues = new HashSet<>();
 
   /**
    * Make a player join a queue from voice channel
@@ -66,7 +66,7 @@ public class QueueHandler implements GuidoHandler {
    * @param info the information of the data to leave all queues
    */
   public void leaveQueue(@NonNull LinkableInfo info) {
-    for (Queue queue : this.getQueues(info)) {
+    for (MinecraftQueue queue : this.getQueues(info)) {
       queue.leave(info);
     }
   }
@@ -77,9 +77,9 @@ public class QueueHandler implements GuidoHandler {
    * @param guildId the guild querying for queues
    * @return the queues for the given guild
    */
-  private Set<Queue> getQueues(long guildId) {
-    Set<Queue> queues = new HashSet<>();
-    for (Queue queue : this.queues) {
+  private Set<MinecraftQueue> getQueues(long guildId) {
+    Set<MinecraftQueue> queues = new HashSet<>();
+    for (MinecraftQueue queue : this.queues) {
       if (queue.getGuildId() == guildId) {
         queues.add(queue);
       }
@@ -96,14 +96,14 @@ public class QueueHandler implements GuidoHandler {
    *     Ladder#createQueue(long)})}
    */
   @NonNull
-  public Queue getQueue(@NonNull GuidoGuild guild, @NonNull Ladder ladder) {
-    Set<Queue> queues = this.getQueues(guild.getId());
-    for (Queue queue : queues) {
+  public MinecraftQueue getQueue(@NonNull GuidoGuild guild, @NonNull Ladder ladder) {
+    Set<MinecraftQueue> queues = this.getQueues(guild.getId());
+    for (MinecraftQueue queue : queues) {
       if (queue.getLadderName().equalsIgnoreCase(ladder.getName())) {
         return queue;
       }
     }
-    Queue queue = ladder.createQueue(guild.getId());
+    MinecraftQueue queue = ladder.createQueue(guild.getId());
     this.queues.add(queue);
     return queue;
   }
@@ -118,7 +118,7 @@ public class QueueHandler implements GuidoHandler {
    */
   public QueueResult joinQueue(
       @NonNull GuidoGuild guild, @NonNull Member member, @NonNull Ladder ladder) {
-    Queue queue = this.getQueue(guild, ladder);
+    MinecraftQueue queue = this.getQueue(guild, ladder);
     QueueResult join = queue.join(Discord.getUser(member).getInfo());
     if (join.isCancelled()) return join;
     guild.toDiscord().moveVoiceMember(member, this.channels().getWaitingChannel(guild)).queue();
@@ -131,9 +131,9 @@ public class QueueHandler implements GuidoHandler {
    * @param info the information of a link
    * @return the collection of queues where the link is waiting
    */
-  public Collection<Queue> getQueues(@NonNull LinkableInfo info) {
-    Set<Queue> queues = new HashSet<>();
-    for (Queue queue : this.queues) {
+  public Collection<MinecraftQueue> getQueues(@NonNull LinkableInfo info) {
+    Set<MinecraftQueue> queues = new HashSet<>();
+    for (MinecraftQueue queue : this.queues) {
       if (queue.isWaiting(info)) {
         queues.add(queue);
       }
@@ -152,7 +152,7 @@ public class QueueHandler implements GuidoHandler {
   public boolean isWaiting(
       @NonNull GuidoGuild guild, @NonNull Member member, @NonNull Ladder ladder) {
     DiscordLinkable memberData = Discord.getUser(member);
-    Queue queue = this.getQueue(guild, ladder);
+    MinecraftQueue queue = this.getQueue(guild, ladder);
     for (Linkable link : memberData.getLinks()) {
       if (queue.isWaiting(link.getInfo())) {
         return true;

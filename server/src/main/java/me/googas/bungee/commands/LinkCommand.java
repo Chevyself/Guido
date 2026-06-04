@@ -25,7 +25,7 @@ public class LinkCommand {
             Requests.ifPresentElse(
                 linked -> {
                   if (!linked) {
-                    Requests.Server.linkCode(link)
+                    Requests.Server.minecraftLinkCode(link)
                         .send(
                             client,
                             Requests.ifPresentElse(

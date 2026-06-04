@@ -4,9 +4,9 @@ import com.github.chevyself.starbox.exceptions.ArgumentProviderException;
 import com.github.chevyself.starbox.jda.context.CommandContext;
 import com.github.chevyself.starbox.jda.providers.type.JdaArgumentProvider;
 import lombok.NonNull;
+import me.googas.api.links.DiscordLinkable;
 import me.googas.api.links.Linkable;
-import me.googas.api.links.ref.DiscordLinkable;
-import me.googas.api.links.ref.MinecraftLinkable;
+import me.googas.api.links.MinecraftLinkable;
 import me.googas.api.utility.Maps;
 import me.googas.bot.core.util.Lang;
 

@@ -2,7 +2,7 @@ package me.googas.api.events.queue;
 
 import lombok.Getter;
 import lombok.NonNull;
-import me.googas.api.matches.queue.Queue;
+import me.googas.api.matches.queue.MinecraftQueue;
 import me.googas.api.matches.queue.Queueable;
 
 /** Called when data joins a queue */
@@ -17,7 +17,7 @@ public class QueueJoinEvent extends QueueEvent {
    * @param queue the queue involved in the event
    * @param data the data that joined the queue
    */
-  public QueueJoinEvent(@NonNull Queue queue, @NonNull Queueable data) {
+  public QueueJoinEvent(@NonNull MinecraftQueue queue, @NonNull Queueable data) {
     super(queue);
     this.data = data;
   }
