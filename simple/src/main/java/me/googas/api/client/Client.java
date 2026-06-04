@@ -8,7 +8,6 @@ import java.util.Set;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.Setter;
-import lombok.experimental.Delegate;
 import me.googas.api.Requests;
 import me.googas.api.client.receptors.SimpleReceptors;
 import me.googas.api.utility.Adapters;
@@ -36,7 +35,6 @@ public class Client {
    * @throws NullPointerException if there's no connection and no connection could be stabilised
    */
   @NonNull
-  @Delegate(excludes = ClientMethods.class)
   public JsonClient validated() {
     try {
       return this.validatedConnection();
@@ -73,7 +71,7 @@ public class Client {
     this.connection =
         JsonClient.join(this.ip, this.port)
             .setGson(Adapters.buildClient())
-            .addReceptors(this.receptors)
+            .addReceptors(this.receptors.toArray())
             .start();
   }
 

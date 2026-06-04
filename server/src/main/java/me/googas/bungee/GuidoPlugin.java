@@ -5,11 +5,14 @@ import com.github.chevyself.starbox.CommandManagerBuilder;
 import com.github.chevyself.starbox.bungee.BungeeAdapter;
 import com.github.chevyself.starbox.bungee.commands.BungeeCommand;
 import com.github.chevyself.starbox.bungee.context.CommandContext;
+import com.github.chevyself.starbox.bungee.middleware.BungeeResultHandlingMiddleware;
+import com.github.chevyself.starbox.registry.MiddlewareRegistry;
 import com.github.chevyself.starbox.registry.ProvidersRegistry;
 import java.io.File;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.util.List;
+import java.util.Objects;
 import lombok.Getter;
 import lombok.NonNull;
 import me.googas.api.utility.Lots;
@@ -22,6 +25,8 @@ import me.googas.bungee.commands.PunishmentCommands;
 import me.googas.bungee.commands.ServerCommands;
 import me.googas.bungee.commands.StatsCommand;
 import me.googas.bungee.commands.providers.BungeeLocaleFileProvider;
+import me.googas.bungee.commands.providers.GroupProvider;
+import me.googas.bungee.commands.providers.JsonClientProvider;
 import me.googas.bungee.commands.providers.ProxiedOfflinePlayerProvider;
 import me.googas.bungee.configuration.BungeeConfiguration;
 import me.googas.bungee.configuration.GuidoBungeeConfiguration;
@@ -39,6 +44,7 @@ import me.googas.bungee.receptors.BungeeQueueReceptors;
 import me.googas.bungee.receptors.BungeeReceptors;
 import me.googas.bungee.utility.Proxy;
 import me.googas.net.api.Server;
+import me.googas.net.sockets.json.client.JsonClient;
 import me.googas.net.sockets.json.server.JsonClientThread;
 import me.googas.net.sockets.json.server.JsonSocketServer;
 import me.googas.server.GuidoRuntime;
@@ -63,9 +69,16 @@ public class GuidoPlugin extends Plugin {
   private final @NonNull CommandManager<CommandContext, BungeeCommand> manager =
       new CommandManagerBuilder<>(new BungeeAdapter(this))
           .setMessagesProvider(this.languageHandler)
+          .setMiddlewareRegistry(
+              new MiddlewareRegistry<CommandContext>()
+                  .addGlobalMiddleware(new BungeeResultHandlingMiddleware()))
           .setProvidersRegistry(
               new ProvidersRegistry<CommandContext>()
-                  .addProviders(new BungeeLocaleFileProvider(), new ProxiedOfflinePlayerProvider()))
+                  .addProviders(
+                      new BungeeLocaleFileProvider(),
+                      new GroupProvider(),
+                      new JsonClientProvider(),
+                      new ProxiedOfflinePlayerProvider()))
           .build();
   /** The bungeeConfiguration that the plugin will use */
   @NonNull @Getter private BungeeConfiguration configuration = loadConfiguration();
@@ -81,6 +94,8 @@ public class GuidoPlugin extends Plugin {
           new PermissionsListener(),
           new PunishmentsListener(),
           new TipsListener());
+
+  private JsonClient client = null;
 
   /**
    * Loads the configuration
@@ -152,6 +167,11 @@ public class GuidoPlugin extends Plugin {
               new BungeeQueueReceptors(),
               new BungeeReceptors());
     }
+    try {
+      client = JsonClient.join("localhost", 3000).start();
+    } catch (IOException e) {
+      getLogger().severe("Failed to init json client");
+    }
     for (GuidoListener listener : this.listeners) {
       listener.register(this);
       listener.onEnable();
@@ -164,5 +184,9 @@ public class GuidoPlugin extends Plugin {
     this.manager.parseAndRegisterAll(new StatsCommand());
     this.loadServers();
     super.onEnable();
+  }
+
+  public @NonNull JsonClient getClient() {
+    return Objects.requireNonNull(client, "Client may not have been initialized yet");
   }
 }

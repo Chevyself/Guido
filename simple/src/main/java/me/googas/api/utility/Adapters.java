@@ -9,6 +9,7 @@ public class Adapters {
   public static GsonBuilder buildClient() {
     return new GsonBuilder()
         // Required by messengers
-        .registerTypeAdapter(Message.class, new MessageDeserializer());
+        .registerTypeAdapter(Message.class, new MessageDeserializer())
+        .registerTypeAdapter(me.googas.net.api.messages.Message.class, new MessageDeserializer());
   }
 }

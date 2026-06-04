@@ -192,7 +192,7 @@ public class AbstractMatch implements GuidoCatchable, Informative {
    */
   @Deprecated
   public long getGuildId() {
-    return -1;
+    return 1511402659767128291L; // TODO fix this
   }
 
   /**

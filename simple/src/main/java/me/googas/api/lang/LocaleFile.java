@@ -54,7 +54,7 @@ public interface LocaleFile {
    */
   @NonNull
   default String get(@NonNull String path, @NonNull MapBuilder<String, String> placeholders) {
-    return Strings.format(this.get(path), placeholders);
+    return Strings.format(this.get(path), placeholders.build());
   }
 
   /**

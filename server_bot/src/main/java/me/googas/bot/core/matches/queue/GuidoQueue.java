@@ -56,7 +56,7 @@ public class GuidoQueue implements Queue {
 
   @Override
   public QueueResult join(@NonNull Queueable data) {
-    if (!this.isWaiting(data) && new QueuePreJoinEvent(this, data).callAndGet()) {
+    if (!this.isWaiting(data) && !new QueuePreJoinEvent(this, data).callAndGet()) {
       this.getWaiting().add(data);
       new QueueJoinEvent(this, data).call();
       return new QueueResult();

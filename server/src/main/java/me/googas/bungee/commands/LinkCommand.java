@@ -1,11 +1,19 @@
 package me.googas.bungee.commands;
 
+import com.github.chevyself.starbox.annotations.Command;
+import com.github.chevyself.starbox.common.Async;
+import me.googas.api.Requests;
+import me.googas.api.links.LinkableInfo;
+import me.googas.api.utility.Maps;
+import me.googas.bungee.data.ProxiedOfflinePlayer;
+import me.googas.bungee.lang.BungeeLocaleFile;
+import me.googas.net.sockets.json.client.JsonClient;
+import net.md_5.bungee.api.connection.ProxiedPlayer;
+
 /** Commands for linking minecraft accounts */
-// TODO fix link command
 public class LinkCommand {
 
-  /*
-  @Settings("async")
+  @Async
   @Command(aliases = "link")
   public void link(ProxiedPlayer player, BungeeLocaleFile locale, JsonClient client) {
     // TODO make proxied offline player as an extra argument
@@ -36,6 +44,4 @@ public class LinkCommand {
                   // TODO could not check if is linked
                 }));
   }
-
-     */
 }

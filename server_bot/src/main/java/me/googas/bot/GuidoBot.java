@@ -20,6 +20,7 @@ import me.googas.api.API;
 import me.googas.api.GuidoCatchable;
 import me.googas.api.GuidoInstance;
 import me.googas.api.loader.Loader;
+import me.googas.api.matches.ladder.Ladder;
 import me.googas.api.server.GuidoAuthenticator;
 import me.googas.api.server.receptors.*;
 import me.googas.bot.api.Guido;
@@ -169,6 +170,17 @@ public class GuidoBot implements GuidoInstance {
       long timeout = Long.parseLong(args.getProperty("timeout", "3000"));
       Loader loader = getLoader();
       this.authenticator = new GuidoAuthenticator(getLoader());
+      MatchReceptors matchReceptors = new MatchReceptors(loader.getMatches());
+      matchReceptors.setLadderSupplier(
+          new MatchReceptors.LadderSupplier() {
+            @Override
+            public Ladder getLadder(@NonNull String name) {
+              return Guido.getHandlers()
+                  .getDiscordLoader()
+                  .getGuild(connection.getJda().getGuilds().getFirst().getIdLong())
+                  .getLadder(name);
+            }
+          });
       JsonSocketServer.ServerBuilder serverBuilder =
           JsonSocketServer.listen(port)
               .maxWait(timeout)
@@ -176,7 +188,7 @@ public class GuidoBot implements GuidoInstance {
                   new GroupReceptors(loader.getGroups()),
                   new GuidoServerReceptors(this.authenticator),
                   new LinkReceptors(loader.getLinks()),
-                  new MatchReceptors(loader.getMatches()),
+                  matchReceptors,
                   new PunishmentReceptors(loader.getPunishments()),
                   this.authenticator);
       return serverBuilder.start();
