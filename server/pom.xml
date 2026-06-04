@@ -85,7 +85,7 @@
         <dependency>
             <groupId>com.github.Chevyself.starbox-commands</groupId>
             <artifactId>bungee</artifactId>
-            <version>${starbox-commands-version}</version>
+            <version>${starbox-commands.version}</version>
         </dependency>
         <!-- Mongo dependency -->
         <dependency>
@@ -101,8 +101,8 @@
         </dependency>-->
         <dependency>
             <groupId>com.starfishst.guido</groupId>
-            <artifactId>simple</artifactId>
-            <version>1.0.0</version>
+            <artifactId>core</artifactId>
+            <version>1.2.1</version>
             <scope>compile</scope>
         </dependency>
         <dependency>

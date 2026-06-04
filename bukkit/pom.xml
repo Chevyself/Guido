@@ -11,7 +11,7 @@
     </parent>
 
     <artifactId>bukkit</artifactId>
-    <description>Implementations for bukkit</description>
+    <description>Bootstrap for Bukkit</description>
     <packaging>jar</packaging>
 
     <build>
@@ -72,6 +72,13 @@
     </repositories>
 
     <dependencies>
+        <!-- Guido core -->
+        <dependency>
+            <groupId>com.starfishst.guido</groupId>
+            <artifactId>core</artifactId>
+            <version>${guido.version}</version>
+            <scope>compile</scope>
+        </dependency>
         <!-- Spigot -->
         <dependency>
             <groupId>org.spigotmc</groupId>
@@ -84,12 +91,6 @@
                     <artifactId>bungeecord-chat</artifactId>
                 </exclusion>
             </exclusions>
-        </dependency>
-        <!-- Dependency on simple -->
-        <dependency>
-            <groupId>com.starfishst.guido</groupId>
-            <artifactId>simple</artifactId>
-            <version>1.0.0</version>
         </dependency>
         <!-- Starbox -->
         <dependency>
