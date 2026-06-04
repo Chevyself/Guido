@@ -4,7 +4,6 @@ import lombok.Getter;
 import lombok.NonNull;
 import me.googas.api.API;
 import me.googas.api.GuidoCatchable;
-import me.googas.api.events.token.AuthTokenUnloadedEvent;
 import me.googas.api.user.UserData;
 import me.googas.api.utility.RandomUtils;
 
@@ -47,9 +46,7 @@ public class AuthToken implements GuidoCatchable {
   }
 
   @Override
-  public void onRemove() {
-    new AuthTokenUnloadedEvent(this).call();
-  }
+  public void onRemove() {}
 
   @Override
   public @NonNull AuthToken cache() {

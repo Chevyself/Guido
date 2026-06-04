@@ -11,7 +11,6 @@ import lombok.NonNull;
 import lombok.Setter;
 import me.googas.api.GuidoCatchable;
 import me.googas.api.Informative;
-import me.googas.api.events.group.GroupUnloadedEvent;
 
 /** This class represents a group which can be used to have multiple permissions in one */
 public class Group implements Permissible, GuidoCatchable, Informative {
@@ -54,9 +53,7 @@ public class Group implements Permissible, GuidoCatchable, Informative {
   }
 
   @Override
-  public void onRemove() {
-    new GroupUnloadedEvent(this).call();
-  }
+  public void onRemove() {}
 
   @Override
   public @NonNull Group cache() {

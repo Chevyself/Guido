@@ -10,7 +10,6 @@ import me.googas.api.GuidoCatchable;
 import me.googas.api.Informative;
 import me.googas.api.events.punishment.PunishmentExpiresUpdatedEvent;
 import me.googas.api.events.punishment.PunishmentStatusUpdatedEvent;
-import me.googas.api.events.punishment.PunishmentUnloadedEvent;
 import me.googas.api.links.LinkableInfo;
 
 /** This class represents a punishment which can be done to any kind of data */
@@ -89,7 +88,5 @@ public class Punishment implements GuidoCatchable, Expirable, Informative {
   }
 
   @Override
-  public void onRemove() {
-    new PunishmentUnloadedEvent(this).call();
-  }
+  public void onRemove() {}
 }

@@ -13,7 +13,6 @@ import me.googas.api.GuidoCatchable;
 import me.googas.api.Identifiable;
 import me.googas.api.Informative;
 import me.googas.api.Stateable;
-import me.googas.api.events.links.LinkableUnloadedEvent;
 import me.googas.api.lang.Localized;
 import me.googas.api.links.ref.DiscordLinkable;
 import me.googas.api.links.ref.MinecraftLinkable;
@@ -247,9 +246,7 @@ public class Linkable
   }
 
   @Override
-  public void onRemove() {
-    new LinkableUnloadedEvent(this).call();
-  }
+  public void onRemove() {}
 
   @Override
   public @NonNull Linkable cache() {

@@ -9,7 +9,6 @@ import lombok.NonNull;
 import me.googas.api.API;
 import me.googas.api.GuidoCatchable;
 import me.googas.api.Informative;
-import me.googas.api.events.user.UserUnloadedDataEvent;
 import me.googas.api.lang.Localized;
 import me.googas.api.links.Linkable;
 import me.googas.api.links.LinkableType;
@@ -86,9 +85,7 @@ public class UserData implements GuidoCatchable, Localized, Informative {
   }
 
   @Override
-  public void onRemove() {
-    new UserUnloadedDataEvent(this).call();
-  }
+  public void onRemove() {}
 
   @Override
   public @NonNull UserData cache() {

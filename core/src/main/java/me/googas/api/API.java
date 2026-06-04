@@ -9,6 +9,7 @@ import me.googas.net.cache.MemoryCache;
 import me.googas.starbox.events.ListenerManager;
 import me.googas.starbox.scheduler.Scheduler;
 
+/** @deprecated we should not use statics */
 public class API {
 
   private static GuidoInstance instance;

@@ -47,6 +47,7 @@ public class Mongo {
         .registerTypeAdapter(Long.class, new LongMongoAdapter());
   }
 
+  /*TODO deprecated, remove
   public static void save(
       @NonNull MongoCollection<Document> collection,
       @NonNull Document query,
@@ -58,7 +59,7 @@ public class Mongo {
     } else {
       collection.insertOne(document);
     }
-  }
+  }*/
 
   public static <T extends GuidoCatchable> T get(
       @NonNull Class<T> typeOfT,

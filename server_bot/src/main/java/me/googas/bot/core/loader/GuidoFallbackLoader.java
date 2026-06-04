@@ -2,7 +2,6 @@ package me.googas.bot.core.loader;
 
 import lombok.NonNull;
 import me.googas.api.loader.GroupLoader;
-import me.googas.api.loader.LadderLoader;
 import me.googas.api.loader.LinksLoader;
 import me.googas.api.loader.MatchLoader;
 import me.googas.api.loader.PunishmentLoader;
@@ -17,11 +16,6 @@ import me.googas.api.loader.UserLoader;
 public class GuidoFallbackLoader implements GuidoLoader {
   @Override
   public void onDisable() {}
-
-  @Override
-  public @NonNull LadderLoader getLadders() {
-    throw new UnsupportedOperationException("Operations are not supported by fallback loader");
-  }
 
   @Override
   public @NonNull GroupLoader getGroups() {

@@ -16,7 +16,6 @@ import me.googas.api.events.match.MatchPreAddTeamEvent;
 import me.googas.api.events.match.MatchPreRemoveTeamEvent;
 import me.googas.api.events.match.MatchRemoveTeamEvent;
 import me.googas.api.events.match.MatchStatusUpdatedEvent;
-import me.googas.api.events.match.MatchUnloadedEvent;
 import me.googas.api.events.match.MatchWinnersSetEvent;
 import me.googas.api.links.LinkableInfo;
 import me.googas.api.links.LinkableType;
@@ -201,7 +200,7 @@ public class AbstractMatch implements GuidoCatchable, Informative {
    * @return the ladder where the match was played
    */
   public Ladder getLadder() {
-    return API.getLoader().getLadders().getLadder(this.getString(null, "ladder", ""));
+    throw new UnsupportedOperationException("Fix me, ladders do not use loaders");
   }
 
   /**
@@ -221,9 +220,7 @@ public class AbstractMatch implements GuidoCatchable, Informative {
   }
 
   @Override
-  public void onRemove() {
-    new MatchUnloadedEvent(this).call();
-  }
+  public void onRemove() {}
 
   @Override
   public @NonNull AbstractMatch cache() {
