@@ -23,6 +23,7 @@ import lombok.NonNull;
 import me.googas.api.utility.Lots;
 import me.googas.starbox.BukkitYamlLanguage;
 import me.googas.starbox.Starbox;
+import me.googas.starbox.compatibilities.Compatibility;
 import me.googas.starbox.modules.ModuleRegistry;
 import me.googas.starbox.modules.language.LanguageModule;
 import me.googas.starbox.scheduler.Scheduler;
@@ -134,7 +135,14 @@ public class GuidoPlugin extends JavaPlugin {
 
   @Override
   public void onEnable() {
-    this.compatibilities.check();
+    this.compatibilities.check().getCompatibilities().stream()
+        .filter(Compatibility::isEnabled)
+        .forEach(
+            compatibility -> {
+              this.moduleRegistry.engage(compatibility.getModules(this));
+              this.manager.registerAll(compatibility.getCommands());
+              this.manager.getProvidersRegistry().addProviders(compatibility.getProviders());
+            });
     this.setupStarbox();
     this.loadConfiguration();
     this.registerCommands();

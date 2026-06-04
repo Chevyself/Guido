@@ -19,6 +19,7 @@ import java.util.concurrent.ExecutionException;
 import lombok.Getter;
 import lombok.NonNull;
 import me.googas.api.Requests;
+import me.googas.api.client.SimpleClientLadder;
 import me.googas.api.matches.AbstractMatch;
 import me.googas.api.matches.MatchStatus;
 import me.googas.api.matches.ladder.Ladder;
@@ -82,7 +83,8 @@ public class PGMMatchMakingHandler implements GuidoModule {
     JsonClient connection = Guido.getClient().getConnection();
     if (this.check(type, pgmMatch) && connection != null) {
       try {
-        Optional<Ladder> optional = Requests.Matches.getLadder(ladderName).send(connection);
+        Optional<SimpleClientLadder> optional =
+            Requests.Matches.getLadder(ladderName).send(connection);
         return optional.map(ladder -> !this.getSuitableMaps(ladder).isEmpty()).orElse(false);
       } catch (MessengerListenFailException e) {
         e.printStackTrace();
@@ -150,7 +152,8 @@ public class PGMMatchMakingHandler implements GuidoModule {
     if (!type.equalsIgnoreCase("PGM") && ladderName == null) return null;
     try {
       JsonClient connection = Guido.getClient().validatedConnection();
-      Optional<Ladder> optional = Requests.Matches.getLadder(ladderName).send(connection);
+      Optional<SimpleClientLadder> optional =
+          Requests.Matches.getLadder(ladderName).send(connection);
       if (optional.isEmpty()) return null;
       Ladder ladder = optional.get();
       List<MapInfo> maps = this.getSuitableMaps(ladder);

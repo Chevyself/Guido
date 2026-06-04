@@ -37,7 +37,7 @@ public class GuidoLadder implements Ladder {
     this.playersPerTeam = playersPerTeam;
     this.baseValue = baseValue;
     this.teamsPerMatch = teamsPerMatch;
-    this.information = information;
+    this.information = new HashMap<>(information);
   }
 
   /** @deprecated this constructor may only be used by gson */
@@ -62,7 +62,7 @@ public class GuidoLadder implements Ladder {
 
   @Override
   public @NonNull Queue createQueue(long guildId) {
-    String type = this.getString("global", "type", "none");
+    String type = this.getString("global", "type", "pgm");
     switch (type) {
       case "pgm":
         return new GuidoPGMQueue(guildId, this.getName());

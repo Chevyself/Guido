@@ -8,13 +8,13 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.function.Consumer;
 import lombok.NonNull;
+import me.googas.api.client.SimpleClientLadder;
 import me.googas.api.links.Linkable;
 import me.googas.api.links.LinkableInfo;
 import me.googas.api.links.LinkableType;
 import me.googas.api.matches.AbstractMatch;
 import me.googas.api.matches.MatchStatus;
 import me.googas.api.matches.MatchTeam;
-import me.googas.api.matches.ladder.Ladder;
 import me.googas.api.permissions.AbstractPermission;
 import me.googas.api.permissions.Group;
 import me.googas.api.permissions.GroupInfo;
@@ -460,8 +460,8 @@ public class Requests {
     }
 
     @NonNull
-    public static RequestBuilder<Ladder> getLadder(@NonNull String name) {
-      return new RequestBuilder<>(Ladder.class, Matches.LADDER).put("name", name);
+    public static RequestBuilder<SimpleClientLadder> getLadder(@NonNull String name) {
+      return new RequestBuilder<>(SimpleClientLadder.class, Matches.LADDER).put("name", name);
     }
   }
 
@@ -538,15 +538,13 @@ public class Requests {
 
     @NonNull
     public static RequestBuilder<Boolean> canHost(@NonNull AbstractMatch abstractMatch) {
-      return new RequestBuilder<>(Boolean.class, MatchServer.CAN_HOST)
-          .put("abstractMatch", abstractMatch);
+      return new RequestBuilder<>(Boolean.class, MatchServer.CAN_HOST).put("match", abstractMatch);
     }
 
     // Must return the server IP
     @NonNull
     public static RequestBuilder<String> host(@NonNull AbstractMatch abstractMatch) {
-      return new RequestBuilder<>(String.class, MatchServer.HOST)
-          .put("abstractMatch", abstractMatch);
+      return new RequestBuilder<>(String.class, MatchServer.HOST).put("match", abstractMatch);
     }
 
     @NonNull

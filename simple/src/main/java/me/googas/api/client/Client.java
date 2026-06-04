@@ -71,7 +71,7 @@ public class Client {
     this.connection =
         JsonClient.join(this.ip, this.port)
             .setGson(Adapters.buildClient())
-            .addReceptors(this.receptors)
+            .addReceptors(this.receptors.toArray())
             .start();
   }
 

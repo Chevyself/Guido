@@ -3,8 +3,9 @@ package me.googas.api.server.receptors;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import lombok.Getter;
 import lombok.NonNull;
-import me.googas.api.API;
+import lombok.Setter;
 import me.googas.api.Requests;
 import me.googas.api.loader.MatchLoader;
 import me.googas.api.matches.AbstractMatch;
@@ -17,6 +18,7 @@ import me.googas.net.sockets.json.Receptor;
 public class MatchReceptors {
 
   @NonNull private final MatchLoader loader;
+  @NonNull @Getter @Setter private LadderSupplier ladderSupplier;
 
   public MatchReceptors(@NonNull MatchLoader loader) {
     this.loader = loader;
@@ -104,6 +106,10 @@ public class MatchReceptors {
 
   @Receptor(Requests.Matches.LADDER)
   public Ladder ladder(@ParamName("name") String name) {
-    return API.getLoader().getLadders().getLadder(name);
+    return ladderSupplier.getLadder(name);
+  }
+
+  public interface LadderSupplier {
+    Ladder getLadder(@NonNull String name);
   }
 }
