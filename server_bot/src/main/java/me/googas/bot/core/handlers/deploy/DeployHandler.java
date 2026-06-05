@@ -1,13 +1,7 @@
 package me.googas.bot.core.handlers.deploy;
 
-import me.googas.api.Requests;
 import me.googas.api.events.links.LinkableEloUpdatedEvent;
-import me.googas.api.events.permissible.PermissiblePermissionAddedEvent;
-import me.googas.api.events.permissible.PermissiblePermissionRemovedEvent;
-import me.googas.api.links.Linkable;
-import me.googas.api.permissions.Permissible;
 import me.googas.api.utility.Maps;
-import me.googas.bot.api.Guido;
 import me.googas.bot.api.events.data.links.LinkableRankUpdatedEvent;
 import me.googas.bot.core.handlers.GuidoHandler;
 import me.googas.bot.core.handlers.ranks.RanksHandler;
@@ -51,30 +45,6 @@ public class DeployHandler implements GuidoHandler {
             "elo.rank.updated",
             Maps.builder("applied", Ranks.getRanksToken(update.getApplied()))
                 .put("removed", Ranks.getRanksToken(update.getRemoved())));
-  }
-
-  @Listener(priority = ListenPriority.HIGHEST)
-  public void onPermissiblePermissionAdded(PermissiblePermissionAddedEvent event) {
-    Permissible permissible = event.getPermissible();
-    if (permissible instanceof Linkable) {
-      Requests.Deploy.addPermission(
-              ((Linkable) permissible).getInfo(),
-              event.getContext(),
-              event.getNode(),
-              event.isEnabled(),
-              event.getExpires())
-          .queue(Guido.getServer());
-    }
-  }
-
-  @Listener(priority = ListenPriority.HIGHEST)
-  public void onPermissiblePermissionRemoved(PermissiblePermissionRemovedEvent event) {
-    Permissible permissible = event.getPermissible();
-    if (permissible instanceof Linkable) {
-      Requests.Deploy.removePermission(
-              ((Linkable) permissible).getInfo(), event.getContext(), event.getNode())
-          .queue(Guido.getServer());
-    }
   }
 
   @Override

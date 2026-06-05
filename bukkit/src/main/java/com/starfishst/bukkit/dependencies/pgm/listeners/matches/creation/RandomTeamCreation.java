@@ -58,7 +58,7 @@ public class RandomTeamCreation implements TeamCreation {
       @NonNull Match match) {
     Set<HostedPlayer> left = new HashSet<>(hosted.getParticipants());
     Map<Party, List<HostedPlayer>> teams = new HashMap<>();
-    int perTeam = hosted.getInt(null, "players-per-team", 1);
+    int perTeam = hosted.getPlayersPerTeam();
     int index = 1;
     for (int i = 0; i < (hosted.getParticipants().size() / perTeam); i++) {
       Team party = this.getAvailableParty(teams, match);

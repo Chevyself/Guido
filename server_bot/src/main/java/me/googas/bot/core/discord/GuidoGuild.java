@@ -1,118 +1,45 @@
 package me.googas.bot.core.discord;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
 import java.util.Objects;
-import java.util.Set;
-import java.util.concurrent.atomic.AtomicReference;
-import lombok.Getter;
+import java.util.Optional;
 import lombok.NonNull;
-import me.googas.api.GuidoCatchable;
+import me.googas.api.matches.MinecraftTeamSelectionType;
 import me.googas.api.matches.ladder.GlobalLadder;
 import me.googas.api.matches.ladder.Ladder;
-import me.googas.api.ranks.RankRange;
+import me.googas.api.utility.ImmutableCollection;
+import me.googas.bot.DiscordRankRange;
 import me.googas.bot.api.Guido;
-import me.googas.bot.api.events.data.guild.GuidoGuildUnloadedEvent;
-import me.googas.bot.api.types.messages.ResponsiveMesage;
-import me.googas.starbox.time.Time;
-import me.googas.starbox.time.unit.Unit;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.channel.concrete.Category;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
-import net.dv8tion.jda.api.entities.channel.concrete.VoiceChannel;
 
 /** This object represents the data for a guild that is using this bot */
-public class GuidoGuild implements GuidoCatchable {
+public interface GuidoGuild {
 
-  /** The version of serialization for the scheme */
-  @NonNull @Getter private final String version = "PRE-3";
-
-  private final long id;
-  @NonNull private final Set<Ladder> ladders;
-  @NonNull private final Set<RankRange> ranges;
-  @NonNull private final Map<String, Long> channels;
-  @NonNull private final Map<String, Long> voiceChannels;
-  @NonNull private final Map<String, Long> categories;
-  @NonNull private final Set<ResponsiveMesage> messages;
-
-  /**
-   * Create the guido guild
-   *
-   * @param id the id of the guild
-   * @param ladders the ladders of the guild
-   * @param ranges the ranges of the guild
-   * @param channels the channels map of the guild
-   * @param voiceChannels the voice channels map of the guild
-   * @param categories the categories map of the guild
-   * @param messages the messages that can be used inside the guild
-   */
-  public GuidoGuild(
-      long id,
-      @NonNull Set<Ladder> ladders,
-      @NonNull Set<RankRange> ranges,
-      @NonNull Map<String, Long> channels,
-      @NonNull Map<String, Long> voiceChannels,
-      @NonNull Map<String, Long> categories,
-      @NonNull Set<ResponsiveMesage> messages) {
-    this.id = id;
-    this.ladders = ladders;
-    this.ranges = ranges;
-    this.channels = channels;
-    this.voiceChannels = voiceChannels;
-    this.categories = categories;
-    this.messages = messages;
-  }
-
-  /** @deprecated this constructor may only be used by gson */
-  public GuidoGuild() {
-    this(
-        0,
-        new HashSet<>(),
-        new HashSet<>(),
-        new HashMap<>(),
-        new HashMap<>(),
-        new HashMap<>(),
-        new HashSet<>());
-  }
-
-  public @NonNull Collection<ResponsiveMesage> getMessages() {
-    return this.messages;
-  }
-
-  public ResponsiveMesage getMessage(long id) {
-    for (ResponsiveMesage message : this.messages) {
-      if (message != null && message.getId() == id) return message;
-    }
-    return null;
-  }
-
-  public long getId() {
-    return this.id;
-  }
+  long getId();
 
   @NonNull
-  public Set<Ladder> getLadders() {
-    return this.ladders;
-  }
+  ImmutableCollection<Ladder> getLadders();
 
   @NonNull
-  public Set<RankRange> getRanges() {
-    return this.ranges;
-  }
+  ImmutableCollection<DiscordRankRange> getRanges();
 
-  public @NonNull Map<String, Long> getChannels() {
-    return this.channels;
-  }
+  long getMatchesChannelId();
 
-  public @NonNull Map<String, Long> getVoiceChannels() {
-    return this.voiceChannels;
-  }
+  void setMatchesChannelId(long idLong);
 
-  public @NonNull Map<String, Long> getCategories() {
-    return this.categories;
-  }
+  long getMatchesCategoryId();
+
+  void setMatchesCategoryId(long idLong);
+
+  void addLadder(
+      @NonNull String name,
+      int playersPerTeam,
+      int baseElo,
+      int teamsPerMatch,
+      MinecraftTeamSelectionType teamSelectionType);
+
+  void removeLadderByName(String name);
 
   /**
    * Get a ladder using its name
@@ -120,98 +47,26 @@ public class GuidoGuild implements GuidoCatchable {
    * @param name the name of the ladder
    * @return the ladder if found else null
    */
-  public Ladder getLadder(@NonNull String name) {
+  default Optional<Ladder> getLadder(@NonNull String name) {
+    Ladder ladder = null;
     if (name.equalsIgnoreCase("global")) {
-      return GlobalLadder.INSTANCE;
+      ladder = GlobalLadder.INSTANCE;
     } else {
-      for (Ladder ladder : this.getLadders()) {
-        if (ladder.getName().equalsIgnoreCase(name)) {
-          return ladder;
+      for (Ladder thisLadders : this.getLadders()) {
+        if (thisLadders.getName().equalsIgnoreCase(name)) {
+          ladder = thisLadders;
+          break;
         }
       }
-      return null;
     }
+    return Optional.ofNullable(ladder);
   }
 
-  @Override
-  public @NonNull Time getToRemove() {
-    return Time.of(10, Unit.MINUTES);
-  }
-
-  public RankRange getRange(long id) {
-    for (RankRange range : this.getRanges()) {
-      Long rangeId = range.get(null, "id", Long.class);
-      if (rangeId != null && rangeId == id) return range;
+  default DiscordRankRange getRange(long id) {
+    for (DiscordRankRange range : this.getRanges()) {
+      if (range.getRoleId() == id) return range;
     }
     return null;
-  }
-
-  /**
-   * Get the discord text channel for the given key
-   *
-   * @param key the key to getId the channel
-   * @return the channel
-   */
-  @NonNull
-  public TextChannel getTextChannel(@NonNull String key) {
-    Guild guild = this.toDiscord();
-    TextChannel channel = guild.getTextChannelById(this.getChannels().getOrDefault(key, -1L));
-    if (channel == null) {
-      channel = guild.createTextChannel(key).complete();
-      this.getChannels().put(key, channel.getIdLong());
-    }
-    return channel;
-  }
-
-  /**
-   * Get the discord text channel for the given key
-   *
-   * @param key the key to getId the channel
-   * @return the channel
-   */
-  @NonNull
-  public VoiceChannel getVoiceChannel(@NonNull String key) {
-    Guild guild = this.toDiscord();
-    VoiceChannel channel =
-        guild.getVoiceChannelById(this.getVoiceChannels().getOrDefault(key, -1L));
-    if (channel == null) {
-      channel = guild.createVoiceChannel(key).complete();
-      this.getVoiceChannels().put(key, channel.getIdLong());
-    }
-    return channel;
-  }
-
-  /**
-   * Get the discord category for the given key
-   *
-   * @param key the key to getId the category
-   * @return the category
-   */
-  @NonNull
-  public Category getCategory(@NonNull String key) {
-    Guild guild = this.toDiscord();
-    Category category = guild.getCategoryById(this.getCategories().getOrDefault(key, -1L));
-    if (category == null) {
-      category = guild.createCategory(key).complete();
-      this.getChannels().put(key, category.getIdLong());
-    }
-    return category;
-  }
-
-  /**
-   * Get the key of a voice channel matching the id
-   *
-   * @param id the id of the channel to match
-   * @return the key that contains that channel if found else null
-   */
-  public String getVoiceChannel(long id) {
-    AtomicReference<String> atomic = new AtomicReference<>();
-    this.getVoiceChannels()
-        .forEach(
-            (key, channel) -> {
-              if (channel == id) atomic.set(key);
-            });
-    return atomic.get();
   }
 
   /**
@@ -220,55 +75,31 @@ public class GuidoGuild implements GuidoCatchable {
    * @return the discord guild
    */
   @NonNull
-  public Guild toDiscord() {
+  default Guild toDiscord() {
     return Objects.requireNonNull(
         Guido.getConnection().validatedJda().getGuildById(this.getId()),
         "Seems like the guild with the id " + this.getId() + " no longer exists");
   }
 
-  @Override
-  public void onRemove() {
-    new GuidoGuildUnloadedEvent(this).call();
+  default TextChannel getMatchesTextChannel() {
+    Guild guild = toDiscord();
+    TextChannel channel = guild.getTextChannelById(this.getMatchesChannelId());
+    if (channel == null) {
+      channel = guild.createTextChannel("Matches").complete();
+      this.setMatchesChannelId(channel.getIdLong());
+    }
+    return channel;
   }
 
-  @Override
-  public String toString() {
-    return "GuidoGuild{"
-        + "version='"
-        + version
-        + '\''
-        + ", id="
-        + id
-        + ", ladders="
-        + ladders
-        + ", ranges="
-        + ranges
-        + ", channels="
-        + channels
-        + ", voiceChannels="
-        + voiceChannels
-        + ", categories="
-        + categories
-        + ", messages="
-        + messages
-        + '}';
+  default Category getMatchesCategory() {
+    Guild guild = toDiscord();
+    Category category = guild.getCategoryById(this.getMatchesCategoryId());
+    if (category == null) {
+      category = guild.createCategory("Matches").complete();
+      this.setMatchesCategoryId(category.getIdLong());
+    }
+    return category;
   }
 
-  @Override
-  public boolean equals(Object o) {
-    if (this == o) return true;
-    if (o == null || this.getClass() != o.getClass()) return false;
-    GuidoGuild that = (GuidoGuild) o;
-    return this.id == that.id;
-  }
-
-  @Override
-  public int hashCode() {
-    return Objects.hash(this.id);
-  }
-
-  @Override
-  public @NonNull GuidoGuild cache() {
-    return (GuidoGuild) GuidoCatchable.super.cache();
-  }
+  void addRange(@NonNull String ladderName, @NonNull String name, int min, int max, long roleId);
 }

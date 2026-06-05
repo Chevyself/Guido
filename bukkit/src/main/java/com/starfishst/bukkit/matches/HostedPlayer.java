@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.NonNull;
 import me.googas.api.Stateable;
 import me.googas.api.matches.minecraft.MinecraftMatchTeamMember;
+import me.googas.api.utility.ImmutableCollection;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
@@ -32,7 +33,8 @@ public class HostedPlayer implements Stateable {
     return player == null ? "Offline" : player.getDisplayName();
   }
 
-  public static Set<HostedPlayer> parse(@NonNull Set<MinecraftMatchTeamMember> participants) {
+  public static Set<HostedPlayer> parse(
+      @NonNull ImmutableCollection<? extends MinecraftMatchTeamMember> participants) {
     return participants.stream()
         .map(participant -> new HostedPlayer(participant.getId(), new HashMap<>()))
         .collect(Collectors.toSet());

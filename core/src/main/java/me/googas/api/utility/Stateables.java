@@ -4,27 +4,27 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import lombok.NonNull;
-import me.googas.api.ranks.RankRange;
+import me.googas.api.Range;
 
 public class Stateables {
 
   @NonNull
-  public static List<RankRange> getApplying(
-      @NonNull Number number, @NonNull Collection<RankRange> ranges) {
-    List<RankRange> applying = new ArrayList<>();
+  public static <T extends Range> List<T> getApplying(
+      @NonNull Number number, @NonNull Collection<T> ranges) {
+    List<T> applying = new ArrayList<>();
     if (ranges.isEmpty()) return applying;
-    for (RankRange range : ranges) {
+    for (T range : ranges) {
       if (range.isBound(number.intValue())) applying.add(range);
     }
     return applying;
   }
 
   @NonNull
-  public static List<RankRange> getOutside(
-      @NonNull Number number, @NonNull Collection<RankRange> ranges) {
-    List<RankRange> outside = new ArrayList<>();
+  public static <T extends Range> List<T> getOutside(
+      @NonNull Number number, @NonNull Collection<T> ranges) {
+    List<T> outside = new ArrayList<>();
     if (ranges.isEmpty()) return outside;
-    for (RankRange range : ranges) {
+    for (T range : ranges) {
       if (!range.isBound(number.intValue())) outside.add(range);
     }
     return outside;

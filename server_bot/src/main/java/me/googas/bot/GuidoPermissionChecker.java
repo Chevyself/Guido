@@ -9,19 +9,10 @@ import com.github.chevyself.starbox.result.Result;
 import java.util.Optional;
 import java.util.Set;
 import lombok.NonNull;
-import me.googas.api.links.DiscordLinkable;
-import me.googas.api.links.Linkable;
-import me.googas.api.links.LinkableType;
 import me.googas.api.utility.Lots;
-import me.googas.api.utility.Maps;
-import me.googas.bot.api.DiscordLoader;
-import me.googas.bot.core.discord.GuidoRole;
 import me.googas.bot.core.loader.GuidoLoader;
-import me.googas.bot.core.util.Discord;
 import net.dv8tion.jda.api.Permission;
-import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
-import net.dv8tion.jda.api.entities.Role;
 
 /** Checks the permissions for the guido bot */
 public class GuidoPermissionChecker implements Middleware<CommandContext> {
@@ -34,22 +25,17 @@ public class GuidoPermissionChecker implements Middleware<CommandContext> {
 
   @NonNull private final JdaMessagesProvider messagesProvider;
   @NonNull private final GuidoLoader dataLoader;
-  @NonNull private final DiscordLoader discordLoader;
 
   /**
    * Create the permission checker
    *
    * @param messagesProvider the messages provider in case it has to return a result
    * @param dataLoader the data loader to getId the permissions from the user
-   * @param discordLoader the loader to getId roles
    */
   public GuidoPermissionChecker(
-      @NonNull JdaMessagesProvider messagesProvider,
-      @NonNull GuidoLoader dataLoader,
-      @NonNull DiscordLoader discordLoader) {
+      @NonNull JdaMessagesProvider messagesProvider, @NonNull GuidoLoader dataLoader) {
     this.messagesProvider = messagesProvider;
     this.dataLoader = dataLoader;
-    this.discordLoader = discordLoader;
   }
 
   /**
@@ -62,20 +48,7 @@ public class GuidoPermissionChecker implements Middleware<CommandContext> {
    */
   public boolean checkMemberPermission(@NonNull GuildCommandContext context, @NonNull String perm) {
     Member discordMember = context.getMember();
-    Guild guild = context.getGuild();
-    // discordMember.getIdLong(), guild.getIdLong()
-    DiscordLinkable member = Discord.getUser(discordMember);
-    if (member.hasPermission(perm, "discord")
-        || discordMember.hasPermission(Permission.ADMINISTRATOR)) {
-      return true;
-    }
-    for (Role role : discordMember.getRoles()) {
-      GuidoRole roleData = this.discordLoader.getRole(role.getIdLong());
-      if (roleData.hasPermission(perm, "discord") || role.hasPermission(Permission.ADMINISTRATOR)) {
-        return true;
-      }
-    }
-    return false;
+    return discordMember.hasPermission(Permission.ADMINISTRATOR);
   }
 
   @Override
@@ -92,13 +65,14 @@ public class GuidoPermissionChecker implements Middleware<CommandContext> {
     } else {
       String node =
           permissionNode.startsWith("user:") ? permissionNode.substring(5) : permissionNode;
+      /*
       Linkable userData =
           this.dataLoader
               .getLinks()
               .getLink(LinkableType.DISCORD, Maps.singleton("id", context.getSender().getIdLong()));
       if (userData != null && userData.hasPermission(node, "discord")) {
         return Optional.empty();
-      }
+      }*/
     }
     Result result = Result.of(this.messagesProvider.notAllowed(context));
     return Optional.of(result);

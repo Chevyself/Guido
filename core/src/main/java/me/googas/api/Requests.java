@@ -1,22 +1,15 @@
 package me.googas.api;
 
-import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.Set;
 import java.util.UUID;
 import java.util.function.Consumer;
 import lombok.NonNull;
 import me.googas.api.client.SimpleClientLadder;
-import me.googas.api.links.Linkable;
-import me.googas.api.links.LinkableType;
 import me.googas.api.matches.MatchStatus;
+import me.googas.api.matches.minecraft.MinecraftMatch;
 import me.googas.api.matches.minecraft.MinecraftMatchTeam;
-import me.googas.api.permissions.AbstractPermission;
-import me.googas.api.permissions.Group;
-import me.googas.api.permissions.GroupInfo;
-import me.googas.api.permissions.PermissionStack;
 import me.googas.net.api.messages.RequestBuilder;
 
 /** Static utilities for requests */
@@ -32,137 +25,6 @@ public class Requests {
         elseRun.run();
       }
     };
-  }
-
-  public static class Groups {
-    @NonNull public static final String PREFIX = "group/";
-    @NonNull public static final String GROUP = "group";
-    @NonNull public static final String GROUPS_SIZE = Groups.PREFIX + "group-size";
-    @NonNull public static final String GROUPS = Groups.PREFIX + "groups";
-    @NonNull public static final String DELETE = Groups.PREFIX + "delete";
-    @NonNull public static final String ALL_GROUPS = Groups.PREFIX + "all-groups";
-    @NonNull public static final String CREATE = Groups.PREFIX + "create";
-    @NonNull public static final String WEIGHT = Groups.PREFIX + "weight";
-    @NonNull public static final String NAME = Groups.PREFIX + "name";
-    @NonNull public static final String PREFERENCE = Groups.PREFIX + "preference";
-    @NonNull public static final String CONTEXT_PREFERENCE = Groups.PREFIX + "context-preference";
-    @NonNull public static final String REMOVE_PREFERENCE = Groups.PREFIX + "remove-preference";
-    @NonNull public static final String ADD_PERMISSION = Groups.PREFIX + "add-permission";
-    @NonNull public static final String REMOVE_PERMISSION = Groups.PREFIX + "remove-permission";
-    @NonNull public static final String PARENT = Groups.PREFIX + "parent";
-    @NonNull public static final String REMOVE_PARENT = Groups.PREFIX + "remove-parent";
-
-    @NonNull
-    public static RequestBuilder<Group> getGroup(@NonNull String id) {
-      return new RequestBuilder<>(Group.class, "group").put("id", id);
-    }
-
-    @NonNull
-    public static RequestBuilder<Long> getGroupsSize(int size) {
-      return new RequestBuilder<>(Long.class, Groups.GROUPS_SIZE).put("size", size);
-    }
-
-    @NonNull
-    public static RequestBuilder<GroupInfo[]> getGroups(int page, int size) {
-      return new RequestBuilder<>(GroupInfo[].class, Groups.GROUPS)
-          .put("page", page)
-          .put("size", size);
-    }
-
-    @NonNull
-    public static RequestBuilder<Boolean> delete(@NonNull String id) {
-      return new RequestBuilder<>(Boolean.class, Groups.DELETE).put("id", id);
-    }
-
-    @NonNull
-    public static RequestBuilder<Group> create(
-        @NonNull List<String> parents,
-        @NonNull Map<String, Map<String, Object>> information,
-        @NonNull Set<PermissionStack> permissions,
-        @NonNull String name,
-        int weight) {
-      return new RequestBuilder<>(Group.class, Groups.CREATE)
-          .put("parents", parents)
-          .put("information", information)
-          .put("permissions", permissions)
-          .put("name", name)
-          .put("weight", weight);
-    }
-
-    @NonNull
-    public static RequestBuilder<Boolean> setWeight(@NonNull String id, int weight) {
-      return new RequestBuilder<>(Boolean.class, Groups.WEIGHT).put("id", id).put("weight", weight);
-    }
-
-    @NonNull
-    public static RequestBuilder<Boolean> setName(@NonNull String id, @NonNull String name) {
-      return new RequestBuilder<>(Boolean.class, Groups.NAME).put("id", id).put("name", name);
-    }
-
-    /** @deprecated use {@link #setPreference(String, String, String, Object)} */
-    @NonNull
-    public static RequestBuilder<Boolean> setPreference(
-        @NonNull String id, @NonNull String key, @NonNull Object value) {
-      return new RequestBuilder<>(Boolean.class, Groups.PREFERENCE)
-          .put("id", id)
-          .put("key", key)
-          .put("value", value);
-    }
-
-    @NonNull
-    public static RequestBuilder<Boolean> removePreference(
-        @NonNull String id, @NonNull String key) {
-      return new RequestBuilder<>(Boolean.class, Groups.REMOVE_PREFERENCE)
-          .put("id", id)
-          .put("key", key);
-    }
-
-    @NonNull
-    public static RequestBuilder<Boolean> addPermission(
-        @NonNull String id,
-        @NonNull String context,
-        @NonNull AbstractPermission abstractPermission) {
-      return new RequestBuilder<>(Boolean.class, Groups.ADD_PERMISSION)
-          .put("id", id)
-          .put("context", context)
-          .put("abstractPermission", abstractPermission);
-    }
-
-    @NonNull
-    public static RequestBuilder<Boolean> removePermission(
-        @NonNull String id, @NonNull String context, @NonNull String node) {
-      return new RequestBuilder<>(Boolean.class, Groups.REMOVE_PERMISSION)
-          .put("id", id)
-          .put("context", context)
-          .put("node", node);
-    }
-
-    @NonNull
-    public static RequestBuilder<Boolean> addParent(@NonNull String id, @NonNull String parent) {
-      return new RequestBuilder<>(Boolean.class, Groups.PARENT).put("id", id).put("parent", parent);
-    }
-
-    @NonNull
-    public static RequestBuilder<Boolean> removeParent(@NonNull String id, @NonNull String parent) {
-      return new RequestBuilder<>(Boolean.class, Groups.REMOVE_PARENT)
-          .put("id", id)
-          .put("parent", parent);
-    }
-
-    @NonNull
-    public static RequestBuilder<Boolean> setPreference(
-        @NonNull String context, @NonNull String id, @NonNull String key, @NonNull Object value) {
-      return new RequestBuilder<>(Boolean.class, Groups.CONTEXT_PREFERENCE)
-          .put("context", context)
-          .put("id", id)
-          .put("key", key)
-          .put("value", value);
-    }
-
-    @NonNull
-    public static RequestBuilder<Group[]> getGroups() {
-      return new RequestBuilder<>(Group[].class, Groups.ALL_GROUPS);
-    }
   }
 
   public static class Server {
@@ -192,96 +54,6 @@ public class Requests {
     public static RequestBuilder<String> minecraftLinkCode(@NonNull UUID minecraftId) {
       return new RequestBuilder<>(String.class, Server.MINECRAFT_LINK_CODE)
           .put(Server.MINECRAFT_LINK_CODE_ID, minecraftId);
-    }
-  }
-
-  public static class Links {
-
-    @NonNull public static final String PREFIX = "link/";
-    @NonNull public static final String USER_LINKS = Links.PREFIX + "user-links";
-    @NonNull public static final String USER_TYPE = Links.PREFIX + "user-type";
-    @NonNull public static final String LINKS_SIZE = Links.PREFIX + "links-size";
-    @NonNull public static final String LINKS = Links.PREFIX + "links";
-    @NonNull public static final String LINK = "link";
-    @NonNull public static final String IDENTIFICATION = Links.PREFIX + "identification";
-    @NonNull public static final String RECOGNITION = Links.PREFIX + "recognition";
-    @NonNull public static final String CREATE = Links.PREFIX + "create";
-    @NonNull public static final String IS_LINKED = Links.PREFIX + "is-linked";
-    @NonNull public static final String LINK_LINK = Links.PREFIX + "link";
-    @NonNull public static final String EXISTS = Links.PREFIX + "exists";
-    @NonNull public static final String SET_RECOGNITION = Links.PREFIX + "set-recognition";
-    @NonNull public static final String PREFERENCE = Links.PREFIX + "preference";
-    @NonNull public static final String REMOVE_PREFERENCE = Links.PREFIX + "remove-preference";
-    @NonNull public static final String PERMISSIONS = Links.PREFIX + "permissions";
-    @NonNull public static final String PERMISSION = Links.PREFIX + "permission";
-    @NonNull public static final String REMOVE_PERMISSION = Links.PREFIX + "remove-permission";
-    @NonNull public static final String STATS = Links.PREFIX + "stats";
-    @NonNull public static final String SAVE_STATS = Links.PREFIX + "save-stats";
-    @NonNull public static final String RESET_STATS = Links.PREFIX + "reset-stats";
-    @NonNull public static final String SET_PREFERENCE = Links.PREFIX + "set-preference";
-
-    @NonNull
-    public static RequestBuilder<Linkable[]> getLinks(@NonNull String userId) {
-      return new RequestBuilder<>(Linkable[].class, Links.USER_LINKS).put("id", userId);
-    }
-
-    @NonNull
-    public static RequestBuilder<Linkable> getLink(
-        @NonNull String userId, @NonNull LinkableType type) {
-      return new RequestBuilder<>(Linkable.class, Links.USER_TYPE)
-          .put("id", userId)
-          .put("type", type);
-    }
-
-    @NonNull
-    public static RequestBuilder<Long> getLinksSize(@NonNull Collection<LinkableType> types) {
-      return new RequestBuilder<>(Long.class, Links.LINKS_SIZE).put("types", types);
-    }
-
-    @NonNull
-    public static RequestBuilder<Linkable> getLink(
-        @NonNull LinkableType type,
-        @NonNull Map<String, Object> identification,
-        @NonNull Map<String, Object> recognition) {
-      return new RequestBuilder<>(Linkable.class, Links.LINK)
-          .put("type", type)
-          .put("identification", identification)
-          .put("recognition", recognition);
-    }
-
-    @NonNull
-    public static RequestBuilder<Linkable> getLinkByIdentification(
-        @NonNull LinkableType type, @NonNull Map<String, Object> identification) {
-      return new RequestBuilder<>(Linkable.class, Links.IDENTIFICATION)
-          .put("type", type)
-          .put("identification", identification);
-    }
-
-    @NonNull
-    public static RequestBuilder<Linkable> getLinkByRecognition(
-        @NonNull LinkableType type, @NonNull Map<String, Object> recognition) {
-      return new RequestBuilder<>(Linkable.class, Links.RECOGNITION)
-          .put("type", type)
-          .put("recognition", recognition);
-    }
-
-    @NonNull
-    public static RequestBuilder<Linkable> create(
-        @NonNull LinkableType type,
-        @NonNull Map<String, Object> identification,
-        @NonNull Map<String, Object> recognition,
-        @NonNull Map<String, Double> accounts,
-        @NonNull Set<PermissionStack> permissions,
-        @NonNull Map<String, Map<String, Object>> information,
-        @NonNull Map<String, Map<String, Float>> stats) {
-      return new RequestBuilder<>(Linkable.class, Links.CREATE)
-          .put("type", type)
-          .put("identification", identification)
-          .put("recognition", recognition)
-          .put("accounts", accounts)
-          .put("permissions", permissions)
-          .put("information", information)
-          .put("stats", stats);
     }
   }
 
@@ -392,12 +164,22 @@ public class Requests {
 
     @NonNull public static final String PREFIX = "server/";
     @NonNull public static final String CAN_HOST = MatchServer.PREFIX + "can-host";
+    @NonNull public static final String CAN_HOST_MATCH = "match";
     @NonNull public static final String HOST = MatchServer.PREFIX + "host";
+    @NonNull public static final String HOST_MATCH = "match";
     @NonNull public static final String SERVER_READY = MatchServer.PREFIX + "server-ready";
 
     @NonNull
     public static RequestBuilder<Boolean> serverReady() {
       return new RequestBuilder<>(Boolean.class, MatchServer.SERVER_READY);
+    }
+
+    public static RequestBuilder<Boolean> canHost(@NonNull MinecraftMatch match) {
+      return new RequestBuilder<>(Boolean.class, MatchServer.CAN_HOST).put(CAN_HOST_MATCH, match);
+    }
+
+    public static RequestBuilder<String> host(@NonNull MinecraftMatch match) {
+      return new RequestBuilder<>(String.class, MatchServer.HOST).put(HOST_MATCH, match);
     }
   }
 

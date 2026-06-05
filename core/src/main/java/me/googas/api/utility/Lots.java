@@ -2,6 +2,7 @@ package me.googas.api.utility;
 
 import java.util.*;
 import lombok.NonNull;
+import me.googas.starbox.Pagination;
 
 public class Lots {
 
@@ -24,5 +25,13 @@ public class Lots {
   @SafeVarargs
   public static <E> List<E> list(@NonNull E... elements) {
     return Arrays.asList(elements);
+  }
+
+  public static <E> Pagination<E> pagesOf(@NonNull Iterable<E> iterable, int limit) {
+    List<E> list = new ArrayList<>();
+    for (E e : iterable) {
+      list.add(e);
+    }
+    return new Pagination<>(list, limit);
   }
 }

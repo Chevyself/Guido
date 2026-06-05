@@ -10,6 +10,7 @@ import java.util.UUID;
 import java.util.concurrent.atomic.AtomicReference;
 import lombok.Getter;
 import lombok.NonNull;
+import me.googas.api.matches.MinecraftTeamSelectionType;
 import me.googas.api.matches.minecraft.MinecraftMatchTeam;
 import me.googas.api.matches.minecraft.MinecraftMatchTeamMember;
 import org.bukkit.command.CommandSender;
@@ -33,16 +34,22 @@ public class PGMHostedMatch extends HostedMatch {
   /** The id of the pgm match */
   @NonNull @Getter private final String pgm;
 
+  @Getter private final int playersPerTeam;
+  @Getter private final MinecraftTeamSelectionType teamSelectionType;
+
   public PGMHostedMatch(
       @NonNull UUID id,
       @NonNull Set<HostedPlayer> participants,
       String ladder,
-      @NonNull Map<String, Map<String, Object>> details,
       @NonNull MapInfo map,
-      @NonNull String pgm) {
-    super(id, participants, ladder, details);
+      @NonNull String pgm,
+      int playersPerTeam,
+      MinecraftTeamSelectionType teamSelectionType) {
+    super(id, participants, ladder);
     this.map = map;
     this.pgm = pgm;
+    this.playersPerTeam = playersPerTeam;
+    this.teamSelectionType = teamSelectionType;
   }
 
   public static Team getTeam(@NonNull Match match, @NonNull String id) {
@@ -112,5 +119,13 @@ public class PGMHostedMatch extends HostedMatch {
   @Override
   public String toString() {
     return "PGMHostedMatch{" + "teams=" + teams + ", map=" + map + ", pgm='" + pgm + '\'' + '}';
+  }
+
+  public int getPlayersPerTeam() {
+    return 1;
+  }
+
+  public MinecraftTeamSelectionType getTeamSelectionType() {
+    return null;
   }
 }

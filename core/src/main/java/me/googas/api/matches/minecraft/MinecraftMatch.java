@@ -1,16 +1,14 @@
 package me.googas.api.matches.minecraft;
 
-import java.util.Set;
-import java.util.UUID;
 import lombok.NonNull;
+import me.googas.api.matches.Match;
 import me.googas.api.matches.MatchStatus;
+import me.googas.api.utility.ImmutableCollection;
 
-public interface MinecraftMatch {
-  @NonNull
-  UUID getId();
+public interface MinecraftMatch extends Match {
 
   @NonNull
-  Set<MinecraftMatchTeam> getTeams();
+  ImmutableCollection<? extends MinecraftMatchTeam> getTeams();
 
   @NonNull
   MatchStatus getStatus();
@@ -31,5 +29,7 @@ public interface MinecraftMatch {
    * @return a set containing all the members of all {@link #getTeams()}
    */
   @NonNull
-  Set<MinecraftMatchTeamMember> getParticipants();
+  ImmutableCollection<? extends MinecraftMatchTeamMember> getParticipants();
+
+  void setServer(@NonNull String name);
 }

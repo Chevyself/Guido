@@ -1,18 +1,16 @@
 package me.googas.bot.core.util;
 
 import java.awt.*;
-import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
 import lombok.NonNull;
 import me.googas.api.lang.LocaleFile;
-import me.googas.api.matches.AbstractMatch;
+import me.googas.api.links.LinkableMatcher;
+import me.googas.api.matches.Match;
 import me.googas.api.matches.MatchStatus;
 import me.googas.api.matches.MatchTeam;
 import me.googas.api.utility.Lots;
 import me.googas.api.utility.Maps;
-import me.googas.bot.api.Guido;
-import me.googas.bot.core.discord.GuidoGuild;
 import net.dv8tion.jda.api.EmbedBuilder;
 
 public class Matches {
@@ -32,78 +30,47 @@ public class Matches {
           .build();
 
   /**
-   * Get the guild in which a abstractMatch was played
-   *
-   * @param abstractMatch the abstractMatch to getId the guild from
-   * @return the guild of the abstractMatch or null if not found
-   */
-  public static GuidoGuild getGuild(@NonNull AbstractMatch abstractMatch) {
-    return Guido.getHandlers().getDiscordLoader().getGuild(abstractMatch.getGuildId());
-  }
-
-  /**
-   * Get the information from a abstractMatch
+   * Get the information from a match
    *
    * @param locale the locale that will read the information
-   * @return the information of the abstractMatch as a embed query
+   * @return the information of the match as a embed query
    */
   @NonNull
   public static EmbedBuilder getInformation(
-      @NonNull AbstractMatch abstractMatch, @NonNull LocaleFile locale) {
+      @NonNull Match match, @NonNull LocaleFile locale, @NonNull LinkableMatcher linkableMatcher) {
     EmbedBuilder builder = new EmbedBuilder();
-    String thumbnail = abstractMatch.getString(null, "thumbnail", "");
-    builder.setTitle(locale.get("match.title", Maps.singleton("id", abstractMatch.getId())));
+    Map<String, String> placeholders = Maps.singleton("id", match.getId().toString());
+    builder.setTitle(locale.get("match.title", placeholders));
     builder.setFooter(locale.get("footer"));
-    builder.setColor(Matches.getColor(abstractMatch.getStatus()));
-    builder.setDescription(
-        locale.get("match.description", Maps.singleton("id", abstractMatch.getId())));
-    if (thumbnail != null && !thumbnail.isEmpty()) {
-      builder.setThumbnail(thumbnail);
-    }
-    Matches.appendDetails(abstractMatch, locale, builder);
-    Matches.appendTeams(abstractMatch, builder);
+    builder.setColor(Matches.getColor(match.getStatus()));
+    builder.setDescription(locale.get("match.description", placeholders));
+    Matches.appendTeams(match, builder, linkableMatcher);
+    match.appendDetails(builder);
     return builder;
   }
 
   public static void appendTeams(
-      @NonNull AbstractMatch abstractMatch, @NonNull EmbedBuilder builder) {
-    for (MatchTeam matchTeam : abstractMatch.getTeams()) {
+      @NonNull Match match,
+      @NonNull EmbedBuilder builder,
+      @NonNull LinkableMatcher linkableMatcher) {
+    for (MatchTeam matchTeam : match.getTeams()) {
       builder.addField(
-          Matches.getTitle(matchTeam, abstractMatch),
-          Lots.pretty(matchTeam.getMemberSingles(), "[]"),
+          Matches.getTitle(matchTeam, match),
+          Lots.pretty(matchTeam.getMemberPublicDisplay(linkableMatcher), "[]"),
           false);
     }
   }
 
-  public static String getTitle(@NonNull MatchTeam team, @NonNull AbstractMatch abstractMatch) {
-    if (abstractMatch.getWinners() == null) {
+  public static String getTitle(@NonNull MatchTeam team, @NonNull Match match) {
+    MatchTeam winners = match.getWinners().orElse(null);
+    if (winners == null) {
       return team.getName() + " (+0)";
     }
-    if (team.equals(abstractMatch.getWinners())) {
-      return team.getName() + " (+" + abstractMatch.getInt(null, "winners-difference", 0) + ")";
+    if (team.equals(winners)) {
+      return team.getName() + " (+" + match.getWinnersDifference() + ")";
     } else {
-      return team.getName() + " (-" + abstractMatch.getInt(null, "losers-difference", 0) + ")";
+      return team.getName() + " (-" + match.getLosersDifference() + ")";
     }
-  }
-
-  public static void appendDetails(
-      @NonNull AbstractMatch abstractMatch,
-      @NonNull LocaleFile locale,
-      @NonNull EmbedBuilder builder) {
-    abstractMatch
-        .getInformation("global")
-        .forEach(
-            (key, value) -> {
-              if (!Matches.toIgnore.contains(key)) {
-                String fieldDesc;
-                if (value instanceof Collection) {
-                  fieldDesc = Lots.pretty((Collection<?>) value);
-                } else {
-                  fieldDesc = value.toString();
-                }
-                builder.addField(locale.get(key), fieldDesc, true);
-              }
-            });
   }
 
   @NonNull

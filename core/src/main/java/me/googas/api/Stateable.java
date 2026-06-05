@@ -11,6 +11,7 @@ import me.googas.api.matches.ladder.Ladder;
 import me.googas.api.utility.SortedStats;
 
 /** This object represents an entity that can have stats */
+@Deprecated
 public interface Stateable {
 
   @NonNull

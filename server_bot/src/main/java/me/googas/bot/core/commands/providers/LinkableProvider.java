@@ -20,20 +20,16 @@ public class LinkableProvider implements JdaArgumentProvider<Linkable> {
   public @NonNull Linkable fromString(@NonNull String s, @NonNull CommandContext commandContext)
       throws ArgumentProviderException {
     try {
-      MinecraftLinkable minecraft =
-          commandContext
-              .getProvidersRegistry()
-              .fromString(s, MinecraftLinkable.class, commandContext);
-      return minecraft.validated();
+      return commandContext
+          .getProvidersRegistry()
+          .fromString(s, MinecraftLinkable.class, commandContext);
 
     } catch (ArgumentProviderException ignored) {
     }
     try {
-      DiscordLinkable discordLinkable =
-          commandContext
-              .getProvidersRegistry()
-              .fromString(s, DiscordLinkable.class, commandContext);
-      return discordLinkable.validated();
+      return commandContext
+          .getProvidersRegistry()
+          .fromString(s, DiscordLinkable.class, commandContext);
     } catch (ArgumentProviderException ignored) {
 
     }

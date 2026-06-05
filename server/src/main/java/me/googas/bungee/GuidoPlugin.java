@@ -47,7 +47,7 @@ import me.googas.net.api.Server;
 import me.googas.net.sockets.json.client.JsonClient;
 import me.googas.net.sockets.json.server.JsonClientThread;
 import me.googas.net.sockets.json.server.JsonSocketServer;
-import me.googas.server.GuidoRuntime;
+import me.googas.server.GuidoServerRuntime;
 import me.googas.starbox.CoreFiles;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.config.ServerInfo;
@@ -83,7 +83,8 @@ public class GuidoPlugin extends Plugin {
   /** The bungeeConfiguration that the plugin will use */
   @NonNull @Getter private BungeeConfiguration configuration = loadConfiguration();
 
-  @NonNull private GuidoRuntime runtime = new GuidoPluginRuntime(this, this.configuration);
+  @NonNull
+  private GuidoServerRuntime runtime = new GuidoPluginServerRuntime(this, this.configuration);
   /** The listeners being used by the plugin */
   @NonNull @Getter
   private final List<GuidoListener> listeners =
@@ -157,7 +158,7 @@ public class GuidoPlugin extends Plugin {
   public void onEnable() {
     GuidoBungee.setPlugin(this);
     this.loadConfiguration();
-    new GuidoBot(runtime).start();
+    new GuidoBot(this.runtime).start();
     Server<JsonClientThread> server = Guido.getServer();
     if (server instanceof JsonSocketServer) {
       ((JsonSocketServer) server)

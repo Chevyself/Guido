@@ -2,15 +2,17 @@ package me.googas.bot.core.handlers.queue;
 
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.Optional;
 import java.util.Set;
 import lombok.Getter;
 import lombok.NonNull;
 import me.googas.api.links.DiscordLinkable;
-import me.googas.api.links.Linkable;
-import me.googas.api.links.LinkableInfo;
+import me.googas.api.links.MinecraftLinkable;
 import me.googas.api.matches.ladder.Ladder;
+import me.googas.api.matches.minecraft.MinecraftMatchTeamMember;
 import me.googas.api.matches.queue.MinecraftQueue;
 import me.googas.api.matches.queue.QueueResult;
+import me.googas.bot.GuidoBotRuntime;
 import me.googas.bot.api.Guido;
 import me.googas.bot.core.discord.GuidoGuild;
 import me.googas.bot.core.handlers.GuidoHandler;
@@ -23,8 +25,14 @@ import net.dv8tion.jda.api.hooks.SubscribeEvent;
 /** Handles the queue */
 public class QueueHandler implements GuidoHandler {
 
+  @NonNull @Getter private final GuidoBotRuntime runtime;
+
   /** The queues that are working right now in the handler */
   @NonNull @Getter private final Set<MinecraftQueue> queues = new HashSet<>();
+
+  public QueueHandler(@NonNull GuidoBotRuntime runtime) {
+    this.runtime = runtime;
+  }
 
   /**
    * Make a player join a queue from voice channel
@@ -65,26 +73,16 @@ public class QueueHandler implements GuidoHandler {
    *
    * @param info the information of the data to leave all queues
    */
-  public void leaveQueue(@NonNull LinkableInfo info) {
+  public void leaveQueue(@NonNull MinecraftLinkable info) {
     for (MinecraftQueue queue : this.getQueues(info)) {
       queue.leave(info);
     }
   }
 
-  /**
-   * Get all the queues for a guild
-   *
-   * @param guildId the guild querying for queues
-   * @return the queues for the given guild
-   */
-  private Set<MinecraftQueue> getQueues(long guildId) {
-    Set<MinecraftQueue> queues = new HashSet<>();
+  public void leaveQueue(@NonNull MinecraftMatchTeamMember member) {
     for (MinecraftQueue queue : this.queues) {
-      if (queue.getGuildId() == guildId) {
-        queues.add(queue);
-      }
+      queue.leave(member);
     }
-    return queues;
   }
 
   /**
@@ -97,7 +95,6 @@ public class QueueHandler implements GuidoHandler {
    */
   @NonNull
   public MinecraftQueue getQueue(@NonNull GuidoGuild guild, @NonNull Ladder ladder) {
-    Set<MinecraftQueue> queues = this.getQueues(guild.getId());
     for (MinecraftQueue queue : queues) {
       if (queue.getLadderName().equalsIgnoreCase(ladder.getName())) {
         return queue;
@@ -119,7 +116,10 @@ public class QueueHandler implements GuidoHandler {
   public QueueResult joinQueue(
       @NonNull GuidoGuild guild, @NonNull Member member, @NonNull Ladder ladder) {
     MinecraftQueue queue = this.getQueue(guild, ladder);
-    QueueResult join = queue.join(Discord.getUser(member).getInfo());
+    DiscordLinkable discord = Discord.getUser(member);
+    Optional<MinecraftLinkable> optional = runtime.getLinkableMatcher().getMinecraft(discord);
+    if (optional.isEmpty()) return new QueueResult();
+    QueueResult join = queue.join(optional.get());
     if (join.isCancelled()) return join;
     guild.toDiscord().moveVoiceMember(member, this.channels().getWaitingChannel(guild)).queue();
     return new QueueResult();
@@ -131,7 +131,7 @@ public class QueueHandler implements GuidoHandler {
    * @param info the information of a link
    * @return the collection of queues where the link is waiting
    */
-  public Collection<MinecraftQueue> getQueues(@NonNull LinkableInfo info) {
+  public Collection<MinecraftQueue> getQueues(@NonNull MinecraftLinkable info) {
     Set<MinecraftQueue> queues = new HashSet<>();
     for (MinecraftQueue queue : this.queues) {
       if (queue.isWaiting(info)) {
@@ -153,10 +153,10 @@ public class QueueHandler implements GuidoHandler {
       @NonNull GuidoGuild guild, @NonNull Member member, @NonNull Ladder ladder) {
     DiscordLinkable memberData = Discord.getUser(member);
     MinecraftQueue queue = this.getQueue(guild, ladder);
-    for (Linkable link : memberData.getLinks()) {
-      if (queue.isWaiting(link.getInfo())) {
-        return true;
-      }
+    Optional<MinecraftLinkable> optional = runtime.getLinkableMatcher().getMinecraft(memberData);
+    if (optional.isEmpty()) return false;
+    if (queue.isWaiting(optional.get())) {
+      return true;
     }
     return false;
   }

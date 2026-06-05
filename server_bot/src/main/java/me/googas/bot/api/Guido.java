@@ -17,6 +17,7 @@ import me.googas.net.sockets.json.server.JsonClientThread;
 import me.googas.starbox.events.ListenerManager;
 import me.googas.starbox.scheduler.Scheduler;
 
+@Deprecated
 public class Guido {
 
   @Getter private static GuidoBot instance;

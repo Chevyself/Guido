@@ -2,11 +2,11 @@ package me.googas.bot.core.handlers.matches;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 import lombok.NonNull;
-import me.googas.api.matches.AbstractMatch;
+import me.googas.api.matches.minecraft.MinecraftMatch;
 import me.googas.bot.api.Guido;
-import me.googas.bot.core.discord.GuidoGuild;
 import me.googas.bot.core.handlers.GuidoHandler;
 import me.googas.bot.core.util.Discord;
 import net.dv8tion.jda.api.entities.Member;
@@ -22,10 +22,10 @@ public class MatchMakingChannelsHandler implements GuidoHandler {
    * A map that contains the team voice channels in a match First element in the map is the id of
    * the match and then another map with the id of the team and the id of the voice channel
    */
-  @NonNull private final Map<String, Map<Integer, Long>> teams = new HashMap<>();
+  @NonNull private final Map<UUID, Map<Integer, Long>> teams = new HashMap<>();
 
   /** The pre match channels created */
-  @NonNull private final Map<Long, String> preMatch = new HashMap<>();
+  @NonNull private final Map<Long, UUID> preMatch = new HashMap<>();
 
   /**
    * Get the voices channels for the teams in a match
@@ -33,7 +33,7 @@ public class MatchMakingChannelsHandler implements GuidoHandler {
    * @param matchId the id of the match
    * @return the voices channels for the teams in a match
    */
-  public Map<Integer, Long> getVoices(@NonNull String matchId) {
+  public Map<Integer, Long> getVoices(@NonNull UUID matchId) {
     return this.teams.computeIfAbsent(matchId, k -> new HashMap<>());
   }
 
@@ -43,7 +43,7 @@ public class MatchMakingChannelsHandler implements GuidoHandler {
    * @param abstractMatch the abstractMatch to id and the channels
    * @return the voices channels for the teams in a abstractMatch
    */
-  public Map<Integer, Long> getVoices(@NonNull AbstractMatch abstractMatch) {
+  public Map<Integer, Long> getVoices(@NonNull MinecraftMatch abstractMatch) {
     return this.getVoices(abstractMatch.getId());
   }
 
@@ -54,7 +54,7 @@ public class MatchMakingChannelsHandler implements GuidoHandler {
    */
   public void checkDeletePreGame(AudioChannelUnion channel) {
     if (channel == null) return;
-    String id = this.preMatch.get(channel.getIdLong());
+    UUID id = this.preMatch.get(channel.getIdLong());
     if (id == null) return;
     if (channel.getMembers().isEmpty()) {
       channel.delete().queue();
@@ -88,7 +88,7 @@ public class MatchMakingChannelsHandler implements GuidoHandler {
    * @param idLong the id of the pre match channel
    * @param id the id of the match
    */
-  public void putPreMatch(long idLong, @NonNull String id) {
+  public void putPreMatch(long idLong, @NonNull UUID id) {
     this.preMatch.put(idLong, id);
   }
 
@@ -107,7 +107,7 @@ public class MatchMakingChannelsHandler implements GuidoHandler {
    * @param botGuild the guild where the channel exists
    * @param channel the channel itself
    */
-  public void deleteAndMove(GuidoGuild botGuild, VoiceChannel channel) {
+  public void deleteAndMove(VoiceChannel channel) {
     VoiceChannel waiting = botGuild.getVoiceChannel("waiting");
     if (channel != null) {
       for (Member member : channel.getMembers()) {
@@ -134,12 +134,11 @@ public class MatchMakingChannelsHandler implements GuidoHandler {
    *
    * @param abstractMatch the abstractMatch to delete the voice channels
    */
-  public void deleteVoices(@NonNull AbstractMatch abstractMatch) {
+  public void deleteVoices(@NonNull MinecraftMatch abstractMatch) {
     Map<Integer, Long> voices = this.getVoices(abstractMatch.getId());
-    GuidoGuild guild = Guido.getHandlers().getDiscordLoader().getGuild(abstractMatch.getGuildId());
     for (Long value : voices.values()) {
       VoiceChannel voiceChannel = Guido.getConnection().validatedJda().getVoiceChannelById(value);
-      this.deleteAndMove(guild, voiceChannel);
+      this.deleteAndMove(voiceChannel);
     }
     this.teams.remove(abstractMatch.getId());
   }

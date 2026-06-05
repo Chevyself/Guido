@@ -5,23 +5,23 @@ import java.io.InputStream;
 import java.nio.file.Path;
 import lombok.Getter;
 import lombok.NonNull;
-import me.googas.server.GuidoRuntime;
+import me.googas.server.GuidoServerRuntime;
 import me.googas.starbox.CoreFiles;
 import me.googas.starbox.ProgramArguments;
 
 public class GuidoBotMain {
 
-  private static class SingletonRuntime implements GuidoRuntime {
+  private static class SingletonServerRuntime implements GuidoServerRuntime {
 
     @NonNull @Getter private final ProgramArguments arguments;
     @NonNull private final Path currentDirectory = Path.of(System.getProperty("user.dir"));
 
-    private SingletonRuntime(@NonNull ProgramArguments arguments) {
+    private SingletonServerRuntime(@NonNull ProgramArguments arguments) {
       this.arguments = arguments;
     }
 
-    public static SingletonRuntime of(@NonNull String[] args) {
-      return new SingletonRuntime(ProgramArguments.construct(args));
+    public static SingletonServerRuntime of(@NonNull String[] args) {
+      return new SingletonServerRuntime(ProgramArguments.construct(args));
     }
 
     @Override
@@ -59,6 +59,6 @@ public class GuidoBotMain {
    * @param args the desired arguments for the bot
    */
   public static void main(@NonNull String[] args) {
-    new GuidoBot(SingletonRuntime.of(args)).start();
+    new GuidoBot(SingletonServerRuntime.of(args)).start();
   }
 }

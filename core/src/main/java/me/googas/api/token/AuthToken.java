@@ -1,44 +1,20 @@
 package me.googas.api.token;
 
-import lombok.Getter;
+import java.util.UUID;
 import lombok.NonNull;
-import me.googas.api.GuidoCatchable;
-import me.googas.api.utility.RandomUtils;
 
 /** Token used by clients to authenticate */
-public class AuthToken implements GuidoCatchable {
+public interface AuthToken {
 
-  @NonNull @Getter private final String token;
-  @NonNull @Getter private final String userId;
-  @NonNull @Getter private final AuthLevel level;
+  @NonNull
+  UUID getId();
 
-  /**
-   * Create the token
-   *
-   * @param token the actual token. This must be unique for every token
-   * @param userId The id of the user that created the token
-   * @param level the level to which the token is authenticated
-   */
-  public AuthToken(@NonNull String token, @NonNull String userId, @NonNull AuthLevel level) {
-    this.token = token;
-    this.userId = userId;
-    this.level = level;
-  }
+  @NonNull
+  String getToken();
 
-  /** @deprecated this constructor may only be used by GSON */
-  public AuthToken() {
-    this("", "", AuthLevel.NONE);
-  }
+  @NonNull
+  UUID getUserId();
 
-  public AuthToken(@NonNull String userId, @NonNull AuthLevel level) {
-    this(RandomUtils.nextString(16), userId, level);
-  }
-
-  @Override
-  public void onRemove() {}
-
-  @Override
-  public @NonNull AuthToken cache() {
-    return (AuthToken) GuidoCatchable.super.cache();
-  }
+  @NonNull
+  AuthLevel getAuthLevel();
 }

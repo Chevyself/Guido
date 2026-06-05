@@ -7,16 +7,20 @@ import com.github.chevyself.starbox.jda.context.CommandContext;
 import com.github.chevyself.starbox.result.Result;
 import java.time.Duration;
 import java.util.Collection;
+import java.util.Map;
+import java.util.Optional;
+import lombok.NonNull;
 import me.googas.api.lang.LocaleFile;
 import me.googas.api.links.Linkable;
-import me.googas.api.links.LinkableInfo;
-import me.googas.api.links.LinkableType;
+import me.googas.api.links.LinkableMatcher;
+import me.googas.api.links.MinecraftLinkable;
+import me.googas.api.stats.Stats;
+import me.googas.api.stats.StatsProvider;
 import me.googas.api.user.UserData;
 import me.googas.api.utility.Maps;
 import me.googas.bot.api.Guido;
 import me.googas.bot.core.discord.GuidoGuild;
 import me.googas.bot.core.handlers.link.LinkHandler;
-import me.googas.bot.core.loader.GuidoLoader;
 
 /** Commands that users can use */
 public class UserCommands {
@@ -33,6 +37,7 @@ public class UserCommands {
   public Result links(
       LocaleFile locale,
       UserData sender,
+      LinkableMatcher matcher,
       @Free(name = "links.user", description = "links.user.desc") UserData that) {
     UserData toSee;
     if (that != null) {
@@ -40,15 +45,15 @@ public class UserCommands {
     } else {
       toSee = sender;
     }
-    GuidoLoader loader = Guido.getHandlers().getLoader();
-    Collection<Linkable> links = loader.getLinks().getLinks(toSee);
+    Collection<Linkable> links = matcher.getLinkedAccounts(toSee);
+    Map<String, String> placeholders = Maps.singleton("id", toSee.getId().toString());
     if (links.isEmpty()) {
-      return Result.of(locale.get("links.empty", Maps.singleton("id", toSee.getId())));
+      return Result.of(locale.get("links.empty", placeholders));
     } else {
       StringBuilder builder = new StringBuilder();
-      builder.append(locale.get("links.title", Maps.singleton("id", toSee.getId())));
+      builder.append(locale.get("links.title", placeholders));
       for (Linkable link : links) {
-        builder.append("\n - ").append(link.getSingle());
+        builder.append("\n - ").append(link.getPublicDisplayName(matcher));
       }
       return Result.of(builder.toString(), Duration.ofSeconds(5));
     }
@@ -66,27 +71,15 @@ public class UserCommands {
   public Result link(
       LocaleFile locale,
       UserData user,
+      LinkableMatcher matcher,
       @Required(name = "link.code", description = "link.code.desc") String code) {
-    GuidoLoader loader = Guido.getHandlers().getLoader();
-    LinkableInfo info = Guido.getHandlers().getHandler(LinkHandler.class).getInfo(code);
-    if (info != null) {
-      Linkable link = loader.getLinks().getLink(user, info.getType());
-      if (link != null) {
-        return Result.of(
-            locale.get(
-                "link.only-one", Maps.singleton("type", info.getType().toString().toLowerCase())));
-      } else {
-        Linkable data = loader.getLinks().getLink(info.getType(), info.getIdentification());
-        if (data != null) {
-          data.setLinkedUser(user);
-          return Result.of(locale.get("link.added", Maps.singleton("readable", data.getSingle())));
-        } else {
-          return Result.of(locale.get("link.data-not-found"));
-        }
-      }
-    } else {
+    Linkable link = Guido.getHandlers().getHandler(LinkHandler.class).getLinkable(code);
+    if (link == null) {
       return Result.of(locale.get("link.code-not-match"));
     }
+    link.setLinkedUser(user);
+    return Result.of(
+        locale.get("link.added", Maps.singleton("readable", link.getPublicDisplayName(matcher))));
   }
 
   @Command(aliases = "stats", description = "guido.stats.desc")
@@ -95,65 +88,46 @@ public class UserCommands {
       GuidoGuild guild,
       LocaleFile locale,
       UserData data,
+      LinkableMatcher matcher,
+      StatsProvider statsProvider,
       @Free(name = "stats.name", description = "stats.name.desc") String nickname) {
-    GuidoLoader loader = Guido.getHandlers().getLoader();
-    Linkable link = loader.getLinks().getLink(data, LinkableType.MINECRAFT);
-    if (nickname != null) {
-      link =
-          loader
-              .getLinks()
-              .getLinkByRecognition(LinkableType.MINECRAFT, Maps.singleton("nickname", nickname));
-      if (link != null) {
-        // return Result.of(this.buildStats(guild, locale, context, link));
-        // TODO return result that handles embed query
-        return null;
-      } else {
-        return Result.of(locale.get("stats.player-not-found", Maps.singleton("nick", nickname)));
-      }
-    } else {
-      if (link != null) {
-        // return Result.of(this.buildStats(guild, locale, context, link));
-        return null;
-      } else {
-        return Result.of(locale.get("stats.not-linked"));
-      }
-    }
+    Optional<MinecraftLinkable> optional = matcher.getMinecraftByLinkedUser(data.getId());
+    return optional
+        .map(
+            linkable -> Result.of(this.buildStats(guild, statsProvider, locale, context, linkable)))
+        .orElseGet(() -> Result.of(locale.get("stats.not-linked")));
   }
 
-  /*
-  private EmbedQuery buildStats(
+  private String buildStats(
       GuidoGuild guild,
+      @NonNull StatsProvider statsProvider,
       @NonNull LocaleFile locale,
       @NonNull CommandContext context,
-      @NonNull Linkable linkable) {
-    String nickname = linkable.getRecogString("nickname", "");
-    EmbedQuery query =
-        EmbedFactory.fromResult(
-            new Result(locale.get("stats.desc", Maps.singleton("nick", nickname))),
-            Guido.getCommandManager().getListener(),
-            context);
-    query.setTitle(locale.get(locale.get("stats.title", Maps.singleton("nick", nickname))));
-    query.setThumbnail("https://minotar.net/helm/" + nickname + "/100.png");
-    SortedStats organized = linkable.getOrganized(guild.getLadders());
-    organized
+      @NonNull MinecraftLinkable linkable) {
+    String nickname = linkable.getNickname();
+    StringBuilder stringBuilder =
+        new StringBuilder(locale.get(locale.get("stats.title", Maps.singleton("nick", nickname))));
+    stringBuilder.append(locale.get("stats.desc", Maps.singleton("nick", nickname)));
+
+    // query.setThumbnail("https://minotar.net/helm/" + nickname + "/100.png");
+
+    // SortedStats organized = linkable.getOrganized(guild.getLadders());
+    Stats stats = linkable.getStats(statsProvider);
+    stats
         .getMap()
         .forEach(
-            (statContext, stats) -> {
-              StringBuilder builder = Strings.getBuilder();
-              stats.forEach(
-                  (stat, value) ->
-                      builder
-                          .append("\n")
-                          .append("- **")
-                          .append(stat)
-                          .append("**: ")
-                          .append("`")
-                          .append(value)
-                          .append("`"));
-              query.addField(statContext.replace("_", " "), builder.toString(), true);
+            (key, value) -> {
+              stringBuilder
+                  .append("\n")
+                  .append("- **")
+                  .append(key)
+                  .append("**: ")
+                  .append("`")
+                  .append(value)
+                  .append("`");
             });
-    return query;
-  }*/
+    return stringBuilder.toString();
+  }
 }
 
 /*

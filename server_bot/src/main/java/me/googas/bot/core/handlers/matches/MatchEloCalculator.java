@@ -4,13 +4,13 @@ import java.util.Collection;
 import lombok.NonNull;
 import me.googas.api.Stateable;
 import me.googas.api.events.links.LinkableEloUpdatedEvent;
-import me.googas.api.events.match.MatchStatusUpdatedEvent;
+import me.googas.api.events.match.MinecraftMatchStatusUpdatedEvent;
 import me.googas.api.links.Linkable;
-import me.googas.api.matches.AbstractMatch;
+import me.googas.api.matches.Match;
 import me.googas.api.matches.MatchStatus;
 import me.googas.api.matches.MatchTeam;
 import me.googas.api.matches.ladder.Ladder;
-import me.googas.api.matches.team.TeamMember;
+import me.googas.api.matches.minecraft.MinecraftMatch;
 import me.googas.bot.core.handlers.GuidoHandler;
 import me.googas.starbox.events.ListenPriority;
 import me.googas.starbox.events.Listener;
@@ -27,8 +27,8 @@ public class MatchEloCalculator implements GuidoHandler {
    * @param event the event of a match updating its status
    */
   @Listener(priority = ListenPriority.MEDIUM)
-  public void onMatchStatusUpdatedEvent(@NonNull MatchStatusUpdatedEvent event) {
-    AbstractMatch abstractMatch = event.getAbstractMatch();
+  public void onMatchStatusUpdatedEvent(@NonNull MinecraftMatchStatusUpdatedEvent event) {
+    Match abstractMatch = event.getMatch();
     if (event.getStatus() == MatchStatus.FINISHED) {
       this.setElo(abstractMatch, true);
     }
@@ -44,7 +44,7 @@ public class MatchEloCalculator implements GuidoHandler {
    * @param event whether to call the elo updated event
    */
   public void setElo(
-      @NonNull AbstractMatch abstractMatch,
+      @NonNull MinecraftMatch abstractMatch,
       @NonNull Ladder ladder,
       float winnersDifference,
       int losersDifference,
@@ -113,7 +113,7 @@ public class MatchEloCalculator implements GuidoHandler {
    *
    * @param abstractMatch the abstractMatch to void
    */
-  public void voidMatch(@NonNull AbstractMatch abstractMatch, boolean setVoided) {
+  public void voidMatch(@NonNull MinecraftMatch abstractMatch, boolean setVoided) {
     MatchTeam winners = abstractMatch.getWinners();
     Ladder ladder = abstractMatch.getLadder();
     if (setVoided) abstractMatch.setStatus(MatchStatus.VOIDED);
@@ -143,7 +143,7 @@ public class MatchEloCalculator implements GuidoHandler {
    * @param abstractMatch the abstractMatch to recount
    * @param callEvents whether to all the events related to elo updates
    */
-  public void recount(@NonNull AbstractMatch abstractMatch, boolean callEvents) {
+  public void recount(@NonNull MinecraftMatch abstractMatch, boolean callEvents) {
     this.voidMatch(abstractMatch, false);
     this.setElo(abstractMatch, callEvents);
   }
@@ -210,7 +210,7 @@ public class MatchEloCalculator implements GuidoHandler {
    * @param ladder the ladder which was played in the abstractMatch
    * @return the elo of the losers
    */
-  public float getLosersElo(AbstractMatch abstractMatch, Ladder ladder) {
+  public float getLosersElo(MinecraftMatch abstractMatch, Ladder ladder) {
     float losersElo = 0;
     int total = 0;
     MatchTeam winners = abstractMatch.getWinners();
@@ -229,7 +229,7 @@ public class MatchEloCalculator implements GuidoHandler {
    * @param abstractMatch the abstractMatch to set the elo
    * @param event whether to call the event of elo updated
    */
-  public void setElo(@NonNull AbstractMatch abstractMatch, boolean event) {
+  public void setElo(@NonNull MinecraftMatch abstractMatch, boolean event) {
     MatchTeam winners = abstractMatch.getWinners();
     Ladder ladder = abstractMatch.getLadder();
     if (ladder != null && winners != null) {

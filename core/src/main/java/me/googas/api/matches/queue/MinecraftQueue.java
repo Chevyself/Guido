@@ -3,35 +3,21 @@ package me.googas.api.matches.queue;
 import java.util.Collection;
 import java.util.Optional;
 import lombok.NonNull;
+import me.googas.api.links.MinecraftLinkable;
 import me.googas.api.matches.minecraft.MinecraftMatch;
+import me.googas.api.matches.minecraft.MinecraftMatchTeamMember;
 
 /** A queue is joined by players to start playing */
 public interface MinecraftQueue {
 
-  /**
-   * Makes the linked info join the queue
-   *
-   * @param queueable the queueable that will join the queue
-   * @return whether the queueable joined
-   */
-  QueueResult join(@NonNull Queueable queueable);
+  @NonNull
+  QueueResult join(@NonNull MinecraftLinkable minecraft);
 
-  /**
-   * Leaves the queue for certain linked queueable
-   *
-   * @param queueable the queueable leaving the queue
-   * @return if the queueable left the queue
-   */
-  QueueResult leave(@NonNull Queueable queueable);
+  @NonNull
+  QueueResult leave(@NonNull MinecraftLinkable minecraft);
 
-  /**
-   * Get whether someone is waiting in the queue
-   *
-   * @param queueable the queueable to check if it is waiting
-   * @return true if the queueable is waiting inside this queue
-   */
-  default boolean isWaiting(@NonNull Queueable queueable) {
-    return this.getWaiting().contains(queueable);
+  default boolean isWaiting(@NonNull MinecraftLinkable minecraft) {
+    return this.getWaiting().contains(minecraft);
   }
 
   /**
@@ -43,19 +29,12 @@ public interface MinecraftQueue {
   Optional<MinecraftMatch> checkReady();
 
   /**
-   * Get the id of the guild where this queue is happening
-   *
-   * @return the id of the guild
-   */
-  long getGuildId();
-
-  /**
    * Get the linked data of the users that are waiting
    *
    * @return the linked data
    */
   @NonNull
-  Collection<Queueable> getWaiting();
+  Collection<? extends MinecraftLinkable> getWaiting();
 
   /**
    * Get the ladder that this queue is playing
@@ -64,4 +43,6 @@ public interface MinecraftQueue {
    */
   @NonNull
   String getLadderName();
+
+  void leave(@NonNull MinecraftMatchTeamMember member);
 }

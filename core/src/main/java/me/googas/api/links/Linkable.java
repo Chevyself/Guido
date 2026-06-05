@@ -3,10 +3,24 @@ package me.googas.api.links;
 import java.util.Optional;
 import java.util.UUID;
 import lombok.NonNull;
+import me.googas.api.stats.Stats;
+import me.googas.api.stats.StatsProvider;
+import me.googas.api.user.UserData;
 
 /** This object represents data or an account that can be linked to a user */
 public interface Linkable {
 
   @NonNull
   Optional<UUID> getLinkedUserId();
+
+  Stats getStats(@NonNull StatsProvider statsProvider);
+
+  @NonNull
+  String getPublicDisplayName(@NonNull LinkableMatcher linkableMatcher);
+
+  void setLinkedUser(@NonNull UserData user);
+
+  default boolean isLinked() {
+    return this.getLinkedUserId().isPresent();
+  }
 }

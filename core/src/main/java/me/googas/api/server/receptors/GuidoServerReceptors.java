@@ -1,5 +1,6 @@
 package me.googas.api.server.receptors;
 
+import java.util.Optional;
 import lombok.NonNull;
 import me.googas.api.Requests;
 import me.googas.api.ValuesMap;
@@ -33,14 +34,12 @@ public class GuidoServerReceptors {
 
   @Receptor(Requests.Server.AUTH)
   public boolean auth(@NonNull JsonMessenger messenger, @ParamName("token") String token) {
-    if (messenger instanceof JsonClientThread) {
-      AuthToken authToken = this.authenticator.getLoader().getTokens().getAuthToken(token);
-      if (authToken != null) {
-        this.authenticator.getLevels().put((JsonClientThread) messenger, authToken.getLevel());
-        return true;
-      }
-      return false;
-    }
-    return false;
+    if (!(messenger instanceof JsonClientThread)) return false;
+    Optional<? extends AuthToken> optional =
+        this.authenticator.getLoader().getTokens().getAuthToken(token);
+    if (optional.isEmpty()) return false;
+    AuthToken authToken = optional.get();
+    this.authenticator.getLevels().put((JsonClientThread) messenger, authToken.getAuthLevel());
+    return true;
   }
 }

@@ -24,4 +24,9 @@ public interface MinecraftLinkable extends Linkable {
    */
   @NonNull
   UUID getId();
+
+  @Override
+  default @NonNull String getPublicDisplayName(@NonNull LinkableMatcher linkableMatcher) {
+    return this.getNickname();
+  }
 }

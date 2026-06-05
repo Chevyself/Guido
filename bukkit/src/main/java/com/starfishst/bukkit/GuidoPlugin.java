@@ -6,7 +6,6 @@ import com.github.chevyself.starbox.bukkit.BukkitAdapter;
 import com.github.chevyself.starbox.bukkit.commands.BukkitCommand;
 import com.github.chevyself.starbox.bukkit.context.CommandContext;
 import com.starfishst.bukkit.client.BukkitClient;
-import com.starfishst.bukkit.commands.ConfigurationCommands;
 import com.starfishst.bukkit.commands.FlyCommand;
 import com.starfishst.bukkit.commands.GameModeCommand;
 import com.starfishst.bukkit.commands.GuidoCommand;
@@ -56,7 +55,6 @@ public class GuidoPlugin extends JavaPlugin {
   @NonNull
   private final Set<GuidoCommand> commands =
       Lots.set(
-          new ConfigurationCommands(),
           new FlyCommand(),
           new GameModeCommand(),
           new SudoCommand(),

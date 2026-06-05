@@ -1,26 +1,24 @@
 package me.googas.bot.core.handlers.matches;
 
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 import lombok.NonNull;
 import me.googas.api.Requests;
-import me.googas.api.events.match.MatchAddTeamEvent;
-import me.googas.api.events.match.MatchLoadedEvent;
-import me.googas.api.events.match.MatchStatusUpdatedEvent;
-import me.googas.api.events.queue.QueueJoinEvent;
+import me.googas.api.events.match.MinecraftMatchAddTeamEvent;
+import me.googas.api.events.match.MinecraftMatchLoadedEvent;
+import me.googas.api.events.match.MinecraftMatchRemoveTeamEvent;
+import me.googas.api.events.match.MinecraftMatchStatusUpdatedEvent;
+import me.googas.api.events.queue.MinecraftQueueJoinEvent;
 import me.googas.api.lang.LocaleFile;
 import me.googas.api.links.Linkable;
-import me.googas.api.links.LinkableInfo;
-import me.googas.api.matches.AbstractMatch;
 import me.googas.api.matches.MatchStatus;
-import me.googas.api.matches.MatchTeam;
-import me.googas.api.matches.team.TeamMember;
+import me.googas.api.matches.minecraft.MinecraftMatch;
+import me.googas.api.matches.minecraft.MinecraftMatchTeam;
+import me.googas.api.matches.minecraft.MinecraftMatchTeamMember;
 import me.googas.api.user.UserData;
 import me.googas.api.utility.Lots;
 import me.googas.api.utility.Maps;
+import me.googas.bot.GuidoBotRuntime;
 import me.googas.bot.api.Guido;
 import me.googas.bot.core.discord.GuidoGuild;
 import me.googas.bot.core.handlers.GuidoHandler;
@@ -34,7 +32,6 @@ import me.googas.starbox.events.Listener;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.GuildVoiceState;
-import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.entities.channel.concrete.VoiceChannel;
 
@@ -42,10 +39,16 @@ import net.dv8tion.jda.api.entities.channel.concrete.VoiceChannel;
 // TODO this class and QueueHandler must separate its channel handlers to a different class
 public class MatchMakingHandler implements GuidoHandler {
 
-  /** @see #onMatchStatusUpdatedEvent(MatchStatusUpdatedEvent) */
+  @NonNull private final GuidoBotRuntime runtime;
+
+  /** @see #onMatchStatusUpdatedEvent(MinecraftMatchStatusUpdatedEvent) */
   @NonNull
   private static final Set<MatchStatus> announce =
       Lots.set(MatchStatus.STARTING, MatchStatus.FINISHED);
+
+  public MatchMakingHandler(@NonNull GuidoBotRuntime runtime) {
+    this.runtime = runtime;
+  }
 
   /**
    * Listen to when a match ends to announce it
@@ -53,18 +56,16 @@ public class MatchMakingHandler implements GuidoHandler {
    * @param event the event of a match updating its status
    */
   @Listener(priority = ListenPriority.HIGHEST)
-  public void onMatchStatusUpdatedEvent(@NonNull MatchStatusUpdatedEvent event) {
+  public void onMatchStatusUpdatedEvent(@NonNull MinecraftMatchStatusUpdatedEvent event) {
     if (!MatchMakingHandler.announce.contains(event.getStatus())) return;
-    AbstractMatch abstractMatch = event.getAbstractMatch();
-    GuidoGuild guildData =
-        Guido.getHandlers().getDiscordLoader().getGuild(abstractMatch.getGuildId());
-    TextChannel channel = guildData.getTextChannel("matches");
+    MinecraftMatch match = event.getMatch();
+    TextChannel channel = runtime.getBotJda().getGuidoGuild().getMatchesTextChannel();
     LocaleFile locale = Guido.getHandlers().getLanguageHandler().getDefault();
-    EmbedBuilder information = Matches.getInformation(abstractMatch, locale);
+    EmbedBuilder information = Matches.getInformation(match, locale, runtime.getLinkableMatcher());
     if (event.getStatus() == MatchStatus.FINISHED) {
       information.setTitle(
-          locale.get("match.announce.title", Maps.singleton("id", abstractMatch.getId())));
-      this.channels().deleteVoices(abstractMatch);
+          locale.get("match.announce.title", Maps.singleton("id", match.getId().toString())));
+      this.channels().deleteVoices(match);
     }
     channel.sendMessageEmbeds(information.build()).queue();
   }
@@ -75,13 +76,13 @@ public class MatchMakingHandler implements GuidoHandler {
    * @param event the event of a link joining a queue
    */
   @Listener(priority = ListenPriority.HIGHEST)
-  public void onQueueJoin(QueueJoinEvent event) {
-    AbstractMatch abstractMatch = event.getQueue().checkReady();
-    if (abstractMatch != null) {
-      new MatchLoadedEvent(abstractMatch).call();
-      for (LinkableInfo participant : abstractMatch.getParticipants()) {
-        Guido.getHandlers().getHandler(QueueHandler.class).leaveQueue(participant);
-      }
+  public void onQueueJoin(MinecraftQueueJoinEvent event) {
+    Optional<MinecraftMatch> optional = event.getQueue().checkReady();
+    if (optional.isEmpty()) return;
+    MinecraftMatch match = optional.get();
+    new MinecraftMatchLoadedEvent(match).call();
+    for (MinecraftMatchTeamMember participant : match.getParticipants()) {
+      Guido.getHandlers().getHandler(QueueHandler.class).leaveQueue(participant);
     }
   }
 
@@ -91,45 +92,45 @@ public class MatchMakingHandler implements GuidoHandler {
    * @param event the event of a match being loaded
    */
   @Listener(priority = ListenPriority.HIGHEST)
-  public void onMatchLoaded(MatchLoadedEvent event) {
-    AbstractMatch abstractMatch = event.getAbstractMatch();
-    GuidoGuild guild = Matches.getGuild(abstractMatch);
-    guild
-        .getCategory("matches")
-        .createVoiceChannel("Pre-Game " + abstractMatch.getId())
-        .queue(
-            channel -> {
-              this.channels().putPreMatch(channel.getIdLong(), abstractMatch.getId());
-              Discord.removeAllPermission(
-                  channel,
-                  Permission.VIEW_CHANNEL,
-                  Permission.VOICE_SPEAK,
-                  Permission.VOICE_STREAM,
-                  Permission.VOICE_USE_VAD);
-              for (LinkableInfo participant : abstractMatch.getParticipants()) {
-                Linkable link = participant.getLink();
-                if (link == null) continue;
-                Member member = link.requireDiscordRef().getMember(guild.toDiscord());
-                if (member != null) {
-                  Discord.addPermissions(
-                      channel,
-                      member,
-                      Discord.VOICE,
-                      aVoid -> {
-                        GuildVoiceState state = member.getVoiceState();
-                        if (state != null) {
-                          if (state.getChannel() != null) {
-                            guild
-                                .toDiscord()
-                                .moveVoiceMember(member, channel)
-                                .queueAfter(500, TimeUnit.MILLISECONDS);
-                          }
+  public void onMatchLoaded(MinecraftMatchLoadedEvent event) {
+    MinecraftMatch minecraftMatch = event.getMatch();
+    GuidoGuild guild = runtime.getBotJda().getGuidoGuild();
+    VoiceChannel channel =
+        guild
+            .getMatchesCategory()
+            .createVoiceChannel("Pre-Game " + minecraftMatch.getId())
+            .complete();
+    this.channels().putPreMatch(channel.getIdLong(), minecraftMatch.getId());
+    Discord.removeAllPermission(
+        channel,
+        Permission.VIEW_CHANNEL,
+        Permission.VOICE_SPEAK,
+        Permission.VOICE_STREAM,
+        Permission.VOICE_USE_VAD);
+    for (MinecraftMatchTeamMember participant : minecraftMatch.getParticipants()) {
+      participant
+          .getLinkable(runtime.getLinkableMatcher())
+          .flatMap(minecraft -> runtime.getLinkableMatcher().getDiscord(minecraft))
+          .flatMap(discord -> discord.getMember(runtime.getBotJda()))
+          .ifPresent(
+              member -> {
+                Discord.addPermissions(
+                    channel,
+                    member,
+                    Discord.VOICE,
+                    aVoid -> {
+                      GuildVoiceState state = member.getVoiceState();
+                      if (state != null) {
+                        if (state.getChannel() != null) {
+                          guild
+                              .toDiscord()
+                              .moveVoiceMember(member, channel)
+                              .queueAfter(500, TimeUnit.MILLISECONDS);
                         }
-                      });
-                }
-              }
-            },
-            Discord.exceptionConsumer());
+                      }
+                    });
+              });
+    }
   }
 
   /**
@@ -138,45 +139,49 @@ public class MatchMakingHandler implements GuidoHandler {
    * @param event the event of a team being added to a match
    */
   @Listener(priority = ListenPriority.HIGHEST)
-  public void onTeamAddTeamEvent(@NonNull MatchAddTeamEvent event) {
-    AbstractMatch abstractMatch = event.getAbstractMatch();
-    MatchTeam matchTeam = event.getMatchTeam();
-    GuidoGuild data = Matches.getGuild(abstractMatch);
-    data.getCategory("matches")
-        .createVoiceChannel(matchTeam.getName())
-        .queue(
-            channel -> {
-              this.channels()
-                  .getVoices(abstractMatch.getId())
-                  .put(matchTeam.getId(), channel.getIdLong());
-              Discord.removeAllPermission(
-                  channel,
-                  Permission.VIEW_CHANNEL,
-                  Permission.VOICE_SPEAK,
-                  Permission.VOICE_STREAM,
-                  Permission.VOICE_USE_VAD);
-              for (TeamMember member : matchTeam.getMembers()) {
-                Linkable link = member.getLink().getLink();
-                if (link == null) continue;
-                Member discordMember = link.requireDiscordRef().getMember(data.toDiscord());
-                if (discordMember != null) {
-                  Discord.addPermissions(
-                      channel,
-                      discordMember,
-                      Discord.VOICE,
-                      (aVoid -> {
-                        GuildVoiceState state = discordMember.getVoiceState();
-                        if (state != null) {
-                          if (state.getChannel() != null) {
-                            data.toDiscord()
-                                .moveVoiceMember(discordMember, channel)
-                                .queueAfter(500, TimeUnit.MILLISECONDS);
-                          }
+  public void onTeamAddTeamEvent(@NonNull MinecraftMatchAddTeamEvent event) {
+    MinecraftMatch abstractMatch = event.getMatch();
+    MinecraftMatchTeam matchTeam = event.getTeam();
+
+    VoiceChannel channel =
+        runtime
+            .getBotJda()
+            .getGuidoGuild()
+            .getMatchesCategory()
+            .createVoiceChannel(matchTeam.getName())
+            .complete();
+    this.channels().getVoices(abstractMatch.getId()).put(matchTeam.getId(), channel.getIdLong());
+    Discord.removeAllPermission(
+        channel,
+        Permission.VIEW_CHANNEL,
+        Permission.VOICE_SPEAK,
+        Permission.VOICE_STREAM,
+        Permission.VOICE_USE_VAD);
+    for (MinecraftMatchTeamMember member : matchTeam.getMembers()) {
+      member
+          .getLinkable(runtime.getLinkableMatcher())
+          .flatMap(minecraft -> runtime.getLinkableMatcher().getDiscord(minecraft))
+          .flatMap(discord -> discord.getMember(runtime.getBotJda()))
+          .ifPresent(
+              discordMember -> {
+                Discord.addPermissions(
+                    channel,
+                    discordMember,
+                    Discord.VOICE,
+                    (aVoid -> {
+                      GuildVoiceState state = discordMember.getVoiceState();
+                      if (state != null) {
+                        if (state.getChannel() != null) {
+                          runtime
+                              .getBotJda()
+                              .getGuild()
+                              .moveVoiceMember(discordMember, channel)
+                              .queueAfter(500, TimeUnit.MILLISECONDS);
                         }
-                      }));
-                }
-              }
-            });
+                      }
+                    }));
+              });
+    }
   }
 
   /**
@@ -185,9 +190,8 @@ public class MatchMakingHandler implements GuidoHandler {
    * @param event the event of a team being added to a match
    */
   @Listener(priority = ListenPriority.HIGHEST)
-  public void onTeamRemoveEvent(@NonNull MatchAddTeamEvent event) {
-    AbstractMatch abstractMatch = event.getAbstractMatch();
-    GuidoGuild data = Matches.getGuild(abstractMatch);
+  public void onTeamRemoveEvent(@NonNull MinecraftMatchRemoveTeamEvent event) {
+    MinecraftMatch abstractMatch = event.getMatch();
     Map<Integer, Long> voices = this.channels().getVoices(abstractMatch.getId());
     VoiceChannel channel =
         Guido.getConnection()
@@ -213,10 +217,10 @@ public class MatchMakingHandler implements GuidoHandler {
    * @param data the user to check where it is playing
    * @return the collection of matches where the user is playing
    */
-  public Collection<AbstractMatch> getPlaying(@NonNull UserData data) {
+  public Collection<MinecraftMatch> getPlaying(@NonNull UserData data) {
     GuidoLoader loader = Guido.getHandlers().getLoader();
     Collection<Linkable> links = loader.getLinks().getLinks(data);
-    Collection<AbstractMatch> participating = new HashSet<>();
+    Collection<MinecraftMatch> participating = new HashSet<>();
     for (Linkable link : links) {
       participating.addAll(
           loader

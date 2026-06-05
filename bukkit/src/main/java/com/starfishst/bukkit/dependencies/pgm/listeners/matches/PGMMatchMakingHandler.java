@@ -21,6 +21,7 @@ import lombok.NonNull;
 import me.googas.api.Requests;
 import me.googas.api.client.SimpleClientLadder;
 import me.googas.api.matches.MatchStatus;
+import me.googas.api.matches.MinecraftTeamSelectionType;
 import me.googas.api.matches.ladder.Ladder;
 import me.googas.api.matches.minecraft.MinecraftMatch;
 import me.googas.api.utility.Maps;
@@ -55,9 +56,9 @@ public class PGMMatchMakingHandler implements GuidoModule {
 
   /** The team creators for matches */
   @NonNull
-  private final Map<String, TeamCreation> creator =
-      Maps.builder("random", (TeamCreation) new RandomTeamCreation())
-          .put("pick", new PickTeamSelection())
+  private final Map<MinecraftTeamSelectionType, TeamCreation> creator =
+      Maps.builder(MinecraftTeamSelectionType.RANDOM, (TeamCreation) new RandomTeamCreation())
+          .put(MinecraftTeamSelectionType.PICK, new PickTeamSelection())
           .build();
 
   /** The list of matches hosted by the server */
@@ -76,7 +77,7 @@ public class PGMMatchMakingHandler implements GuidoModule {
    * @return true if the match can be hosted
    */
   @Receptor(Requests.MatchServer.CAN_HOST)
-  public boolean canHost(@ParamName("match") MinecraftMatch match) {
+  public boolean canHost(@ParamName(Requests.MatchServer.CAN_HOST_MATCH) MinecraftMatch match) {
     String ladderName = match.getLadderName();
     Match pgmMatch = this.getCurrentPgm();
     JsonClient connection = Guido.getClient().getConnection();
@@ -141,7 +142,7 @@ public class PGMMatchMakingHandler implements GuidoModule {
    * @return the ip of the server if it can be hosted
    */
   @Receptor(Requests.MatchServer.HOST)
-  public String host(@ParamName("match") MinecraftMatch match) {
+  public String host(@ParamName(Requests.MatchServer.HOST_MATCH) MinecraftMatch match) {
     if (!this.canHost(match)) return null;
     String ladderName = match.getLadderName();
     PGM pgm = PGM.get();
@@ -160,12 +161,10 @@ public class PGMMatchMakingHandler implements GuidoModule {
               match.getId(),
               HostedPlayer.parse(match.getParticipants()),
               ladderName,
-              Maps.singleton(
-                  "global",
-                  Maps.objects("team-selection", ladder.getString(null, "team-selection", "random"))
-                      .build()),
               random,
-              loaded.getId());
+              loaded.getId(),
+              ladder.playersPerTeam(),
+              ladder.getTeamSelectionType());
       this.matches.add(hostedMatch);
       Requests.MinecraftMatches.updateStatus(hostedMatch.getId(), MatchStatus.READY)
           .queue(connection);
@@ -183,11 +182,9 @@ public class PGMMatchMakingHandler implements GuidoModule {
 
   @NonNull
   public TeamCreation getTeamCreation(PGMHostedMatch hostedMatch) {
-    for (String key : this.creator.keySet()) {
-      String teamSelection = hostedMatch.getString(null, "team-selection", "random");
-      if (key.equalsIgnoreCase(teamSelection)) return this.creator.get(key);
-    }
-    return this.creator.get("random");
+    TeamCreation teamCreation = this.creator.get(hostedMatch.getTeamSelectionType());
+    if (teamCreation == null) return this.creator.get(MinecraftTeamSelectionType.RANDOM);
+    return teamCreation;
   }
 
   /**

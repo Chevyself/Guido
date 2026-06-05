@@ -1,15 +1,11 @@
 package me.googas.api.loader;
 
-import java.util.Optional;
+import lombok.NonNull;
 import me.googas.api.user.UserData;
+import net.dv8tion.jda.api.entities.User;
 
 public interface UserLoader extends DataLoader {
 
-  /**
-   * Load the data of an user
-   *
-   * @param id the id of the user
-   * @return the data of the user or null if not found
-   */
-  Optional<UserData> getUserData(String id);
+  @NonNull
+  UserData ensureUserData(@NonNull User user);
 }
