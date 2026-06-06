@@ -8,6 +8,7 @@ import lombok.NonNull;
 import me.googas.api.Requests;
 import me.googas.api.links.Linkable;
 import me.googas.api.utility.RandomUtils;
+import me.googas.bot.GuidoBotRuntime;
 import me.googas.bot.api.Guido;
 import me.googas.bot.core.handlers.GuidoHandler;
 import me.googas.net.sockets.json.ParamName;
@@ -18,8 +19,14 @@ import me.googas.starbox.time.unit.Unit;
 /** Handles linking for accounts */
 public class LinkHandler implements GuidoHandler {
 
+  @NonNull private final GuidoBotRuntime runtime;
+
   /** The set of queries created */
   @NonNull private final Set<LinkQuery> queries = new HashSet<>();
+
+  public LinkHandler(@NonNull GuidoBotRuntime runtime) {
+    this.runtime = runtime;
+  }
 
   /**
    * Create the code for the given linkable
@@ -111,9 +118,17 @@ public class LinkHandler implements GuidoHandler {
     }
   }
 
-  @Receptor(Requests.Server.MINECRAFT_LINK_CODE)
-  public String linkCode(@ParamName(Requests.Server.MINECRAFT_LINK_CODE_ID) UUID minecraftId) {
-    return Guido.getHandlers().getHandler(LinkHandler.class).createCode();
+  @Receptor(Requests.MinecraftLinks.LINK_NEW)
+  public String linkCode(@ParamName(Requests.MinecraftLinks.LINK_NEW) UUID minecraftId) {
+    return runtime
+        .getLoader()
+        .getMinecraftLinks()
+        .getById(minecraftId)
+        .map(
+            link -> {
+              return runtime.getHandlers().getHandler(LinkHandler.class).createCode(link);
+            })
+        .orElse("");
   }
 
   @Override

@@ -4,6 +4,7 @@ import com.mongodb.client.MongoCollection;
 import com.mongodb.client.model.Filters;
 import com.mongodb.client.model.Updates;
 import java.util.Optional;
+import java.util.UUID;
 import lombok.Getter;
 import lombok.NonNull;
 import me.googas.api.links.MinecraftLinkable;
@@ -35,6 +36,15 @@ public class MongoMinecraftLinksLoader extends SimpleMongoLoader
   @Override
   public @NonNull Optional<MinecraftLinkable> getByIdRegex(@NonNull String id) {
     MongoMinecraftLink match = this.collection.find(Filters.regex("_id", id)).first();
+    if (match != null) {
+      match.setLoader(this);
+    }
+    return Optional.ofNullable(match);
+  }
+
+  @Override
+  public @NonNull Optional<MinecraftLinkable> getById(@NonNull UUID minecraftId) {
+    MongoMinecraftLink match = this.collection.find(Filters.eq("_id", minecraftId)).first();
     if (match != null) {
       match.setLoader(this);
     }

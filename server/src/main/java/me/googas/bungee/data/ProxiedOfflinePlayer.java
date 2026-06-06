@@ -1,13 +1,7 @@
 package me.googas.bungee.data;
 
-import java.util.HashMap;
 import java.util.UUID;
 import lombok.NonNull;
-import me.googas.api.links.LinkableInfo;
-import me.googas.api.links.LinkableType;
-import me.googas.api.links.MinecraftLinkable;
-import me.googas.api.utility.Maps;
-import me.googas.starbox.UUIDUtils;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 
@@ -35,10 +29,6 @@ public class ProxiedOfflinePlayer {
     this(player.getUniqueId(), player.getName());
   }
 
-  public ProxiedOfflinePlayer(@NonNull MinecraftLinkable ref) {
-    this(ref.getUuid(), ref.getNickname());
-  }
-
   public ProxiedPlayer toProxy() {
     return ProxyServer.getInstance().getPlayer(this.uuid);
   }
@@ -61,18 +51,5 @@ public class ProxiedOfflinePlayer {
   @NonNull
   public String getNickname() {
     return this.nickname;
-  }
-
-  /**
-   * Get the link information of this offline proxied player
-   *
-   * @return the link information
-   */
-  @NonNull
-  public LinkableInfo getLink() {
-    return new LinkableInfo(
-        LinkableType.MINECRAFT,
-        Maps.singleton("uuid", UUIDUtils.trim(this.getUniqueId())),
-        new HashMap<>());
   }
 }

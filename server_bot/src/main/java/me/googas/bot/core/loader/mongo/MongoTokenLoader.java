@@ -9,7 +9,9 @@ import java.util.logging.Logger;
 import lombok.Getter;
 import lombok.NonNull;
 import me.googas.api.loader.TokenLoader;
+import me.googas.api.token.AuthLevel;
 import me.googas.api.token.AuthToken;
+import me.googas.api.utility.RandomUtils;
 import me.googas.bot.core.loader.mongo.types.MongoToken;
 import me.googas.starbox.logging.LoggerFactory;
 
@@ -43,5 +45,12 @@ public class MongoTokenLoader extends SimpleMongoLoader implements TokenLoader {
       logger.log(Level.SEVERE, "Failed to get groups", e);
     }
     return match;
+  }
+
+  @Override
+  public @NonNull MongoToken create(@NonNull UUID userId, @NonNull AuthLevel level) {
+    MongoToken token = new MongoToken(UUID.randomUUID(), RandomUtils.nextString(16), userId, level);
+    collection.insertOne(token);
+    return token;
   }
 }

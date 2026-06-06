@@ -7,6 +7,7 @@ import java.util.UUID;
 import java.util.function.Consumer;
 import lombok.NonNull;
 import me.googas.api.client.SimpleClientLadder;
+import me.googas.api.links.generic.ImmutableMinecraftLinkable;
 import me.googas.api.matches.MatchStatus;
 import me.googas.api.matches.minecraft.MinecraftMatch;
 import me.googas.api.matches.minecraft.MinecraftMatchTeam;
@@ -32,8 +33,6 @@ public class Requests {
     @NonNull public static final String DISCONNECT = "disconnect";
     @NonNull public static final String CLIENT_INFO = "client-info";
     @NonNull public static final String AUTH = "auth";
-    @NonNull public static final String MINECRAFT_LINK_CODE = "minecraft-link-code";
-    @NonNull public static final String MINECRAFT_LINK_CODE_ID = "id";
 
     @NonNull
     public static RequestBuilder<Boolean> disconnect() {
@@ -41,19 +40,8 @@ public class Requests {
     }
 
     @NonNull
-    public static RequestBuilder<Boolean> clientInfo(@NonNull ValuesMap info) {
-      return new RequestBuilder<>(Boolean.class, Server.CLIENT_INFO).put("info", info);
-    }
-
-    @NonNull
     public static RequestBuilder<Boolean> auth(@NonNull String token) {
       return new RequestBuilder<>(Boolean.class, Server.AUTH).put("token", token);
-    }
-
-    @NonNull
-    public static RequestBuilder<String> minecraftLinkCode(@NonNull UUID minecraftId) {
-      return new RequestBuilder<>(String.class, Server.MINECRAFT_LINK_CODE)
-          .put(Server.MINECRAFT_LINK_CODE_ID, minecraftId);
     }
   }
 
@@ -62,6 +50,18 @@ public class Requests {
     @NonNull public static final String SAVE_STATS = PREFIX + "save-stats";
     @NonNull public static final String SAVE_STATS_UUID = "uuid";
     @NonNull public static final String SAVE_STATS_STATS = "stats";
+    @NonNull public static final String UPDATE_STATUS = PREFIX + "update-status";
+    @NonNull public static final String UPDATE_STATUS_UUID = "uuid";
+    @NonNull public static final String UPDATE_STATUS_NICKNAME = "nickname";
+    @NonNull public static final String UPDATE_STATUS_IP = "ip";
+    @NonNull public static final String UPDATE_STATUS_ONLINE = "online";
+    @NonNull public static final String UPDATE_ONLINE = PREFIX + "update-online";
+    @NonNull public static final String UPDATE_ONLINE_UUID = "uuid";
+    @NonNull public static final String UPDATE_ONLINE_ONLINE = "uuid";
+    @NonNull public static final String IS_LINKED = PREFIX + "is-linked";
+    @NonNull public static final String IS_LINKED_UUID = "uuid";
+    @NonNull public static final String LINK_NEW = PREFIX + "link-new";
+    @NonNull public static final String LINK_NEW_UUID = "uuid";
 
     // TODO receptor
     @NonNull
@@ -70,6 +70,34 @@ public class Requests {
       return new RequestBuilder<>(Void.class, MinecraftLinks.SAVE_STATS)
           .put(MinecraftLinks.SAVE_STATS_UUID, uuid)
           .put(MinecraftLinks.SAVE_STATS_STATS, stats);
+    }
+
+    @NonNull
+    public static RequestBuilder<ImmutableMinecraftLinkable> updateStatus(
+        @NonNull UUID uuid, @NonNull String nickname, @NonNull String ip, boolean online) {
+      return new RequestBuilder<>(ImmutableMinecraftLinkable.class, MinecraftLinks.UPDATE_STATUS)
+          .put(MinecraftLinks.UPDATE_STATUS_UUID, uuid)
+          .put(MinecraftLinks.UPDATE_STATUS_NICKNAME, nickname)
+          .put(MinecraftLinks.UPDATE_STATUS_IP, ip)
+          .put(MinecraftLinks.UPDATE_STATUS_ONLINE, online);
+    }
+
+    @NonNull
+    public static RequestBuilder<Void> updateOnline(@NonNull UUID uuid, boolean online) {
+      return new RequestBuilder<>(Void.class, MinecraftLinks.UPDATE_ONLINE)
+          .put(MinecraftLinks.UPDATE_ONLINE_UUID, uuid)
+          .put(MinecraftLinks.UPDATE_ONLINE_ONLINE, online);
+    }
+
+    public static RequestBuilder<Boolean> isLinked(@NonNull UUID uuid) {
+      return new RequestBuilder<>(Boolean.class, MinecraftLinks.IS_LINKED)
+          .put(MinecraftLinks.IS_LINKED_UUID, uuid);
+    }
+
+    @NonNull
+    public static RequestBuilder<String> linkNew(@NonNull UUID minecraftId) {
+      return new RequestBuilder<>(String.class, MinecraftLinks.LINK_NEW)
+          .put(MinecraftLinks.LINK_NEW_UUID, minecraftId);
     }
   }
 

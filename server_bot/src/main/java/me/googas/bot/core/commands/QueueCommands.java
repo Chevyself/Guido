@@ -16,6 +16,7 @@ import me.googas.bot.core.commands.middleware.GuidoJdaPermission;
 import me.googas.bot.core.discord.GuidoGuild;
 import me.googas.bot.core.handlers.matches.MatchMakingHandler;
 import me.googas.bot.core.handlers.queue.QueueHandler;
+import me.googas.bot.core.matches.ladder.PlayableLadder;
 import net.dv8tion.jda.api.entities.GuildVoiceState;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
@@ -40,7 +41,7 @@ public class QueueCommands {
       LocaleFile locale,
       GuidoGuild guild,
       Member member,
-      @Required(name = "queue.ladder", description = "queue.ladder.desc") Ladder ladder) {
+      @Required(name = "queue.ladder", description = "queue.ladder.desc") PlayableLadder ladder) {
     if (Guido.getHandlers().getHandler(MatchMakingHandler.class).isPlaying(data)) {
       return Result.of(locale.get("queue.already-playing"));
     } else {
@@ -49,7 +50,7 @@ public class QueueCommands {
         return Result.of(locale.get("queue.join-voice"));
       } else {
         QueueHandler queues = Guido.getHandlers().getHandler(QueueHandler.class);
-        if (queues.isWaiting(guild, member, ladder)) {
+        if (queues.isWaiting(member, ladder)) {
           return Result.of(locale.get("queue.already"));
         } else {
           QueueResult join = queues.joinQueue(guild, member, ladder);
@@ -72,9 +73,9 @@ public class QueueCommands {
   public Result inQueue(
       LocaleFile locale,
       GuidoGuild guild,
-      @Required(name = "iq.ladder", description = "iq.ladder.desc") Ladder ladder) {
+      @Required(name = "iq.ladder", description = "iq.ladder.desc") PlayableLadder ladder) {
     Collection<? extends MinecraftLinkable> waiting =
-        Guido.getHandlers().getHandler(QueueHandler.class).getQueue(guild, ladder).getWaiting();
+        Guido.getHandlers().getHandler(QueueHandler.class).getQueue(ladder).getWaiting();
     if (waiting.isEmpty()) {
       return Result.of(locale.get("iq.empty", Maps.singleton("ladder", ladder.getName())));
     } else {

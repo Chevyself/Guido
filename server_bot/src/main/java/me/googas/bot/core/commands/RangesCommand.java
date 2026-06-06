@@ -65,21 +65,18 @@ public class RangesCommand {
       @Required(name = "range.set.ladder", description = "range.set.ladder.desc") Ladder ladder,
       @Required(name = "range.set.min", description = "range.set.min.desc") int min,
       @Required(name = "range.set.max", description = "range.set.max.desc") int max) {
-    DiscordRankRange range =
-        new DiscordRankRange(
-            ladder.getName(),
-            Maps.singleton(
-                "global", Maps.objects("id", role.getIdLong()).put("name", role.getName()).build()),
-            min,
-            max);
-    guild.addRange(ladderName, ladder.getName(), min, max, roleId);
-    return Result.of(
-        locale.get(
-            "range.set.success",
-            Maps.builder("mention", role.getAsMention())
-                .put("ladder", range.getLadder())
-                .put("min", String.valueOf(range.getMin()))
-                .put("max", String.valueOf(range.getMax()))));
+    return guild
+        .addRange(ladder.getName(), role.getName(), min, max, role.getIdLong())
+        .map(
+            (range) ->
+                Result.of(
+                    locale.get(
+                        "range.set.success",
+                        Maps.builder("mention", role.getAsMention())
+                            .put("ladder", range.getLadder())
+                            .put("min", String.valueOf(range.getMin()))
+                            .put("max", String.valueOf(range.getMax())))))
+        .orElse(Result.of("Failed to create range"));
   }
 
   /**
@@ -100,7 +97,7 @@ public class RangesCommand {
       @Required(name = "range.del.role", description = "range.del.role.desc") Role role) {
     DiscordRankRange range = guild.getRange(role.getIdLong());
     if (range != null) {
-      guild.getRanges().remove(range);
+      guild.removeRange(range);
       return Result.of(
           locale.get("range.del.success", Maps.singleton("mention", role.getAsMention())));
     } else {

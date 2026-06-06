@@ -20,14 +20,9 @@ import me.googas.bot.GuidoBot;
 import me.googas.bot.api.Guido;
 import me.googas.bungee.commands.GuidoCommands;
 import me.googas.bungee.commands.LinkCommand;
-import me.googas.bungee.commands.PermissionCommands;
-import me.googas.bungee.commands.PunishmentCommands;
 import me.googas.bungee.commands.ServerCommands;
-import me.googas.bungee.commands.StatsCommand;
 import me.googas.bungee.commands.providers.BungeeLocaleFileProvider;
-import me.googas.bungee.commands.providers.GroupProvider;
 import me.googas.bungee.commands.providers.JsonClientProvider;
-import me.googas.bungee.commands.providers.ProxiedOfflinePlayerProvider;
 import me.googas.bungee.configuration.BungeeConfiguration;
 import me.googas.bungee.configuration.GuidoBungeeConfiguration;
 import me.googas.bungee.configuration.GuidoServer;
@@ -35,8 +30,6 @@ import me.googas.bungee.events.GuidoListener;
 import me.googas.bungee.lang.BungeeLanguageHandler;
 import me.googas.bungee.listeners.MinecraftDataListener;
 import me.googas.bungee.listeners.MotdListener;
-import me.googas.bungee.listeners.PermissionsListener;
-import me.googas.bungee.listeners.PunishmentsListener;
 import me.googas.bungee.listeners.TipsListener;
 import me.googas.bungee.receptors.BungeeConnectionReceptors;
 import me.googas.bungee.receptors.BungeeMessagingReceptors;
@@ -74,11 +67,7 @@ public class GuidoPlugin extends Plugin {
                   .addGlobalMiddleware(new BungeeResultHandlingMiddleware()))
           .setProvidersRegistry(
               new ProvidersRegistry<CommandContext>()
-                  .addProviders(
-                      new BungeeLocaleFileProvider(),
-                      new GroupProvider(),
-                      new JsonClientProvider(),
-                      new ProxiedOfflinePlayerProvider()))
+                  .addProviders(new BungeeLocaleFileProvider(), new JsonClientProvider()))
           .build();
   /** The bungeeConfiguration that the plugin will use */
   @NonNull @Getter private BungeeConfiguration configuration = loadConfiguration();
@@ -92,8 +81,6 @@ public class GuidoPlugin extends Plugin {
           this.languageHandler,
           new MinecraftDataListener(),
           new MotdListener(runtime),
-          new PermissionsListener(),
-          new PunishmentsListener(),
           new TipsListener());
 
   private JsonClient client = null;
@@ -179,10 +166,8 @@ public class GuidoPlugin extends Plugin {
     }
     this.manager.parseAndRegisterAll(new GuidoCommands());
     this.manager.parseAndRegisterAll(new LinkCommand());
-    this.manager.parseAndRegisterAll(new PermissionCommands());
-    this.manager.parseAndRegisterAll(new PunishmentCommands());
     this.manager.parseAndRegisterAll(new ServerCommands());
-    this.manager.parseAndRegisterAll(new StatsCommand());
+    // TODO implement stats command
     this.loadServers();
     super.onEnable();
   }

@@ -2,8 +2,10 @@ package me.googas.api.loader;
 
 import java.util.Map;
 import lombok.NonNull;
+import me.googas.api.links.MinecraftLinkable;
 import me.googas.api.matches.ladder.Ladder;
 import me.googas.api.stats.LeaderboardEntry;
+import me.googas.api.stats.Stats;
 
 public interface StatsLoader extends DataLoader {
   long maxPageLeaderboard(@NonNull String context, @NonNull Ladder ladder, int limit);
@@ -17,4 +19,7 @@ public interface StatsLoader extends DataLoader {
   @NonNull
   Map<Integer, LeaderboardEntry> getLeaderboard(
       @NonNull String context, @NonNull String key, int page, int limit);
+
+  @NonNull
+  Stats getForMinecraftLink(@NonNull MinecraftLinkable minecraftLink, @NonNull String context);
 }

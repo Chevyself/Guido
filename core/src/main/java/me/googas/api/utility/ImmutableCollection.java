@@ -33,4 +33,8 @@ public final class ImmutableCollection<E> implements Iterable<E> {
   public boolean isEmpty() {
     return elements.isEmpty();
   }
+
+  public double size() {
+    return elements.size();
+  }
 }

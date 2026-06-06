@@ -2,6 +2,7 @@ package me.googas.bot.core.loader.mongo;
 
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.model.Filters;
+import com.mongodb.client.model.Updates;
 import java.util.*;
 import java.util.stream.Collectors;
 import lombok.Getter;
@@ -30,7 +31,7 @@ public class MongoMinecraftMatchLoader extends SimpleMongoLoader implements Mine
   }
 
   @NonNull
-  private Set<GenericMinecraftMatchTeam> mapTeams(
+  private List<GenericMinecraftMatchTeam> mapTeams(
       @NonNull Collection<? extends MinecraftMatchTeam> teams) {
     return teams.stream()
         .map(
@@ -38,7 +39,7 @@ public class MongoMinecraftMatchLoader extends SimpleMongoLoader implements Mine
               return new GenericMinecraftMatchTeam(
                   team.getId(), mapMembers(team.getMembers()), team.getName());
             })
-        .collect(Collectors.toSet());
+        .collect(Collectors.toList());
   }
 
   private @NonNull Set<GenericMinecraftMatchTeamMember> mapMembers(
@@ -57,15 +58,50 @@ public class MongoMinecraftMatchLoader extends SimpleMongoLoader implements Mine
       @NonNull Collection<? extends MinecraftMatchTeam> teams, @NonNull String ladderName) {
     MongoMinecraftMatch match =
         new MongoMinecraftMatch(
-            UUID.randomUUID(), mapTeams(teams), MatchStatus.WAITING, -1, ladderName, 0, 0);
+                UUID.randomUUID(), mapTeams(teams), MatchStatus.WAITING, -1, ladderName, 0, 0)
+            .setLoader(this);
     collection.insertOne(match);
-    new MinecraftMatchLoadedEvent(match).call();
+    this.loader.getRuntime().getListeners().call(new MinecraftMatchLoadedEvent(match));
     return match;
   }
 
   @Override
   public @NonNull Optional<MinecraftMatch> getByRegexId(@NonNull String pattern) {
     MongoMinecraftMatch match = collection.find(Filters.regex("_id", pattern)).first();
+    if (match != null) {
+      match.setLoader(this);
+    }
     return Optional.ofNullable(match);
+  }
+
+  @Override
+  public @NonNull Collection<? extends MinecraftMatch> getParticipating(
+      @NonNull UUID id, MatchStatus... statuses) {
+    // TODO
+    return new ArrayList<>();
+  }
+
+  public void setServer(@NonNull MongoMinecraftMatch mongoMinecraftMatch, @NonNull String name) {
+    this.collection.updateOne(
+        Filters.eq("_id", mongoMinecraftMatch.getId()), Updates.set("server", name));
+  }
+
+  public void setWinnersDifference(
+      @NonNull MongoMinecraftMatch mongoMinecraftMatch, int winnersDifference) {
+    this.collection.updateOne(
+        Filters.eq("_id", mongoMinecraftMatch.getId()),
+        Updates.set("winnersDifference", winnersDifference));
+  }
+
+  public void setLosersDifference(
+      @NonNull MongoMinecraftMatch mongoMinecraftMatch, int losersDifference) {
+    this.collection.updateOne(
+        Filters.eq("_id", mongoMinecraftMatch.getId()),
+        Updates.set("losersDifference", losersDifference));
+  }
+
+  public void setStatus(MongoMinecraftMatch mongoMinecraftMatch, @NonNull MatchStatus status) {
+    this.collection.updateOne(
+        Filters.eq("_id", mongoMinecraftMatch.getId()), Updates.set("status", status));
   }
 }

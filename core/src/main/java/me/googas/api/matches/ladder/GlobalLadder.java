@@ -33,4 +33,14 @@ public class GlobalLadder implements Ladder {
   public @NonNull MinecraftTeamSelectionType getTeamSelectionType() {
     return MinecraftTeamSelectionType.RANDOM;
   }
+
+  @Override
+  public double getWinMultiplier() {
+    return 1;
+  }
+
+  @Override
+  public double getLoseMultiplier() {
+    return 1;
+  }
 }

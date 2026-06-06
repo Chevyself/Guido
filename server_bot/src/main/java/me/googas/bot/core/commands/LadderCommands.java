@@ -14,6 +14,7 @@ import me.googas.api.utility.Lots;
 import me.googas.api.utility.Maps;
 import me.googas.bot.core.commands.middleware.GuidoJdaPermission;
 import me.googas.bot.core.discord.GuidoGuild;
+import me.googas.bot.core.matches.ladder.PlayableLadder;
 import me.googas.starbox.Pagination;
 import me.googas.starbox.builders.MapBuilder;
 
@@ -39,13 +40,13 @@ public class LadderCommands {
     if (guild.getLadders().isEmpty()) {
       return Result.of(locale.get("ladders.empty"));
     } else {
-      Pagination<Ladder> pagination = Lots.pagesOf(guild.getLadders(), 10);
+      Pagination<? extends PlayableLadder> pagination = Lots.pagesOf(guild.getLadders(), 10);
       if (page < 1) {
         page = 1;
       } else if (page > pagination.maxPage()) {
         page = pagination.maxPage();
       }
-      List<Ladder> ladders = pagination.getPage(page);
+      List<? extends Ladder> ladders = pagination.getPage(page);
       StringBuilder builder = new StringBuilder();
       builder.append(
           locale.get(
@@ -87,7 +88,7 @@ public class LadderCommands {
         .map(ladder -> Result.of(locale.get("ladders.make.exists", placeholders)))
         .orElseGet(
             () -> {
-              guild.addLadder(name, players, base, 2, selectionType);
+              guild.addLadder(name, players, base, 2, 1, 1, selectionType);
               return Result.of(locale.get("ladders.make.success", placeholders));
             });
   }

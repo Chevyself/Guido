@@ -6,6 +6,7 @@ import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 import lombok.NonNull;
 import me.googas.api.matches.minecraft.MinecraftMatch;
+import me.googas.bot.GuidoBotRuntime;
 import me.googas.bot.api.Guido;
 import me.googas.bot.core.handlers.GuidoHandler;
 import me.googas.bot.core.util.Discord;
@@ -17,6 +18,8 @@ import net.dv8tion.jda.api.hooks.SubscribeEvent;
 
 public class MatchMakingChannelsHandler implements GuidoHandler {
 
+  @NonNull private final GuidoBotRuntime runtime;
+
   // TODO create a map or a set of channels that must be deleted
   /**
    * A map that contains the team voice channels in a match First element in the map is the id of
@@ -26,6 +29,10 @@ public class MatchMakingChannelsHandler implements GuidoHandler {
 
   /** The pre match channels created */
   @NonNull private final Map<Long, UUID> preMatch = new HashMap<>();
+
+  public MatchMakingChannelsHandler(@NonNull GuidoBotRuntime runtime) {
+    this.runtime = runtime;
+  }
 
   /**
    * Get the voices channels for the teams in a match
@@ -104,16 +111,15 @@ public class MatchMakingChannelsHandler implements GuidoHandler {
   /**
    * Delete and move all the members from a team voice channel
    *
-   * @param botGuild the guild where the channel exists
    * @param channel the channel itself
    */
   public void deleteAndMove(VoiceChannel channel) {
-    VoiceChannel waiting = botGuild.getVoiceChannel("waiting");
+    VoiceChannel waiting = runtime.getBotJda().getGuidoGuild().getWaitingVoiceChannel();
     if (channel != null) {
       for (Member member : channel.getMembers()) {
         if (member.getVoiceState() != null && member.getVoiceState().getChannel() != null) {
-          botGuild
-              .toDiscord()
+          channel
+              .getGuild()
               .moveVoiceMember(member, waiting)
               .queueAfter(
                   500,

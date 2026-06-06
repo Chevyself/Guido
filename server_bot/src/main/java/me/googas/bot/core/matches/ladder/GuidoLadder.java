@@ -15,6 +15,8 @@ public class GuidoLadder implements PlayableLadder {
   private final int playersPerTeam;
   private final int baseValue;
   private final int teamsPerMatch;
+  @Getter private final double winMultiplier;
+  @Getter private final double loseMultiplier;
   @Getter private final MinecraftTeamSelectionType teamSelectionType;
 
   public GuidoLadder(
@@ -22,11 +24,15 @@ public class GuidoLadder implements PlayableLadder {
       int playersPerTeam,
       int baseValue,
       int teamsPerMatch,
+      double winMultiplier,
+      double loseMultiplier,
       MinecraftTeamSelectionType teamSelectionType) {
     this.name = name;
     this.playersPerTeam = playersPerTeam;
     this.baseValue = baseValue;
     this.teamsPerMatch = teamsPerMatch;
+    this.winMultiplier = winMultiplier;
+    this.loseMultiplier = loseMultiplier;
     this.teamSelectionType = teamSelectionType;
   }
 

@@ -10,7 +10,7 @@ import me.googas.api.events.match.MinecraftMatchRemoveTeamEvent;
 import me.googas.api.events.match.MinecraftMatchStatusUpdatedEvent;
 import me.googas.api.events.queue.MinecraftQueueJoinEvent;
 import me.googas.api.lang.LocaleFile;
-import me.googas.api.links.Linkable;
+import me.googas.api.links.MinecraftLinkable;
 import me.googas.api.matches.MatchStatus;
 import me.googas.api.matches.minecraft.MinecraftMatch;
 import me.googas.api.matches.minecraft.MinecraftMatchTeam;
@@ -80,7 +80,7 @@ public class MatchMakingHandler implements GuidoHandler {
     Optional<MinecraftMatch> optional = event.getQueue().checkReady();
     if (optional.isEmpty()) return;
     MinecraftMatch match = optional.get();
-    new MinecraftMatchLoadedEvent(match).call();
+    runtime.getListeners().call(new MinecraftMatchLoadedEvent(match));
     for (MinecraftMatchTeamMember participant : match.getParticipants()) {
       Guido.getHandlers().getHandler(QueueHandler.class).leaveQueue(participant);
     }
@@ -193,12 +193,13 @@ public class MatchMakingHandler implements GuidoHandler {
   public void onTeamRemoveEvent(@NonNull MinecraftMatchRemoveTeamEvent event) {
     MinecraftMatch abstractMatch = event.getMatch();
     Map<Integer, Long> voices = this.channels().getVoices(abstractMatch.getId());
+    MinecraftMatchTeam team = event.getTeam();
     VoiceChannel channel =
         Guido.getConnection()
             .validatedJda()
-            .getVoiceChannelById(voices.getOrDefault(event.getMatchTeam().getId(), -1L));
-    this.channels().deleteAndMove(data, channel);
-    voices.remove(event.getMatchTeam().getId());
+            .getVoiceChannelById(voices.getOrDefault(team.getId(), -1L));
+    this.channels().deleteAndMove(channel);
+    voices.remove(team.getId());
   }
 
   /**
@@ -219,20 +220,19 @@ public class MatchMakingHandler implements GuidoHandler {
    */
   public Collection<MinecraftMatch> getPlaying(@NonNull UserData data) {
     GuidoLoader loader = Guido.getHandlers().getLoader();
-    Collection<Linkable> links = loader.getLinks().getLinks(data);
+    Optional<MinecraftLinkable> minecraft =
+        runtime.getLinkableMatcher().getMinecraftByLinkedUser(data.getId());
     Collection<MinecraftMatch> participating = new HashSet<>();
-    for (Linkable link : links) {
-      participating.addAll(
-          loader
-              .getMatches()
-              .getParticipating(
-                  link.getType(),
-                  link.getIdentification(),
-                  MatchStatus.PLAYING,
-                  MatchStatus.READY,
-                  MatchStatus.STARTING,
-                  MatchStatus.WAITING));
-    }
+    if (minecraft.isEmpty()) return participating;
+    participating.addAll(
+        loader
+            .getMinecraftMatches()
+            .getParticipating(
+                minecraft.get().getId(),
+                MatchStatus.PLAYING,
+                MatchStatus.READY,
+                MatchStatus.STARTING,
+                MatchStatus.WAITING));
     return participating;
   }
 

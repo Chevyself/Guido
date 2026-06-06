@@ -1,13 +1,6 @@
 package me.googas.bot.core.handlers.deploy;
 
-import me.googas.api.events.links.LinkableEloUpdatedEvent;
-import me.googas.api.utility.Maps;
-import me.googas.bot.api.events.data.links.LinkableRankUpdatedEvent;
 import me.googas.bot.core.handlers.GuidoHandler;
-import me.googas.bot.core.handlers.ranks.RanksHandler;
-import me.googas.bot.core.util.Ranks;
-import me.googas.starbox.events.ListenPriority;
-import me.googas.starbox.events.Listener;
 
 /**
  * The deploy handler is in charge to inform other services on changes such a punishment being done
@@ -15,6 +8,7 @@ import me.googas.starbox.events.Listener;
  */
 public class DeployHandler implements GuidoHandler {
 
+  /* TODO send localized messages
   @Listener(priority = ListenPriority.HIGHEST)
   public void onLinkableEloUpdated(LinkableEloUpdatedEvent event) {
     if (event.isWinner()) {
@@ -45,7 +39,7 @@ public class DeployHandler implements GuidoHandler {
             "elo.rank.updated",
             Maps.builder("applied", Ranks.getRanksToken(update.getApplied()))
                 .put("removed", Ranks.getRanksToken(update.getRemoved())));
-  }
+  }*/
 
   @Override
   public void onDisable() {}

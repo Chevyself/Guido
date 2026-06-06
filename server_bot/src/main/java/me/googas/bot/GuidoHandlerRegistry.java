@@ -41,9 +41,9 @@ public class GuidoHandlerRegistry {
     this.defaultHandlers =
         Lots.set(
             new DeployHandler(),
-            new LinkHandler(),
-            new MatchEloCalculator(),
-            new MatchMakingChannelsHandler(),
+            new LinkHandler(runtime),
+            new MatchEloCalculator(runtime),
+            new MatchMakingChannelsHandler(runtime),
             new MatchMakingHandler(runtime),
             new PGMMatchHandler(),
             new QueueChannelsHandler(runtime),
@@ -112,6 +112,7 @@ public class GuidoHandlerRegistry {
         try {
           loader =
               MongoLoader.join(
+                  runtime,
                   arguments.getProperty("uri", "none"),
                   arguments.getProperty("database", "testing-database"));
         } catch (Exception e) {

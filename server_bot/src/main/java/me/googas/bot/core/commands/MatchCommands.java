@@ -6,16 +6,10 @@ import com.github.chevyself.starbox.annotations.Required;
 import com.github.chevyself.starbox.arguments.ArgumentBehaviour;
 import com.github.chevyself.starbox.jda.context.CommandContext;
 import com.github.chevyself.starbox.result.Result;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import lombok.NonNull;
 import me.googas.api.lang.LocaleFile;
-import me.googas.api.links.Linkable;
-import me.googas.api.links.LinkableType;
+import me.googas.api.links.DiscordLinkable;
 import me.googas.api.links.MinecraftLinkable;
 import me.googas.api.loader.MinecraftMatchLoader;
 import me.googas.api.matches.MatchStatus;
@@ -160,7 +154,7 @@ public class MatchCommands {
               description = "finish.winners.desc",
               behaviour = ArgumentBehaviour.CONTINUOUS)
           String name) {
-    Map<String, @NonNull String> placeholders = Maps.singleton("id", match.getId());
+    Map<String, @NonNull String> placeholders = Maps.singleton("id", match.getId().toString());
     if (match.getStatus() == MatchStatus.FINISHED) {
       return Result.of(locale.get("finish.already", placeholders));
     } else {
@@ -194,28 +188,21 @@ public class MatchCommands {
   public Result currently(
       LocaleFile locale,
       UserData sender,
+      GuidoBotRuntime runtime,
       @Free(name = "currently.else", description = "currently.else.desc") Member member) {
     MatchMakingHandler handler = Guido.getHandlers().getHandler(MatchMakingHandler.class);
-    String single = sender.getId();
+    String single = sender.getId().toString();
     Collection<MinecraftMatch> playing;
-    List<String> matchesId = new ArrayList<>();
+    List<UUID> matchesId = new ArrayList<>();
     if (member != null) {
       // member.getIdLong(), member.getGuild().getIdLong()
-      Linkable link =
-          Guido.getHandlers()
-              .getLoader()
-              .getLinks()
-              .getLink(LinkableType.DISCORD, Maps.singleton("id", member.getIdLong()));
-      if (link != null) {
-        UserData linkedUser = link.getLinkedUser();
-        if (linkedUser != null) {
-          playing = handler.getPlaying(linkedUser);
-          single = link.getSingle();
-        } else {
-          playing = handler.getPlaying(sender);
-        }
+      DiscordLinkable link = runtime.getLoader().getDiscordLinks().ensureByUser(member.getUser());
+      Optional<UserData> optional = runtime.getLinkableMatcher().getUserByLink(link);
+      if (optional.isPresent()) {
+        playing = handler.getPlaying(optional.get());
+        single = link.getPublicDisplayName(runtime.getLinkableMatcher());
       } else {
-        playing = new ArrayList<>();
+        playing = handler.getPlaying(sender);
       }
     } else {
       playing = handler.getPlaying(sender);
@@ -249,14 +236,14 @@ public class MatchCommands {
               name = "win.entities",
               description = "win.entities.desc",
               behaviour = ArgumentBehaviour.CONTINUOUS)
-          Linkable[] linkables) {
+          MinecraftLinkable[] linkables) {
     if (ladder instanceof GlobalLadder) return Result.of(locale.get("win.cannot-global"));
     if (linkables.length == 0) return Result.of(locale.get("win.mention-one"));
     MatchEloCalculator eloHandler = Guido.getHandlers().getHandler(MatchEloCalculator.class);
     RanksHandler ranksHandler = Guido.getHandlers().getHandler(RanksHandler.class);
-    for (Linkable linkable : linkables) {
+    for (MinecraftLinkable linkable : linkables) {
       eloHandler.setElo(linkable, true, ladder, true);
-      ranksHandler.update(linkable, guild);
+      ranksHandler.update(linkable);
     }
     return Result.of(locale.get("win.updated"));
   }
@@ -267,14 +254,15 @@ public class MatchCommands {
       LocaleFile locale,
       GuidoGuild guild,
       @Required(name = "lose.ladder", description = "lose.ladder.desc") Ladder ladder,
-      @Required(name = "lose.entities", description = "lose.entities.desc") Linkable[] linkables) {
+      @Required(name = "lose.entities", description = "lose.entities.desc")
+          MinecraftLinkable[] linkables) {
     if (ladder instanceof GlobalLadder) return Result.of(locale.get("lose.cannot-global"));
     if (linkables.length == 0) return Result.of(locale.get("lose.mention-one"));
     MatchEloCalculator handler = Guido.getHandlers().getHandler(MatchEloCalculator.class);
     RanksHandler ranksHandler = Guido.getHandlers().getHandler(RanksHandler.class);
-    for (Linkable linkable : linkables) {
+    for (MinecraftLinkable linkable : linkables) {
       handler.setElo(linkable, false, ladder, true);
-      ranksHandler.update(linkable, guild);
+      ranksHandler.update(linkable);
     }
     return Result.of(locale.get("lose.updated"));
   }

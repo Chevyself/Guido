@@ -11,7 +11,6 @@ import me.googas.bot.GuidoBotRuntime;
 import me.googas.bot.api.Guido;
 import me.googas.bot.core.discord.GuidoGuild;
 import me.googas.bot.core.handlers.GuidoHandler;
-import me.googas.bot.core.util.Discord;
 import me.googas.starbox.events.ListenPriority;
 import me.googas.starbox.events.Listener;
 import net.dv8tion.jda.api.entities.Guild;
@@ -43,9 +42,7 @@ public class QueueChannelsHandler implements GuidoHandler {
   @SubscribeEvent
   public void onGuildVoiceMove(@NonNull GuildVoiceUpdateEvent event) {
     this.checkRemoveQueue(event.getChannelLeft(), event.getGuild(), event.getMember());
-    this.queues()
-        .joinQueueFromVoice(
-            event.getGuild().getIdLong(), event.getChannelJoined(), event.getMember());
+    this.queues().joinQueueFromVoice(event.getChannelJoined(), event.getMember());
   }
 
   /**
@@ -60,7 +57,8 @@ public class QueueChannelsHandler implements GuidoHandler {
     if (channelLeft == null) return;
     long guildId = guild.getIdLong();
     if (this.waiting == channelLeft.getIdLong()) {
-      DiscordLinkable member = Discord.getUser(discordMember.getIdLong());
+      DiscordLinkable member =
+          runtime.getLoader().getDiscordLinks().ensureByUser(discordMember.getUser());
       runtime
           .getLinkableMatcher()
           .getMinecraft(member)

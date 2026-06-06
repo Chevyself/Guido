@@ -7,30 +7,32 @@ import java.util.logging.Logger;
 import lombok.Getter;
 import lombok.NonNull;
 import me.googas.api.matches.MinecraftTeamSelectionType;
-import me.googas.api.matches.ladder.Ladder;
 import me.googas.api.utility.ImmutableCollection;
 import me.googas.bot.DiscordRankRange;
 import me.googas.bot.core.discord.GuidoGuild;
 import me.googas.bot.core.loader.mongo.MongoGuidoGuildLoader;
 import me.googas.bot.core.matches.ladder.GuidoLadder;
+import me.googas.bot.core.matches.ladder.PlayableLadder;
 import me.googas.starbox.logging.LoggerFactory;
 import org.bson.codecs.pojo.annotations.BsonId;
+import org.jetbrains.annotations.NotNull;
 
 public class MongoGuidoGuild implements GuidoGuild {
 
   private static final Logger logger = LoggerFactory.getLogger(MongoGuidoGuild.class);
 
   @BsonId @Getter private final long id;
-  @NonNull private final List<Ladder> ladders;
-  @NonNull private final Set<DiscordRankRange> ranges;
+  @NonNull private final List<GuidoLadder> ladders;
+  @NonNull private final List<DiscordRankRange> ranges;
   @Getter private long matchesChannelId;
   @Getter private long matchesCategoryId;
+  @Getter private long waitingVoiceChannelId;
   private transient MongoGuidoGuildLoader loader;
 
   public MongoGuidoGuild(long id) {
     this.id = id;
     this.ladders = new ArrayList<>();
-    this.ranges = new HashSet<>();
+    this.ranges = new ArrayList<>();
   }
 
   @NonNull
@@ -40,7 +42,7 @@ public class MongoGuidoGuild implements GuidoGuild {
   }
 
   @Override
-  public @NonNull ImmutableCollection<Ladder> getLadders() {
+  public @NonNull ImmutableCollection<? extends PlayableLadder> getLadders() {
     return new ImmutableCollection<>(this.ladders);
   }
 
@@ -83,11 +85,20 @@ public class MongoGuidoGuild implements GuidoGuild {
       int playersPerTeam,
       int baseElo,
       int teamsPerMatch,
+      double winMultiplier,
+      double loseMultiplier,
       MinecraftTeamSelectionType teamSelectionType) {
     if (noLoader(() -> String.format("Failed to add ladder to %s, loader has not been set", this)))
       return;
     GuidoLadder ladder =
-        new GuidoLadder(name, playersPerTeam, baseElo, teamsPerMatch, teamSelectionType);
+        new GuidoLadder(
+            name,
+            playersPerTeam,
+            baseElo,
+            teamsPerMatch,
+            winMultiplier,
+            loseMultiplier,
+            teamSelectionType);
     this.loader.addLadder(this, ladder);
     this.ladders.add(ladder);
   }
@@ -105,13 +116,37 @@ public class MongoGuidoGuild implements GuidoGuild {
     this.ladders.remove(index);
   }
 
+  @NotNull
   @Override
-  public void addRange(
+  public Optional<DiscordRankRange> addRange(
       @NonNull String ladderName, @NonNull String name, int min, int max, long roleId) {
     if (noLoader(() -> String.format("Failed to add range to %s, loader has not been set", this)))
-      return;
+      return Optional.empty();
     DiscordRankRange range = new DiscordRankRange(ladderName, name, min, max, roleId);
     this.loader.addRange(this, range);
     this.ranges.add(range);
+    return Optional.of(range);
+  }
+
+  @Override
+  public void removeRange(@NonNull DiscordRankRange range) {
+    if (noLoader(
+        () ->
+            String.format(
+                "Failed to remove range %s from %s, loader has not been set", range, this))) return;
+    int index = this.ranges.indexOf(range);
+    this.loader.removeRange(this, index);
+    this.ranges.remove(range);
+  }
+
+  @Override
+  public void setWaitingVoiceChannelId(long idLong) {
+    if (noLoader(
+        () ->
+            String.format(
+                "Failed to set waiting channel id for %s to %d, loader has not been set",
+                this, idLong))) return;
+    this.loader.setWaitingChannelId(this, idLong);
+    this.waitingVoiceChannelId = idLong;
   }
 }

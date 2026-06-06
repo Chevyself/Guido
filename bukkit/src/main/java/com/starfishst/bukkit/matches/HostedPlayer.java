@@ -4,14 +4,13 @@ import java.util.*;
 import java.util.stream.Collectors;
 import lombok.Getter;
 import lombok.NonNull;
-import me.googas.api.Stateable;
 import me.googas.api.matches.minecraft.MinecraftMatchTeamMember;
 import me.googas.api.utility.ImmutableCollection;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
 /** This is basically a minecraft linkable information */
-public class HostedPlayer implements Stateable {
+public class HostedPlayer {
 
   @NonNull @Getter private final UUID id;
   @NonNull @Getter private final Map<String, Map<String, Double>> stats;

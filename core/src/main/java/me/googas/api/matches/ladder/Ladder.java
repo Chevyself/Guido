@@ -37,4 +37,8 @@ public interface Ladder {
 
   @NonNull
   MinecraftTeamSelectionType getTeamSelectionType();
+
+  double getWinMultiplier();
+
+  double getLoseMultiplier();
 }

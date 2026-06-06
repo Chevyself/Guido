@@ -9,15 +9,13 @@ import lombok.NonNull;
 import me.googas.api.matches.ladder.Ladder;
 import me.googas.api.utility.Maps;
 import me.googas.bot.GuidoBotRuntime;
-import me.googas.bot.api.Guido;
-import me.googas.bot.core.discord.GuidoGuild;
 import me.googas.bot.core.util.Lang;
 
-public class LadderProvider implements JdaArgumentProvider<Ladder> {
+public class LadderArgumentProvider implements JdaArgumentProvider<Ladder> {
 
   @NonNull private final GuidoBotRuntime runtime;
 
-    public LadderProvider(@NonNull GuidoBotRuntime runtime) {
+    public LadderArgumentProvider(@NonNull GuidoBotRuntime runtime) {
         this.runtime = runtime;
     }
 

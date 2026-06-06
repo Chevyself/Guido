@@ -8,6 +8,7 @@ import com.mongodb.client.MongoDatabase;
 import lombok.Getter;
 import lombok.NonNull;
 import me.googas.api.loader.StatsLoader;
+import me.googas.bot.GuidoBotRuntime;
 import me.googas.bot.core.loader.GuidoLoader;
 import me.googas.bot.core.loader.mongo.types.*;
 import org.bson.codecs.configuration.CodecRegistries;
@@ -16,6 +17,7 @@ import org.bson.codecs.pojo.PojoCodecProvider;
 
 public final class MongoLoader implements GuidoLoader {
 
+  @NonNull @Getter private final GuidoBotRuntime runtime;
   @NonNull @Getter private final MongoClient client;
   @NonNull @Getter private final MongoDatabase database;
   @NonNull @Getter private final MongoTokenLoader tokens;
@@ -23,8 +25,13 @@ public final class MongoLoader implements GuidoLoader {
   @NonNull @Getter private final MongoMinecraftMatchLoader minecraftMatches;
   @NonNull @Getter private final MongoDiscordLinksLoader discordLinks;
   @NonNull @Getter private final MongoMinecraftLinksLoader minecraftLinks;
+  @NonNull @Getter private final MongoGuidoGuildLoader guidoGuildLoader;
 
-  public MongoLoader(@NonNull MongoClient client, @NonNull MongoDatabase database) {
+  public MongoLoader(
+      @NonNull GuidoBotRuntime runtime,
+      @NonNull MongoClient client,
+      @NonNull MongoDatabase database) {
+    this.runtime = runtime;
     this.client = client;
     this.database = database;
     this.tokens =
@@ -40,6 +47,9 @@ public final class MongoLoader implements GuidoLoader {
     this.minecraftLinks =
         new MongoMinecraftLinksLoader(
             this, this.database.getCollection("minecraft-links", MongoMinecraftLink.class));
+    this.guidoGuildLoader =
+        new MongoGuidoGuildLoader(
+            this, this.database.getCollection("guilds", MongoGuidoGuild.class));
   }
 
   @Override
@@ -49,7 +59,8 @@ public final class MongoLoader implements GuidoLoader {
   }
 
   @NonNull
-  public static MongoLoader join(@NonNull String uri, @NonNull String databaseName) {
+  public static MongoLoader join(
+      @NonNull GuidoBotRuntime runtime, @NonNull String uri, @NonNull String databaseName) {
     CodecRegistry codecRegistry =
         CodecRegistries.fromProviders(PojoCodecProvider.builder().automatic(true).build());
     MongoClientSettings settings =
@@ -58,6 +69,6 @@ public final class MongoLoader implements GuidoLoader {
             .codecRegistry(codecRegistry)
             .build();
     MongoClient mongoClient = MongoClients.create(settings);
-    return new MongoLoader(mongoClient, mongoClient.getDatabase(databaseName));
+    return new MongoLoader(runtime, mongoClient, mongoClient.getDatabase(databaseName));
   }
 }

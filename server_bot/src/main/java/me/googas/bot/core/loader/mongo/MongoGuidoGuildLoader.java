@@ -71,4 +71,15 @@ public class MongoGuidoGuildLoader extends SimpleMongoLoader implements GuidoGui
     this.collection.updateOne(
         Filters.eq("_id", mongoGuidoGuild.getId()), Updates.push("ranges", range));
   }
+
+  public void removeRange(@NonNull MongoGuidoGuild mongoGuidoGuild, int index) {
+    this.collection.updateOne(
+        Filters.eq("_id", mongoGuidoGuild.getId()), Updates.unset("ranges." + index));
+  }
+
+  public void setWaitingChannelId(@NonNull MongoGuidoGuild mongoGuidoGuild, long waitingChannelId) {
+    this.collection.updateOne(
+        Filters.eq("_id", mongoGuidoGuild.getId()),
+        Updates.set("waitingChannelId", waitingChannelId));
+  }
 }

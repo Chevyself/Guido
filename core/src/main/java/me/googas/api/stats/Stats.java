@@ -1,12 +1,18 @@
 package me.googas.api.stats;
 
 import java.util.Collection;
-import java.util.Map;
 import lombok.NonNull;
 import me.googas.api.matches.ladder.Ladder;
+import me.googas.api.utility.ImmutableMap;
 
 public interface Stats {
-  @NonNull static final String EMPTY_CONTEXT = "no-context";
+  @NonNull String EMPTY_CONTEXT = "no-context";
+  @NonNull String LADDER_ELO_SUFFIX = "-elo";
+  @NonNull String LADDER_WINS_SUFFIX = "-wins";
+  @NonNull String LADDER_LOSES_SUFFIX = "-loses";
+
+  @NonNull
+  StatsId getId();
 
   double getElo(@NonNull Ladder ladder, @NonNull Collection<Ladder> ladders);
 
@@ -19,5 +25,15 @@ public interface Stats {
   double getStat(@NonNull String key);
 
   @NonNull
-  Map<String, Double> getMap();
+  ImmutableMap<String, Double> getMap();
+
+  void increaseElo(@NonNull Ladder ladder, float winnersDifference);
+
+  void increaseWins(@NonNull Ladder ladder, float value);
+
+  void decreaseElo(@NonNull Ladder ladder, float losersDifference);
+
+  void increaseLoses(@NonNull Ladder ladder, int value);
+
+  void increasePlayed(@NonNull Ladder ladder, int value);
 }

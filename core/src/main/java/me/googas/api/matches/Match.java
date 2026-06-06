@@ -76,9 +76,15 @@ public interface Match {
     return Optional.ofNullable(team);
   }
 
+  int indexOf(@NonNull MatchTeam matchTeam);
+
   default void finish(@NonNull MatchTeam matchTeam) {
     this.finish(this.indexOf(matchTeam));
   }
 
-  int indexOf(@NonNull MatchTeam matchTeam);
+  void setWinnersDifference(int winnersDifference);
+
+  void setLosersDifference(int losersDifference);
+
+  void setStatus(@NonNull MatchStatus matchStatus);
 }

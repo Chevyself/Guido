@@ -5,7 +5,6 @@ import java.util.Map;
 import java.util.Optional;
 import lombok.Getter;
 import lombok.NonNull;
-import me.googas.api.ValuesMap;
 import me.googas.api.loader.Loader;
 import me.googas.api.token.AuthLevel;
 import me.googas.api.utility.Maps;
@@ -21,7 +20,8 @@ public class GuidoAuthenticator implements Authenticator<JsonClientThread> {
   @NonNull @Getter private final HashMap<Messenger, AuthLevel> levels = new HashMap<>();
 
   /** Each client and its provided information */
-  @NonNull @Getter private final HashMap<JsonClientThread, ValuesMap> info = new HashMap<>();
+  @NonNull @Getter
+  private final HashMap<JsonClientThread, Map<String, Object>> info = new HashMap<>();
 
   /** The required level for each receptor. By default all receptors have read_write */
   @NonNull @Getter
@@ -59,12 +59,13 @@ public class GuidoAuthenticator implements Authenticator<JsonClientThread> {
    */
   public Optional<JsonClientThread> getBungee() {
     JsonClientThread bungee = null;
+    /* TODO improve
     for (JsonClientThread client : this.info.keySet()) {
       if (this.info.get(client).getOr("bungee", Boolean.class, false)) {
         bungee = client;
         break;
       }
-    }
+    }*/
     return Optional.ofNullable(bungee);
   }
 

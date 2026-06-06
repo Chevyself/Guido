@@ -25,6 +25,7 @@ import me.googas.api.stats.StatsProvider;
 import me.googas.bot.api.Guido;
 import me.googas.bot.core.commands.*;
 import me.googas.bot.core.commands.administrative.*;
+import me.googas.bot.core.commands.middleware.EmbededResultHandler;
 import me.googas.bot.core.commands.providers.*;
 import me.googas.bot.core.handlers.GuidoHandler;
 import me.googas.bot.core.handlers.ranks.RanksProvider;
@@ -103,8 +104,9 @@ public class GuidoBot implements GuidoBotRuntime {
     registry.setupLoader(arguments).register(jda);
     MiddlewareRegistry<CommandContext> middlewareRegistry =
         new MiddlewareRegistry<CommandContext>()
-            .addGlobalMiddleware(
-                new GuidoPermissionChecker(registry.getLanguageHandler(), registry.getLoader()));
+            .addGlobalMiddlewares(
+                new GuidoPermissionChecker(registry.getLanguageHandler(), registry.getLoader()),
+                new EmbededResultHandler());
     ProvidersRegistry<CommandContext> providersRegistry =
         new ProvidersRegistry<CommandContext>()
             .addProviders(
@@ -112,13 +114,14 @@ public class GuidoBot implements GuidoBotRuntime {
                 new DiscordLinkableProvider(this),
                 new GuidoBotRuntimeProvider(this),
                 new GuildDataProvider(this),
-                new LadderProvider(this),
+                new LadderArgumentProvider(this),
                 new LinkableArrayProvider(),
                 new LinkableProvider(),
                 new LocaleFileProvider(),
                 new MinecraftLinkableProvider(this),
                 new MinecraftMatchProvider(this),
                 new MinecraftTeamSelectionTypeProvider(),
+                new PlayableLadderArgumentProvider(this),
                 new UserDataProvider(this),
                 new UserDataSenderProvider(this));
     CommandManager<CommandContext, JdaCommand> commandManager =
@@ -227,6 +230,11 @@ public class GuidoBot implements GuidoBotRuntime {
 
   @Override
   public @NonNull ListenerManager getListeners() {
+    return null;
+  }
+
+  @Override
+  public @NonNull GuidoHandlerRegistry getHandlers() {
     return null;
   }
 

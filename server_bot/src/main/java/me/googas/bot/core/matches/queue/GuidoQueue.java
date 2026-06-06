@@ -2,7 +2,6 @@ package me.googas.bot.core.matches.queue;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 import lombok.Getter;
 import lombok.NonNull;
@@ -43,9 +42,7 @@ public class GuidoQueue implements MinecraftQueue {
    */
   @NonNull
   public Ladder getLadder() {
-    return Objects.requireNonNull(
-        runtime.getLoader().getGuidoGuildLoader().getGuild().getLadder(this.ladder),
-        "Ladder was deleted?");
+    return runtime.getBotJda().getGuidoGuild().getLadder(this.ladder).orElseThrow();
   }
 
   @NonNull

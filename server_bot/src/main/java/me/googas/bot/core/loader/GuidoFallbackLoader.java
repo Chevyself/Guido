@@ -30,4 +30,19 @@ public class GuidoFallbackLoader implements GuidoLoader {
   public @NonNull MinecraftMatchLoader getMinecraftMatches() {
     throw new UnsupportedOperationException("Operations are not supported by fallback loader");
   }
+
+  @Override
+  public @NonNull MinecraftLinkableLoader getMinecraftLinks() {
+    throw new UnsupportedOperationException("Operations are not supported by fallback loader");
+  }
+
+  @Override
+  public @NonNull DiscordLinkableLoader getDiscordLinks() {
+    throw new UnsupportedOperationException("Operations are not supported by fallback loader");
+  }
+
+  @Override
+  public @NonNull GuidoGuildLoader getGuidoGuildLoader() {
+    throw new UnsupportedOperationException("Operations are not supported by fallback loader");
+  }
 }
