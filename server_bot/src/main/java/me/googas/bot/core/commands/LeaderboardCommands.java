@@ -12,7 +12,7 @@ import me.googas.api.matches.ladder.Ladder;
 import me.googas.api.stats.LeaderboardEntry;
 import me.googas.api.stats.Stats;
 import me.googas.api.utility.Maps;
-import me.googas.bot.api.Guido;
+import me.googas.bot.GuidoBotRuntime;
 import me.googas.bot.core.loader.GuidoLoader;
 
 /** Commands for leaderboard */
@@ -26,9 +26,10 @@ public class LeaderboardCommands {
       description = "lb.desc")
   public Result leaderboard(
       LocaleFile locale,
+      GuidoBotRuntime runtime,
       @Required(name = "lb.ladder", description = "lb.ladder.desc") Ladder ladder,
       @Free(name = "lb.page", description = "lb.page.desc", suggestions = "0") int page) {
-    GuidoLoader loader = Guido.getHandlers().getLoader();
+    GuidoLoader loader = runtime.getLoader();
     if (ladder instanceof GlobalLadder) return Result.of(locale.get("lb.not-global"));
     long max =
         loader
@@ -67,9 +68,10 @@ public class LeaderboardCommands {
       description = "table.desc")
   public Result ranking(
       LocaleFile locale,
+      GuidoBotRuntime runtime,
       @Required(name = "table.stat", description = "table.stat.desc") String stat,
       @Free(name = "table.page", description = "table.page.desc", suggestions = "0") int page) {
-    GuidoLoader loader = Guido.getHandlers().getLoader();
+    GuidoLoader loader = runtime.getLoader();
     long max = loader.getStats().maxPageLeaderboard(Stats.EMPTY_CONTEXT, stat, 20);
     if (page < 0) {
       page = 0;

@@ -75,7 +75,7 @@ public interface GuidoGuild {
   @NonNull
   default Guild toDiscord() {
     return Objects.requireNonNull(
-        Guido.getConnection().validatedJda().getGuildById(this.getId()),
+        Guido.getConnection().getJda().getGuildById(this.getId()),
         "Seems like the guild with the id " + this.getId() + " no longer exists");
   }
 

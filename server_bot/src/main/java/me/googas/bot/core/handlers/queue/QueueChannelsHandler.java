@@ -5,8 +5,6 @@ import java.util.Optional;
 import lombok.Getter;
 import lombok.NonNull;
 import me.googas.api.events.queue.MinecraftQueueLeaveEvent;
-import me.googas.api.links.DiscordLinkable;
-import me.googas.api.links.MinecraftLinkable;
 import me.googas.bot.GuidoBotRuntime;
 import me.googas.bot.api.Guido;
 import me.googas.bot.core.discord.GuidoGuild;
@@ -57,11 +55,13 @@ public class QueueChannelsHandler implements GuidoHandler {
     if (channelLeft == null) return;
     long guildId = guild.getIdLong();
     if (this.waiting == channelLeft.getIdLong()) {
-      DiscordLinkable member =
-          runtime.getLoader().getDiscordLinks().ensureByUser(discordMember.getUser());
       runtime
-          .getLinkableMatcher()
-          .getMinecraft(member)
+          .getLoader()
+          .getDiscordLinks()
+          .ensureByUser(discordMember.getUser())
+          .getLinkedUserId()
+          .flatMap(
+              linkedUserId -> runtime.getLoader().getMinecraftLinks().getByLinkedUser(linkedUserId))
           .ifPresent(minecraft -> this.queues().leaveQueue(minecraft));
       this.checkDeletion(channelLeft, guildId);
     }
@@ -99,11 +99,12 @@ public class QueueChannelsHandler implements GuidoHandler {
    */
   @Listener(priority = ListenPriority.HIGHEST)
   public void onQueueLeave(MinecraftQueueLeaveEvent event) {
-    MinecraftLinkable data = event.getMinecraft();
     Optional<Member> optional =
-        runtime
-            .getLinkableMatcher()
-            .getDiscord(data)
+        event
+            .getMinecraft()
+            .getLinkedUserId()
+            .flatMap(
+                linkedUserId -> runtime.getLoader().getDiscordLinks().getByLinkedUser(linkedUserId))
             .flatMap(discord -> discord.getMember(runtime.getBotJda()));
     if (optional.isEmpty()) return;
     Member member = optional.get();

@@ -143,7 +143,7 @@ public class MatchMakingChannelsHandler implements GuidoHandler {
   public void deleteVoices(@NonNull MinecraftMatch abstractMatch) {
     Map<Integer, Long> voices = this.getVoices(abstractMatch.getId());
     for (Long value : voices.values()) {
-      VoiceChannel voiceChannel = Guido.getConnection().validatedJda().getVoiceChannelById(value);
+      VoiceChannel voiceChannel = Guido.getConnection().getJda().getVoiceChannelById(value);
       this.deleteAndMove(voiceChannel);
     }
     this.teams.remove(abstractMatch.getId());

@@ -77,7 +77,10 @@ public class GuidoPGMQueue extends GuidoQueue {
   @Override
   public @NonNull QueueResult join(@NonNull MinecraftLinkable minecraft) {
     LocaleFile locale = Lang.getLocale(minecraft);
-    Optional<UserData> optional = runtime.getLinkableMatcher().getUserByLink(minecraft);
+    Optional<UserData> optional =
+        minecraft
+            .getLinkedUserId()
+            .flatMap(linkedUserId -> runtime.getLoader().getUsers().getById(linkedUserId));
     if (optional.isEmpty()) return new QueueResult(locale.get("pgm-queue.link-first"));
     if (isOnline(minecraft.getId())) {
       QueueResult join = super.join(minecraft);

@@ -2,6 +2,7 @@ package me.googas.api.links;
 
 import java.util.UUID;
 import lombok.NonNull;
+import me.googas.api.loader.Loader;
 
 /** This interface represents a linkable Minecraft account */
 public interface MinecraftLinkable extends Linkable {
@@ -26,7 +27,7 @@ public interface MinecraftLinkable extends Linkable {
   UUID getId();
 
   @Override
-  default @NonNull String getPublicDisplayName(@NonNull LinkableMatcher linkableMatcher) {
+  default @NonNull String getPublicDisplayName(@NonNull Loader loader) {
     return this.getNickname();
   }
 }

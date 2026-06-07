@@ -1,11 +1,8 @@
 package me.googas.bot.core.loader.types;
 
-import java.util.Optional;
 import java.util.UUID;
 import lombok.Getter;
 import lombok.NonNull;
-import me.googas.api.links.LinkableMatcher;
-import me.googas.api.links.MinecraftLinkable;
 import me.googas.api.matches.minecraft.MinecraftMatchTeamMember;
 import me.googas.api.matches.team.TeamRole;
 
@@ -17,11 +14,5 @@ public class GenericMinecraftMatchTeamMember implements MinecraftMatchTeamMember
   public GenericMinecraftMatchTeamMember(@NonNull UUID id, @NonNull TeamRole role) {
     this.id = id;
     this.role = role;
-  }
-
-  @Override
-  public @NonNull Optional<MinecraftLinkable> getLinkable(
-      @NonNull LinkableMatcher linkableMatcher) {
-    return linkableMatcher.getMinecraftById(id);
   }
 }

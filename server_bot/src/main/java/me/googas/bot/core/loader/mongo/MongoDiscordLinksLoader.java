@@ -4,8 +4,10 @@ import com.mongodb.client.MongoCollection;
 import com.mongodb.client.model.Filters;
 import com.mongodb.client.model.Updates;
 import java.util.Optional;
+import java.util.UUID;
 import lombok.Getter;
 import lombok.NonNull;
+import me.googas.api.links.DiscordLinkable;
 import me.googas.api.loader.DiscordLinkableLoader;
 import me.googas.api.user.UserData;
 import me.googas.bot.core.loader.mongo.types.MongoDiscordLinkable;
@@ -43,6 +45,16 @@ public class MongoDiscordLinksLoader extends SimpleMongoLoader implements Discor
   @Override
   public @NonNull MongoDiscordLinkable ensureByUser(@NonNull User user) {
     return this.getById(user.getIdLong()).orElseGet(() -> this.create(user));
+  }
+
+  @Override
+  public @NonNull Optional<DiscordLinkable> getByLinkedUser(@NonNull UUID linkedUserId) {
+    MongoDiscordLinkable match =
+        this.collection.find(Filters.eq("linkedUserId", linkedUserId)).first();
+    if (match != null) {
+      match.setLoader(this);
+    }
+    return Optional.ofNullable(match);
   }
 
   public void setLinkedUser(

@@ -65,7 +65,7 @@ public class MatchEloCalculator implements GuidoHandler {
           boolean event) {
     for (MinecraftMatchTeam matchTeam : match.getTeams()) {
       for (MinecraftMatchTeamMember member : matchTeam.getMembers()) {
-        member.getLinkable(runtime.getLinkableMatcher())
+        member.getLinkable(runtime.getLoader())
                 .ifPresent(data -> {
                   this.setElo(
                           data, null, matchTeam.equals(winners), ladder, winnersDifference, losersDifference, event);

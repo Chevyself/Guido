@@ -14,4 +14,7 @@ public interface MinecraftLinkableLoader extends DataLoader {
 
   @NonNull
   Optional<MinecraftLinkable> getById(@NonNull UUID minecraftId);
+
+  @NonNull
+  Optional<MinecraftLinkable> getByLinkedUser(@NonNull UUID linkedUserId);
 }

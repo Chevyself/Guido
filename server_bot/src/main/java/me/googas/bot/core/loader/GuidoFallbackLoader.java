@@ -9,9 +9,6 @@ import me.googas.api.loader.*;
  */
 public class GuidoFallbackLoader implements GuidoLoader {
   @Override
-  public void onDisable() {}
-
-  @Override
   public @NonNull TokenLoader getTokens() {
     throw new UnsupportedOperationException("Operations are not supported by fallback loader");
   }

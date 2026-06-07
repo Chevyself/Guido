@@ -6,7 +6,6 @@ import java.util.Optional;
 import java.util.Set;
 import lombok.Getter;
 import lombok.NonNull;
-import me.googas.api.links.DiscordLinkable;
 import me.googas.api.links.MinecraftLinkable;
 import me.googas.api.matches.minecraft.MinecraftMatchTeamMember;
 import me.googas.api.matches.queue.MinecraftQueue;
@@ -112,8 +111,15 @@ public class QueueHandler implements GuidoHandler {
   public QueueResult joinQueue(
       @NonNull GuidoGuild guild, @NonNull Member member, @NonNull PlayableLadder ladder) {
     MinecraftQueue queue = this.getQueue(ladder);
-    DiscordLinkable discord = runtime.getLoader().getDiscordLinks().ensureByMember(member);
-    Optional<MinecraftLinkable> optional = runtime.getLinkableMatcher().getMinecraft(discord);
+    Optional<MinecraftLinkable> optional =
+        runtime
+            .getLoader()
+            .getDiscordLinks()
+            .ensureByMember(member)
+            .getLinkedUserId()
+            .flatMap(
+                linkedUserId ->
+                    runtime.getLoader().getMinecraftLinks().getByLinkedUser(linkedUserId));
     if (optional.isEmpty()) return new QueueResult();
     QueueResult join = queue.join(optional.get());
     if (join.isCancelled()) return join;
@@ -148,9 +154,16 @@ public class QueueHandler implements GuidoHandler {
    * @return true if the member is waiting in the queue
    */
   public boolean isWaiting(@NonNull Member member, @NonNull PlayableLadder ladder) {
-    DiscordLinkable memberData = runtime.getLoader().getDiscordLinks().ensureByMember(member);
     MinecraftQueue queue = this.getQueue(ladder);
-    Optional<MinecraftLinkable> optional = runtime.getLinkableMatcher().getMinecraft(memberData);
+    Optional<MinecraftLinkable> optional =
+        runtime
+            .getLoader()
+            .getDiscordLinks()
+            .ensureByMember(member)
+            .getLinkedUserId()
+            .flatMap(
+                linkedUserId ->
+                    runtime.getLoader().getMinecraftLinks().getByLinkedUser(linkedUserId));
     return optional.filter(queue::isWaiting).isPresent();
   }
 

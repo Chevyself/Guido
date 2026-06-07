@@ -137,8 +137,7 @@ public class MatchCommands {
         .map(
             match ->
                 (Result)
-                    new EmbededResult(
-                        Matches.getInformation(match, locale, runtime.getLinkableMatcher())))
+                    new EmbededResult(Matches.getInformation(match, locale, runtime.getLoader())))
         .orElse(Result.of(locale.get("game.not-found", Maps.singleton("id", id))));
   }
 
@@ -197,10 +196,12 @@ public class MatchCommands {
     if (member != null) {
       // member.getIdLong(), member.getGuild().getIdLong()
       DiscordLinkable link = runtime.getLoader().getDiscordLinks().ensureByUser(member.getUser());
-      Optional<UserData> optional = runtime.getLinkableMatcher().getUserByLink(link);
+      Optional<UserData> optional =
+          link.getLinkedUserId()
+              .flatMap(linkedUserId -> runtime.getLoader().getUsers().getById(linkedUserId));
       if (optional.isPresent()) {
         playing = handler.getPlaying(optional.get());
-        single = link.getPublicDisplayName(runtime.getLinkableMatcher());
+        single = link.getPublicDisplayName(runtime.getLoader());
       } else {
         playing = handler.getPlaying(sender);
       }

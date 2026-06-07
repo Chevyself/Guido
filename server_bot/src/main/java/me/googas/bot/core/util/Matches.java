@@ -5,7 +5,7 @@ import java.util.Map;
 import java.util.Set;
 import lombok.NonNull;
 import me.googas.api.lang.LocaleFile;
-import me.googas.api.links.LinkableMatcher;
+import me.googas.api.loader.Loader;
 import me.googas.api.matches.Match;
 import me.googas.api.matches.MatchStatus;
 import me.googas.api.matches.MatchTeam;
@@ -37,26 +37,24 @@ public class Matches {
    */
   @NonNull
   public static EmbedBuilder getInformation(
-      @NonNull Match match, @NonNull LocaleFile locale, @NonNull LinkableMatcher linkableMatcher) {
+      @NonNull Match match, @NonNull LocaleFile locale, @NonNull Loader loader) {
     EmbedBuilder builder = new EmbedBuilder();
     Map<String, String> placeholders = Maps.singleton("id", match.getId().toString());
     builder.setTitle(locale.get("match.title", placeholders));
     builder.setFooter(locale.get("footer"));
     builder.setColor(Matches.getColor(match.getStatus()));
     builder.setDescription(locale.get("match.description", placeholders));
-    Matches.appendTeams(match, builder, linkableMatcher);
+    Matches.appendTeams(match, builder, loader);
     match.appendDetails(builder);
     return builder;
   }
 
   public static void appendTeams(
-      @NonNull Match match,
-      @NonNull EmbedBuilder builder,
-      @NonNull LinkableMatcher linkableMatcher) {
+      @NonNull Match match, @NonNull EmbedBuilder builder, @NonNull Loader loader) {
     for (MatchTeam matchTeam : match.getTeams()) {
       builder.addField(
           Matches.getTitle(matchTeam, match),
-          Lots.pretty(matchTeam.getMemberPublicDisplay(linkableMatcher), "[]"),
+          Lots.pretty(matchTeam.getMemberPublicDisplay(loader), "[]"),
           false);
     }
   }

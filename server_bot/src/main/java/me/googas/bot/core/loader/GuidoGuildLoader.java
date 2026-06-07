@@ -6,5 +6,9 @@ import net.dv8tion.jda.api.entities.Guild;
 
 public interface GuidoGuildLoader {
   @NonNull
-  GuidoGuild getGuild(@NonNull Guild guild);
+  default GuidoGuild getGuild(@NonNull Guild guild) {
+    return this.getGuildOrCreate(guild.getIdLong());
+  }
+
+  GuidoGuild getGuildOrCreate(long id);
 }

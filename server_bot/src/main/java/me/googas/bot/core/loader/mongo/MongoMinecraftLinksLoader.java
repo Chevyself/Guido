@@ -51,6 +51,16 @@ public class MongoMinecraftLinksLoader extends SimpleMongoLoader
     return Optional.ofNullable(match);
   }
 
+  @Override
+  public @NonNull Optional<MinecraftLinkable> getByLinkedUser(@NonNull UUID linkedUserId) {
+    MongoMinecraftLink match =
+        this.collection.find(Filters.eq("linkedUserId", linkedUserId)).first();
+    if (match != null) {
+      match.setLoader(this);
+    }
+    return Optional.ofNullable(match);
+  }
+
   public void setLinkedUser(
       @NonNull MongoMinecraftLink mongoMinecraftLink, @NonNull UserData user) {
     this.collection.updateOne(

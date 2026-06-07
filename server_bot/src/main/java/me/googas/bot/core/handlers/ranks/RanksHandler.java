@@ -15,9 +15,9 @@ import me.googas.api.matches.MatchTeamMember;
 import me.googas.api.matches.ladder.GlobalLadder;
 import me.googas.api.matches.ladder.Ladder;
 import me.googas.api.utility.Stateables;
-import me.googas.bot.BotJdaProvider;
 import me.googas.bot.DiscordRankRange;
 import me.googas.bot.GuidoBotRuntime;
+import me.googas.bot.GuidoJdaProvider;
 import me.googas.bot.api.events.data.links.LinkableRankUpdatedEvent;
 import me.googas.bot.core.handlers.GuidoHandler;
 import me.googas.starbox.events.ListenPriority;
@@ -57,8 +57,7 @@ public class RanksHandler implements GuidoHandler {
   public void update(@NonNull Match match, boolean event) {
     for (MatchTeam matchTeam : match.getTeams()) {
       for (MatchTeamMember teamMember : matchTeam.getMembers()) {
-        Optional<? extends Linkable> optional =
-            teamMember.getLinkable(runtime.getLinkableMatcher());
+        Optional<? extends Linkable> optional = teamMember.getLinkable(runtime.getLoader());
         if (optional.isEmpty()) {
           logger.warning(
               String.format(
@@ -81,7 +80,12 @@ public class RanksHandler implements GuidoHandler {
       double elo = linkable.getStats(runtime.getStatsProvider()).getElo(ladder, ladders);
       result.append(this.update(elo, ranges));
     }
-    Optional<DiscordLinkable> optional = runtime.getLinkableMatcher().getDiscord(linkable);
+    Optional<DiscordLinkable> optional =
+        linkable
+            .getLinkedUserId()
+            .flatMap(
+                linkedUserId ->
+                    runtime.getLoader().getDiscordLinks().getByLinkedUser(linkedUserId));
     if (optional.isEmpty()) {
       logger.warning(
           String.format(
@@ -98,7 +102,7 @@ public class RanksHandler implements GuidoHandler {
       UpdateResult result,
       @NonNull DiscordLinkable discord,
       Collection<Ladder> ladders) {
-    BotJdaProvider jdaProvider = runtime.getBotJda();
+    GuidoJdaProvider jdaProvider = runtime.getBotJda();
     Optional<Member> optional = discord.getMember(jdaProvider);
     if (optional.isEmpty()) {
       logger.warning(
@@ -140,7 +144,7 @@ public class RanksHandler implements GuidoHandler {
   public void updateNickname(
       @NonNull Linkable linkable, Member member, Collection<Ladder> ladders) {
     if (!member.isOwner()) {
-      String nick = linkable.getPublicDisplayName(runtime.getLinkableMatcher());
+      String nick = linkable.getPublicDisplayName(runtime.getLoader());
       member
           .modifyNickname(
               "["

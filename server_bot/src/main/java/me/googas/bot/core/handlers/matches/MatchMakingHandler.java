@@ -10,6 +10,7 @@ import me.googas.api.events.match.MinecraftMatchRemoveTeamEvent;
 import me.googas.api.events.match.MinecraftMatchStatusUpdatedEvent;
 import me.googas.api.events.queue.MinecraftQueueJoinEvent;
 import me.googas.api.lang.LocaleFile;
+import me.googas.api.links.Linkable;
 import me.googas.api.links.MinecraftLinkable;
 import me.googas.api.matches.MatchStatus;
 import me.googas.api.matches.minecraft.MinecraftMatch;
@@ -61,7 +62,7 @@ public class MatchMakingHandler implements GuidoHandler {
     MinecraftMatch match = event.getMatch();
     TextChannel channel = runtime.getBotJda().getGuidoGuild().getMatchesTextChannel();
     LocaleFile locale = Guido.getHandlers().getLanguageHandler().getDefault();
-    EmbedBuilder information = Matches.getInformation(match, locale, runtime.getLinkableMatcher());
+    EmbedBuilder information = Matches.getInformation(match, locale, runtime.getLoader());
     if (event.getStatus() == MatchStatus.FINISHED) {
       information.setTitle(
           locale.get("match.announce.title", Maps.singleton("id", match.getId().toString())));
@@ -109,8 +110,10 @@ public class MatchMakingHandler implements GuidoHandler {
         Permission.VOICE_USE_VAD);
     for (MinecraftMatchTeamMember participant : minecraftMatch.getParticipants()) {
       participant
-          .getLinkable(runtime.getLinkableMatcher())
-          .flatMap(minecraft -> runtime.getLinkableMatcher().getDiscord(minecraft))
+          .getLinkable(runtime.getLoader())
+          .flatMap(Linkable::getLinkedUserId)
+          .flatMap(
+              linkedUserId -> runtime.getLoader().getDiscordLinks().getByLinkedUser(linkedUserId))
           .flatMap(discord -> discord.getMember(runtime.getBotJda()))
           .ifPresent(
               member -> {
@@ -159,8 +162,10 @@ public class MatchMakingHandler implements GuidoHandler {
         Permission.VOICE_USE_VAD);
     for (MinecraftMatchTeamMember member : matchTeam.getMembers()) {
       member
-          .getLinkable(runtime.getLinkableMatcher())
-          .flatMap(minecraft -> runtime.getLinkableMatcher().getDiscord(minecraft))
+          .getLinkable(runtime.getLoader())
+          .flatMap(Linkable::getLinkedUserId)
+          .flatMap(
+              linkedUserId -> runtime.getLoader().getDiscordLinks().getByLinkedUser(linkedUserId))
           .flatMap(discord -> discord.getMember(runtime.getBotJda()))
           .ifPresent(
               discordMember -> {
@@ -195,8 +200,9 @@ public class MatchMakingHandler implements GuidoHandler {
     Map<Integer, Long> voices = this.channels().getVoices(abstractMatch.getId());
     MinecraftMatchTeam team = event.getTeam();
     VoiceChannel channel =
-        Guido.getConnection()
-            .validatedJda()
+        runtime
+            .getJdaConnection()
+            .getJda()
             .getVoiceChannelById(voices.getOrDefault(team.getId(), -1L));
     this.channels().deleteAndMove(channel);
     voices.remove(team.getId());
@@ -219,9 +225,9 @@ public class MatchMakingHandler implements GuidoHandler {
    * @return the collection of matches where the user is playing
    */
   public Collection<MinecraftMatch> getPlaying(@NonNull UserData data) {
-    GuidoLoader loader = Guido.getHandlers().getLoader();
+    GuidoLoader loader = runtime.getLoader();
     Optional<MinecraftLinkable> minecraft =
-        runtime.getLinkableMatcher().getMinecraftByLinkedUser(data.getId());
+        runtime.getLoader().getMinecraftLinks().getByLinkedUser(data.getId());
     Collection<MinecraftMatch> participating = new HashSet<>();
     if (minecraft.isEmpty()) return participating;
     participating.addAll(
@@ -239,14 +245,14 @@ public class MatchMakingHandler implements GuidoHandler {
   /** Wake up queues waiting for server */
   @Receptor(Requests.MatchServer.SERVER_READY)
   public void serverReady() {
-    for (MatchHandler handler : Guido.getHandlers().getHandlers(MatchHandler.class)) {
+    for (MatchHandler handler : runtime.getHandlers().getHandlers(MatchHandler.class)) {
       handler.serverReady();
     }
   }
 
   @NonNull
   private MatchMakingChannelsHandler channels() {
-    return Guido.getHandlers().getHandler(MatchMakingChannelsHandler.class);
+    return runtime.getHandlers().getHandler(MatchMakingChannelsHandler.class);
   }
 
   @Override

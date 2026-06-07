@@ -19,10 +19,6 @@ import me.googas.bot.core.handlers.queue.QueueHandler;
 import me.googas.bot.core.handlers.ranks.RanksHandler;
 import me.googas.bot.core.handlers.test.TestHandler;
 import me.googas.bot.core.lang.GuidoLanguageHandler;
-import me.googas.bot.core.loader.GuidoFallbackLoader;
-import me.googas.bot.core.loader.GuidoLoader;
-import me.googas.bot.core.loader.mongo.MongoLoader;
-import me.googas.starbox.ProgramArguments;
 import net.dv8tion.jda.api.JDA;
 
 public class GuidoHandlerRegistry {
@@ -88,41 +84,19 @@ public class GuidoHandlerRegistry {
     return handlers;
   }
 
-  public void register(@NonNull JDA jda) {
+  public GuidoHandlerRegistry register(@NonNull JDA jda) {
     for (GuidoHandler handler : this.primaryHandlers) {
       this.register(jda, handler);
     }
     for (GuidoHandler handler : this.defaultHandlers) {
       this.register(jda, handler);
     }
+    return this;
   }
 
   public void register(@NonNull JDA jda, @NonNull GuidoHandler handler) {
     handler.register(jda).onEnable();
     this.registered.add(handler);
-  }
-
-  @NonNull
-  public GuidoHandlerRegistry setupLoader(@NonNull ProgramArguments arguments) {
-    // TODO check if a loader has already been registered and unregister it
-    GuidoLoader loader = new GuidoFallbackLoader();
-    if (arguments.containsKey("loader")) {
-      String loaderName = arguments.getProperty("loader");
-      if (loaderName.equalsIgnoreCase("jsongo")) {
-        try {
-          loader =
-              MongoLoader.join(
-                  runtime,
-                  arguments.getProperty("uri", "none"),
-                  arguments.getProperty("database", "testing-database"));
-        } catch (Exception e) {
-          e.printStackTrace();
-        }
-      }
-    }
-    this.primaryHandlers.add(new GuidoLanguageHandler(this.runtime, loader).load(runtime, "en"));
-    this.primaryHandlers.add(loader);
-    return this;
   }
 
   public void unregister() {
@@ -140,10 +114,5 @@ public class GuidoHandlerRegistry {
   @NonNull
   public GuidoLanguageHandler getLanguageHandler() {
     return this.getHandler(GuidoLanguageHandler.class);
-  }
-
-  @NonNull
-  public GuidoLoader getLoader() {
-    return this.getHandler(GuidoLoader.class);
   }
 }

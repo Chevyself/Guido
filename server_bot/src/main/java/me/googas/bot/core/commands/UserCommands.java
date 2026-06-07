@@ -12,12 +12,12 @@ import java.util.Optional;
 import lombok.NonNull;
 import me.googas.api.lang.LocaleFile;
 import me.googas.api.links.Linkable;
-import me.googas.api.links.LinkableMatcher;
 import me.googas.api.links.MinecraftLinkable;
 import me.googas.api.stats.Stats;
 import me.googas.api.stats.StatsProvider;
 import me.googas.api.user.UserData;
 import me.googas.api.utility.Maps;
+import me.googas.bot.GuidoBotRuntime;
 import me.googas.bot.api.Guido;
 import me.googas.bot.core.discord.GuidoGuild;
 import me.googas.bot.core.handlers.link.LinkHandler;
@@ -37,7 +37,7 @@ public class UserCommands {
   public Result links(
       LocaleFile locale,
       UserData sender,
-      LinkableMatcher matcher,
+      GuidoBotRuntime runtime,
       @Free(name = "links.user", description = "links.user.desc") UserData that) {
     UserData toSee;
     if (that != null) {
@@ -45,7 +45,7 @@ public class UserCommands {
     } else {
       toSee = sender;
     }
-    Collection<Linkable> links = matcher.getLinkedAccounts(toSee);
+    Collection<Linkable> links = toSee.getLinkedAccounts(runtime.getLoader());
     Map<String, String> placeholders = Maps.singleton("id", toSee.getId().toString());
     if (links.isEmpty()) {
       return Result.of(locale.get("links.empty", placeholders));
@@ -53,7 +53,7 @@ public class UserCommands {
       StringBuilder builder = new StringBuilder();
       builder.append(locale.get("links.title", placeholders));
       for (Linkable link : links) {
-        builder.append("\n - ").append(link.getPublicDisplayName(matcher));
+        builder.append("\n - ").append(link.getPublicDisplayName(runtime.getLoader()));
       }
       return Result.of(builder.toString(), Duration.ofSeconds(5));
     }
@@ -71,7 +71,7 @@ public class UserCommands {
   public Result link(
       LocaleFile locale,
       UserData user,
-      LinkableMatcher matcher,
+      GuidoBotRuntime runtime,
       @Required(name = "link.code", description = "link.code.desc") String code) {
     Linkable link = Guido.getHandlers().getHandler(LinkHandler.class).getLinkable(code);
     if (link == null) {
@@ -79,7 +79,9 @@ public class UserCommands {
     }
     link.setLinkedUser(user);
     return Result.of(
-        locale.get("link.added", Maps.singleton("readable", link.getPublicDisplayName(matcher))));
+        locale.get(
+            "link.added",
+            Maps.singleton("readable", link.getPublicDisplayName(runtime.getLoader()))));
   }
 
   @Command(aliases = "stats", description = "guido.stats.desc")
@@ -88,13 +90,15 @@ public class UserCommands {
       GuidoGuild guild,
       LocaleFile locale,
       UserData data,
-      LinkableMatcher matcher,
-      StatsProvider statsProvider,
+      GuidoBotRuntime runtime,
       @Free(name = "stats.name", description = "stats.name.desc") String nickname) {
-    Optional<MinecraftLinkable> optional = matcher.getMinecraftByLinkedUser(data.getId());
+    Optional<MinecraftLinkable> optional =
+        runtime.getLoader().getMinecraftLinks().getByLinkedUser(data.getId());
     return optional
         .map(
-            linkable -> Result.of(this.buildStats(guild, statsProvider, locale, context, linkable)))
+            linkable ->
+                Result.of(
+                    this.buildStats(guild, runtime.getStatsProvider(), locale, context, linkable)))
         .orElseGet(() -> Result.of(locale.get("stats.not-linked")));
   }
 

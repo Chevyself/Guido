@@ -2,7 +2,7 @@ package me.googas.api.matches;
 
 import java.util.Collection;
 import lombok.NonNull;
-import me.googas.api.links.LinkableMatcher;
+import me.googas.api.loader.Loader;
 import me.googas.api.utility.ImmutableCollection;
 
 public interface MatchTeam {
@@ -16,5 +16,5 @@ public interface MatchTeam {
   String getName();
 
   @NonNull
-  Collection<String> getMemberPublicDisplay(@NonNull LinkableMatcher linkableMatcher);
+  Collection<String> getMemberPublicDisplay(@NonNull Loader loader);
 }

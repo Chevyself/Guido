@@ -38,7 +38,11 @@ public class MinecraftLinkableProvider implements JdaArgumentProvider<MinecraftL
               try {
                 DiscordLinkable discord =
                     context.getProvidersRegistry().fromString(s, DiscordLinkable.class, context);
-                return runtime.getLinkableMatcher().getMinecraft(discord);
+                return discord
+                    .getLinkedUserId()
+                    .flatMap(
+                        linkedUserId ->
+                            runtime.getLoader().getMinecraftLinks().getByLinkedUser(linkedUserId));
               } catch (ArgumentProviderException ignored) {
                 return Optional.empty();
               }

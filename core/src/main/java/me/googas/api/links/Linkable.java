@@ -3,6 +3,7 @@ package me.googas.api.links;
 import java.util.Optional;
 import java.util.UUID;
 import lombok.NonNull;
+import me.googas.api.loader.Loader;
 import me.googas.api.stats.Stats;
 import me.googas.api.stats.StatsProvider;
 import me.googas.api.user.UserData;
@@ -16,7 +17,7 @@ public interface Linkable {
   Stats getStats(@NonNull StatsProvider statsProvider);
 
   @NonNull
-  String getPublicDisplayName(@NonNull LinkableMatcher linkableMatcher);
+  String getPublicDisplayName(@NonNull Loader loader);
 
   void setLinkedUser(@NonNull UserData user);
 

@@ -21,8 +21,8 @@ public class MongoUserLoader extends SimpleMongoLoader implements UserLoader {
     this.collection = collection;
   }
 
-  @NonNull
-  public Optional<MongoUserData> getUserData(@NonNull UUID id) {
+  @Override
+  public @NonNull Optional<MongoUserData> getById(@NonNull UUID id) {
     MongoUserData match = collection.find(Filters.eq("_id", id)).first();
     return Optional.ofNullable(match);
   }
@@ -39,7 +39,7 @@ public class MongoUserLoader extends SimpleMongoLoader implements UserLoader {
         .getDiscordLinks()
         .ensureByUser(user)
         .getLinkedUserId()
-        .flatMap(this::getUserData)
+        .flatMap(this::getById)
         .orElseThrow();
   }
 }

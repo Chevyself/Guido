@@ -11,7 +11,6 @@ import me.googas.bot.core.discord.GuidoGuild;
 import me.googas.bot.core.loader.GuidoGuildLoader;
 import me.googas.bot.core.loader.mongo.types.MongoGuidoGuild;
 import me.googas.bot.core.matches.ladder.GuidoLadder;
-import net.dv8tion.jda.api.entities.Guild;
 
 public class MongoGuidoGuildLoader extends SimpleMongoLoader implements GuidoGuildLoader {
 
@@ -33,16 +32,16 @@ public class MongoGuidoGuildLoader extends SimpleMongoLoader implements GuidoGui
   }
 
   @NonNull
-  private MongoGuidoGuild create(@NonNull Guild guild) {
-    MongoGuidoGuild created = new MongoGuidoGuild(guild.getIdLong());
+  private MongoGuidoGuild create(long id) {
+    MongoGuidoGuild created = new MongoGuidoGuild(id);
     this.collection.insertOne(created);
     created.setLoader(this);
     return created;
   }
 
   @Override
-  public @NonNull GuidoGuild getGuild(@NonNull Guild guild) {
-    return this.getById(guild.getIdLong()).orElseGet(() -> this.create(guild));
+  public @NonNull GuidoGuild getGuildOrCreate(long id) {
+    return this.getById(id).orElseGet(() -> this.create(id));
   }
 
   public void setMatchesChannelId(@NonNull MongoGuidoGuild mongoGuidoGuild, long matchesChannelId) {
