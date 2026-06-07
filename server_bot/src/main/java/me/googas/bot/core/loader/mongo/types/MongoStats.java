@@ -1,6 +1,5 @@
 package me.googas.bot.core.loader.mongo.types;
 
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
@@ -10,6 +9,7 @@ import lombok.NonNull;
 import me.googas.api.matches.ladder.GlobalLadder;
 import me.googas.api.matches.ladder.Ladder;
 import me.googas.api.stats.Stats;
+import me.googas.api.utility.ImmutableCollection;
 import me.googas.api.utility.ImmutableMap;
 import me.googas.bot.core.loader.mongo.MongoStatsLoader;
 import me.googas.bot.core.loader.types.GenericStatsId;
@@ -34,7 +34,9 @@ public class MongoStats implements Stats {
     return this;
   }
 
-  public double getElo(@NonNull Ladder ladder, @NonNull Collection<Ladder> ladders) {
+  @Override
+  public double getElo(
+      @NonNull Ladder ladder, @NonNull ImmutableCollection<? extends Ladder> ladders) {
     if (!(ladder instanceof GlobalLadder)) return this.getElo(ladder);
     double sum = 0;
     int total = ladders.size();

@@ -134,7 +134,7 @@ public class MatchEloCalculator implements GuidoHandler {
    */
   public void voidMatch(@NonNull MinecraftMatch match, boolean setVoided) {
     Optional<MatchTeam> optionalWinners = match.getWinners();
-    Optional<Ladder> optionalLadder = runtime.getLadderProvider().getByName(match.getLadderName());
+    Optional<? extends Ladder> optionalLadder = runtime.getLadderProvider().getByName(match.getLadderName());
     if (setVoided) match.setStatus(MatchStatus.VOIDED);
     if (optionalWinners.isEmpty() || optionalLadder.isEmpty()) return;
     MatchTeam winners = optionalWinners.get();
@@ -204,7 +204,7 @@ public class MatchEloCalculator implements GuidoHandler {
    */
   public void setElo(@NonNull MinecraftMatch match, boolean event) {
     Optional<MatchTeam> optionalWinners = match.getWinners();
-    Optional<Ladder> optionalLadder = runtime.getLadderProvider().getByName(match.getLadderName());
+    Optional<? extends Ladder> optionalLadder = runtime.getLadderProvider().getByName(match.getLadderName());
     if (optionalLadder.isEmpty() || optionalWinners.isEmpty()) return;
     MatchTeam matchTeam = optionalWinners.get();
     Ladder ladder = optionalLadder.get();

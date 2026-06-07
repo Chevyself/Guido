@@ -10,23 +10,21 @@ import com.github.chevyself.starbox.registry.ProvidersRegistry;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Objects;
 import java.util.Timer;
 import java.util.logging.Formatter;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import lombok.Getter;
 import lombok.NonNull;
-import me.googas.api.matches.ladder.LadderProvider;
 import me.googas.api.server.GuidoAuthenticator;
 import me.googas.api.server.receptors.*;
-import me.googas.api.stats.StatsProvider;
 import me.googas.bot.api.Guido;
 import me.googas.bot.core.commands.*;
 import me.googas.bot.core.commands.administrative.*;
 import me.googas.bot.core.commands.middleware.EmbededResultHandler;
 import me.googas.bot.core.commands.providers.*;
 import me.googas.bot.core.handlers.GuidoHandler;
-import me.googas.bot.core.handlers.ranks.RanksProvider;
 import me.googas.bot.core.loader.GuidoFallbackLoader;
 import me.googas.bot.core.loader.GuidoLoader;
 import me.googas.bot.core.loader.mongo.MongoLoader;
@@ -61,10 +59,14 @@ public class GuidoBot implements GuidoBotRuntime {
   @NonNull @Getter private final GuidoJdaConnection jdaConnection = new GuidoJdaConnection();
   @NonNull @Getter private final ListenerManager listeners = new ListenerManager();
   @NonNull @Getter private final Scheduler scheduler = new TimerScheduler(new Timer());
+  @NonNull @Getter private final GuidoJdaProvider jdaProvider = new GuidoJdaProvider(this);
+  @NonNull @Getter private final GuidoLadderProvider ladderProvider = new GuidoLadderProvider(this);
+  @NonNull @Getter private final GuidoRanksProvider ranksProvider = new GuidoRanksProvider(this);
+  @NonNull @Getter private final GuidoStatsProvider statsProvider = new GuidoStatsProvider(this);
   @NonNull @Getter private GuidoLoader loader = new GuidoFallbackLoader();
   @NonNull @Getter private Server<JsonClientThread> server = new GuidoFallbackServer();
 
-  @Getter private CommandManager<CommandContext, JdaCommand> commandManager;
+  private CommandManager<CommandContext, JdaCommand> commandManager;
 
   public GuidoBot(@NonNull GuidoServerRuntime parentRuntime) {
     this.parentRuntime = parentRuntime;
@@ -221,24 +223,16 @@ public class GuidoBot implements GuidoBotRuntime {
     return true;
   }
 
+  @NonNull
+  public CommandManager<CommandContext, JdaCommand> getCommandManager() {
+    return Objects.requireNonNull(
+        this.commandManager, "Command manager may not have been initialized yet");
+  }
+
   @Override
   public @NonNull GuidoJdaProvider getBotJda() {
-    return null;
-  }
-
-  @Override
-  public @NonNull LadderProvider getLadderProvider() {
-    return null;
-  }
-
-  @Override
-  public @NonNull RanksProvider getRanksProvider() {
-    return null;
-  }
-
-  @Override
-  public @NonNull StatsProvider getStatsProvider() {
-    return null;
+    return Objects.requireNonNull(
+        this.jdaProvider, "Jda provider may not have been initialized yet");
   }
 
   @Override

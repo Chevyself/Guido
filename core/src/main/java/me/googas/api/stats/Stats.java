@@ -1,8 +1,8 @@
 package me.googas.api.stats;
 
-import java.util.Collection;
 import lombok.NonNull;
 import me.googas.api.matches.ladder.Ladder;
+import me.googas.api.utility.ImmutableCollection;
 import me.googas.api.utility.ImmutableMap;
 
 public interface Stats {
@@ -14,7 +14,7 @@ public interface Stats {
   @NonNull
   StatsId getId();
 
-  double getElo(@NonNull Ladder ladder, @NonNull Collection<Ladder> ladders);
+  double getElo(@NonNull Ladder ladder, @NonNull ImmutableCollection<? extends Ladder> ladders);
 
   double getElo(@NonNull Ladder ladder);
 

@@ -34,7 +34,7 @@ public final class ImmutableCollection<E> implements Iterable<E> {
     return elements.isEmpty();
   }
 
-  public double size() {
+  public int size() {
     return elements.size();
   }
 }

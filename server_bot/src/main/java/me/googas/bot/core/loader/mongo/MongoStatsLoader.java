@@ -8,7 +8,6 @@ import java.util.Optional;
 import java.util.UUID;
 import lombok.Getter;
 import lombok.NonNull;
-import me.googas.api.links.MinecraftLinkable;
 import me.googas.api.loader.StatsLoader;
 import me.googas.api.matches.ladder.Ladder;
 import me.googas.api.stats.LeaderboardEntry;
@@ -67,12 +66,9 @@ public class MongoStatsLoader extends SimpleMongoLoader implements StatsLoader {
   }
 
   @Override
-  public @NonNull MongoStats getForMinecraftLink(
-      @NonNull MinecraftLinkable minecraftLink, @NonNull String context) {
-    return this.getForMinecraftLinkById(minecraftLink.getId(), context)
-        .orElseGet(
-            () ->
-                new MongoStats(new GenericStatsId(context, minecraftLink.getId())).setLoader(this));
+  public @NonNull MongoStats getForMinecraftLink(@NonNull UUID id, @NonNull String context) {
+    return this.getForMinecraftLinkById(id, context)
+        .orElseGet(() -> new MongoStats(new GenericStatsId(context, id)).setLoader(this));
   }
 
   public boolean changeStat(@NonNull MongoStats mongoStats, @NonNull String key, double value) {

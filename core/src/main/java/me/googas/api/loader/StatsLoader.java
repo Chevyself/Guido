@@ -1,6 +1,7 @@
 package me.googas.api.loader;
 
 import java.util.Map;
+import java.util.UUID;
 import lombok.NonNull;
 import me.googas.api.links.MinecraftLinkable;
 import me.googas.api.matches.ladder.Ladder;
@@ -21,5 +22,11 @@ public interface StatsLoader extends DataLoader {
       @NonNull String context, @NonNull String key, int page, int limit);
 
   @NonNull
-  Stats getForMinecraftLink(@NonNull MinecraftLinkable minecraftLink, @NonNull String context);
+  default Stats getForMinecraftLink(
+      @NonNull MinecraftLinkable minecraftLink, @NonNull String context) {
+    return this.getForMinecraftLink(minecraftLink.getId(), context);
+  }
+
+  @NonNull
+  Stats getForMinecraftLink(@NonNull UUID id, @NonNull String context);
 }

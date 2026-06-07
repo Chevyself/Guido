@@ -1,7 +1,6 @@
 package me.googas.bot.core.handlers.ranks;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.logging.Logger;
@@ -14,6 +13,7 @@ import me.googas.api.matches.MatchTeam;
 import me.googas.api.matches.MatchTeamMember;
 import me.googas.api.matches.ladder.GlobalLadder;
 import me.googas.api.matches.ladder.Ladder;
+import me.googas.api.utility.ImmutableCollection;
 import me.googas.api.utility.Stateables;
 import me.googas.bot.DiscordRankRange;
 import me.googas.bot.GuidoBotRuntime;
@@ -74,8 +74,8 @@ public class RanksHandler implements GuidoHandler {
   @NonNull
   public UpdateResult update(@NonNull Linkable linkable) {
     UpdateResult result = new UpdateResult();
-    Collection<Ladder> ladders = runtime.getLadderProvider().getLadders();
-    Collection<DiscordRankRange> ranges = runtime.getRanksProvider().getRanks();
+    ImmutableCollection<? extends Ladder> ladders = runtime.getLadderProvider().getLadders();
+    ImmutableCollection<DiscordRankRange> ranges = runtime.getRanksProvider().getRanks();
     for (Ladder ladder : ladders) {
       double elo = linkable.getStats(runtime.getStatsProvider()).getElo(ladder, ladders);
       result.append(this.update(elo, ranges));
@@ -101,7 +101,7 @@ public class RanksHandler implements GuidoHandler {
       @NonNull Linkable linkable,
       UpdateResult result,
       @NonNull DiscordLinkable discord,
-      Collection<Ladder> ladders) {
+      ImmutableCollection<? extends Ladder> ladders) {
     GuidoJdaProvider jdaProvider = runtime.getBotJda();
     Optional<Member> optional = discord.getMember(jdaProvider);
     if (optional.isEmpty()) {
@@ -142,7 +142,7 @@ public class RanksHandler implements GuidoHandler {
   }
 
   public void updateNickname(
-      @NonNull Linkable linkable, Member member, Collection<Ladder> ladders) {
+      @NonNull Linkable linkable, Member member, ImmutableCollection<? extends Ladder> ladders) {
     if (!member.isOwner()) {
       String nick = linkable.getPublicDisplayName(runtime.getLoader());
       member
@@ -158,7 +158,7 @@ public class RanksHandler implements GuidoHandler {
     }
   }
 
-  public UpdateResult update(double elo, @NonNull Collection<DiscordRankRange> ranges) {
+  public UpdateResult update(double elo, @NonNull ImmutableCollection<DiscordRankRange> ranges) {
     return new UpdateResult(
         Stateables.getApplying(elo, ranges), Stateables.getOutside(elo, ranges));
   }
