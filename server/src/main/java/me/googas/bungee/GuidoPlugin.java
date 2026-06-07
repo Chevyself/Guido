@@ -144,8 +144,8 @@ public class GuidoPlugin extends Plugin {
   @Override
   public void onEnable() {
     GuidoBungee.setPlugin(this);
-    this.loadConfiguration();
-    new GuidoBot(this.runtime).start();
+    GuidoBungeeConfiguration guidoBungeeConfiguration = this.loadConfiguration();
+    new GuidoBot(this.runtime, guidoBungeeConfiguration).start();
     Server<JsonClientThread> server = Guido.getServer();
     if (server instanceof JsonSocketServer) {
       ((JsonSocketServer) server)

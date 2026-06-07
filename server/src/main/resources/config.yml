@@ -1,10 +1,20 @@
-## This token is used to authenticate the bot connection
+# One line arguments to be used on bot launch
+arguments:
+# Mongo config
+mongo:
+  uri: mongodb://localhost:27017
+  database: guido
+# This token is used to authenticate the bot connection
 token: 0a123asdsd
-## The servers created for the
+# TCP server config
+server:
+  port: 3366
+  timeout: 10000
+# The servers created for the
 servers: {}
-## The configuration used in the listeners of the bot
+# The configuration used in the listeners of the bot
 listeners:
-  ## Configuration for the Motd
+  # Configuration for the Motd
   motd:
     descriptions:
       - Join the googas clan right now

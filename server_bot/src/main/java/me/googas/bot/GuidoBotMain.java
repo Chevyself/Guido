@@ -1,14 +1,16 @@
 package me.googas.bot;
 
-import java.io.File;
-import java.io.InputStream;
+import java.io.*;
 import java.nio.file.Path;
+import java.util.Properties;
 import lombok.Getter;
 import lombok.NonNull;
+import lombok.extern.slf4j.Slf4j;
 import me.googas.server.GuidoServerRuntime;
 import me.googas.starbox.CoreFiles;
 import me.googas.starbox.ProgramArguments;
 
+@Slf4j
 public class GuidoBotMain {
 
   private static class SingletonServerRuntime implements GuidoServerRuntime {
@@ -35,6 +37,54 @@ public class GuidoBotMain {
     }
   }
 
+  static class SingletonGuidoBotConfig implements GuidoBotConfig {
+
+    @NonNull @Getter private final String mongoUri;
+    @NonNull @Getter private final String database;
+    @NonNull @Getter private final String discordToken;
+    @Getter private final int serverPort;
+    @Getter private final long timeout;
+    @Getter private final long guildId;
+
+    private SingletonGuidoBotConfig(
+        @NonNull String mongoUri,
+        @NonNull String database,
+        @NonNull String discordToken,
+        int serverPort,
+        long timeout,
+        long guildId) {
+      this.mongoUri = mongoUri;
+      this.database = database;
+      this.discordToken = discordToken;
+      this.serverPort = serverPort;
+      this.timeout = timeout;
+      this.guildId = guildId;
+    }
+
+    @NonNull
+    public static SingletonGuidoBotConfig ofProperties(@NonNull Properties properties) {
+      return new SingletonGuidoBotConfig(
+          properties.getProperty("mongo_uri", "mongodb://localhost:27017"),
+          properties.getProperty("database", "guido"),
+          properties.getProperty("discord_token", "https://discord.com/developers/"),
+          Integer.parseInt(properties.getProperty("server_port", "3366")),
+          Long.parseLong(properties.getProperty("timeout", "10000")),
+          Long.parseLong(properties.getProperty("guild_id", "1511402659767128291")));
+    }
+
+    @NonNull
+    public static SingletonGuidoBotConfig load() throws IOException {
+      File file = CoreFiles.getFileOrResource(BOT_PROPERTIES_FILE_NAME);
+      Properties properties = new Properties();
+      try (InputStream stream = new FileInputStream(file)) {
+        properties.load(stream);
+      }
+      return SingletonGuidoBotConfig.ofProperties(properties);
+    }
+  }
+
+  @NonNull private static final String BOT_PROPERTIES_FILE_NAME = "bot.properties";
+
   /**
    * The main method of the bot. x
    *
@@ -58,7 +108,9 @@ public class GuidoBotMain {
    *
    * @param args the desired arguments for the bot
    */
-  public static void main(@NonNull String[] args) {
-    new GuidoBot(SingletonServerRuntime.of(args)).start();
+  public static void main(@NonNull String[] args) throws IOException {
+    SingletonGuidoBotConfig config = SingletonGuidoBotConfig.load();
+
+    new GuidoBot(SingletonServerRuntime.of(args), config).start();
   }
 }

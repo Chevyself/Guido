@@ -38,13 +38,6 @@ public interface BungeeConfiguration {
   String getBotArguments();
 
   /**
-   * Get the token used in the bot
-   *
-   * @return the token used for the bot
-   */
-  String getToken();
-
-  /**
    * Get the servers that can be connected in bungee
    *
    * @return the servers that can be connected in bungee

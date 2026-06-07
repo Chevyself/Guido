@@ -8,25 +8,22 @@ import net.dv8tion.jda.api.entities.Guild;
 
 public class GuidoJdaProvider implements JdaProvider {
 
-  @Deprecated private static final long GUILD_ID = 1511402659767128291L;
-
   @NonNull private final GuidoBotRuntime runtime;
+  private final long guildId;
 
-  public GuidoJdaProvider(@NonNull GuidoBotRuntime runtime) {
+  public GuidoJdaProvider(@NonNull GuidoBotRuntime runtime, long guildId) {
     this.runtime = runtime;
+    this.guildId = guildId;
   }
 
   public @NonNull GuidoGuild getGuidoGuild() {
-    return this.runtime
-        .getLoader()
-        .getGuidoGuildLoader()
-        .getGuildOrCreate(GuidoJdaProvider.GUILD_ID);
+    return this.runtime.getLoader().getGuidoGuildLoader().getGuildOrCreate(this.guildId);
   }
 
   @Override
   public @NonNull Guild getGuild() {
     // TODO hardcoded atm
-    Guild guild = this.runtime.getJdaConnection().getJda().getGuildById(GuidoJdaProvider.GUILD_ID);
+    Guild guild = this.runtime.getJdaConnection().getJda().getGuildById(this.guildId);
     return Objects.requireNonNull(guild, "Failed to get default guild");
   }
 }
