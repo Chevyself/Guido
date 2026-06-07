@@ -5,19 +5,11 @@ import java.util.function.Consumer;
 import java.util.logging.Level;
 import lombok.CustomLog;
 import lombok.NonNull;
-import me.googas.api.links.Linkable;
-import me.googas.api.links.LinkableType;
-import me.googas.api.links.ref.DiscordLinkable;
-import me.googas.api.user.UserData;
 import me.googas.api.utility.Lots;
-import me.googas.api.utility.Maps;
-import me.googas.bot.api.Guido;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.IMentionable;
 import net.dv8tion.jda.api.entities.IPermissionHolder;
-import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.PermissionOverride;
-import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.entities.channel.middleman.GuildChannel;
 
 /** y Static utilities for mentions */
@@ -192,38 +184,5 @@ public class Discord {
    */
   public static Consumer<Throwable> exceptionConsumer() {
     return Discord.EXCEPTION_CONSUMER;
-  }
-
-  @NonNull
-  public static DiscordLinkable getUser(long id) {
-    Linkable linkable =
-        Optional.ofNullable(
-                Guido.getHandlers()
-                    .getLoader()
-                    .getLinks()
-                    .getLink(LinkableType.DISCORD, Maps.singleton("id", id)))
-            .orElseGet(
-                () ->
-                    new Linkable(
-                            LinkableType.DISCORD,
-                            Maps.singleton("id", id),
-                            new HashMap<>(),
-                            new HashMap<>(),
-                            new HashSet<>(),
-                            new HashMap<>(),
-                            new HashMap<>(),
-                            new UserData(new HashMap<>()).cache().getId())
-                        .cache());
-    return linkable.requireDiscordRef();
-  }
-
-  @NonNull
-  public static DiscordLinkable getUser(@NonNull User user) {
-    return Discord.getUser(user.getIdLong());
-  }
-
-  @NonNull
-  public static DiscordLinkable getUser(Member member) {
-    return Discord.getUser(member.getIdLong());
   }
 }

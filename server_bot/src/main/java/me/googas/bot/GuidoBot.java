@@ -7,121 +7,149 @@ import com.github.chevyself.starbox.jda.commands.JdaCommand;
 import com.github.chevyself.starbox.jda.context.CommandContext;
 import com.github.chevyself.starbox.registry.MiddlewareRegistry;
 import com.github.chevyself.starbox.registry.ProvidersRegistry;
+import java.io.File;
 import java.io.IOException;
-import java.lang.ref.SoftReference;
+import java.io.InputStream;
+import java.util.Objects;
 import java.util.Timer;
 import java.util.logging.Formatter;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import lombok.Getter;
 import lombok.NonNull;
-import lombok.Setter;
-import me.googas.api.API;
-import me.googas.api.GuidoCatchable;
-import me.googas.api.GuidoInstance;
-import me.googas.api.loader.Loader;
-import me.googas.api.matches.ladder.Ladder;
 import me.googas.api.server.GuidoAuthenticator;
 import me.googas.api.server.receptors.*;
 import me.googas.bot.api.Guido;
 import me.googas.bot.core.commands.*;
 import me.googas.bot.core.commands.administrative.*;
+import me.googas.bot.core.commands.middleware.EmbededResultHandler;
 import me.googas.bot.core.commands.providers.*;
 import me.googas.bot.core.handlers.GuidoHandler;
 import me.googas.bot.core.loader.GuidoFallbackLoader;
+import me.googas.bot.core.loader.GuidoLoader;
+import me.googas.bot.core.loader.mongo.MongoLoader;
 import me.googas.bot.core.server.GuidoFallbackServer;
 import me.googas.net.api.Server;
-import me.googas.net.cache.Catchable;
-import me.googas.net.cache.MemoryCache;
 import me.googas.net.sockets.json.server.JsonClientThread;
 import me.googas.net.sockets.json.server.JsonSocketServer;
-import me.googas.server.GuidoRuntime;
+import me.googas.server.GuidoServerRuntime;
 import me.googas.starbox.ProgramArguments;
 import me.googas.starbox.events.ListenerManager;
 import me.googas.starbox.logging.CustomFormatter;
 import me.googas.starbox.logging.LoggerFactory;
 import me.googas.starbox.scheduler.Scheduler;
 import me.googas.starbox.scheduler.TimerScheduler;
-import me.googas.starbox.time.Time;
-import me.googas.starbox.time.unit.Unit;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.hooks.AnnotatedEventManager;
 
 /** The match making bot */
-public class GuidoBot implements GuidoInstance {
+public class GuidoBot implements GuidoBotRuntime {
 
   @NonNull @Getter private static final Formatter formatter = new CustomFormatter();
 
   @NonNull @Getter
-  public static final Logger log =
+  public static final Logger logger =
       LoggerFactory.start(
-          "GuidoBungee", false, LoggerFactory.createConsoleHandler(GuidoBot.formatter));
+          "GuidoBot", false, LoggerFactory.createConsoleHandler(GuidoBot.formatter));
 
-  @NonNull @Getter private final API.Messenger messenger = new GuidoMessenger();
-  @NonNull @Getter private final MemoryCache cache = new MemoryCache();
-  @NonNull @Getter private final GuidoJdaConnection connection = new GuidoJdaConnection();
-  @NonNull @Getter private final ListenerManager listenerManager = new ListenerManager();
-  @NonNull @Getter private final Scheduler scheduler = new TimerScheduler(new Timer());
-  // TODO what's up with this class with the new authenticator
-  @NonNull @Getter private Server<JsonClientThread> server = new GuidoFallbackServer();
-
-  @Setter @Getter private CommandManager<CommandContext, JdaCommand> commandManager;
-  @NonNull private final GuidoRuntime runtime;
-  @NonNull @Getter private final GuidoHandlerRegistry handlerRegistry;
+  @NonNull private final GuidoServerRuntime parentRuntime;
+  @NonNull @Getter private final GuidoHandlerRegistry handlers;
   @NonNull @Getter private GuidoAuthenticator authenticator;
 
-  public GuidoBot(@NonNull GuidoRuntime runtime) {
-    this.runtime = runtime;
-    this.handlerRegistry = new GuidoHandlerRegistry(runtime);
+  @NonNull @Getter private final GuidoJdaConnection jdaConnection = new GuidoJdaConnection();
+  @NonNull @Getter private final ListenerManager listeners = new ListenerManager();
+  @NonNull @Getter private final Scheduler scheduler = new TimerScheduler(new Timer());
+  @NonNull @Getter private final GuidoJdaProvider jdaProvider = new GuidoJdaProvider(this);
+  @NonNull @Getter private final GuidoLadderProvider ladderProvider = new GuidoLadderProvider(this);
+  @NonNull @Getter private final GuidoRanksProvider ranksProvider = new GuidoRanksProvider(this);
+  @NonNull @Getter private final GuidoStatsProvider statsProvider = new GuidoStatsProvider(this);
+  @NonNull @Getter private GuidoLoader loader = new GuidoFallbackLoader();
+  @NonNull @Getter private Server<JsonClientThread> server = new GuidoFallbackServer();
+
+  private CommandManager<CommandContext, JdaCommand> commandManager;
+
+  public GuidoBot(@NonNull GuidoServerRuntime parentRuntime) {
+    this.parentRuntime = parentRuntime;
+    this.handlers = new GuidoHandlerRegistry(this);
     this.authenticator = new GuidoAuthenticator(new GuidoFallbackLoader());
   }
 
-  public void start() {
-    API.setInstance(this);
-    Guido.setInstance(this);
+  private void setupLogger() {
     try {
-      GuidoBot.log.addHandler(
+      GuidoBot.logger.addHandler(
           LoggerFactory.createFileHandler(
               GuidoBot.getFormatter(),
-              runtime.currentDirectory() + "/logs/",
+              parentRuntime.currentDirectory() + "/logs/",
               System.currentTimeMillis() + ".txt"));
     } catch (IOException ioException) {
-      GuidoBot.log.info("File Handler for logger could not be added");
+      GuidoBot.logger.info("File Handler for logger could not be added");
     }
-    ProgramArguments arguments = runtime.getArguments();
+
     Thread.setDefaultUncaughtExceptionHandler(
-        (thread, exception) -> GuidoBot.log.log(Level.SEVERE, exception, () -> ""));
-    Time time = Time.of(1, Unit.SECONDS);
-    this.getScheduler().repeat(time, time, this.getCache());
-    JDA jda = this.getConnection().createConnection(arguments.getProperty("token", "none"));
+        (thread, exception) -> GuidoBot.logger.log(Level.SEVERE, exception, () -> ""));
+  }
+
+  public void setupLoader() {
+    ProgramArguments arguments = parentRuntime.getArguments();
+    if (arguments.containsKey("loader")) {
+      String loaderName = arguments.getProperty("loader");
+      if (loaderName.equalsIgnoreCase("mongo")) {
+        try {
+          loader =
+              MongoLoader.join(
+                  this,
+                  arguments.getProperty("uri", "none"),
+                  arguments.getProperty("database", "testing-database"));
+        } catch (Exception e) {
+          logger.log(Level.SEVERE, "Failed to setup mongo loader", e);
+        }
+      }
+    }
+  }
+
+  @NonNull
+  private JDA setupJda() {
+    ProgramArguments arguments = parentRuntime.getArguments();
+    JDA jda = this.jdaConnection.createConnection(arguments.getProperty("token", "none"));
     jda.setEventManager(new AnnotatedEventManager());
-    GuidoHandlerRegistry registry = this.getHandlerRegistry();
-    registry.setupDiscordLoader().setupLoader(arguments).register(jda);
+    return jda;
+  }
+
+  private void setupSocketServer() {
+    ProgramArguments arguments = this.parentRuntime.getArguments();
+    JsonSocketServer server = createServer(arguments);
+    if (server != null) {
+      for (GuidoHandler handler : this.handlers.getRegistered()) {
+        if (handler.hasReceptors()) server.addReceptors(handler);
+      }
+      this.server = server;
+    }
+  }
+
+  private void setupCommands(GuidoHandlerRegistry registry, JDA jda) {
     MiddlewareRegistry<CommandContext> middlewareRegistry =
         new MiddlewareRegistry<CommandContext>()
-            .addGlobalMiddleware(
-                new GuidoPermissionChecker(
-                    registry.getLanguageHandler(),
-                    registry.getLoader(),
-                    registry.getDiscordLoader()));
+            .addGlobalMiddlewares(
+                new GuidoPermissionChecker(registry.getLanguageHandler(), this.loader),
+                new EmbededResultHandler());
     ProvidersRegistry<CommandContext> providersRegistry =
         new ProvidersRegistry<CommandContext>()
             .addProviders(
                 new AuthLevelProvider(),
-                new DiscordLinkableProvider(),
-                new GroupProvider(),
-                new GuidoUserProvider(),
-                new GuildDataProvider(),
-                new LadderProvider(),
+                new DiscordLinkableProvider(this),
+                new GuidoBotRuntimeProvider(this),
+                new GuildDataProvider(this),
+                new LadderArgumentProvider(this),
                 new LinkableArrayProvider(),
                 new LinkableProvider(),
                 new LocaleFileProvider(),
-                new MatchProvider(),
-                new MinecraftLinkableProvider(),
-                new MultipleTeamProvider(),
-                new UserDataSenderProvider(),
-                new UserDataSenderProvider());
-    CommandManager<CommandContext, JdaCommand> commandManager =
+                new MinecraftLinkableProvider(this),
+                new MinecraftMatchProvider(this),
+                new MinecraftTeamSelectionTypeProvider(),
+                new PlayableLadderArgumentProvider(this),
+                new UserDataProvider(this),
+                new UserDataSenderProvider(this));
+    this.commandManager =
         new CommandManagerBuilder<>(new JdaAdapter(jda, new GuidoListenerOptions(), false))
             .setMessagesProvider(registry.getLanguageHandler())
             .setMiddlewareRegistry(middlewareRegistry)
@@ -129,34 +157,30 @@ public class GuidoBot implements GuidoInstance {
             .setCommandMetadataParser(new GuidoMetadataParser())
             .build();
     commandManager.parseAndRegisterAll(
-        new AdministrationCommands(),
-        new CacheCommands(),
-        new CategoryCommands(),
-        new ChannelCommands(),
-        // new EvalCommand(),TODO engine was removed
         new StopCommand(),
-        new VoiceChannelCommands(),
         new HelpCommand(),
-        new GroupManagementCommands(),
         new LadderCommands(),
         new LangCommands(),
         new LeaderboardCommands(),
         new MatchCommands(),
         new QueueCommands(),
         new RangesCommand(),
-        new SeasonCommands(),
         new TeamCommands(),
         new TokenCommands(),
         new UserCommands());
-    this.setCommandManager(commandManager);
-    JsonSocketServer server = createServer(arguments);
-    if (server != null) {
-      for (GuidoHandler handler : registry.getRegistered()) {
-        if (handler.hasReceptors()) server.addReceptors(handler);
-      }
-      this.server = server;
-    }
-    GuidoBot.log.info("Bot is ready to use");
+  }
+
+  public void start() {
+    Guido.setInstance(this);
+    this.setupLogger();
+    this.setupLoader();
+    JDA jda = this.setupJda();
+    GuidoHandlerRegistry registry = this.handlers.register(jda);
+    this.setupSocketServer();
+
+    this.setupCommands(registry, jda);
+
+    GuidoBot.logger.info("Bot is ready to use");
   }
 
   /**
@@ -168,75 +192,61 @@ public class GuidoBot implements GuidoInstance {
     try {
       int port = Integer.parseInt(args.getProperty("port", "3000"));
       long timeout = Long.parseLong(args.getProperty("timeout", "3000"));
-      Loader loader = getLoader();
       this.authenticator = new GuidoAuthenticator(getLoader());
-      MatchReceptors matchReceptors = new MatchReceptors(loader.getMatches());
-      matchReceptors.setLadderSupplier(
-          new MatchReceptors.LadderSupplier() {
-            @Override
-            public Ladder getLadder(@NonNull String name) {
-              return Guido.getHandlers()
-                  .getDiscordLoader()
-                  .getGuild(connection.getJda().getGuilds().getFirst().getIdLong())
-                  .getLadder(name);
-            }
-          });
       JsonSocketServer.ServerBuilder serverBuilder =
           JsonSocketServer.listen(port)
               .maxWait(timeout)
-              .addReceptors(
-                  new GroupReceptors(loader.getGroups()),
-                  new GuidoServerReceptors(this.authenticator),
-                  new LinkReceptors(loader.getLinks()),
-                  matchReceptors,
-                  new PunishmentReceptors(loader.getPunishments()),
-                  this.authenticator);
+              .addReceptors(new GuidoServerReceptors(this.authenticator), this.authenticator);
       return serverBuilder.start();
     } catch (IOException | NumberFormatException e) {
-      e.printStackTrace();
+      logger.log(Level.SEVERE, "Failed to setup socket server", e);
     }
     return null;
   }
 
-  @NonNull
-  public GuidoBot clearCache() {
-    for (SoftReference<Catchable> reference : this.cache.keySetCopy()) {
-      Catchable catchable = reference.get();
-      if (catchable instanceof GuidoCatchable) {
-        try {
-          ((GuidoCatchable) catchable).unload(true);
-        } catch (Throwable throwable) {
-          throwable.printStackTrace();
-        }
-      }
-    }
-    this.cache.getMap().clear();
-    return this;
-  }
-
-  /** CLoses the bot server */
+  /** Closes the bot server */
   @NonNull
   public GuidoBot closeServer() {
     try {
       this.server.close();
     } catch (IOException e) {
-      GuidoBot.log.log(Level.SEVERE, e, null);
+      GuidoBot.logger.log(Level.SEVERE, e, null);
     }
     return this;
   }
 
   /** Stops the bot */
   public boolean stop() {
-    this.handlerRegistry.unregister();
-    JDA jda = this.connection.getJda();
-    if (jda != null) {
-      jda.shutdown();
-    }
+    this.handlers.unregister();
+    JDA jda = this.jdaConnection.getJda();
+    jda.shutdown();
     return true;
   }
 
+  @NonNull
+  public CommandManager<CommandContext, JdaCommand> getCommandManager() {
+    return Objects.requireNonNull(
+        this.commandManager, "Command manager may not have been initialized yet");
+  }
+
   @Override
-  public @NonNull Loader getLoader() {
-    return this.handlerRegistry.getLoader();
+  public @NonNull GuidoJdaProvider getBotJda() {
+    return Objects.requireNonNull(
+        this.jdaProvider, "Jda provider may not have been initialized yet");
+  }
+
+  @Override
+  public @NonNull ProgramArguments getArguments() {
+    return this.parentRuntime.getArguments();
+  }
+
+  @Override
+  public @NonNull File currentDirectory() {
+    return this.parentRuntime.currentDirectory();
+  }
+
+  @Override
+  public @NonNull InputStream getResource(@NonNull String name) {
+    return this.parentRuntime.getResource(name);
   }
 }

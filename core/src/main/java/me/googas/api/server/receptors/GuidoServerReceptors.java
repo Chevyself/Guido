@@ -1,8 +1,8 @@
 package me.googas.api.server.receptors;
 
+import java.util.Optional;
 import lombok.NonNull;
 import me.googas.api.Requests;
-import me.googas.api.ValuesMap;
 import me.googas.api.server.GuidoAuthenticator;
 import me.googas.api.token.AuthToken;
 import me.googas.net.sockets.json.JsonMessenger;
@@ -24,23 +24,14 @@ public class GuidoServerReceptors {
     return true;
   }
 
-  @Receptor(Requests.Server.CLIENT_INFO)
-  public boolean info(@NonNull JsonMessenger messenger, @ParamName("info") ValuesMap info) {
-    if (!(messenger instanceof JsonClientThread)) return false;
-    this.authenticator.getInfo().put((JsonClientThread) messenger, info);
-    return true;
-  }
-
   @Receptor(Requests.Server.AUTH)
   public boolean auth(@NonNull JsonMessenger messenger, @ParamName("token") String token) {
-    if (messenger instanceof JsonClientThread) {
-      AuthToken authToken = this.authenticator.getLoader().getTokens().getAuthToken(token);
-      if (authToken != null) {
-        this.authenticator.getLevels().put((JsonClientThread) messenger, authToken.getLevel());
-        return true;
-      }
-      return false;
-    }
-    return false;
+    if (!(messenger instanceof JsonClientThread)) return false;
+    Optional<? extends AuthToken> optional =
+        this.authenticator.getLoader().getTokens().getAuthToken(token);
+    if (optional.isEmpty()) return false;
+    AuthToken authToken = optional.get();
+    this.authenticator.getLevels().put((JsonClientThread) messenger, authToken.getAuthLevel());
+    return true;
   }
 }

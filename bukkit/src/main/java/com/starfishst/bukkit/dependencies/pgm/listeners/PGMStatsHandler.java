@@ -6,11 +6,7 @@ import java.util.Map;
 import java.util.UUID;
 import lombok.NonNull;
 import me.googas.api.Requests;
-import me.googas.api.links.LinkableInfo;
-import me.googas.api.links.LinkableType;
-import me.googas.api.utility.Maps;
 import me.googas.net.sockets.json.client.JsonClient;
-import me.googas.starbox.UUIDUtils;
 import me.googas.starbox.modules.Module;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -123,14 +119,7 @@ public class PGMStatsHandler implements Module {
     JsonClient connection = Guido.getClient().getConnection();
     if (connection != null) {
       this.stats.forEach(
-          (uuid, statsMap) ->
-              Requests.Links.saveStats(
-                      new LinkableInfo(
-                          LinkableType.MINECRAFT,
-                          Maps.singleton("uuid", UUIDUtils.trim(uuid)),
-                          new HashMap<>()),
-                      statsMap)
-                  .queue(connection));
+          (uuid, statsMap) -> Requests.MinecraftLinks.saveStats(uuid, statsMap).queue(connection));
     }
     this.stats.clear();
   }

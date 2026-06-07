@@ -6,26 +6,20 @@ import lombok.NonNull;
 public interface Loader {
 
   @NonNull
-  LadderLoader getLadders();
-
-  @NonNull
-  GroupLoader getGroups();
-
-  @NonNull
-  LinksLoader getLinks();
-
-  @NonNull
-  MatchLoader getMatches();
-
-  @NonNull
-  PunishmentLoader getPunishments();
-
-  @NonNull
-  TeamLoader getTeams();
-
-  @NonNull
   TokenLoader getTokens();
 
   @NonNull
   UserLoader getUsers();
+
+  @NonNull
+  StatsLoader getStats();
+
+  @NonNull
+  MinecraftMatchLoader getMinecraftMatches();
+
+  @NonNull
+  MinecraftLinkableLoader getMinecraftLinks();
+
+  @NonNull
+  DiscordLinkableLoader getDiscordLinks();
 }

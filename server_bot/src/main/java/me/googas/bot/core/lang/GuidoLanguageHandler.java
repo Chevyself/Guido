@@ -14,15 +14,14 @@ import me.googas.api.lang.Localized;
 import me.googas.api.loader.Loader;
 import me.googas.api.utility.Maps;
 import me.googas.bot.core.handlers.GuidoHandler;
-import me.googas.bot.core.util.Discord;
-import me.googas.server.GuidoRuntime;
+import me.googas.server.GuidoServerRuntime;
 import me.googas.starbox.CoreFiles;
 
 /** Handles the language for guido messages */
 @CustomLog
 public class GuidoLanguageHandler implements JdaMessagesProvider, GuidoHandler {
 
-  @NonNull private final GuidoRuntime runtime;
+  @NonNull private final GuidoServerRuntime runtime;
   /** The files that this handler is using */
   @NonNull private final Set<GuidoLocaleFile> files = new HashSet<>();
 
@@ -34,7 +33,7 @@ public class GuidoLanguageHandler implements JdaMessagesProvider, GuidoHandler {
    *
    * @param loader the file loader to getId the user data
    */
-  public GuidoLanguageHandler(@NonNull GuidoRuntime runtime, @NonNull Loader loader) {
+  public GuidoLanguageHandler(@NonNull GuidoServerRuntime runtime, @NonNull Loader loader) {
     this.runtime = runtime;
     this.loader = loader;
   }
@@ -45,7 +44,7 @@ public class GuidoLanguageHandler implements JdaMessagesProvider, GuidoHandler {
    * @param toLoad the locale files to load
    */
   @NonNull
-  public GuidoLanguageHandler load(@NonNull GuidoRuntime runtime, @NonNull String... toLoad) {
+  public GuidoLanguageHandler load(@NonNull GuidoServerRuntime runtime, @NonNull String... toLoad) {
     for (String lang : toLoad) {
       try {
         this.files.add(
@@ -120,7 +119,8 @@ public class GuidoLanguageHandler implements JdaMessagesProvider, GuidoHandler {
    */
   @NonNull
   public String getLang(@NonNull CommandContext context) {
-    return Discord.getUser(context.getSender()).getString(null, "lang", "en");
+    // TODO
+    return "en";
   }
 
   @NonNull

@@ -6,11 +6,19 @@ import com.github.chevyself.starbox.jda.context.GuildCommandContext;
 import com.github.chevyself.starbox.jda.messages.JdaMessagesProvider;
 import com.github.chevyself.starbox.jda.providers.type.JdaExtraArgumentProvider;
 import lombok.NonNull;
+import me.googas.bot.GuidoBotRuntime;
 import me.googas.bot.api.Guido;
 import me.googas.bot.core.discord.GuidoGuild;
 
 public class GuildDataProvider implements JdaExtraArgumentProvider<GuidoGuild> {
-  @Override
+
+  @NonNull private final GuidoBotRuntime runtime;
+
+    public GuildDataProvider(@NonNull GuidoBotRuntime runtime) {
+        this.runtime = runtime;
+    }
+
+    @Override
   public @NonNull Class<GuidoGuild> getClazz() {
     return GuidoGuild.class;
   }
@@ -23,10 +31,10 @@ public class GuildDataProvider implements JdaExtraArgumentProvider<GuidoGuild> {
   @NonNull
   @Override
   public GuidoGuild getObject(@NonNull CommandContext context) throws ArgumentProviderException {
-    if (context instanceof GuildCommandContext) {
-      return Guido.getHandlers()
-          .getDiscordLoader()
-          .getGuild(((GuildCommandContext) context).getGuild().getIdLong());
+    if (context instanceof GuildCommandContext guildContext) {
+      return runtime.getLoader()
+              .getGuidoGuildLoader()
+          .getGuild(guildContext.getGuild());
     }
     String message = ((JdaMessagesProvider) context.getMessagesProvider()).guildOnly(context);
     throw new ArgumentProviderException(message);

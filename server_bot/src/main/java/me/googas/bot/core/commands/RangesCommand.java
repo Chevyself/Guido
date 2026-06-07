@@ -6,8 +6,8 @@ import com.github.chevyself.starbox.annotations.Required;
 import com.github.chevyself.starbox.result.Result;
 import me.googas.api.lang.LocaleFile;
 import me.googas.api.matches.ladder.Ladder;
-import me.googas.api.ranks.RankRange;
 import me.googas.api.utility.Maps;
+import me.googas.bot.DiscordRankRange;
 import me.googas.bot.core.commands.middleware.GuidoJdaPermission;
 import me.googas.bot.core.discord.GuidoGuild;
 import net.dv8tion.jda.api.entities.Role;
@@ -30,7 +30,7 @@ public class RangesCommand {
       LocaleFile locale,
       GuidoGuild guild,
       @Required(name = "range.role", description = "range.role.desc") Role role) {
-    RankRange range = guild.getRange(role.getIdLong());
+    DiscordRankRange range = guild.getRange(role.getIdLong());
     if (range != null) {
       return Result.of(
           locale.get(
@@ -65,21 +65,18 @@ public class RangesCommand {
       @Required(name = "range.set.ladder", description = "range.set.ladder.desc") Ladder ladder,
       @Required(name = "range.set.min", description = "range.set.min.desc") int min,
       @Required(name = "range.set.max", description = "range.set.max.desc") int max) {
-    RankRange range =
-        new RankRange(
-            ladder.getName(),
-            Maps.singleton(
-                "global", Maps.objects("id", role.getIdLong()).put("name", role.getName()).build()),
-            min,
-            max);
-    guild.getRanges().add(range);
-    return Result.of(
-        locale.get(
-            "range.set.success",
-            Maps.builder("mention", role.getAsMention())
-                .put("ladder", range.getLadder())
-                .put("min", String.valueOf(range.getMin()))
-                .put("max", String.valueOf(range.getMax()))));
+    return guild
+        .addRange(ladder.getName(), role.getName(), min, max, role.getIdLong())
+        .map(
+            (range) ->
+                Result.of(
+                    locale.get(
+                        "range.set.success",
+                        Maps.builder("mention", role.getAsMention())
+                            .put("ladder", range.getLadder())
+                            .put("min", String.valueOf(range.getMin()))
+                            .put("max", String.valueOf(range.getMax())))))
+        .orElse(Result.of("Failed to create range"));
   }
 
   /**
@@ -98,9 +95,9 @@ public class RangesCommand {
       LocaleFile locale,
       GuidoGuild guild,
       @Required(name = "range.del.role", description = "range.del.role.desc") Role role) {
-    RankRange range = guild.getRange(role.getIdLong());
+    DiscordRankRange range = guild.getRange(role.getIdLong());
     if (range != null) {
-      guild.getRanges().remove(range);
+      guild.removeRange(range);
       return Result.of(
           locale.get("range.del.success", Maps.singleton("mention", role.getAsMention())));
     } else {

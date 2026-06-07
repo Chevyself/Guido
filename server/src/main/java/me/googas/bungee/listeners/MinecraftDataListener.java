@@ -1,13 +1,7 @@
 package me.googas.bungee.listeners;
 
-import java.util.HashMap;
-import java.util.HashSet;
 import lombok.NonNull;
-import me.googas.api.API;
-import me.googas.api.links.Linkable;
-import me.googas.api.links.LinkableInfo;
-import me.googas.api.links.LinkableType;
-import me.googas.api.utility.Maps;
+import me.googas.api.Requests;
 import me.googas.bungee.events.GuidoListener;
 import me.googas.starbox.UUIDUtils;
 import net.md_5.bungee.api.connection.PendingConnection;
@@ -24,37 +18,14 @@ public class MinecraftDataListener implements GuidoListener {
     PendingConnection connection = event.getConnection();
     String nickname = connection.getName();
     String ip = connection.getSocketAddress().toString();
-    String trim = UUIDUtils.trim(connection.getUniqueId());
-    LinkableInfo link =
-        new LinkableInfo(LinkableType.MINECRAFT, Maps.singleton("uuid", trim), new HashMap<>());
-    Linkable linkable =
-        API.getLoader().getLinks().getLink(link.getType(), link.getIdentification());
-    if (linkable != null) {
-      linkable.setRecogString("nickname", nickname);
-      linkable.setRecogString("ip", ip);
-      linkable.setBoolean(null, "online", true);
-    } else {
-      new Linkable(
-              LinkableType.MINECRAFT,
-              link.getIdentification(),
-              Maps.objects("nickname", nickname).put("ip", ip).build(),
-              new HashMap<>(),
-              new HashSet<>(),
-              new HashMap<>(),
-              new HashMap<>(),
-              null)
-          .cache();
-    }
+
+    Requests.MinecraftLinks.updateStatus(connection.getUniqueId(), nickname, ip, true);
   }
 
   @EventHandler(priority = EventPriority.HIGHEST)
   public void onPlayerDisconnect(PlayerDisconnectEvent event) {
     String trim = UUIDUtils.trim(event.getPlayer().getUniqueId());
-    Linkable linkable =
-        API.getLoader().getLinks().getLink(LinkableType.MINECRAFT, Maps.singleton("uuid", trim));
-    if (linkable != null) {
-      linkable.setBoolean(null, "online", false);
-    }
+    Requests.MinecraftLinks.updateOnline(event.getPlayer().getUniqueId(), false);
   }
 
   @Override

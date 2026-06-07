@@ -4,6 +4,6 @@ package me.googas.api.matches.team;
 public enum TeamRole {
   /** The leader of the team */
   LEADER,
-  /** A normal player inside the team */
-  NORMAL
+  /** A regular member of the team */
+  MEMBER
 }

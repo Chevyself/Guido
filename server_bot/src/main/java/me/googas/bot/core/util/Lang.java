@@ -5,8 +5,7 @@ import com.github.chevyself.starbox.jda.context.CommandContext;
 import java.util.Map;
 import lombok.NonNull;
 import me.googas.api.lang.LocaleFile;
-import me.googas.api.lang.Localized;
-import me.googas.api.matches.queue.Queueable;
+import me.googas.api.links.MinecraftLinkable;
 import me.googas.bot.api.Guido;
 import me.googas.bot.core.lang.GuidoLanguageHandler;
 import me.googas.starbox.builders.MapBuilder;
@@ -20,9 +19,9 @@ public class Lang {
   }
 
   @NonNull
-  public static LocaleFile getLocale(@NonNull Queueable queueable) {
+  public static LocaleFile getLocale(@NonNull MinecraftLinkable minecraft) {
+    // TODO preferences
     GuidoLanguageHandler handler = Guido.getHandlers().getLanguageHandler();
-    if (queueable instanceof Localized) return handler.getFile((Localized) queueable);
     return handler.getDefault();
   }
 

@@ -2,8 +2,6 @@ package me.googas.bot;
 
 import java.util.Objects;
 import java.util.Scanner;
-import java.util.logging.Level;
-import javax.security.auth.login.LoginException;
 import lombok.CustomLog;
 import lombok.NonNull;
 import me.googas.api.utility.Lots;
@@ -52,7 +50,7 @@ public class GuidoJdaConnection {
     while (this.jda == null) {
       try {
         this.jda = this.connect(token);
-      } catch (LoginException e) {
+      } catch (InterruptedException e) {
         token = GuidoJdaConnection.getTokenFromInput(new Scanner(System.in));
       }
     }
@@ -64,21 +62,9 @@ public class GuidoJdaConnection {
    *
    * @param token the discord bot token
    * @return the jda api
-   * @throws LoginException if the discord token is wrong and authentication failed
    */
-  public JDA connect(@NonNull String token) throws LoginException {
-    JDA jda = JDABuilder.create(token, Lots.list(GatewayIntent.values())).build();
-    long millis = 0;
-    while (jda.getStatus() != JDA.Status.CONNECTED) {
-      try {
-        Thread.sleep(1);
-        millis++;
-      } catch (InterruptedException e) {
-        GuidoJdaConnection.log.log(
-            Level.SEVERE, e, () -> "Thread was interrupted while trying to connect to discord");
-      }
-    }
-    return jda;
+  public JDA connect(@NonNull String token) throws InterruptedException {
+    return JDABuilder.create(token, Lots.list(GatewayIntent.values())).build().awaitReady();
   }
 
   /**
@@ -86,17 +72,8 @@ public class GuidoJdaConnection {
    *
    * @return the connection with jda
    */
-  public JDA getJda() {
-    return this.jda;
-  }
-
-  /**
-   * Validate the connection with jda to not be null
-   *
-   * @return the validated connection
-   */
   @NonNull
-  public JDA validatedJda() {
-    return Objects.requireNonNull(this.jda, "Bot is not connected with discord!");
+  public JDA getJda() {
+    return Objects.requireNonNull(this.jda, "JDA has not been set yet");
   }
 }

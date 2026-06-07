@@ -10,7 +10,7 @@ import me.googas.api.token.AuthLevel;
 import me.googas.api.token.AuthToken;
 import me.googas.api.user.UserData;
 import me.googas.api.utility.Maps;
-import me.googas.bot.api.Guido;
+import me.googas.bot.GuidoBotRuntime;
 import me.googas.bot.core.commands.middleware.GuidoJdaPermission;
 
 /** Commands for token generation */
@@ -21,9 +21,9 @@ public class TokenCommands {
   @Command(
       aliases = {"tokens", "token"},
       description = "tokens.desc")
-  public Result token(LocaleFile locale, UserData sender) {
+  public Result token(LocaleFile locale, UserData sender, GuidoBotRuntime runtime) {
     Collection<? extends AuthToken> tokens =
-        Guido.getHandlers().getLoader().getTokens().getTokens(sender);
+        runtime.getLoader().getTokens().getTokens(sender.getId());
     if (tokens.isEmpty()) {
       return Result.of(locale.get("tokens.empty"));
     } else {
@@ -33,7 +33,7 @@ public class TokenCommands {
             locale.get(
                 "tokens.token",
                 Maps.builder("token", token.getToken())
-                    .put("level", token.getLevel().toString().toLowerCase())));
+                    .put("level", token.getAuthLevel().toString().toLowerCase())));
       }
       return Result.of(builder.toString());
     }
@@ -43,8 +43,9 @@ public class TokenCommands {
   @Command(aliases = "generate", description = "token.gen.desc")
   public Result generate(
       UserData user,
+      GuidoBotRuntime runtime,
       @Required(name = "token.gen.perm", description = "token.gen.perm.desc") AuthLevel level) {
-    AuthToken token = new AuthToken(user.getId(), level).cache();
+    AuthToken token = runtime.getLoader().getTokens().create(user.getId(), level);
     return Result.of("Token generated use the string: " + token.getToken() + " to use it");
   }
 }

@@ -2,12 +2,13 @@ package me.googas.bot.core.handlers.link;
 
 import java.util.HashSet;
 import java.util.Set;
+import java.util.UUID;
 import lombok.Getter;
 import lombok.NonNull;
 import me.googas.api.Requests;
 import me.googas.api.links.Linkable;
-import me.googas.api.links.LinkableInfo;
 import me.googas.api.utility.RandomUtils;
+import me.googas.bot.GuidoBotRuntime;
 import me.googas.bot.api.Guido;
 import me.googas.bot.core.handlers.GuidoHandler;
 import me.googas.net.sockets.json.ParamName;
@@ -18,24 +19,25 @@ import me.googas.starbox.time.unit.Unit;
 /** Handles linking for accounts */
 public class LinkHandler implements GuidoHandler {
 
+  @NonNull private final GuidoBotRuntime runtime;
+
   /** The set of queries created */
   @NonNull private final Set<LinkQuery> queries = new HashSet<>();
 
+  public LinkHandler(@NonNull GuidoBotRuntime runtime) {
+    this.runtime = runtime;
+  }
+
   /**
-   * Create the code for the given linked info
+   * Create the code for the given linkable
    *
-   * @param info the info to create the code and link to an user
+   * @param data the info to create the code and link to a user
    * @return the created code if the data is found and it is linked
    */
-  public String createCode(@NonNull LinkableInfo info) {
-    Linkable data =
-        Guido.getHandlers()
-            .getLoader()
-            .getLinks()
-            .getLink(info.getType(), info.getIdentification());
-    if (data != null && !data.isLinked()) {
+  public String createCode(@NonNull Linkable data) {
+    if (!data.isLinked()) {
       String code = this.nextCode();
-      LinkQuery linkQuery = new LinkQuery(code, info);
+      LinkQuery linkQuery = new LinkQuery(code, data);
       this.queries.add(linkQuery);
       Guido.getScheduler()
           .countdown(Time.of(3, Unit.MINUTES), second -> {}, () -> this.queries.remove(linkQuery));
@@ -80,7 +82,7 @@ public class LinkHandler implements GuidoHandler {
    * @param code the code to getId the info
    * @return the linked info if there is one for the given code else null
    */
-  public LinkableInfo getInfo(String code) {
+  public Linkable getLinkable(String code) {
     for (LinkQuery query : this.queries) {
       if (query.getCode().equals(code)) {
         return query.getInfo();
@@ -102,7 +104,7 @@ public class LinkHandler implements GuidoHandler {
     @NonNull @Getter private final String code;
 
     /** The information that will getId the link data from the database */
-    @NonNull @Getter private final LinkableInfo info;
+    @NonNull @Getter private final Linkable info;
 
     /**
      * Create the link query
@@ -110,21 +112,23 @@ public class LinkHandler implements GuidoHandler {
      * @param code the link used to link the linked data
      * @param info the info to getId the linked data
      */
-    LinkQuery(@NonNull String code, @NonNull LinkableInfo info) {
+    LinkQuery(@NonNull String code, @NonNull Linkable info) {
       this.code = code;
       this.info = info;
     }
   }
 
-  /**
-   * Create a link code for the linked given info
-   *
-   * @param info the information of the link to link
-   * @return the link
-   */
-  @Receptor(Requests.Server.LINK_CODE)
-  public String linkCode(@ParamName("link") LinkableInfo info) {
-    return Guido.getHandlers().getHandler(LinkHandler.class).createCode(info);
+  @Receptor(Requests.MinecraftLinks.LINK_NEW)
+  public String linkCode(@ParamName(Requests.MinecraftLinks.LINK_NEW) UUID minecraftId) {
+    return runtime
+        .getLoader()
+        .getMinecraftLinks()
+        .getById(minecraftId)
+        .map(
+            link -> {
+              return runtime.getHandlers().getHandler(LinkHandler.class).createCode(link);
+            })
+        .orElse("");
   }
 
   @Override

@@ -20,14 +20,9 @@ import me.googas.bot.GuidoBot;
 import me.googas.bot.api.Guido;
 import me.googas.bungee.commands.GuidoCommands;
 import me.googas.bungee.commands.LinkCommand;
-import me.googas.bungee.commands.PermissionCommands;
-import me.googas.bungee.commands.PunishmentCommands;
 import me.googas.bungee.commands.ServerCommands;
-import me.googas.bungee.commands.StatsCommand;
 import me.googas.bungee.commands.providers.BungeeLocaleFileProvider;
-import me.googas.bungee.commands.providers.GroupProvider;
 import me.googas.bungee.commands.providers.JsonClientProvider;
-import me.googas.bungee.commands.providers.ProxiedOfflinePlayerProvider;
 import me.googas.bungee.configuration.BungeeConfiguration;
 import me.googas.bungee.configuration.GuidoBungeeConfiguration;
 import me.googas.bungee.configuration.GuidoServer;
@@ -35,8 +30,6 @@ import me.googas.bungee.events.GuidoListener;
 import me.googas.bungee.lang.BungeeLanguageHandler;
 import me.googas.bungee.listeners.MinecraftDataListener;
 import me.googas.bungee.listeners.MotdListener;
-import me.googas.bungee.listeners.PermissionsListener;
-import me.googas.bungee.listeners.PunishmentsListener;
 import me.googas.bungee.listeners.TipsListener;
 import me.googas.bungee.receptors.BungeeConnectionReceptors;
 import me.googas.bungee.receptors.BungeeMessagingReceptors;
@@ -47,7 +40,7 @@ import me.googas.net.api.Server;
 import me.googas.net.sockets.json.client.JsonClient;
 import me.googas.net.sockets.json.server.JsonClientThread;
 import me.googas.net.sockets.json.server.JsonSocketServer;
-import me.googas.server.GuidoRuntime;
+import me.googas.server.GuidoServerRuntime;
 import me.googas.starbox.CoreFiles;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.config.ServerInfo;
@@ -74,16 +67,13 @@ public class GuidoPlugin extends Plugin {
                   .addGlobalMiddleware(new BungeeResultHandlingMiddleware()))
           .setProvidersRegistry(
               new ProvidersRegistry<CommandContext>()
-                  .addProviders(
-                      new BungeeLocaleFileProvider(),
-                      new GroupProvider(),
-                      new JsonClientProvider(),
-                      new ProxiedOfflinePlayerProvider()))
+                  .addProviders(new BungeeLocaleFileProvider(), new JsonClientProvider()))
           .build();
   /** The bungeeConfiguration that the plugin will use */
   @NonNull @Getter private BungeeConfiguration configuration = loadConfiguration();
 
-  @NonNull private GuidoRuntime runtime = new GuidoPluginRuntime(this, this.configuration);
+  @NonNull
+  private GuidoServerRuntime runtime = new GuidoPluginServerRuntime(this, this.configuration);
   /** The listeners being used by the plugin */
   @NonNull @Getter
   private final List<GuidoListener> listeners =
@@ -91,8 +81,6 @@ public class GuidoPlugin extends Plugin {
           this.languageHandler,
           new MinecraftDataListener(),
           new MotdListener(runtime),
-          new PermissionsListener(),
-          new PunishmentsListener(),
           new TipsListener());
 
   private JsonClient client = null;
@@ -157,7 +145,7 @@ public class GuidoPlugin extends Plugin {
   public void onEnable() {
     GuidoBungee.setPlugin(this);
     this.loadConfiguration();
-    new GuidoBot(runtime).start();
+    new GuidoBot(this.runtime).start();
     Server<JsonClientThread> server = Guido.getServer();
     if (server instanceof JsonSocketServer) {
       ((JsonSocketServer) server)
@@ -178,10 +166,8 @@ public class GuidoPlugin extends Plugin {
     }
     this.manager.parseAndRegisterAll(new GuidoCommands());
     this.manager.parseAndRegisterAll(new LinkCommand());
-    this.manager.parseAndRegisterAll(new PermissionCommands());
-    this.manager.parseAndRegisterAll(new PunishmentCommands());
     this.manager.parseAndRegisterAll(new ServerCommands());
-    this.manager.parseAndRegisterAll(new StatsCommand());
+    // TODO implement stats command
     this.loadServers();
     super.onEnable();
   }

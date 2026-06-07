@@ -5,19 +5,16 @@ import com.github.chevyself.starbox.annotations.Free;
 import com.github.chevyself.starbox.annotations.Parent;
 import com.github.chevyself.starbox.annotations.Required;
 import com.github.chevyself.starbox.result.Result;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import lombok.NonNull;
 import me.googas.api.lang.LocaleFile;
+import me.googas.api.matches.MinecraftTeamSelectionType;
 import me.googas.api.matches.ladder.Ladder;
 import me.googas.api.utility.Lots;
 import me.googas.api.utility.Maps;
 import me.googas.bot.core.commands.middleware.GuidoJdaPermission;
 import me.googas.bot.core.discord.GuidoGuild;
-import me.googas.bot.core.matches.ladder.GuidoLadder;
+import me.googas.bot.core.matches.ladder.PlayableLadder;
 import me.googas.starbox.Pagination;
 import me.googas.starbox.builders.MapBuilder;
 
@@ -43,13 +40,13 @@ public class LadderCommands {
     if (guild.getLadders().isEmpty()) {
       return Result.of(locale.get("ladders.empty"));
     } else {
-      Pagination<Ladder> pagination = new Pagination<>(new ArrayList<>(guild.getLadders()), 10);
+      Pagination<? extends PlayableLadder> pagination = Lots.pagesOf(guild.getLadders(), 10);
       if (page < 1) {
         page = 1;
       } else if (page > pagination.maxPage()) {
         page = pagination.maxPage();
       }
-      List<Ladder> ladders = pagination.getPage(page);
+      List<? extends Ladder> ladders = pagination.getPage(page);
       StringBuilder builder = new StringBuilder();
       builder.append(
           locale.get(
@@ -78,17 +75,22 @@ public class LadderCommands {
       @Required(name = "ladders.make.name", description = "ladders.make.name.desc") String name,
       @Required(name = "ladders.make.players", description = "ladders.make.players.desc")
           int players,
-      @Required(name = "ladders.make.base", description = "ladders.make.base.desc") int base) {
+      @Required(name = "ladders.make.base", description = "ladders.make.base.desc") int base,
+      @Required(name = "ladders.make.team", description = "ladders.make.team.desc")
+          MinecraftTeamSelectionType selectionType) {
     MapBuilder<String, String> placeholders =
         Maps.builder("name", name)
             .put("players", String.valueOf(players))
             .put("base", String.valueOf(base));
-    if (guild.getLadder(name) != null) {
-      return Result.of(locale.get("ladders.make.exists", placeholders));
-    } else {
-      guild.getLadders().add(new GuidoLadder(name, players, base, 2, new HashMap<>()));
-      return Result.of(locale.get("ladders.make.success", placeholders));
-    }
+
+    return guild
+        .getLadder(name)
+        .map(ladder -> Result.of(locale.get("ladders.make.exists", placeholders)))
+        .orElseGet(
+            () -> {
+              guild.addLadder(name, players, base, 2, 1, 1, selectionType);
+              return Result.of(locale.get("ladders.make.success", placeholders));
+            });
   }
 
   @GuidoJdaPermission("guido.ladders.del")
@@ -100,71 +102,13 @@ public class LadderCommands {
       GuidoGuild guild,
       @Required(name = "ladders.del.name", description = "ladders.del.name.desc") String name) {
     Map<String, String> placeholder = Maps.singleton("name", name);
-    if (guild.getLadder(name) == null) {
-      return Result.of(locale.get("ladders.del.not-exists", placeholder));
-    } else {
-      guild.getLadders().removeIf(ladder -> ladder.getName().equalsIgnoreCase(name));
-      return Result.of(locale.get("ladders.del.success", placeholder));
-    }
-  }
-
-  @GuidoJdaPermission("guido.ladders.edit")
-  @Command(aliases = "string", description = "ladder.edit.string")
-  public Result string(
-      LocaleFile locale,
-      @Required(name = "ladder.edit.ladder", description = "ladder.edit.ladder.desc") Ladder ladder,
-      @Free(name = "ladder.edit.key", description = "ladder.edit.key.desc") String key,
-      @Required(name = "ladder.edit.value", description = "ladder.edit.value.desc") String value) {
-    return this.setValue(locale, ladder, key, value);
-  }
-
-  @GuidoJdaPermission("guido.ladders.edit")
-  @Command(aliases = "integer", description = "ladder.edit.integer")
-  public Result integer(
-      LocaleFile locale,
-      @Required(name = "ladder.edit.ladder", description = "ladder.edit.ladder.desc") Ladder ladder,
-      @Free(name = "ladder.edit.key", description = "ladder.edit.key.desc") String key,
-      @Required(name = "ladder.edit.value", description = "ladder.edit.value.desc") int value) {
-    return this.setValue(locale, ladder, key, value);
-  }
-
-  @GuidoJdaPermission("guido.ladders.edit")
-  @Command(aliases = "double", description = "ladder.edit.double")
-  public Result integer(
-      LocaleFile locale,
-      @Required(name = "ladder.edit.ladder", description = "ladder.edit.ladder.desc") Ladder ladder,
-      @Free(name = "ladder.edit.key", description = "ladder.edit.key.desc") String key,
-      @Required(name = "ladder.edit.value", description = "ladder.edit.value.desc") double value) {
-    return this.setValue(locale, ladder, key, value);
-  }
-
-  /**
-   * Set the value of an option in a ladder
-   *
-   * @param locale the locale of the command sender
-   * @param ladder the ladder to edit
-   * @param key the key of the new value
-   * @param value the new value
-   * @return whether the value was set
-   */
-  private Result setValue(
-      @NonNull LocaleFile locale, @NonNull Ladder ladder, @NonNull String key, Object value) {
-    if (value == null && ladder.getInformation("global").containsKey(key)) {
-      ladder.remove("global", key);
-    } else if (value != null) {
-      ladder.set("global", key, value);
-    }
-    String valueString;
-    if (value != null) {
-      if (value instanceof Collection) {
-        valueString = Lots.pretty((Collection<?>) value);
-      } else {
-        valueString = value.toString();
-      }
-    } else {
-      valueString = "null";
-    }
-    return Result.of(
-        locale.get("ladder.edit.result", Maps.builder("key", key).put("value", valueString)));
+    return guild
+        .getLadder(name)
+        .map((ladder) -> Result.of(locale.get("ladders.del.not-exists", placeholder)))
+        .orElseGet(
+            () -> {
+              guild.removeLadderByName(name);
+              return Result.of(locale.get("ladders.del.success", placeholder));
+            });
   }
 }

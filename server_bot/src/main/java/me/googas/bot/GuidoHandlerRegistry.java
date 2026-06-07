@@ -7,7 +7,6 @@ import java.util.Set;
 import lombok.Getter;
 import lombok.NonNull;
 import me.googas.api.utility.Lots;
-import me.googas.bot.api.DiscordLoader;
 import me.googas.bot.core.handlers.GuidoHandler;
 import me.googas.bot.core.handlers.deploy.DeployHandler;
 import me.googas.bot.core.handlers.link.LinkHandler;
@@ -18,42 +17,35 @@ import me.googas.bot.core.handlers.matches.PGMMatchHandler;
 import me.googas.bot.core.handlers.queue.QueueChannelsHandler;
 import me.googas.bot.core.handlers.queue.QueueHandler;
 import me.googas.bot.core.handlers.ranks.RanksHandler;
-import me.googas.bot.core.handlers.responsive.GuidoMessagesController;
 import me.googas.bot.core.handlers.test.TestHandler;
 import me.googas.bot.core.lang.GuidoLanguageHandler;
-import me.googas.bot.core.loader.GuidoFallbackLoader;
-import me.googas.bot.core.loader.GuidoLoader;
-import me.googas.bot.core.loader.jsongo.JsongoLoader;
-import me.googas.server.GuidoRuntime;
-import me.googas.starbox.ProgramArguments;
 import net.dv8tion.jda.api.JDA;
 
 public class GuidoHandlerRegistry {
 
-  @NonNull private final GuidoRuntime runtime;
+  @NonNull private final GuidoBotRuntime runtime;
 
   /** Handlers that must be registered first */
   @NonNull private final Set<GuidoHandler> primaryHandlers = new HashSet<>();
 
-  @NonNull
-  private final Set<GuidoHandler> defaultHandlers =
-      Lots.set(
-          new DeployHandler(),
-          new LinkHandler(),
-          new MatchEloCalculator(),
-          new MatchMakingChannelsHandler(),
-          new MatchMakingHandler(),
-          new PGMMatchHandler(),
-          new QueueChannelsHandler(),
-          new QueueHandler(),
-          new RanksHandler(),
-          new GuidoMessagesController(),
-          new TestHandler());
+  @NonNull private final Set<GuidoHandler> defaultHandlers;
   /** The handlers that have been registered */
   @NonNull @Getter private final Set<GuidoHandler> registered = new HashSet<>();
 
-  public GuidoHandlerRegistry(@NonNull GuidoRuntime runtime) {
+  public GuidoHandlerRegistry(@NonNull GuidoBotRuntime runtime) {
     this.runtime = runtime;
+    this.defaultHandlers =
+        Lots.set(
+            new DeployHandler(),
+            new LinkHandler(runtime),
+            new MatchEloCalculator(runtime),
+            new MatchMakingChannelsHandler(runtime),
+            new MatchMakingHandler(runtime),
+            new PGMMatchHandler(),
+            new QueueChannelsHandler(runtime),
+            new QueueHandler(runtime),
+            new RanksHandler(runtime),
+            new TestHandler());
   }
 
   /**
@@ -92,40 +84,19 @@ public class GuidoHandlerRegistry {
     return handlers;
   }
 
-  public void register(@NonNull JDA jda) {
+  public GuidoHandlerRegistry register(@NonNull JDA jda) {
     for (GuidoHandler handler : this.primaryHandlers) {
       this.register(jda, handler);
     }
     for (GuidoHandler handler : this.defaultHandlers) {
       this.register(jda, handler);
     }
+    return this;
   }
 
   public void register(@NonNull JDA jda, @NonNull GuidoHandler handler) {
     handler.register(jda).onEnable();
     this.registered.add(handler);
-  }
-
-  @NonNull
-  public GuidoHandlerRegistry setupLoader(@NonNull ProgramArguments arguments) {
-    // TODO check if a loader has already been registered and unregister it
-    GuidoLoader loader = new GuidoFallbackLoader();
-    if (arguments.containsKey("loader")) {
-      String loaderName = arguments.getProperty("loader");
-      if (loaderName.equalsIgnoreCase("jsongo")) {
-        try {
-          loader =
-              new JsongoLoader(
-                  arguments.getProperty("uri", "none"),
-                  arguments.getProperty("database", "testing-database"));
-        } catch (Exception e) {
-          e.printStackTrace();
-        }
-      }
-    }
-    this.primaryHandlers.add(new GuidoLanguageHandler(this.runtime, loader).load(runtime, "en"));
-    this.primaryHandlers.add(loader);
-    return this;
   }
 
   public void unregister() {
@@ -141,23 +112,7 @@ public class GuidoHandlerRegistry {
   }
 
   @NonNull
-  public GuidoHandlerRegistry setupDiscordLoader() {
-    this.primaryHandlers.add(new GuidoDiscordFileLoader(this.runtime));
-    return this;
-  }
-
-  @NonNull
   public GuidoLanguageHandler getLanguageHandler() {
     return this.getHandler(GuidoLanguageHandler.class);
-  }
-
-  @NonNull
-  public DiscordLoader getDiscordLoader() {
-    return this.getHandler(DiscordLoader.class);
-  }
-
-  @NonNull
-  public GuidoLoader getLoader() {
-    return this.getHandler(GuidoLoader.class);
   }
 }

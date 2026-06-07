@@ -5,6 +5,7 @@ import com.github.chevyself.starbox.jda.context.CommandContext;
 import com.github.chevyself.starbox.jda.providers.type.JdaArgumentProvider;
 import lombok.NonNull;
 import me.googas.api.links.Linkable;
+import org.jetbrains.annotations.NotNull;
 
 public class LinkableArrayProvider implements JdaArgumentProvider<Linkable[]> {
   @Override
@@ -12,10 +13,11 @@ public class LinkableArrayProvider implements JdaArgumentProvider<Linkable[]> {
     return Linkable[].class;
   }
 
+  @NotNull
   @Override
-  public @NonNull Linkable[] fromString(@NonNull String s, @NonNull CommandContext commandContext)
+  public Linkable[] fromString(@NonNull String string, @NonNull CommandContext commandContext)
       throws ArgumentProviderException {
-    String[] strings = s.split(" ");
+    String[] strings = string.split(" ");
     Linkable[] links = new Linkable[strings.length];
     for (int i = 0; i < strings.length; i++) {
       links[i] =

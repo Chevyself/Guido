@@ -27,9 +27,7 @@ public class EventsCompatibility implements Compatibility {
   @Override
   public void setEnabled(boolean bol) {
     this.enabled = bol;
-    if (bol) {
-      GuidoTeamParser.enable();
-    }
+    if (bol) {}
   }
 
   @Override

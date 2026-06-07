@@ -1,18 +1,14 @@
 package me.googas.bot.core.handlers.queue;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
+import java.util.Optional;
+import lombok.Getter;
 import lombok.NonNull;
-import me.googas.api.events.queue.QueueLeaveEvent;
-import me.googas.api.links.Linkable;
-import me.googas.api.links.LinkableInfo;
-import me.googas.api.links.ref.DiscordLinkable;
-import me.googas.api.matches.queue.Queueable;
+import me.googas.api.events.queue.MinecraftQueueLeaveEvent;
+import me.googas.bot.GuidoBotRuntime;
 import me.googas.bot.api.Guido;
 import me.googas.bot.core.discord.GuidoGuild;
 import me.googas.bot.core.handlers.GuidoHandler;
-import me.googas.bot.core.util.Discord;
 import me.googas.starbox.events.ListenPriority;
 import me.googas.starbox.events.Listener;
 import net.dv8tion.jda.api.entities.Guild;
@@ -26,8 +22,14 @@ import net.dv8tion.jda.api.hooks.SubscribeEvent;
 /** Handles the queue channels */
 public class QueueChannelsHandler implements GuidoHandler {
 
+  @NonNull @Getter private final GuidoBotRuntime runtime;
+
   /** The waiting channel for the users in queue */
-  @NonNull private final Map<Long, Long> waiting = new HashMap<>();
+  private long waiting = -1;
+
+  public QueueChannelsHandler(@NonNull GuidoBotRuntime runtime) {
+    this.runtime = runtime;
+  }
 
   /**
    * Check when a member leaves a voice channel. If the voice channel is the queues waiting channel
@@ -38,9 +40,7 @@ public class QueueChannelsHandler implements GuidoHandler {
   @SubscribeEvent
   public void onGuildVoiceMove(@NonNull GuildVoiceUpdateEvent event) {
     this.checkRemoveQueue(event.getChannelLeft(), event.getGuild(), event.getMember());
-    this.queues()
-        .joinQueueFromVoice(
-            event.getGuild().getIdLong(), event.getChannelJoined(), event.getMember());
+    this.queues().joinQueueFromVoice(event.getChannelJoined(), event.getMember());
   }
 
   /**
@@ -52,13 +52,17 @@ public class QueueChannelsHandler implements GuidoHandler {
    */
   public void checkRemoveQueue(
       AudioChannelUnion channelLeft, @NonNull Guild guild, @NonNull Member discordMember) {
+    if (channelLeft == null) return;
     long guildId = guild.getIdLong();
-    long channelId = this.waiting.getOrDefault(guildId, -1L);
-    if (channelId == channelLeft.getIdLong()) {
-      DiscordLinkable member = Discord.getUser(discordMember.getIdLong());
-      for (Linkable data : member.getLinks()) {
-        this.queues().leaveQueue(data.getInfo());
-      }
+    if (this.waiting == channelLeft.getIdLong()) {
+      runtime
+          .getLoader()
+          .getDiscordLinks()
+          .ensureByUser(discordMember.getUser())
+          .getLinkedUserId()
+          .flatMap(
+              linkedUserId -> runtime.getLoader().getMinecraftLinks().getByLinkedUser(linkedUserId))
+          .ifPresent(minecraft -> this.queues().leaveQueue(minecraft));
       this.checkDeletion(channelLeft, guildId);
     }
   }
@@ -73,7 +77,7 @@ public class QueueChannelsHandler implements GuidoHandler {
     if (channel == null) return;
     List<Member> members = channel.getMembers();
     if (members.isEmpty()) {
-      this.waiting.remove(guildId);
+      this.waiting = -1;
       channel.delete().queue();
     }
   }
@@ -94,24 +98,21 @@ public class QueueChannelsHandler implements GuidoHandler {
    * @param event the event of an user leaving the queue
    */
   @Listener(priority = ListenPriority.HIGHEST)
-  public void onQueueLeave(QueueLeaveEvent event) {
-    Queueable data = event.getData();
-    if (!(data instanceof LinkableInfo)) return;
-    Linkable link = ((LinkableInfo) data).getLink();
-    if (link != null) {
-      Member member =
-          link.requireDiscordRef()
-              .getMember(event.getQueue().getGuildId(), Guido.getConnection().validatedJda());
-      if (member != null) {
-        GuildVoiceState voiceState = member.getVoiceState();
-        if (voiceState != null) {
-          AudioChannelUnion channel = voiceState.getChannel();
-          if (channel != null
-              && channel.getIdLong()
-                  == this.waiting.getOrDefault(event.getQueue().getGuildId(), -1L)) {
-            member.getGuild().moveVoiceMember(member, null).queue();
-          }
-        }
+  public void onQueueLeave(MinecraftQueueLeaveEvent event) {
+    Optional<Member> optional =
+        event
+            .getMinecraft()
+            .getLinkedUserId()
+            .flatMap(
+                linkedUserId -> runtime.getLoader().getDiscordLinks().getByLinkedUser(linkedUserId))
+            .flatMap(discord -> discord.getMember(runtime.getBotJda()));
+    if (optional.isEmpty()) return;
+    Member member = optional.get();
+    GuildVoiceState voiceState = member.getVoiceState();
+    if (voiceState != null) {
+      AudioChannelUnion channel = voiceState.getChannel();
+      if (channel != null && channel.getIdLong() == this.waiting) {
+        member.getGuild().moveVoiceMember(member, null).queue();
       }
     }
   }
@@ -123,19 +124,16 @@ public class QueueChannelsHandler implements GuidoHandler {
    * @return the channel
    */
   @NonNull
-  public VoiceChannel getWaitingChannel(GuidoGuild guild) {
-    long id =
-        this.waiting.computeIfAbsent(
-            guild.getId(),
-            aLong ->
-                guild.getCategory("matches").createVoiceChannel("Queue").complete().getIdLong());
-    VoiceChannel channel = guild.toDiscord().getVoiceChannelById(id);
-    if (channel == null) {
-      this.waiting.remove(guild.getId());
-      return this.getWaitingChannel(guild);
-    } else {
-      return channel;
+  public VoiceChannel getWaitingChannel(GuidoGuild guildData, Guild guild) {
+    VoiceChannel channel = null;
+    if (this.waiting != -1) {
+      channel = guild.getVoiceChannelById(this.waiting);
     }
+    if (channel == null) {
+      channel = guildData.getMatchesCategory().createVoiceChannel("Queue").complete();
+      this.waiting = channel.getIdLong();
+    }
+    return channel;
   }
 
   @Override

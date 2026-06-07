@@ -1,29 +1,28 @@
 package me.googas.bot.core.handlers.ranks;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
+import java.util.logging.Logger;
 import lombok.Getter;
 import lombok.NonNull;
-import me.googas.api.events.match.MatchStatusUpdatedEvent;
-import me.googas.api.links.Linkable;
-import me.googas.api.links.LinkableType;
-import me.googas.api.links.ref.DiscordLinkable;
-import me.googas.api.matches.AbstractMatch;
+import me.googas.api.events.match.MinecraftMatchStatusUpdatedEvent;
+import me.googas.api.links.*;
+import me.googas.api.matches.Match;
 import me.googas.api.matches.MatchTeam;
+import me.googas.api.matches.MatchTeamMember;
 import me.googas.api.matches.ladder.GlobalLadder;
 import me.googas.api.matches.ladder.Ladder;
-import me.googas.api.matches.team.TeamMember;
-import me.googas.api.ranks.RankRange;
-import me.googas.api.user.UserData;
+import me.googas.api.utility.ImmutableCollection;
 import me.googas.api.utility.Stateables;
-import me.googas.bot.api.Guido;
+import me.googas.bot.DiscordRankRange;
+import me.googas.bot.GuidoBotRuntime;
+import me.googas.bot.GuidoJdaProvider;
 import me.googas.bot.api.events.data.links.LinkableRankUpdatedEvent;
-import me.googas.bot.core.discord.GuidoGuild;
 import me.googas.bot.core.handlers.GuidoHandler;
-import me.googas.bot.core.util.Stats;
 import me.googas.starbox.events.ListenPriority;
 import me.googas.starbox.events.Listener;
+import me.googas.starbox.logging.LoggerFactory;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Role;
@@ -31,21 +30,12 @@ import net.dv8tion.jda.api.entities.Role;
 /** Handles decorations for linked data */
 public class RanksHandler implements GuidoHandler {
 
-  /**
-   * Get the ladders to apply an update of decorations
-   *
-   * @return the ladders to apply the update
-   */
-  public static List<Ladder> getLadders(String ladderName, @NonNull GuidoGuild guild) {
-    List<Ladder> ladders = new ArrayList<>();
-    Ladder ladder = ladderName == null ? null : guild.getLadder(ladderName);
-    if (ladder == null) {
-      ladders.addAll(guild.getLadders());
-    } else {
-      ladders.add(ladder);
-    }
-    ladders.add(GlobalLadder.INSTANCE);
-    return ladders;
+  @NonNull private static final Logger logger = LoggerFactory.getLogger(RanksHandler.class);
+
+  @NonNull private final GuidoBotRuntime runtime;
+
+  public RanksHandler(@NonNull GuidoBotRuntime runtime) {
+    this.runtime = runtime;
   }
 
   /**
@@ -54,126 +44,121 @@ public class RanksHandler implements GuidoHandler {
    * @param event the event of a match updating its status
    */
   @Listener(priority = ListenPriority.HIGHEST)
-  public void onMatchStatusUpdatedEvent(@NonNull MatchStatusUpdatedEvent event) {
-    this.update(event.getAbstractMatch(), false);
+  public void onMatchStatusUpdatedEvent(@NonNull MinecraftMatchStatusUpdatedEvent event) {
+    this.update(event.getMatch(), false);
   }
 
   /**
    * Update the ranks from a abstractMatch
    *
-   * @param abstractMatch the abstractMatch to update the ranks
+   * @param match the abstractMatch to update the ranks
    * @param event whether to call the event of ranks updated
    */
-  public void update(@NonNull AbstractMatch abstractMatch, boolean event) {
-    long guildId = abstractMatch.getGuildId();
-    String ladderName = abstractMatch.get(null, "ladder", String.class);
-    if (ladderName != null) {
-      GuidoGuild guildData = Guido.getHandlers().getDiscordLoader().getGuild(guildId);
-      Ladder ladder = guildData.getLadder(ladderName);
-      if (ladder != null) {
-        for (MatchTeam matchTeam : abstractMatch.getTeams()) {
-          for (TeamMember teamMember : matchTeam.getMembers()) {
-            Linkable data = teamMember.getLink().getLink();
-            if (data == null) return;
-            UpdateResult update = this.update(data, guildData);
-            if (event) new LinkableRankUpdatedEvent(data, update).call();
-          }
+  public void update(@NonNull Match match, boolean event) {
+    for (MatchTeam matchTeam : match.getTeams()) {
+      for (MatchTeamMember teamMember : matchTeam.getMembers()) {
+        Optional<? extends Linkable> optional = teamMember.getLinkable(runtime.getLoader());
+        if (optional.isEmpty()) {
+          logger.warning(
+              String.format(
+                  "Failed to update team member %s, could not find linkable", teamMember));
+          return;
         }
+        Linkable data = optional.get();
+        UpdateResult update = this.update(data);
+        if (event) runtime.getListeners().call(new LinkableRankUpdatedEvent(data, update));
       }
     }
   }
 
   @NonNull
-  public UpdateResult update(@NonNull Linkable linkable, @NonNull GuidoGuild guild) {
-    return this.update(linkable, guild.getLadders(), guild.getRanges(), guild);
-  }
-
-  @NonNull
-  public UpdateResult update(
-      @NonNull Linkable linkable,
-      @NonNull Collection<Ladder> ladders,
-      @NonNull Collection<RankRange> ranges,
-      GuidoGuild guild) {
+  public UpdateResult update(@NonNull Linkable linkable) {
     UpdateResult result = new UpdateResult();
-    DiscordLinkable discord = linkable.toDiscordRef();
+    ImmutableCollection<? extends Ladder> ladders = runtime.getLadderProvider().getLadders();
+    ImmutableCollection<DiscordRankRange> ranges = runtime.getRanksProvider().getRanks();
     for (Ladder ladder : ladders) {
-      double elo = Stats.getElo(linkable, ladder, ladders);
+      double elo = linkable.getStats(runtime.getStatsProvider()).getElo(ladder, ladders);
       result.append(this.update(elo, ranges));
     }
-    this.updateDiscord(linkable, guild, result, discord);
+    Optional<DiscordLinkable> optional =
+        linkable
+            .getLinkedUserId()
+            .flatMap(
+                linkedUserId ->
+                    runtime.getLoader().getDiscordLinks().getByLinkedUser(linkedUserId));
+    if (optional.isEmpty()) {
+      logger.warning(
+          String.format(
+              "Failed to update discord for linkable %s, could not find Discord", linkable));
+      return result;
+    }
+    DiscordLinkable discord = optional.get();
+    this.updateDiscord(linkable, result, discord, ladders);
     return result;
   }
 
-  /**
-   * This will getId which roles the user didn't or did have to update the result TODO a better
-   * javadoc
-   *
-   * @param guild
-   * @param result
-   * @param discord
-   */
   public void updateDiscord(
-      @NonNull Linkable linkable, GuidoGuild guild, UpdateResult result, DiscordLinkable discord) {
-    if (guild != null && discord != null) {
-      Guild guildDiscord = guild.toDiscord();
-      Member member = discord.getMember(guildDiscord);
-      if (member == null) return;
-      result
-          .getApplied()
-          .removeIf(
-              range -> {
-                Role role = guildDiscord.getRoleById(range.getLong(null, "id", 0L));
-                if (role != null) {
-                  if (!member.getRoles().contains(role)) {
-                    guildDiscord.addRoleToMember(member, role).queue();
-                    return false;
-                  }
-                }
-                return true;
-              });
-      result
-          .getRemoved()
-          .removeIf(
-              range -> {
-                Role role = guildDiscord.getRoleById(range.getLong(null, "id", 0L));
-                if (role != null) {
-                  if (member.getRoles().contains(role)) {
-                    guildDiscord.removeRoleFromMember(member, role).queue();
-                    return false;
-                  }
-                }
-                return true;
-              });
-      this.updateNickname(linkable, guild, member);
+      @NonNull Linkable linkable,
+      UpdateResult result,
+      @NonNull DiscordLinkable discord,
+      ImmutableCollection<? extends Ladder> ladders) {
+    GuidoJdaProvider jdaProvider = runtime.getBotJda();
+    Optional<Member> optional = discord.getMember(jdaProvider);
+    if (optional.isEmpty()) {
+      logger.warning(
+          String.format(
+              "Failed to update discord for linkable %s, could not find Guild member", linkable));
+      return;
     }
+    Member member = optional.get();
+    Guild guild = jdaProvider.getGuild();
+    result
+        .getApplied()
+        .removeIf(
+            range -> {
+              Role role = guild.getRoleById(range.getRoleId());
+              if (role != null) {
+                if (!member.getRoles().contains(role)) {
+                  guild.addRoleToMember(member, role).queue();
+                  return false;
+                }
+              }
+              return true;
+            });
+    result
+        .getRemoved()
+        .removeIf(
+            range -> {
+              Role role = guild.getRoleById(range.getRoleId());
+              if (role != null) {
+                if (member.getRoles().contains(role)) {
+                  guild.removeRoleFromMember(member, role).queue();
+                  return false;
+                }
+              }
+              return true;
+            });
+    this.updateNickname(linkable, member, ladders);
   }
 
-  public void updateNickname(@NonNull Linkable linkable, @NonNull GuidoGuild guild, Member member) {
+  public void updateNickname(
+      @NonNull Linkable linkable, Member member, ImmutableCollection<? extends Ladder> ladders) {
     if (!member.isOwner()) {
-      String nick =
-          member.getEffectiveName().contains(" - ")
-              ? member.getEffectiveName().split(" - ")[1]
-              : member.getEffectiveName();
-      if (linkable.getType() == LinkableType.MINECRAFT) {
-        nick = linkable.getSingle();
-      } else {
-        UserData user = linkable.getLinkedUser();
-        if (user != null) {
-          Linkable link = user.getLink(LinkableType.MINECRAFT);
-          if (link != null) nick = link.getSingle();
-        }
-      }
+      String nick = linkable.getPublicDisplayName(runtime.getLoader());
       member
           .modifyNickname(
               "["
-                  + (int) Stats.getElo(linkable, GlobalLadder.INSTANCE, guild.getLadders())
+                  + (int)
+                      linkable
+                          .getStats(runtime.getStatsProvider())
+                          .getElo(GlobalLadder.INSTANCE, ladders)
                   + "] - "
                   + nick)
           .queue();
     }
   }
 
-  public UpdateResult update(double elo, @NonNull Collection<RankRange> ranges) {
+  public UpdateResult update(double elo, @NonNull ImmutableCollection<DiscordRankRange> ranges) {
     return new UpdateResult(
         Stateables.getApplying(elo, ranges), Stateables.getOutside(elo, ranges));
   }
@@ -183,14 +168,15 @@ public class RanksHandler implements GuidoHandler {
 
   /** This is a result of the ranks that have been applied or removed */
   public static class UpdateResult {
-    @NonNull @Getter private final List<RankRange> applied;
-    @NonNull @Getter private final List<RankRange> removed;
+    @NonNull @Getter private final List<DiscordRankRange> applied;
+    @NonNull @Getter private final List<DiscordRankRange> removed;
 
     public UpdateResult() {
       this(new ArrayList<>(), new ArrayList<>());
     }
 
-    public UpdateResult(@NonNull List<RankRange> applied, @NonNull List<RankRange> removed) {
+    public UpdateResult(
+        @NonNull List<DiscordRankRange> applied, @NonNull List<DiscordRankRange> removed) {
       this.applied = applied;
       this.removed = removed;
     }

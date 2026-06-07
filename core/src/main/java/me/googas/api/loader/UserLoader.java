@@ -1,28 +1,17 @@
 package me.googas.api.loader;
 
+import java.util.Optional;
+import java.util.UUID;
 import lombok.NonNull;
 import me.googas.api.user.UserData;
-import me.googas.api.utility.RandomUtils;
+import net.dv8tion.jda.api.entities.User;
+import org.jetbrains.annotations.NotNull;
 
 public interface UserLoader extends DataLoader {
 
-  /**
-   * Load the data of an user
-   *
-   * @param id the id of the user
-   * @return the data of the user or null if not found
-   */
-  UserData getUserData(String id);
-
-  /**
-   * Get a new id for an user
-   *
-   * @return the new id for an user
-   */
   @NonNull
-  default String nextUserId() {
-    String id = RandomUtils.nextString(6);
-    if (this.getUserData(id) != null) return this.nextUserId();
-    return id;
-  }
+  UserData ensureUserData(@NonNull User user);
+
+  @NotNull
+  Optional<? extends UserData> getById(@NonNull UUID id);
 }

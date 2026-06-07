@@ -1,11 +1,10 @@
 package me.googas.api.matches.ladder;
 
 import lombok.NonNull;
-import me.googas.api.Informative;
-import me.googas.api.matches.queue.Queue;
+import me.googas.api.matches.MinecraftTeamSelectionType;
 
 /** A ladder is a ranked system that users may use to climb */
-public interface Ladder extends Informative {
+public interface Ladder {
 
   /**
    * Get the number of players per team
@@ -29,19 +28,17 @@ public interface Ladder extends Informative {
   int teamsPerMatch();
 
   /**
-   * Create the queue for this ladder
-   *
-   * @param guildId the id of the guild to create the queue
-   * @return the created queue
-   */
-  @NonNull
-  Queue createQueue(long guildId);
-
-  /**
    * Get the name of the ladder
    *
    * @return the name of the ladder
    */
   @NonNull
   String getName();
+
+  @NonNull
+  MinecraftTeamSelectionType getTeamSelectionType();
+
+  double getWinMultiplier();
+
+  double getLoseMultiplier();
 }

@@ -1,48 +1,39 @@
 package me.googas.bot.core.matches.ladder;
 
-import java.util.HashMap;
-import java.util.Map;
 import lombok.Getter;
 import lombok.NonNull;
-import me.googas.api.matches.ladder.Ladder;
-import me.googas.api.matches.queue.Queue;
+import me.googas.api.matches.MinecraftTeamSelectionType;
+import me.googas.api.matches.queue.MinecraftQueue;
+import me.googas.bot.GuidoBotRuntime;
 import me.googas.bot.core.matches.queue.GuidoPGMQueue;
-import me.googas.bot.core.matches.queue.GuidoQueue;
 
 /** An implementation for ladder */
-public class GuidoLadder implements Ladder {
+// TODO move to generics
+public class GuidoLadder implements PlayableLadder {
 
   @NonNull @Getter private final String name;
   private final int playersPerTeam;
   private final int baseValue;
   private final int teamsPerMatch;
-  @NonNull @Getter private final Map<String, Map<String, Object>> information;
+  @Getter private final double winMultiplier;
+  @Getter private final double loseMultiplier;
+  @Getter private final MinecraftTeamSelectionType teamSelectionType;
 
-  /**
-   * Create the ladder
-   *
-   * @param name the name of the ladder
-   * @param playersPerTeam the players per team in the ladder
-   * @param baseValue the base value of the ladder
-   * @param teamsPerMatch the teams per match in the ladder
-   * @param information the options of the ladder
-   */
   public GuidoLadder(
       @NonNull String name,
       int playersPerTeam,
       int baseValue,
       int teamsPerMatch,
-      @NonNull Map<String, Map<String, Object>> information) {
+      double winMultiplier,
+      double loseMultiplier,
+      MinecraftTeamSelectionType teamSelectionType) {
     this.name = name;
     this.playersPerTeam = playersPerTeam;
     this.baseValue = baseValue;
     this.teamsPerMatch = teamsPerMatch;
-    this.information = new HashMap<>(information);
-  }
-
-  /** @deprecated this constructor may only be used by gson */
-  public GuidoLadder() {
-    this("", 5, 500, -1, new HashMap<>());
+    this.winMultiplier = winMultiplier;
+    this.loseMultiplier = loseMultiplier;
+    this.teamSelectionType = teamSelectionType;
   }
 
   @Override
@@ -61,13 +52,7 @@ public class GuidoLadder implements Ladder {
   }
 
   @Override
-  public @NonNull Queue createQueue(long guildId) {
-    String type = this.getString("global", "type", "pgm");
-    switch (type) {
-      case "pgm":
-        return new GuidoPGMQueue(guildId, this.getName());
-      default:
-        return new GuidoQueue(guildId, this.getName());
-    }
+  public @NonNull MinecraftQueue createQueue(@NonNull GuidoBotRuntime runtime) {
+    return new GuidoPGMQueue(this.getName(), runtime);
   }
 }

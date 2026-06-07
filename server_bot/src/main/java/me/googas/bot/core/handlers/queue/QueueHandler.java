@@ -2,108 +2,100 @@ package me.googas.bot.core.handlers.queue;
 
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.Optional;
 import java.util.Set;
 import lombok.Getter;
 import lombok.NonNull;
-import me.googas.api.links.Linkable;
-import me.googas.api.links.LinkableInfo;
-import me.googas.api.links.ref.DiscordLinkable;
-import me.googas.api.matches.ladder.Ladder;
-import me.googas.api.matches.queue.Queue;
+import me.googas.api.links.MinecraftLinkable;
+import me.googas.api.matches.minecraft.MinecraftMatchTeamMember;
+import me.googas.api.matches.queue.MinecraftQueue;
 import me.googas.api.matches.queue.QueueResult;
+import me.googas.bot.GuidoBotRuntime;
 import me.googas.bot.api.Guido;
 import me.googas.bot.core.discord.GuidoGuild;
 import me.googas.bot.core.handlers.GuidoHandler;
-import me.googas.bot.core.util.Discord;
+import me.googas.bot.core.matches.ladder.PlayableLadder;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.channel.unions.AudioChannelUnion;
-import net.dv8tion.jda.api.events.guild.voice.GuildVoiceUpdateEvent;
-import net.dv8tion.jda.api.hooks.SubscribeEvent;
 
 /** Handles the queue */
 public class QueueHandler implements GuidoHandler {
 
+  @NonNull @Getter private final GuidoBotRuntime runtime;
+
   /** The queues that are working right now in the handler */
-  @NonNull @Getter private final Set<Queue> queues = new HashSet<>();
+  @NonNull @Getter private final Set<MinecraftQueue> queues = new HashSet<>();
+
+  public QueueHandler(@NonNull GuidoBotRuntime runtime) {
+    this.runtime = runtime;
+  }
 
   /**
    * Make a player join a queue from voice channel
    *
-   * @param guildId the id of the guild where this is happening
    * @param channelJoined the channel that the member joined
    * @param member the member that joined the channel
    */
-  public void joinQueueFromVoice(
-      long guildId, AudioChannelUnion channelJoined, @NonNull Member member) {
+  public void joinQueueFromVoice(AudioChannelUnion channelJoined, @NonNull Member member) {
     if (channelJoined == null) return;
-    GuidoGuild guild = Guido.getHandlers().getDiscordLoader().getGuild(guildId);
+    /*TODO
+    GuidoGuild guild = runtime.getBotJda().getGuidoGuild();
     String key = guild.getVoiceChannel(channelJoined.getIdLong());
     if (key != null && key.startsWith("join-")) {
       String ladderName = key.substring(5);
-      Ladder ladder = guild.getLadder(ladderName);
-      if (ladder == null) return;
-      QueueResult result = this.joinQueue(guild, member, ladder);
-      if (result.isCancelled())
-        member
-            .getUser()
-            .openPrivateChannel()
-            .queue(
-                channel -> {
-                  channel.sendMessage(result.getReason()).queue();
-                });
-    }
+      guild.getLadder(ladderName)
+              .ifPresent(ladder -> {
+                QueueResult result = this.joinQueue(guild, member, ladder);
+                if (result.isCancelled())
+                  member
+                          .getUser()
+                          .openPrivateChannel()
+                          .queue(
+                                  channel -> {
+                                    channel.sendMessage(result.getReason()).queue();
+                                  });
+              });
+    }*/
   }
 
+  /*
   @SubscribeEvent
   public void onGuildVoiceJoinEvent(@NonNull GuildVoiceUpdateEvent event) {
-    this.joinQueueFromVoice(
-        event.getGuild().getIdLong(), event.getChannelJoined(), event.getMember());
-  }
+    this.joinQueueFromVoice(event.getChannelJoined(), event.getMember());
+  }*/
 
   /**
    * Makes the given info leave all the queues where it is waiting
    *
    * @param info the information of the data to leave all queues
    */
-  public void leaveQueue(@NonNull LinkableInfo info) {
-    for (Queue queue : this.getQueues(info)) {
+  public void leaveQueue(@NonNull MinecraftLinkable info) {
+    for (MinecraftQueue queue : this.getQueues(info)) {
       queue.leave(info);
     }
   }
 
-  /**
-   * Get all the queues for a guild
-   *
-   * @param guildId the guild querying for queues
-   * @return the queues for the given guild
-   */
-  private Set<Queue> getQueues(long guildId) {
-    Set<Queue> queues = new HashSet<>();
-    for (Queue queue : this.queues) {
-      if (queue.getGuildId() == guildId) {
-        queues.add(queue);
-      }
+  public void leaveQueue(@NonNull MinecraftMatchTeamMember member) {
+    for (MinecraftQueue queue : this.queues) {
+      queue.leave(member);
     }
-    return queues;
   }
 
   /**
    * Get the queue for certain ladder in a guild
    *
-   * @param guild the guild to getId the queue from
    * @param ladder the ladder that needs the queue
    * @return the queue if exists else a new one will be created from {@link
-   *     Ladder#createQueue(long)})}
+   *     PlayableLadder#createQueue(GuidoBotRuntime)}}
    */
   @NonNull
-  public Queue getQueue(@NonNull GuidoGuild guild, @NonNull Ladder ladder) {
-    Set<Queue> queues = this.getQueues(guild.getId());
-    for (Queue queue : queues) {
+  public MinecraftQueue getQueue(@NonNull PlayableLadder ladder) {
+    for (MinecraftQueue queue : queues) {
       if (queue.getLadderName().equalsIgnoreCase(ladder.getName())) {
         return queue;
       }
     }
-    Queue queue = ladder.createQueue(guild.getId());
+    MinecraftQueue queue = ladder.createQueue(runtime);
     this.queues.add(queue);
     return queue;
   }
@@ -117,11 +109,24 @@ public class QueueHandler implements GuidoHandler {
    * @return whether the member joined the queue
    */
   public QueueResult joinQueue(
-      @NonNull GuidoGuild guild, @NonNull Member member, @NonNull Ladder ladder) {
-    Queue queue = this.getQueue(guild, ladder);
-    QueueResult join = queue.join(Discord.getUser(member).getInfo());
+      @NonNull GuidoGuild guild, @NonNull Member member, @NonNull PlayableLadder ladder) {
+    MinecraftQueue queue = this.getQueue(ladder);
+    Optional<MinecraftLinkable> optional =
+        runtime
+            .getLoader()
+            .getDiscordLinks()
+            .ensureByMember(member)
+            .getLinkedUserId()
+            .flatMap(
+                linkedUserId ->
+                    runtime.getLoader().getMinecraftLinks().getByLinkedUser(linkedUserId));
+    if (optional.isEmpty()) return new QueueResult();
+    QueueResult join = queue.join(optional.get());
     if (join.isCancelled()) return join;
-    guild.toDiscord().moveVoiceMember(member, this.channels().getWaitingChannel(guild)).queue();
+    guild
+        .toDiscord()
+        .moveVoiceMember(member, this.channels().getWaitingChannel(guild, guild.toDiscord()))
+        .queue();
     return new QueueResult();
   }
 
@@ -131,9 +136,9 @@ public class QueueHandler implements GuidoHandler {
    * @param info the information of a link
    * @return the collection of queues where the link is waiting
    */
-  public Collection<Queue> getQueues(@NonNull LinkableInfo info) {
-    Set<Queue> queues = new HashSet<>();
-    for (Queue queue : this.queues) {
+  public Collection<MinecraftQueue> getQueues(@NonNull MinecraftLinkable info) {
+    Set<MinecraftQueue> queues = new HashSet<>();
+    for (MinecraftQueue queue : this.queues) {
       if (queue.isWaiting(info)) {
         queues.add(queue);
       }
@@ -144,21 +149,22 @@ public class QueueHandler implements GuidoHandler {
   /**
    * Get whether a member is in queue
    *
-   * @param guild the guild to
    * @param member the member to check
    * @param ladder the ladder to getId the queue
    * @return true if the member is waiting in the queue
    */
-  public boolean isWaiting(
-      @NonNull GuidoGuild guild, @NonNull Member member, @NonNull Ladder ladder) {
-    DiscordLinkable memberData = Discord.getUser(member);
-    Queue queue = this.getQueue(guild, ladder);
-    for (Linkable link : memberData.getLinks()) {
-      if (queue.isWaiting(link.getInfo())) {
-        return true;
-      }
-    }
-    return false;
+  public boolean isWaiting(@NonNull Member member, @NonNull PlayableLadder ladder) {
+    MinecraftQueue queue = this.getQueue(ladder);
+    Optional<MinecraftLinkable> optional =
+        runtime
+            .getLoader()
+            .getDiscordLinks()
+            .ensureByMember(member)
+            .getLinkedUserId()
+            .flatMap(
+                linkedUserId ->
+                    runtime.getLoader().getMinecraftLinks().getByLinkedUser(linkedUserId));
+    return optional.filter(queue::isWaiting).isPresent();
   }
 
   /**

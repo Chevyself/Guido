@@ -28,9 +28,7 @@ public class PickCommands implements GuidoCommand {
     if (creation instanceof PickTeamSelection) {
       if (((PickTeamSelection) creation).isPicking(match.getId(), leader.validated())) {
         ((PickTeamSelection) creation).pick(match.getId(), leader.validated(), player.validated());
-        return Result.of(
-            locale.get(
-                "pick.success", Maps.singleton("name", player.getRecogString("nickname", ""))));
+        return Result.of(locale.get("pick.success", Maps.singleton("name", player.getNickname())));
       } else {
         return Result.of(locale.get("pick.not-picking"));
       }

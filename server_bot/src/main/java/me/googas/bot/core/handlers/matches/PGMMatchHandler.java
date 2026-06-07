@@ -3,16 +3,15 @@ package me.googas.bot.core.handlers.matches;
 import java.util.*;
 import lombok.NonNull;
 import me.googas.api.Requests;
-import me.googas.api.events.match.MatchLoadedEvent;
-import me.googas.api.events.match.MatchStatusUpdatedEvent;
-import me.googas.api.links.LinkableInfo;
-import me.googas.api.matches.AbstractMatch;
+import me.googas.api.events.match.MinecraftMatchLoadedEvent;
+import me.googas.api.events.match.MinecraftMatchStatusUpdatedEvent;
 import me.googas.api.matches.MatchStatus;
+import me.googas.api.matches.minecraft.MinecraftMatch;
+import me.googas.api.matches.minecraft.MinecraftMatchTeamMember;
 import me.googas.bot.api.Guido;
 import me.googas.net.api.Server;
 import me.googas.net.sockets.json.JsonMessenger;
 import me.googas.net.sockets.json.server.JsonClientThread;
-import me.googas.starbox.UUIDUtils;
 import me.googas.starbox.events.ListenPriority;
 import me.googas.starbox.events.Listener;
 
@@ -21,7 +20,7 @@ import me.googas.starbox.events.Listener;
 public class PGMMatchHandler implements MatchHandler {
 
   /** All the matches that are looking for a server */
-  @NonNull private final Set<AbstractMatch> waitingForServer = new HashSet<>();
+  @NonNull private final Set<MinecraftMatch> waitingForServer = new HashSet<>();
 
   /**
    * Listen to a match being loaded to look for a server and start playing
@@ -29,14 +28,11 @@ public class PGMMatchHandler implements MatchHandler {
    * @param event the event of a match being loaded
    */
   @Listener(priority = ListenPriority.HIGHEST)
-  public void onMatchLoaded(@NonNull MatchLoadedEvent event) {
-    AbstractMatch abstractMatch = event.getAbstractMatch();
-    String type = abstractMatch.getString(null, "type", "");
-    if (type != null && type.equalsIgnoreCase("pgm")) {
-      if (abstractMatch.getStatus() == MatchStatus.WAITING) {
-        this.waitingForServer.add(abstractMatch);
-        this.lookForServer(abstractMatch);
-      }
+  public void onMatchLoaded(@NonNull MinecraftMatchLoadedEvent event) {
+    MinecraftMatch abstractMatch = event.getMatch();
+    if (abstractMatch.getStatus() == MatchStatus.WAITING) {
+      this.waitingForServer.add(abstractMatch);
+      this.lookForServer(abstractMatch);
     }
   }
 
@@ -46,9 +42,8 @@ public class PGMMatchHandler implements MatchHandler {
    * @param event the event of a match updating its status
    */
   @Listener(priority = ListenPriority.HIGHEST)
-  public void onMatchStatusUpdated(@NonNull MatchStatusUpdatedEvent event) {
-    if (event.getStatus() == MatchStatus.FINISHED
-        && "pgm".equalsIgnoreCase(event.getAbstractMatch().getString(null, "type", ""))) {
+  public void onMatchStatusUpdated(@NonNull MinecraftMatchStatusUpdatedEvent event) {
+    if (event.getStatus() == MatchStatus.FINISHED) {
       this.lookForServers();
     }
   }
@@ -56,7 +51,7 @@ public class PGMMatchHandler implements MatchHandler {
   /** Makes all the matches waiting for servers look for a server */
   public void lookForServers() {
     if (this.waitingForServer.isEmpty()) return;
-    for (AbstractMatch abstractMatch : this.waitingForServer) {
+    for (MinecraftMatch abstractMatch : this.waitingForServer) {
       this.lookForServer(abstractMatch);
     }
   }
@@ -66,7 +61,7 @@ public class PGMMatchHandler implements MatchHandler {
    *
    * @param abstractMatch the abstractMatch looking for the server
    */
-  public void lookForServer(@NonNull AbstractMatch abstractMatch) {
+  public void lookForServer(@NonNull MinecraftMatch abstractMatch) {
     if (abstractMatch.getStatus() != MatchStatus.WAITING) {
       this.waitingForServer.remove(abstractMatch);
       return;
@@ -77,8 +72,7 @@ public class PGMMatchHandler implements MatchHandler {
         .send(
             server,
             (messenger, canHost) -> {
-              if (!(messenger instanceof JsonClientThread)) return;
-              if (!canHost.isPresent()) return;
+              if (canHost.isEmpty()) return;
               if (this.waitingForServer.contains(abstractMatch) && canHost.get()) {
                 this.waitingForServer.remove(abstractMatch);
                 this.pleaseHost(abstractMatch, bungee, messenger);
@@ -87,38 +81,35 @@ public class PGMMatchHandler implements MatchHandler {
   }
 
   /**
-   * Request a server to host a abstractMatch
+   * Request a server to host a match
    *
-   * @param abstractMatch the abstractMatch to host
+   * @param match the match to host
    * @param bungee the instance of the bungee
-   * @param messenger the server that is supposed to be able to host the abstractMatch
+   * @param messenger the server that is supposed to be able to host the match
    */
   public void pleaseHost(
-      @NonNull AbstractMatch abstractMatch, JsonClientThread bungee, JsonMessenger messenger) {
+      @NonNull MinecraftMatch match, JsonClientThread bungee, JsonMessenger messenger) {
     List<UUID> participants = new ArrayList<>();
-    for (LinkableInfo info : abstractMatch.getParticipants()) {
-      String trimmed = info.getIdString("uuid", "");
-      participants.add(
-          UUIDUtils.untrim(Objects.requireNonNull(trimmed, "Queueing user does not have uuid")));
+    for (MinecraftMatchTeamMember info : match.getParticipants()) {
+      participants.add(info.getId());
     }
-    Requests.MatchServer.host(abstractMatch)
+    Requests.MatchServer.host(match)
         .send(
             messenger,
             Requests.ifPresentElse(
                 ip -> {
                   if (bungee != null) {
-                    sendParticipantsToServer(abstractMatch, bungee, ip, participants);
+                    sendParticipantsToServer(match, bungee, ip, participants);
                   }
                 },
-                () -> this.waitingForServer.add(abstractMatch)));
+                () -> this.waitingForServer.add(match)));
   }
 
   private void sendParticipantsToServer(
-      AbstractMatch abstractMatch, JsonClientThread bungee, String ip, List<UUID> participants) {
+      MinecraftMatch match, JsonClientThread bungee, String ip, List<UUID> participants) {
     this.sendParticipantsToServer(bungee, ip, participants);
     Requests.Bungee.serverName(ip)
-        .send(
-            bungee, optinal -> optinal.ifPresent(name -> abstractMatch.set(null, "server", name)));
+        .send(bungee, optinal -> optinal.ifPresent(name -> match.setServer(name)));
   }
 
   /**

@@ -12,7 +12,6 @@ import com.starfishst.bukkit.dependencies.pgm.commands.provider.PGMHostedPlayerP
 import com.starfishst.bukkit.dependencies.pgm.commands.provider.PGMLeaderSenderProvider;
 import com.starfishst.bukkit.dependencies.pgm.commands.provider.PartyProvider;
 import com.starfishst.bukkit.dependencies.pgm.listeners.PGMStatsHandler;
-import com.starfishst.bukkit.dependencies.pgm.listeners.groups.PGMGroupsHandler;
 import com.starfishst.bukkit.dependencies.pgm.listeners.matches.PGMMatchMakingHandler;
 import java.util.Collection;
 import java.util.Optional;
@@ -77,7 +76,7 @@ public class PGMDependency implements Compatibility {
 
   @Override
   public @NonNull Collection<Module> getModules(@NonNull Plugin plugin) {
-    return Lots.list(new PGMGroupsHandler(), new PGMMatchMakingHandler(), new PGMStatsHandler());
+    return Lots.list(new PGMMatchMakingHandler(), new PGMStatsHandler());
   }
 
   @Override

@@ -12,11 +12,11 @@ import me.googas.bot.GuidoBot;
 import me.googas.bot.GuidoHandlerRegistry;
 import me.googas.bot.GuidoJdaConnection;
 import me.googas.net.api.Server;
-import me.googas.net.cache.MemoryCache;
 import me.googas.net.sockets.json.server.JsonClientThread;
 import me.googas.starbox.events.ListenerManager;
 import me.googas.starbox.scheduler.Scheduler;
 
+@Deprecated
 public class Guido {
 
   @Getter private static GuidoBot instance;
@@ -40,19 +40,15 @@ public class Guido {
   }
 
   public static @NonNull GuidoHandlerRegistry getHandlers() {
-    return Guido.validated().getHandlerRegistry();
-  }
-
-  public static @NonNull MemoryCache getCache() {
-    return Guido.validated().getCache();
+    return Guido.validated().getHandlers();
   }
 
   public static @NonNull GuidoJdaConnection getConnection() {
-    return Guido.validated().getConnection();
+    return Guido.validated().getJdaConnection();
   }
 
   public static @NonNull ListenerManager getListenerManager() {
-    return Guido.validated().getListenerManager();
+    return Guido.validated().getListeners();
   }
 
   public static @NonNull Scheduler getScheduler() {
@@ -70,7 +66,7 @@ public class Guido {
   }
 
   public static @NonNull Logger getLogger() {
-    return GuidoBot.getLog();
+    return GuidoBot.getLogger();
   }
 
   public static @NonNull GuidoAuthenticator getAuthenticator() {
