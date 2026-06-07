@@ -26,7 +26,7 @@ public class GuidoHandlerRegistry {
   @NonNull private final GuidoBotRuntime runtime;
 
   /** Handlers that must be registered first */
-  @NonNull private final Set<GuidoHandler> primaryHandlers = new HashSet<>();
+  @NonNull private final Set<GuidoHandler> primaryHandlers;
 
   @NonNull private final Set<GuidoHandler> defaultHandlers;
   /** The handlers that have been registered */
@@ -34,6 +34,7 @@ public class GuidoHandlerRegistry {
 
   public GuidoHandlerRegistry(@NonNull GuidoBotRuntime runtime) {
     this.runtime = runtime;
+    this.primaryHandlers = Set.of(new GuidoLanguageHandler(this.runtime));
     this.defaultHandlers =
         Lots.set(
             new DeployHandler(),

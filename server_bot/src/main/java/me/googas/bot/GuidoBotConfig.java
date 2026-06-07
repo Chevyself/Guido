@@ -1,3 +1,21 @@
 package me.googas.bot;
 
-public interface GuidoBotConfig {}
+import lombok.NonNull;
+
+public interface GuidoBotConfig {
+
+  @NonNull
+  String getMongoUri();
+
+  @NonNull
+  String getDatabase();
+
+  @NonNull
+  String getDiscordToken();
+
+  int getServerPort();
+
+  long getTimeout();
+
+  long getGuildId();
+}

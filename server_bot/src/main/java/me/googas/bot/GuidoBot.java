@@ -53,13 +53,14 @@ public class GuidoBot implements GuidoBotRuntime {
           "GuidoBot", false, LoggerFactory.createConsoleHandler(GuidoBot.formatter));
 
   @NonNull private final GuidoServerRuntime parentRuntime;
-  @NonNull @Getter private final GuidoHandlerRegistry handlers;
+  @NonNull private final GuidoBotConfig config;
+  @NonNull @Getter private final GuidoJdaProvider jdaProvider;
   @NonNull @Getter private GuidoAuthenticator authenticator;
 
   @NonNull @Getter private final GuidoJdaConnection jdaConnection = new GuidoJdaConnection();
   @NonNull @Getter private final ListenerManager listeners = new ListenerManager();
   @NonNull @Getter private final Scheduler scheduler = new TimerScheduler(new Timer());
-  @NonNull @Getter private final GuidoJdaProvider jdaProvider = new GuidoJdaProvider(this);
+  @NonNull @Getter private final GuidoHandlerRegistry handlers = new GuidoHandlerRegistry(this);
   @NonNull @Getter private final GuidoLadderProvider ladderProvider = new GuidoLadderProvider(this);
   @NonNull @Getter private final GuidoRanksProvider ranksProvider = new GuidoRanksProvider(this);
   @NonNull @Getter private final GuidoStatsProvider statsProvider = new GuidoStatsProvider(this);
@@ -68,9 +69,10 @@ public class GuidoBot implements GuidoBotRuntime {
 
   private CommandManager<CommandContext, JdaCommand> commandManager;
 
-  public GuidoBot(@NonNull GuidoServerRuntime parentRuntime) {
+  public GuidoBot(@NonNull GuidoServerRuntime parentRuntime, @NonNull GuidoBotConfig config) {
     this.parentRuntime = parentRuntime;
-    this.handlers = new GuidoHandlerRegistry(this);
+    this.config = config;
+    this.jdaProvider = new GuidoJdaProvider(this, config.getGuildId());
     this.authenticator = new GuidoAuthenticator(new GuidoFallbackLoader());
   }
 
@@ -90,34 +92,22 @@ public class GuidoBot implements GuidoBotRuntime {
   }
 
   public void setupLoader() {
-    ProgramArguments arguments = parentRuntime.getArguments();
-    if (arguments.containsKey("loader")) {
-      String loaderName = arguments.getProperty("loader");
-      if (loaderName.equalsIgnoreCase("mongo")) {
-        try {
-          loader =
-              MongoLoader.join(
-                  this,
-                  arguments.getProperty("uri", "none"),
-                  arguments.getProperty("database", "testing-database"));
-        } catch (Exception e) {
-          logger.log(Level.SEVERE, "Failed to setup mongo loader", e);
-        }
-      }
+    try {
+      loader = MongoLoader.join(this, config.getMongoUri(), config.getDatabase());
+    } catch (Exception e) {
+      logger.log(Level.SEVERE, "Failed to setup mongo loader", e);
     }
   }
 
   @NonNull
   private JDA setupJda() {
-    ProgramArguments arguments = parentRuntime.getArguments();
-    JDA jda = this.jdaConnection.createConnection(arguments.getProperty("token", "none"));
+    JDA jda = this.jdaConnection.createConnection(config.getDiscordToken());
     jda.setEventManager(new AnnotatedEventManager());
     return jda;
   }
 
   private void setupSocketServer() {
-    ProgramArguments arguments = this.parentRuntime.getArguments();
-    JsonSocketServer server = createServer(arguments);
+    JsonSocketServer server = createServer();
     if (server != null) {
       for (GuidoHandler handler : this.handlers.getRegistered()) {
         if (handler.hasReceptors()) server.addReceptors(handler);
@@ -183,15 +173,11 @@ public class GuidoBot implements GuidoBotRuntime {
     GuidoBot.logger.info("Bot is ready to use");
   }
 
-  /**
-   * Creates the server and the receptors
-   *
-   * @param args the map to getId the port and timeout of the server
-   */
-  private JsonSocketServer createServer(@NonNull ProgramArguments args) {
+  /** Creates the server and the receptors */
+  private JsonSocketServer createServer() {
     try {
-      int port = Integer.parseInt(args.getProperty("port", "3000"));
-      long timeout = Long.parseLong(args.getProperty("timeout", "3000"));
+      int port = config.getServerPort();
+      long timeout = config.getTimeout();
       this.authenticator = new GuidoAuthenticator(getLoader());
       JsonSocketServer.ServerBuilder serverBuilder =
           JsonSocketServer.listen(port)

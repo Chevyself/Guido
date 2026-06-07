@@ -2,19 +2,26 @@ package me.googas.bungee.configuration;
 
 import java.util.ArrayList;
 import java.util.List;
+import lombok.Getter;
 import lombok.NonNull;
+import me.googas.bot.GuidoBotConfig;
 import me.googas.bungee.utility.Config;
 import net.md_5.bungee.config.Configuration;
 
 /** The default yaml configuration for the bot */
-public class GuidoBungeeConfiguration implements BungeeConfiguration {
+public class GuidoBungeeConfiguration implements BungeeConfiguration, GuidoBotConfig {
 
-  @NonNull private final String botArguments;
+  @NonNull @Getter private final String botArguments;
+  @NonNull @Getter private final String mongoUri;
+  @NonNull @Getter private final String database;
   /** The token used for the bot */
-  @NonNull private final String token;
+  @NonNull @Getter private final String discordToken;
+
+  @Getter private final int serverPort;
+  @Getter private final long timeout;
 
   /** The id of the guild */
-  private final long guildId;
+  @Getter private final long guildId;
 
   /** The servers that can be connected using bungee */
   @NonNull private final List<GuidoServer> servers;
@@ -25,7 +32,11 @@ public class GuidoBungeeConfiguration implements BungeeConfiguration {
   /** Create the bungee configuration */
   public GuidoBungeeConfiguration() {
     this.botArguments = "";
-    this.token = "0";
+    this.mongoUri = "";
+    this.database = "";
+    this.discordToken = "0";
+    this.serverPort = 0;
+    this.timeout = 0;
     this.guildId = 0;
     this.servers = new ArrayList<>();
     this.settings = new ArrayList<>();
@@ -38,22 +49,21 @@ public class GuidoBungeeConfiguration implements BungeeConfiguration {
    */
   public GuidoBungeeConfiguration(@NonNull Configuration section) {
     this.botArguments = section.getString("arguments", "");
+
+    Configuration mongo = section.getSection("mongo");
+    this.mongoUri = mongo.getString("uri", "");
+    this.database = mongo.getString("database", "");
+
+    this.discordToken = section.getString("token", "0");
+
+    Configuration server = section.getSection("server");
+    this.serverPort = server.getInt("port", 3366);
+    this.timeout = server.getLong("timeout", 10000);
+
     this.settings = new ArrayList<>();
-    this.token = section.getString("token", "0");
     this.guildId = section.getLong("guild", 0L);
     this.servers = Config.parseServers(section.getSection("servers"));
     this.settings.addAll(Config.parseSettings(section.getSection("listeners")));
-  }
-
-  @Override
-  public @NonNull String getBotArguments() {
-    return this.botArguments;
-  }
-
-  @NonNull
-  @Override
-  public String getToken() {
-    return this.token;
   }
 
   @Override
@@ -73,7 +83,7 @@ public class GuidoBungeeConfiguration implements BungeeConfiguration {
         + botArguments
         + '\''
         + ", token='"
-        + token
+        + discordToken
         + '\''
         + ", guildId="
         + guildId

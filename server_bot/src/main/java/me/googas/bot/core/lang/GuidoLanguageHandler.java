@@ -25,17 +25,12 @@ public class GuidoLanguageHandler implements JdaMessagesProvider, GuidoHandler {
   /** The files that this handler is using */
   @NonNull private final Set<GuidoLocaleFile> files = new HashSet<>();
 
-  /** The loader to getId the localization */
-  @NonNull private Loader loader;
 
   /**
    * Create the guido localization handler
-   *
-   * @param loader the file loader to getId the user data
    */
-  public GuidoLanguageHandler(@NonNull GuidoServerRuntime runtime, @NonNull Loader loader) {
+  public GuidoLanguageHandler(@NonNull GuidoServerRuntime runtime) {
     this.runtime = runtime;
-    this.loader = loader;
   }
 
   /**
@@ -128,15 +123,6 @@ public class GuidoLanguageHandler implements JdaMessagesProvider, GuidoHandler {
     return this.getFile(localized.getLang());
   }
 
-  /**
-   * Set the data loader for the language handler
-   *
-   * @param loader the new data loader
-   */
-  public void setLoader(@NonNull Loader loader) {
-    this.loader = loader;
-  }
-
   @Override
   public void onDisable() {}
 
@@ -223,6 +209,12 @@ public class GuidoLanguageHandler implements JdaMessagesProvider, GuidoHandler {
   @Override
   public @NonNull String guildOnly(@NonNull CommandContext commandContext) {
     return this.getFile(commandContext).get("guild-only");
+  }
+
+  @Override
+  public void onEnable() {
+    GuidoHandler.super.onEnable();
+    this.load(runtime, "en");
   }
 
   @Override
