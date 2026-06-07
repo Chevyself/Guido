@@ -12,8 +12,8 @@ import me.googas.api.matches.ladder.Ladder;
 import me.googas.api.stats.LeaderboardEntry;
 import me.googas.api.stats.Stats;
 import me.googas.api.utility.Maps;
-import me.googas.bot.GuidoBotRuntime;
-import me.googas.bot.core.loader.GuidoLoader;
+import me.googas.bot.core.GuidoBotRuntime;
+import me.googas.server.loader.GuidoLoader;
 
 /** Commands for leaderboard */
 public class LeaderboardCommands {

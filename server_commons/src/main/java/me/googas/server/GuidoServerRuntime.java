@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.InputStream;
 import lombok.NonNull;
 import me.googas.starbox.ProgramArguments;
+import me.googas.starbox.events.ListenerManager;
 
 public interface GuidoServerRuntime {
   /**
@@ -24,4 +25,7 @@ public interface GuidoServerRuntime {
 
   @NonNull
   InputStream getResource(@NonNull String name);
+
+  @NonNull
+  ListenerManager getListeners();
 }

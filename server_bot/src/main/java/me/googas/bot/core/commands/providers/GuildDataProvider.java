@@ -6,9 +6,8 @@ import com.github.chevyself.starbox.jda.context.GuildCommandContext;
 import com.github.chevyself.starbox.jda.messages.JdaMessagesProvider;
 import com.github.chevyself.starbox.jda.providers.type.JdaExtraArgumentProvider;
 import lombok.NonNull;
-import me.googas.bot.GuidoBotRuntime;
-import me.googas.bot.api.Guido;
-import me.googas.bot.core.discord.GuidoGuild;
+import me.googas.bot.core.GuidoBotRuntime;
+import me.googas.server.GuidoGuild;
 
 public class GuildDataProvider implements JdaExtraArgumentProvider<GuidoGuild> {
 

@@ -7,14 +7,16 @@ import java.util.Set;
 import lombok.Getter;
 import lombok.NonNull;
 import me.googas.api.links.MinecraftLinkable;
+import me.googas.api.matches.ladder.Ladder;
 import me.googas.api.matches.minecraft.MinecraftMatchTeamMember;
 import me.googas.api.matches.queue.MinecraftQueue;
 import me.googas.api.matches.queue.QueueResult;
-import me.googas.bot.GuidoBotRuntime;
 import me.googas.bot.api.Guido;
-import me.googas.bot.core.discord.GuidoGuild;
+import me.googas.bot.core.GuidoBotRuntime;
 import me.googas.bot.core.handlers.GuidoHandler;
-import me.googas.bot.core.matches.ladder.PlayableLadder;
+import me.googas.bot.core.matches.queue.GuidoPGMQueue;
+import me.googas.server.GuidoGuild;
+import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.channel.unions.AudioChannelUnion;
 
@@ -81,21 +83,25 @@ public class QueueHandler implements GuidoHandler {
     }
   }
 
+  @NonNull
+  public MinecraftQueue createQueue(@NonNull Ladder ladder) {
+    return new GuidoPGMQueue(ladder.getName(), runtime);
+  }
+
   /**
    * Get the queue for certain ladder in a guild
    *
    * @param ladder the ladder that needs the queue
-   * @return the queue if exists else a new one will be created from {@link
-   *     PlayableLadder#createQueue(GuidoBotRuntime)}}
+   * @return the queue if exists else a new one will be created
    */
   @NonNull
-  public MinecraftQueue getQueue(@NonNull PlayableLadder ladder) {
+  public MinecraftQueue getQueue(@NonNull Ladder ladder) {
     for (MinecraftQueue queue : queues) {
       if (queue.getLadderName().equalsIgnoreCase(ladder.getName())) {
         return queue;
       }
     }
-    MinecraftQueue queue = ladder.createQueue(runtime);
+    MinecraftQueue queue = this.createQueue(ladder);
     this.queues.add(queue);
     return queue;
   }
@@ -109,7 +115,7 @@ public class QueueHandler implements GuidoHandler {
    * @return whether the member joined the queue
    */
   public QueueResult joinQueue(
-      @NonNull GuidoGuild guild, @NonNull Member member, @NonNull PlayableLadder ladder) {
+      @NonNull GuidoGuild guild, @NonNull Member member, @NonNull Ladder ladder) {
     MinecraftQueue queue = this.getQueue(ladder);
     Optional<MinecraftLinkable> optional =
         runtime
@@ -123,10 +129,8 @@ public class QueueHandler implements GuidoHandler {
     if (optional.isEmpty()) return new QueueResult();
     QueueResult join = queue.join(optional.get());
     if (join.isCancelled()) return join;
-    guild
-        .toDiscord()
-        .moveVoiceMember(member, this.channels().getWaitingChannel(guild, guild.toDiscord()))
-        .queue();
+    Guild discord = guild.toDiscord(member.getJDA());
+    discord.moveVoiceMember(member, this.channels().getWaitingChannel(guild, discord)).queue();
     return new QueueResult();
   }
 
@@ -153,7 +157,7 @@ public class QueueHandler implements GuidoHandler {
    * @param ladder the ladder to getId the queue
    * @return true if the member is waiting in the queue
    */
-  public boolean isWaiting(@NonNull Member member, @NonNull PlayableLadder ladder) {
+  public boolean isWaiting(@NonNull Member member, @NonNull Ladder ladder) {
     MinecraftQueue queue = this.getQueue(ladder);
     Optional<MinecraftLinkable> optional =
         runtime

@@ -8,7 +8,7 @@ import com.github.chevyself.starbox.jda.providers.type.JdaArgumentProvider;
 import lombok.NonNull;
 import me.googas.api.matches.ladder.Ladder;
 import me.googas.api.utility.Maps;
-import me.googas.bot.GuidoBotRuntime;
+import me.googas.bot.core.GuidoBotRuntime;
 import me.googas.bot.core.util.Lang;
 
 public class LadderArgumentProvider implements JdaArgumentProvider<Ladder> {

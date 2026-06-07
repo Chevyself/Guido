@@ -5,7 +5,7 @@ import com.github.chevyself.starbox.jda.context.CommandContext;
 import com.github.chevyself.starbox.jda.providers.type.JdaArgumentProvider;
 import lombok.NonNull;
 import me.googas.api.links.DiscordLinkable;
-import me.googas.bot.GuidoBotRuntime;
+import me.googas.bot.core.GuidoBotRuntime;
 import net.dv8tion.jda.api.entities.User;
 
 public class DiscordLinkableProvider implements JdaArgumentProvider<DiscordLinkable> {

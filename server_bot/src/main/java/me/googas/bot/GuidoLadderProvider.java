@@ -2,9 +2,10 @@ package me.googas.bot;
 
 import java.util.Optional;
 import lombok.NonNull;
+import me.googas.api.matches.ladder.Ladder;
 import me.googas.api.matches.ladder.LadderProvider;
 import me.googas.api.utility.ImmutableCollection;
-import me.googas.bot.core.matches.ladder.PlayableLadder;
+import me.googas.bot.core.GuidoBotRuntime;
 
 public class GuidoLadderProvider implements LadderProvider {
   @NonNull private final GuidoBotRuntime runtime;
@@ -14,12 +15,12 @@ public class GuidoLadderProvider implements LadderProvider {
   }
 
   @Override
-  public @NonNull Optional<PlayableLadder> getByName(@NonNull String name) {
+  public @NonNull Optional<? extends Ladder> getByName(@NonNull String name) {
     return runtime.getBotJda().getGuidoGuild().getLadder(name);
   }
 
   @Override
-  public @NonNull ImmutableCollection<? extends PlayableLadder> getLadders() {
+  public @NonNull ImmutableCollection<? extends Ladder> getLadders() {
     return runtime.getBotJda().getGuidoGuild().getLadders();
   }
 }

@@ -4,7 +4,7 @@ import com.github.chevyself.starbox.jda.context.CommandContext;
 import com.github.chevyself.starbox.jda.providers.type.JdaExtraArgumentProvider;
 import lombok.NonNull;
 import me.googas.api.user.UserData;
-import me.googas.bot.GuidoBotRuntime;
+import me.googas.bot.core.GuidoBotRuntime;
 
 /** Provides the commands with bot user as a command sender */
 public class UserDataSenderProvider implements JdaExtraArgumentProvider<UserData> {

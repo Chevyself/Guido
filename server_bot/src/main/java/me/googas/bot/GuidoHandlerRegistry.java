@@ -7,6 +7,7 @@ import java.util.Set;
 import lombok.Getter;
 import lombok.NonNull;
 import me.googas.api.utility.Lots;
+import me.googas.bot.core.GuidoBotRuntime;
 import me.googas.bot.core.handlers.GuidoHandler;
 import me.googas.bot.core.handlers.deploy.DeployHandler;
 import me.googas.bot.core.handlers.link.LinkHandler;
@@ -17,7 +18,6 @@ import me.googas.bot.core.handlers.matches.PGMMatchHandler;
 import me.googas.bot.core.handlers.queue.QueueChannelsHandler;
 import me.googas.bot.core.handlers.queue.QueueHandler;
 import me.googas.bot.core.handlers.ranks.RanksHandler;
-import me.googas.bot.core.handlers.test.TestHandler;
 import me.googas.bot.core.lang.GuidoLanguageHandler;
 import net.dv8tion.jda.api.JDA;
 
@@ -45,8 +45,7 @@ public class GuidoHandlerRegistry {
             new PGMMatchHandler(),
             new QueueChannelsHandler(runtime),
             new QueueHandler(runtime),
-            new RanksHandler(runtime),
-            new TestHandler());
+            new RanksHandler(runtime));
   }
 
   /**

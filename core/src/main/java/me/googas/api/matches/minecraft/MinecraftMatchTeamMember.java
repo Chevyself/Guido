@@ -13,7 +13,7 @@ public interface MinecraftMatchTeamMember extends MatchTeamMember {
   UUID getId();
 
   @NonNull
-  default Optional<MinecraftLinkable> getLinkable(@NonNull Loader loader) {
+  default Optional<? extends MinecraftLinkable> getLinkable(@NonNull Loader loader) {
     return loader.getMinecraftLinks().getById(this.getId());
   }
 }

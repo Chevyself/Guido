@@ -13,8 +13,12 @@ public interface MinecraftLinkableLoader extends DataLoader {
   Optional<MinecraftLinkable> getByIdRegex(@NonNull String id);
 
   @NonNull
-  Optional<MinecraftLinkable> getById(@NonNull UUID minecraftId);
+  Optional<? extends MinecraftLinkable> getById(@NonNull UUID minecraftId);
 
   @NonNull
   Optional<MinecraftLinkable> getByLinkedUser(@NonNull UUID linkedUserId);
+
+  @NonNull
+  MinecraftLinkable updateOrCreate(
+      @NonNull UUID minecraftId, @NonNull String nickname, @NonNull String ip, boolean online);
 }

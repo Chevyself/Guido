@@ -15,11 +15,11 @@ import me.googas.api.matches.ladder.GlobalLadder;
 import me.googas.api.matches.ladder.Ladder;
 import me.googas.api.utility.ImmutableCollection;
 import me.googas.api.utility.Stateables;
-import me.googas.bot.DiscordRankRange;
-import me.googas.bot.GuidoBotRuntime;
 import me.googas.bot.GuidoJdaProvider;
 import me.googas.bot.api.events.data.links.LinkableRankUpdatedEvent;
+import me.googas.bot.core.GuidoBotRuntime;
 import me.googas.bot.core.handlers.GuidoHandler;
+import me.googas.server.RankRange;
 import me.googas.starbox.events.ListenPriority;
 import me.googas.starbox.events.Listener;
 import me.googas.starbox.logging.LoggerFactory;
@@ -75,7 +75,7 @@ public class RanksHandler implements GuidoHandler {
   public UpdateResult update(@NonNull Linkable linkable) {
     UpdateResult result = new UpdateResult();
     ImmutableCollection<? extends Ladder> ladders = runtime.getLadderProvider().getLadders();
-    ImmutableCollection<DiscordRankRange> ranges = runtime.getRanksProvider().getRanks();
+    ImmutableCollection<? extends RankRange> ranges = runtime.getRanksProvider().getRanks();
     for (Ladder ladder : ladders) {
       double elo = linkable.getStats(runtime.getStatsProvider()).getElo(ladder, ladders);
       result.append(this.update(elo, ranges));
@@ -158,7 +158,7 @@ public class RanksHandler implements GuidoHandler {
     }
   }
 
-  public UpdateResult update(double elo, @NonNull ImmutableCollection<DiscordRankRange> ranges) {
+  public UpdateResult update(double elo, @NonNull ImmutableCollection<? extends RankRange> ranges) {
     return new UpdateResult(
         Stateables.getApplying(elo, ranges), Stateables.getOutside(elo, ranges));
   }
@@ -168,15 +168,14 @@ public class RanksHandler implements GuidoHandler {
 
   /** This is a result of the ranks that have been applied or removed */
   public static class UpdateResult {
-    @NonNull @Getter private final List<DiscordRankRange> applied;
-    @NonNull @Getter private final List<DiscordRankRange> removed;
+    @NonNull @Getter private final List<RankRange> applied;
+    @NonNull @Getter private final List<RankRange> removed;
 
     public UpdateResult() {
       this(new ArrayList<>(), new ArrayList<>());
     }
 
-    public UpdateResult(
-        @NonNull List<DiscordRankRange> applied, @NonNull List<DiscordRankRange> removed) {
+    public UpdateResult(@NonNull List<RankRange> applied, @NonNull List<RankRange> removed) {
       this.applied = applied;
       this.removed = removed;
     }

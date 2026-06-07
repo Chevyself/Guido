@@ -7,7 +7,7 @@ import me.googas.api.loader.*;
  * This loader will attempt to getId the data from files if it fails it will create a new instance
  * of the data required
  */
-public class GuidoFallbackLoader implements GuidoLoader {
+public class GuidoFallbackLoader implements me.googas.server.loader.GuidoLoader {
   @Override
   public @NonNull TokenLoader getTokens() {
     throw new UnsupportedOperationException("Operations are not supported by fallback loader");
@@ -39,7 +39,7 @@ public class GuidoFallbackLoader implements GuidoLoader {
   }
 
   @Override
-  public @NonNull GuidoGuildLoader getGuidoGuildLoader() {
+  public @NonNull me.googas.server.loader.GuidoGuildLoader getGuidoGuildLoader() {
     throw new UnsupportedOperationException("Operations are not supported by fallback loader");
   }
 }

@@ -7,9 +7,10 @@ import lombok.Getter;
 import lombok.NonNull;
 import me.googas.api.Requests;
 import me.googas.api.links.Linkable;
+import me.googas.api.links.MinecraftLinkable;
 import me.googas.api.utility.RandomUtils;
-import me.googas.bot.GuidoBotRuntime;
 import me.googas.bot.api.Guido;
+import me.googas.bot.core.GuidoBotRuntime;
 import me.googas.bot.core.handlers.GuidoHandler;
 import me.googas.net.sockets.json.ParamName;
 import me.googas.net.sockets.json.Receptor;
@@ -129,6 +130,18 @@ public class LinkHandler implements GuidoHandler {
               return runtime.getHandlers().getHandler(LinkHandler.class).createCode(link);
             })
         .orElse("");
+  }
+
+  @Receptor(Requests.MinecraftLinks.UPDATE_STATUS)
+  public MinecraftLinkable updateStatus(
+      @ParamName(Requests.MinecraftLinks.UPDATE_ONLINE_UUID) UUID minecraftId,
+      @ParamName(Requests.MinecraftLinks.UPDATE_STATUS_NICKNAME) String nickname,
+      @ParamName(Requests.MinecraftLinks.UPDATE_STATUS_IP) String ip,
+      @ParamName(Requests.MinecraftLinks.UPDATE_STATUS_ONLINE) boolean online) {
+    return runtime
+        .getLoader()
+        .getMinecraftLinks()
+        .updateOrCreate(minecraftId, nickname, ip, online);
   }
 
   @Override

@@ -1,6 +1,5 @@
 package me.googas.bot.core.handlers.matches;
 
-import java.util.Collection;
 import java.util.Optional;
 
 import lombok.NonNull;
@@ -15,7 +14,7 @@ import me.googas.api.matches.minecraft.MinecraftMatchTeam;
 import me.googas.api.matches.minecraft.MinecraftMatchTeamMember;
 import me.googas.api.stats.Stats;
 import me.googas.api.stats.StatsProvider;
-import me.googas.bot.GuidoBotRuntime;
+import me.googas.bot.core.GuidoBotRuntime;
 import me.googas.bot.core.handlers.GuidoHandler;
 import me.googas.starbox.events.ListenPriority;
 import me.googas.starbox.events.Listener;

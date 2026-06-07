@@ -5,25 +5,25 @@ import java.util.Collection;
 import java.util.List;
 import lombok.NonNull;
 import me.googas.api.utility.Lots;
-import me.googas.bot.DiscordRankRange;
+import me.googas.server.RankRange;
 
 /** Static utilities for ranks */
 public class Ranks {
 
   @NonNull
-  public static String getRankToken(@NonNull DiscordRankRange range) {
+  public static String getRankToken(@NonNull RankRange range) {
     return "%rank." + range.getName() + "%";
   }
 
   @NonNull
-  public static String getRanksToken(@NonNull Collection<DiscordRankRange> ranges) {
+  public static String getRanksToken(@NonNull Collection<RankRange> ranges) {
     return Lots.pretty(Ranks.getListRanksToken(ranges));
   }
 
   @NonNull
-  public static List<String> getListRanksToken(@NonNull Collection<DiscordRankRange> ranges) {
+  public static List<String> getListRanksToken(@NonNull Collection<RankRange> ranges) {
     List<String> tokens = new ArrayList<>();
-    for (DiscordRankRange range : ranges) {
+    for (RankRange range : ranges) {
       tokens.add(Ranks.getRankToken(range));
     }
     return tokens;

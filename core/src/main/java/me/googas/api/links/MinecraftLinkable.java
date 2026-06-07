@@ -10,6 +10,9 @@ public interface MinecraftLinkable extends Linkable {
   @NonNull
   String getNickname();
 
+  @NonNull
+  String getIp();
+
   /**
    * Get whether the player is inside the bungee server
    *

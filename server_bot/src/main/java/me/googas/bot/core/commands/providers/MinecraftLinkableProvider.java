@@ -9,7 +9,7 @@ import me.googas.api.links.DiscordLinkable;
 import me.googas.api.links.MinecraftLinkable;
 import me.googas.api.loader.MinecraftLinkableLoader;
 import me.googas.api.utility.Maps;
-import me.googas.bot.GuidoBotRuntime;
+import me.googas.bot.core.GuidoBotRuntime;
 import me.googas.bot.core.util.Lang;
 
 public class MinecraftLinkableProvider implements JdaArgumentProvider<MinecraftLinkable> {

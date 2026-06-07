@@ -9,7 +9,7 @@ public class Stateables {
 
   @NonNull
   public static <T extends Range> List<T> getApplying(
-      @NonNull Number number, @NonNull ImmutableCollection<T> ranges) {
+      @NonNull Number number, @NonNull ImmutableCollection<? extends T> ranges) {
     List<T> applying = new ArrayList<>();
     if (ranges.isEmpty()) return applying;
     for (T range : ranges) {
@@ -20,7 +20,7 @@ public class Stateables {
 
   @NonNull
   public static <T extends Range> List<T> getOutside(
-      @NonNull Number number, @NonNull ImmutableCollection<T> ranges) {
+      @NonNull Number number, @NonNull ImmutableCollection<? extends T> ranges) {
     List<T> outside = new ArrayList<>();
     if (ranges.isEmpty()) return outside;
     for (T range : ranges) {

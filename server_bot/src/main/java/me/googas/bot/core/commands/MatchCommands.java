@@ -6,6 +6,7 @@ import com.github.chevyself.starbox.annotations.Required;
 import com.github.chevyself.starbox.arguments.ArgumentBehaviour;
 import com.github.chevyself.starbox.jda.context.CommandContext;
 import com.github.chevyself.starbox.result.Result;
+import dev.xevy.guido.mongo.types.MongoMinecraftMatchTeamMember;
 import java.util.*;
 import lombok.NonNull;
 import me.googas.api.lang.LocaleFile;
@@ -20,19 +21,17 @@ import me.googas.api.matches.team.TeamRole;
 import me.googas.api.user.UserData;
 import me.googas.api.utility.Lots;
 import me.googas.api.utility.Maps;
-import me.googas.bot.GuidoBotRuntime;
 import me.googas.bot.GuidoHandlerRegistry;
 import me.googas.bot.api.Guido;
+import me.googas.bot.core.GuidoBotRuntime;
 import me.googas.bot.core.commands.middleware.GuidoJdaPermission;
 import me.googas.bot.core.commands.types.EmbededResult;
-import me.googas.bot.core.discord.GuidoGuild;
 import me.googas.bot.core.handlers.matches.MatchEloCalculator;
 import me.googas.bot.core.handlers.matches.MatchMakingHandler;
 import me.googas.bot.core.handlers.matches.PGMMatchHandler;
 import me.googas.bot.core.handlers.ranks.RanksHandler;
-import me.googas.bot.core.loader.types.GenericMinecraftMatchTeam;
-import me.googas.bot.core.loader.types.GenericMinecraftMatchTeamMember;
 import me.googas.bot.core.util.Matches;
+import me.googas.server.GuidoGuild;
 import net.dv8tion.jda.api.entities.Member;
 
 /** Commands related to matches */
@@ -60,20 +59,22 @@ public class MatchCommands {
               Maps.builder("given", String.valueOf(participants.length))
                   .put("expected", String.valueOf(ladder.baseValue() * 2))));
     }
-    Set<GenericMinecraftMatchTeamMember> members1 = new HashSet<>();
-    Set<GenericMinecraftMatchTeamMember> members2 = new HashSet<>();
+    Set<MongoMinecraftMatchTeamMember> members1 = new HashSet<>();
+    Set<MongoMinecraftMatchTeamMember> members2 = new HashSet<>();
     for (int i = 0; i < participants.length; i++) {
       MinecraftLinkable participant = participants[i];
-      GenericMinecraftMatchTeamMember member =
-          new GenericMinecraftMatchTeamMember(participant.getId(), TeamRole.MEMBER);
+      MongoMinecraftMatchTeamMember member =
+          new MongoMinecraftMatchTeamMember(participant.getId(), TeamRole.MEMBER);
       if (i > ladder.playersPerTeam() - 1) {
         members2.add(member);
       } else {
         members1.add(member);
       }
     }
-    GenericMinecraftMatchTeam team1 = new GenericMinecraftMatchTeam(1, members1, "Team 1");
-    GenericMinecraftMatchTeam team2 = new GenericMinecraftMatchTeam(2, members2, "Team 2");
+    dev.xevy.guido.mongo.types.MongoMinecraftMatchTeam team1 =
+        new dev.xevy.guido.mongo.types.MongoMinecraftMatchTeam(1, members1, "Team 1");
+    dev.xevy.guido.mongo.types.MongoMinecraftMatchTeam team2 =
+        new dev.xevy.guido.mongo.types.MongoMinecraftMatchTeam(2, members2, "Team 2");
     MinecraftMatch match =
         minecraftMatchLoader.createMatch(Lots.set(team1, team2), ladder.getName());
     if (context.hasFlag("-t")) {

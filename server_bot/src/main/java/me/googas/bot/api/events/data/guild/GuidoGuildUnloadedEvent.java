@@ -1,7 +1,7 @@
 package me.googas.bot.api.events.data.guild;
 
 import lombok.NonNull;
-import me.googas.bot.core.discord.GuidoGuild;
+import me.googas.server.GuidoGuild;
 
 /** Called when the guild data is unloaded */
 public class GuidoGuildUnloadedEvent extends GuidoGuildEvent {
