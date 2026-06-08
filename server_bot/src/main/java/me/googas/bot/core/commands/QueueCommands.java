@@ -5,8 +5,8 @@ import com.github.chevyself.starbox.annotations.Free;
 import com.github.chevyself.starbox.annotations.Required;
 import com.github.chevyself.starbox.result.Result;
 import java.util.Collection;
+import java.util.UUID;
 import me.googas.api.lang.LocaleFile;
-import me.googas.api.links.MinecraftLinkable;
 import me.googas.api.matches.ladder.Ladder;
 import me.googas.api.matches.queue.QueueResult;
 import me.googas.api.user.UserData;
@@ -73,16 +73,17 @@ public class QueueCommands {
       LocaleFile locale,
       GuidoGuild guild,
       @Required(name = "iq.ladder", description = "iq.ladder.desc") Ladder ladder) {
-    Collection<? extends MinecraftLinkable> waiting =
+    Collection<UUID> waiting =
         Guido.getHandlers().getHandler(QueueHandler.class).getQueue(ladder).getWaiting();
     if (waiting.isEmpty()) {
       return Result.of(locale.get("iq.empty", Maps.singleton("ladder", ladder.getName())));
     } else {
       StringBuilder builder = new StringBuilder();
       builder.append(locale.get("iq.title", Maps.singleton("ladder", ladder.getName())));
-      for (MinecraftLinkable queueable : waiting) {
-        builder.append("\n - ").append(queueable.getNickname());
-      }
+      // TODO
+      // for (MinecraftLinkable queueable : waiting) {
+      //  builder.append("\n - ").append(queueable.getNickname());
+      // }
       return Result.of(builder.toString());
     }
   }

@@ -65,4 +65,71 @@ public class GuidoPGMQueueTest {
     Assertions.assertTrue(isAInCanHost, "linkableA must be in match");
     Assertions.assertTrue(isBInCanHost, "linkableB must be in match");
   }
+
+  @Test
+  public void testCantJoinTwice() {
+    GuidoTestRuntime runtime = GuidoTestRuntime.createRuntime();
+    Ladder ladder =
+        runtime
+            .getJdaProvider()
+            .getGuidoGuild()
+            .addLadder("1v1", 1, 500, 2, 1f, 1f, MinecraftTeamSelectionType.RANDOM)
+            .orElseThrow();
+    MinecraftQueue queue = runtime.getHandlers().getHandler(QueueHandler.class).createQueue(ladder);
+    MinecraftLinkable linkable = runtime.createMinecraftLinkable("Foo", true);
+    QueueResult join = queue.join(linkable);
+    Assertions.assertFalse(
+        join.isCancelled(),
+        "Join for linkable should not have been cancelled: " + join.getReason());
+    QueueResult second = queue.join(linkable);
+    Assertions.assertTrue(second.isCancelled(), "Second for linkable should have been cancelled");
+    boolean waiting = queue.isWaiting(linkable);
+    Assertions.assertTrue(waiting, "Linkable should be waiting");
+  }
+
+  @Test
+  public void testWaitingIfRefetched() {
+    GuidoTestRuntime runtime = GuidoTestRuntime.createRuntime();
+    Ladder ladder =
+        runtime
+            .getJdaProvider()
+            .getGuidoGuild()
+            .addLadder("1v1", 1, 500, 2, 1f, 1f, MinecraftTeamSelectionType.RANDOM)
+            .orElseThrow();
+    MinecraftQueue queue = runtime.getHandlers().getHandler(QueueHandler.class).createQueue(ladder);
+    MinecraftLinkable linkable = runtime.createMinecraftLinkable("Foo", true);
+    QueueResult join = queue.join(linkable);
+    Assertions.assertFalse(
+        join.isCancelled(),
+        "Join for linkable should not have been cancelled: " + join.getReason());
+    boolean waiting = queue.isWaiting(linkable);
+    Assertions.assertTrue(waiting, "Linkable should be waiting");
+    MinecraftLinkable refetched =
+        runtime.getLoader().getMinecraftLinks().getById(linkable.getId()).orElseThrow();
+    boolean refetchWaiting = queue.isWaiting(refetched);
+    Assertions.assertTrue(refetchWaiting, "Refetched should be waiting");
+  }
+
+  @Test
+  public void testLeave() {
+    GuidoTestRuntime runtime = GuidoTestRuntime.createRuntime();
+    Ladder ladder =
+            runtime
+                    .getJdaProvider()
+                    .getGuidoGuild()
+                    .addLadder("1v1", 1, 500, 2, 1f, 1f, MinecraftTeamSelectionType.RANDOM)
+                    .orElseThrow();
+    MinecraftQueue queue = runtime.getHandlers().getHandler(QueueHandler.class).createQueue(ladder);
+    MinecraftLinkable linkable = runtime.createMinecraftLinkable("Foo", true);
+    QueueResult join = queue.join(linkable);
+    Assertions.assertFalse(
+            join.isCancelled(),
+            "Join for linkable should not have been cancelled: " + join.getReason());
+    boolean waiting = queue.isWaiting(linkable);
+    Assertions.assertTrue(waiting, "Linkable should be waiting");
+    QueueResult leave = queue.leave(linkable);
+    Assertions.assertFalse(leave.isCancelled(), "Leave for linkable should not have been cancelled " + join.getReason());
+    boolean waitingAfterLeave = queue.isWaiting(linkable);
+    Assertions.assertFalse(waitingAfterLeave, "Linkable should not be waiting after leaving");
+  }
 }

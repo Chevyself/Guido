@@ -33,9 +33,9 @@ public class GuidoPGMQueue extends GuidoQueue {
     // to create this we should create playlist to count people playing on it not people in queue
     if (this.getWaiting().size() >= ladder.playersPerTeam() * 2) {
       Set<ImmutableMinecraftTeamMember> participants = new HashSet<>();
-      for (int i = ladder.playersPerTeam() -1; i >= 0; i--) {
-        MinecraftLinkable linkable = this.getWaiting().remove(i);
-        participants.add(new ImmutableMinecraftTeamMember(linkable.getId(), TeamRole.MEMBER));
+      for (int i = ladder.playersPerTeam() - 1; i >= 0; i--) {
+        UUID id = this.getWaiting().remove(i);
+        participants.add(new ImmutableMinecraftTeamMember(id, TeamRole.MEMBER));
       }
       match =
           runtime

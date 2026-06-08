@@ -3,6 +3,7 @@ package me.googas.bot.core.matches.queue;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 import lombok.Getter;
 import lombok.NonNull;
 import me.googas.api.events.queue.MinecraftQueueJoinEvent;
@@ -23,7 +24,7 @@ public class GuidoQueue implements MinecraftQueue {
 
   private final String ladder;
   @NonNull protected final GuidoBotRuntime runtime;
-  @NonNull @Getter private final List<MinecraftLinkable> waiting = new ArrayList<>();
+  @NonNull @Getter private final List<UUID> waiting = new ArrayList<>();
 
   /**
    * Create the queue
@@ -61,7 +62,7 @@ public class GuidoQueue implements MinecraftQueue {
     ListenerManager listeners = runtime.getListeners();
     boolean cancelled = listeners.callAndGet(event);
     if (cancelled) return new QueueResult(event.getReason());
-    this.getWaiting().add(minecraft);
+    this.getWaiting().add(minecraft.getId());
     listeners.call(new MinecraftQueueJoinEvent(this, minecraft));
     return new QueueResult();
   }
@@ -69,7 +70,7 @@ public class GuidoQueue implements MinecraftQueue {
   @Override
   public @NonNull QueueResult leave(@NonNull MinecraftLinkable minecraft) {
     if (this.isWaiting(minecraft)) {
-      if (this.getWaiting().remove(minecraft)) {
+      if (this.getWaiting().remove(minecraft.getId())) {
         return new QueueResult();
       } else {
         return new QueueResult("Could not leave the queue");
