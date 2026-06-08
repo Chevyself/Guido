@@ -6,7 +6,7 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.function.Consumer;
 import lombok.NonNull;
-import me.googas.api.client.SimpleClientLadder;
+import me.googas.api.immutable.ImmutableLadder;
 import me.googas.api.immutable.ImmutableMinecraftMatch;
 import me.googas.api.links.generic.ImmutableMinecraftLinkable;
 import me.googas.api.matches.MatchStatus;
@@ -49,6 +49,7 @@ public class Requests {
     @NonNull public static final String PREFIX = "mclinks/";
     @NonNull public static final String SAVE_STATS = PREFIX + "save-stats";
     @NonNull public static final String SAVE_STATS_UUID = "uuid";
+    @NonNull public static final String SAVE_STATS_CONTEXT = "context";
     @NonNull public static final String SAVE_STATS_STATS = "stats";
     @NonNull public static final String UPDATE_STATUS = PREFIX + "update-status";
     @NonNull public static final String UPDATE_STATUS_UUID = "uuid";
@@ -63,12 +64,12 @@ public class Requests {
     @NonNull public static final String LINK_NEW = PREFIX + "link-new";
     @NonNull public static final String LINK_NEW_UUID = "uuid";
 
-    // TODO receptor
     @NonNull
     public static RequestBuilder<Void> saveStats(
-        @NonNull UUID uuid, @NonNull Map<String, Float> stats) {
+        @NonNull UUID uuid, @NonNull String context, @NonNull Map<String, Double> stats) {
       return new RequestBuilder<>(Void.class, MinecraftLinks.SAVE_STATS)
           .put(MinecraftLinks.SAVE_STATS_UUID, uuid)
+          .put(MinecraftLinks.SAVE_STATS_CONTEXT, context)
           .put(MinecraftLinks.SAVE_STATS_STATS, stats);
     }
 
@@ -149,8 +150,8 @@ public class Requests {
     }
 
     @NonNull
-    public static RequestBuilder<SimpleClientLadder> getLadder(@NonNull String name) {
-      return new RequestBuilder<>(SimpleClientLadder.class, Matches.LADDER).put("name", name);
+    public static RequestBuilder<ImmutableLadder> getLadder(@NonNull String name) {
+      return new RequestBuilder<>(ImmutableLadder.class, Matches.LADDER).put("name", name);
     }
   }
 

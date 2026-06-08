@@ -10,6 +10,7 @@ public interface Stats {
   @NonNull String LADDER_ELO_SUFFIX = "-elo";
   @NonNull String LADDER_WINS_SUFFIX = "-wins";
   @NonNull String LADDER_LOSES_SUFFIX = "-loses";
+  @NonNull String LADDER_PLAYED_SUFFIX = "-played";
 
   @NonNull
   StatsId getId();
@@ -36,4 +37,6 @@ public interface Stats {
   void increaseLoses(@NonNull Ladder ladder, int value);
 
   void increasePlayed(@NonNull Ladder ladder, int value);
+
+  boolean increaseValue(@NonNull String key, double value);
 }

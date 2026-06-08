@@ -48,7 +48,7 @@ public class LeaderboardCommands {
             Maps.builder("page", String.valueOf(page))
                 .put("max", String.valueOf(max))
                 .put("ladder", ladder.getName())));
-    Map<Integer, LeaderboardEntry> leaderboard =
+    Map<Integer, ? extends LeaderboardEntry> leaderboard =
         loader.getStats().getLeaderboard(Stats.EMPTY_CONTEXT, ladder, page, 10);
     leaderboard.forEach(
         (index, data) ->
@@ -57,9 +57,9 @@ public class LeaderboardCommands {
                     "lb.entry",
                     Maps.builder("display", data.getDisplay())
                         .put("index", String.valueOf(index))
-                        .put("elo", String.valueOf((int) data.getElo(ladder)))
-                        .put("wins", String.valueOf((int) data.getWins(ladder)))
-                        .put("loses", String.valueOf((int) data.getLoses(ladder))))));
+                        .put("elo", String.valueOf((int) data.getValue()))
+                        .put("wins", String.valueOf((int) data.getWins()))
+                        .put("loses", String.valueOf((int) data.getLoses())))));
     return Result.of(builder.toString(), Duration.ofSeconds(30));
   }
 
@@ -86,7 +86,7 @@ public class LeaderboardCommands {
             Maps.builder("page", String.valueOf(page))
                 .put("max", String.valueOf(max))
                 .put("stat", stat)));
-    Map<Integer, LeaderboardEntry> leaderboard =
+    Map<Integer, ? extends LeaderboardEntry> leaderboard =
         loader
             .getStats()
             .getLeaderboard(
@@ -98,7 +98,7 @@ public class LeaderboardCommands {
                     "table.entry",
                     Maps.builder("display", data.getDisplay())
                         .put("index", String.valueOf(index))
-                        .put("stat", String.valueOf((int) data.getStat(stat))))));
+                        .put("stat", String.valueOf((int) data.getValue())))));
     return Result.of(builder.toString());
   }
 }

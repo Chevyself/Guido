@@ -1,11 +1,11 @@
-package me.googas.api.client;
+package me.googas.api.immutable;
 
 import lombok.Getter;
 import lombok.NonNull;
 import me.googas.api.matches.MinecraftTeamSelectionType;
 import me.googas.api.matches.ladder.Ladder;
 
-public class SimpleClientLadder implements Ladder {
+public class ImmutableLadder implements Ladder {
 
   private final int playersPerTeam;
   private final int baseValue;
@@ -15,7 +15,7 @@ public class SimpleClientLadder implements Ladder {
   @NonNull @Getter private final String name;
   @NonNull @Getter private final MinecraftTeamSelectionType teamSelectionType;
 
-  public SimpleClientLadder(
+  public ImmutableLadder(
       int playersPerTeam,
       int baseValue,
       int teamsPerMatch,

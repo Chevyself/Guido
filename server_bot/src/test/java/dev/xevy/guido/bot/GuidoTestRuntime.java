@@ -16,8 +16,6 @@ import me.googas.net.api.Messenger;
 import me.googas.net.sockets.json.JsonReceptor;
 import me.googas.net.sockets.json.ReceivedJsonRequest;
 import me.googas.net.sockets.json.client.JsonClient;
-import me.googas.net.sockets.json.exception.JsonExternalCommunicationException;
-import me.googas.net.sockets.json.exception.JsonInternalCommunicationException;
 
 public final class GuidoTestRuntime implements GuidoBotRuntime {
 
@@ -50,6 +48,11 @@ public final class GuidoTestRuntime implements GuidoBotRuntime {
   }
 
   @NonNull
+  public JsonClient joinWithClient() throws IOException {
+    return JsonClient.join(GuidoTestRuntime.LOCALHOST, this.config.getServerPort()).start();
+  }
+
+  @NonNull
   public JsonClient joinWithClient(@NonNull JsonReceptor... receptors) throws IOException {
     return JsonClient.join(GuidoTestRuntime.LOCALHOST, this.config.getServerPort())
         .addReceptors(receptors)
@@ -62,8 +65,9 @@ public final class GuidoTestRuntime implements GuidoBotRuntime {
     return new JsonReceptor() {
       @Override
       public Object execute(
-          Messenger messenger, @NonNull ReceivedJsonRequest receivedJsonRequest, @NonNull Gson gson)
-          throws JsonExternalCommunicationException, JsonInternalCommunicationException {
+          Messenger messenger,
+          @NonNull ReceivedJsonRequest receivedJsonRequest,
+          @NonNull Gson gson) {
         return consumer.apply(new JClientContext(messenger, receivedJsonRequest, gson));
       }
 

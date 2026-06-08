@@ -8,7 +8,6 @@ import com.mongodb.client.MongoDatabase;
 import dev.xevy.guido.mongo.types.*;
 import lombok.Getter;
 import lombok.NonNull;
-import me.googas.api.loader.StatsLoader;
 import me.googas.server.GuidoServerRuntime;
 import org.bson.UuidRepresentation;
 import org.bson.codecs.configuration.CodecRegistries;
@@ -16,6 +15,8 @@ import org.bson.codecs.configuration.CodecRegistry;
 import org.bson.codecs.pojo.PojoCodecProvider;
 
 public final class MongoLoader implements me.googas.server.loader.GuidoLoader {
+
+  @NonNull public static final String MINECRAFT_LINKS_COLLECTION_NAME = "minecraft-links";
 
   @NonNull @Getter private final GuidoServerRuntime runtime;
   @NonNull @Getter private final MongoClient client;
@@ -26,6 +27,7 @@ public final class MongoLoader implements me.googas.server.loader.GuidoLoader {
   @NonNull @Getter private final MongoDiscordLinksLoader discordLinks;
   @NonNull @Getter private final MongoMinecraftLinksLoader minecraftLinks;
   @NonNull @Getter private final MongoGuidoGuildLoader guidoGuildLoader;
+  @NonNull @Getter private final MongoStatsLoader stats;
 
   private MongoLoader(
       @NonNull GuidoServerRuntime runtime,
@@ -50,16 +52,13 @@ public final class MongoLoader implements me.googas.server.loader.GuidoLoader {
     this.minecraftLinks =
         new MongoMinecraftLinksLoader(
             this,
-            this.database.getCollection("minecraft-links", MongoMinecraftLinkable.Document.class));
+            this.database.getCollection(
+                MINECRAFT_LINKS_COLLECTION_NAME, MongoMinecraftLinkable.Document.class));
     this.guidoGuildLoader =
         new MongoGuidoGuildLoader(
             this, this.database.getCollection("guilds", MongoGuidoGuild.Document.class));
-  }
-
-  @Override
-  public @NonNull StatsLoader getStats() {
-    // TODO
-    throw new UnsupportedOperationException("Stats are wip");
+    this.stats =
+        new MongoStatsLoader(this, this.database.getCollection("stats", MongoStats.Document.class));
   }
 
   @NonNull

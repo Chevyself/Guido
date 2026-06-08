@@ -19,7 +19,7 @@ import java.util.concurrent.ExecutionException;
 import lombok.Getter;
 import lombok.NonNull;
 import me.googas.api.Requests;
-import me.googas.api.client.SimpleClientLadder;
+import me.googas.api.immutable.ImmutableLadder;
 import me.googas.api.immutable.ImmutableMinecraftMatch;
 import me.googas.api.matches.MatchStatus;
 import me.googas.api.matches.MinecraftTeamSelectionType;
@@ -84,7 +84,7 @@ public class PGMMatchMakingHandler implements GuidoModule {
     JsonClient connection = Guido.getClient().getConnection();
     if (this.check(pgmMatch) && connection != null) {
       try {
-        Optional<SimpleClientLadder> optional =
+        Optional<ImmutableLadder> optional =
             Requests.Matches.getLadder(ladderName).send(connection);
         return optional.map(ladder -> !this.getSuitableMaps(ladder).isEmpty()).orElse(false);
       } catch (MessengerListenFailException e) {
@@ -149,8 +149,7 @@ public class PGMMatchMakingHandler implements GuidoModule {
     PGM pgm = PGM.get();
     try {
       JsonClient connection = Guido.getClient().validatedConnection();
-      Optional<SimpleClientLadder> optional =
-          Requests.Matches.getLadder(ladderName).send(connection);
+      Optional<ImmutableLadder> optional = Requests.Matches.getLadder(ladderName).send(connection);
       if (optional.isEmpty()) return null;
       Ladder ladder = optional.get();
       List<MapInfo> maps = this.getSuitableMaps(ladder);
