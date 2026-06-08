@@ -71,19 +71,17 @@ public class MongoGuidoGuild implements GuidoGuild {
       double winMultiplier,
       double loseMultiplier,
       MinecraftTeamSelectionType teamSelectionType) {
-    MongoLadder ladder =
-        new MongoLadder(
-            name,
-            playersPerTeam,
-            baseElo,
-            teamsPerMatch,
-            winMultiplier,
-            loseMultiplier,
-            teamSelectionType);
-    MongoLadder.Document doc = LadderMapper.toDocument(ladder);
+    MongoLadder.Document doc = new MongoLadder.Document();
+    doc.name = name;
+    doc.playersPerTeam = playersPerTeam;
+    doc.baseValue = baseElo;
+    doc.teamsPerMatch = teamsPerMatch;
+    doc.winMultiplier = winMultiplier;
+    doc.loseMultiplier = loseMultiplier;
+    doc.teamSelectionType = teamSelectionType;
     this.loader.addLadder(this, doc);
     this.document.ladders.add(doc);
-    return Optional.of(ladder);
+    return Optional.of(new MongoLadder(doc));
   }
 
   @Override
@@ -100,11 +98,15 @@ public class MongoGuidoGuild implements GuidoGuild {
   @Override
   public Optional<MongoRankRange> addRange(
       @NonNull String ladderName, @NonNull String name, int min, int max, long roleId) {
-    MongoRankRange range = new MongoRankRange(ladderName, name, min, max, roleId);
-    MongoRankRange.Document doc = RankRangeMapper.toDocument(range);
+    MongoRankRange.Document doc = new MongoRankRange.Document();
+    doc.ladder = ladderName;
+    doc.name = name;
+    doc.min = min;
+    doc.max = max;
+    doc.roleId = roleId;
     this.loader.addRange(this, doc);
     this.document.ranges.add(doc);
-    return Optional.of(range);
+    return Optional.of(new MongoRankRange(doc));
   }
 
   @Override
@@ -129,11 +131,11 @@ public class MongoGuidoGuild implements GuidoGuild {
   }
 
   public static class Document {
-    @BsonId public long id;
-    public List<MongoLadder.Document> ladders;
-    public List<MongoRankRange.Document> ranges;
-    public long matchesChannelId;
-    public long matchesCategoryId;
-    public long waitingVoiceChannelId;
+    @BsonId public long id = 0;
+    @NonNull public List<MongoLadder.Document> ladders = new ArrayList<>();
+    @NonNull public List<MongoRankRange.Document> ranges = new ArrayList<>();
+    public long matchesChannelId = 0;
+    public long matchesCategoryId = 0;
+    public long waitingVoiceChannelId = 0;
   }
 }

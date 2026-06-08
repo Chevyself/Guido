@@ -1,5 +1,6 @@
 package me.googas.api.immutable;
 
+import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -26,5 +27,22 @@ public class ImmutableMinecraftMatchTeamMember implements MinecraftMatchTeamMemb
   public static @NonNull Set<ImmutableMinecraftMatchTeamMember> from(
       @NonNull ImmutableCollection<? extends MinecraftMatchTeamMember> members) {
     return members.stream().map(ImmutableMinecraftMatchTeamMember::new).collect(Collectors.toSet());
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (o == null || getClass() != o.getClass()) return false;
+    ImmutableMinecraftMatchTeamMember that = (ImmutableMinecraftMatchTeamMember) o;
+    return Objects.equals(id, that.id) && role == that.role;
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(id, role);
+  }
+
+  @Override
+  public String toString() {
+    return "ImmutableMinecraftMatchTeamMember{" + "id=" + id + ", role=" + role + '}';
   }
 }

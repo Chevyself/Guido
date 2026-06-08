@@ -2,6 +2,7 @@ package me.googas.api.immutable;
 
 import com.google.gson.annotations.SerializedName;
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 import lombok.Getter;
 import lombok.NonNull;
@@ -100,6 +101,25 @@ public class ImmutableMinecraftMatch implements MinecraftMatch {
   @Override
   public void setServer(@NonNull String name) {
     throw new UnsupportedOperationException();
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (o == null || getClass() != o.getClass()) return false;
+    ImmutableMinecraftMatch that = (ImmutableMinecraftMatch) o;
+    return teamWinner == that.teamWinner
+        && winnersDifference == that.winnersDifference
+        && losersDifference == that.losersDifference
+        && Objects.equals(id, that.id)
+        && Objects.equals(teams, that.teams)
+        && status == that.status
+        && Objects.equals(ladderName, that.ladderName);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(
+        id, teams, status, teamWinner, ladderName, winnersDifference, losersDifference);
   }
 
   @Override
