@@ -7,14 +7,7 @@ import me.googas.api.matches.ladder.Ladder;
 public final class LadderMapper {
   @NonNull
   public static MongoLadder fromDocument(@NonNull MongoLadder.Document document) {
-    return new MongoLadder(
-        document.name,
-        document.playersPerTeam,
-        document.baseValue,
-        document.teamsPerMatch,
-        document.winMultiplier,
-        document.loseMultiplier,
-        document.teamSelectionType);
+    return new MongoLadder(document);
   }
 
   @NonNull

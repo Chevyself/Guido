@@ -6,30 +6,35 @@ import me.googas.server.RankRange;
 
 public class MongoRankRange implements RankRange {
 
-  @NonNull @Getter private final String ladder;
-  @NonNull @Getter private final String name;
-  @Getter private final int min;
-  @Getter private final int max;
-  @Getter private final long roleId;
+  @NonNull @Getter private final Document document;
 
-  /**
-   * Create the rank range
-   *
-   * @param ladder the ladder where this range applies
-   * @param min the minimum value of the range
-   * @param max the maximum value of the range
-   */
-  public MongoRankRange(
-      @NonNull String ladder, @NonNull String name, int min, int max, long roleId) {
-    this.ladder = ladder;
-    this.name = name;
-    this.min = min;
-    this.max = max;
-    this.roleId = roleId;
+  public MongoRankRange(@NonNull Document document) {
+    this.document = document;
   }
 
-  public MongoRankRange() {
-    this("", "", 0, 0, 0);
+  @Override
+  public @NonNull String getLadder() {
+    return document.ladder;
+  }
+
+  @Override
+  public @NonNull String getName() {
+    return document.name;
+  }
+
+  @Override
+  public long getRoleId() {
+    return document.roleId;
+  }
+
+  @Override
+  public int getMin() {
+    return document.min;
+  }
+
+  @Override
+  public int getMax() {
+    return document.max;
   }
 
   public static class Document {

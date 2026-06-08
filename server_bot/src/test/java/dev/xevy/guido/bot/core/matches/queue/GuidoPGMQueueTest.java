@@ -5,11 +5,13 @@ import java.io.IOException;
 import java.util.concurrent.atomic.AtomicReference;
 import me.googas.api.Requests;
 import me.googas.api.immutable.ImmutableMinecraftMatch;
+import me.googas.api.immutable.ImmutableMinecraftMatchTeamMember;
 import me.googas.api.links.MinecraftLinkable;
 import me.googas.api.matches.MinecraftTeamSelectionType;
 import me.googas.api.matches.ladder.Ladder;
 import me.googas.api.matches.queue.MinecraftQueue;
 import me.googas.api.matches.queue.QueueResult;
+import me.googas.api.utility.ImmutableCollection;
 import me.googas.bot.core.handlers.queue.QueueHandler;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -45,7 +47,6 @@ public class GuidoPGMQueueTest {
     MinecraftQueue queue = runtime.getHandlers().getHandler(QueueHandler.class).createQueue(ladder);
     MinecraftLinkable linkableA = runtime.createMinecraftLinkable("A", true);
     MinecraftLinkable linkableB = runtime.createMinecraftLinkable("B", true);
-
     QueueResult joinA = queue.join(linkableA);
     QueueResult joinB = queue.join(linkableB);
     Assertions.assertFalse(
@@ -54,5 +55,14 @@ public class GuidoPGMQueueTest {
     Assertions.assertFalse(
         joinB.isCancelled(),
         "Join for linkableB must not have been cancelled: " + joinB.getReason());
+    Assertions.assertEquals(canHostMatch.get(), hostMatch.get());
+    ImmutableCollection<ImmutableMinecraftMatchTeamMember> canHostParticipants =
+        canHostMatch.get().getParticipants();
+    boolean isAInCanHost =
+        canHostParticipants.stream().anyMatch(member -> member.getId().equals(linkableA.getId()));
+    boolean isBInCanHost =
+        canHostParticipants.stream().anyMatch(member -> member.getId().equals(linkableA.getId()));
+    Assertions.assertTrue(isAInCanHost, "linkableA must be in match");
+    Assertions.assertTrue(isBInCanHost, "linkableB must be in match");
   }
 }

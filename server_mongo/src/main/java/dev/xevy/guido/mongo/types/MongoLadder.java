@@ -7,44 +7,45 @@ import me.googas.api.matches.ladder.Ladder;
 
 public class MongoLadder implements Ladder {
 
-  @NonNull @Getter private final String name;
-  private final int playersPerTeam;
-  private final int baseValue;
-  private final int teamsPerMatch;
-  @Getter private final double winMultiplier;
-  @Getter private final double loseMultiplier;
-  @Getter private final MinecraftTeamSelectionType teamSelectionType;
+  @NonNull @Getter private final Document document;
 
-  public MongoLadder(
-      @NonNull String name,
-      int playersPerTeam,
-      int baseValue,
-      int teamsPerMatch,
-      double winMultiplier,
-      double loseMultiplier,
-      MinecraftTeamSelectionType teamSelectionType) {
-    this.name = name;
-    this.playersPerTeam = playersPerTeam;
-    this.baseValue = baseValue;
-    this.teamsPerMatch = teamsPerMatch;
-    this.winMultiplier = winMultiplier;
-    this.loseMultiplier = loseMultiplier;
-    this.teamSelectionType = teamSelectionType;
+  public MongoLadder(@NonNull Document document) {
+    this.document = document;
   }
 
   @Override
   public int playersPerTeam() {
-    return this.playersPerTeam;
+    return this.document.playersPerTeam;
   }
 
   @Override
   public int baseValue() {
-    return this.baseValue;
+    return this.document.baseValue;
   }
 
   @Override
   public int teamsPerMatch() {
-    return this.teamsPerMatch;
+    return this.document.teamsPerMatch;
+  }
+
+  @Override
+  public @NonNull String getName() {
+    return this.document.name;
+  }
+
+  @Override
+  public @NonNull MinecraftTeamSelectionType getTeamSelectionType() {
+    return this.document.teamSelectionType;
+  }
+
+  @Override
+  public double getWinMultiplier() {
+    return this.document.winMultiplier;
+  }
+
+  @Override
+  public double getLoseMultiplier() {
+    return this.document.loseMultiplier;
   }
 
   public static class Document {
