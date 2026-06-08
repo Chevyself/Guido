@@ -14,6 +14,7 @@ public interface Linkable {
   @NonNull
   Optional<UUID> getLinkedUserId();
 
+  @Deprecated
   Stats getStats(@NonNull StatsProvider statsProvider);
 
   @NonNull

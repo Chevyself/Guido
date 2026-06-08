@@ -1,6 +1,7 @@
 package me.googas.bot.core.handlers.link;
 
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 import lombok.Getter;
@@ -142,6 +143,14 @@ public class LinkHandler implements GuidoHandler {
         .getLoader()
         .getMinecraftLinks()
         .updateOrCreate(minecraftId, nickname, ip, online);
+  }
+
+  @Receptor(Requests.MinecraftLinks.SAVE_STATS)
+  public void saveStats(
+      @ParamName(Requests.MinecraftLinks.SAVE_STATS_UUID) UUID id,
+      @ParamName(Requests.MinecraftLinks.SAVE_STATS_CONTEXT) String context,
+      @ParamName(Requests.MinecraftLinks.SAVE_STATS_STATS) Map<String, Double> stats) {
+    runtime.getLoader().getStats().saveForMinecraftLink(id, context, stats);
   }
 
   @Override
