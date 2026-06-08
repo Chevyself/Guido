@@ -43,4 +43,8 @@ public class RandomUtils {
   public static @NonNull Random getRandom() {
     return RANDOM;
   }
+
+  public static int nextInt(int min, int max) {
+    return RANDOM.nextInt(min, max);
+  }
 }

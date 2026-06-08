@@ -6,7 +6,6 @@ import com.github.chevyself.starbox.annotations.Required;
 import com.github.chevyself.starbox.arguments.ArgumentBehaviour;
 import com.github.chevyself.starbox.jda.context.CommandContext;
 import com.github.chevyself.starbox.result.Result;
-import dev.xevy.guido.mongo.types.MongoMinecraftMatchTeamMember;
 import java.util.*;
 import lombok.NonNull;
 import me.googas.api.lang.LocaleFile;
@@ -30,6 +29,8 @@ import me.googas.bot.core.handlers.matches.MatchEloCalculator;
 import me.googas.bot.core.handlers.matches.MatchMakingHandler;
 import me.googas.bot.core.handlers.matches.PGMMatchHandler;
 import me.googas.bot.core.handlers.ranks.RanksHandler;
+import me.googas.bot.core.matches.queue.ImmutableMinecraftMatchTeam;
+import me.googas.bot.core.matches.queue.ImmutableMinecraftTeamMember;
 import me.googas.bot.core.util.Matches;
 import me.googas.server.GuidoGuild;
 import net.dv8tion.jda.api.entities.Member;
@@ -59,22 +60,20 @@ public class MatchCommands {
               Maps.builder("given", String.valueOf(participants.length))
                   .put("expected", String.valueOf(ladder.baseValue() * 2))));
     }
-    Set<MongoMinecraftMatchTeamMember> members1 = new HashSet<>();
-    Set<MongoMinecraftMatchTeamMember> members2 = new HashSet<>();
+    Set<ImmutableMinecraftTeamMember> members1 = new HashSet<>();
+    Set<ImmutableMinecraftTeamMember> members2 = new HashSet<>();
     for (int i = 0; i < participants.length; i++) {
       MinecraftLinkable participant = participants[i];
-      MongoMinecraftMatchTeamMember member =
-          new MongoMinecraftMatchTeamMember(participant.getId(), TeamRole.MEMBER);
+      ImmutableMinecraftTeamMember member =
+          new ImmutableMinecraftTeamMember(participant.getId(), TeamRole.MEMBER);
       if (i > ladder.playersPerTeam() - 1) {
         members2.add(member);
       } else {
         members1.add(member);
       }
     }
-    dev.xevy.guido.mongo.types.MongoMinecraftMatchTeam team1 =
-        new dev.xevy.guido.mongo.types.MongoMinecraftMatchTeam(1, members1, "Team 1");
-    dev.xevy.guido.mongo.types.MongoMinecraftMatchTeam team2 =
-        new dev.xevy.guido.mongo.types.MongoMinecraftMatchTeam(2, members2, "Team 2");
+    ImmutableMinecraftMatchTeam team1 = new ImmutableMinecraftMatchTeam(1, members1, "Team 1");
+    ImmutableMinecraftMatchTeam team2 = new ImmutableMinecraftMatchTeam(2, members2, "Team 2");
     MinecraftMatch match =
         minecraftMatchLoader.createMatch(Lots.set(team1, team2), ladder.getName());
     if (context.hasFlag("-t")) {

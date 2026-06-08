@@ -4,6 +4,8 @@ import com.mongodb.client.MongoCollection;
 import com.mongodb.client.model.Filters;
 import com.mongodb.client.model.Updates;
 import dev.xevy.guido.mongo.types.MongoGuidoGuild;
+import dev.xevy.guido.mongo.types.MongoLadder;
+import dev.xevy.guido.mongo.types.MongoRankRange;
 import java.util.Optional;
 import lombok.Getter;
 import lombok.NonNull;
@@ -22,7 +24,7 @@ public class MongoGuidoGuildLoader extends SimpleMongoLoader implements GuidoGui
 
   private Optional<MongoGuidoGuild> getById(long id) {
     MongoGuidoGuild.Document doc = this.collection.find(Filters.eq("_id", id)).first();
-    MongoGuidoGuild match = doc != null ? new MongoGuidoGuild(doc, this) : null;
+    MongoGuidoGuild match = doc == null ? null : new MongoGuidoGuild(doc, this);
     return Optional.ofNullable(match);
   }
 
@@ -53,7 +55,7 @@ public class MongoGuidoGuildLoader extends SimpleMongoLoader implements GuidoGui
   }
 
   public void addLadder(
-      @NonNull MongoGuidoGuild mongoGuidoGuild, @NonNull MongoGuidoGuild.LadderDocument ladder) {
+      @NonNull MongoGuidoGuild mongoGuidoGuild, @NonNull MongoLadder.Document ladder) {
     this.collection.updateOne(
         Filters.eq("_id", mongoGuidoGuild.getId()), Updates.push("ladders", ladder));
   }
@@ -63,8 +65,7 @@ public class MongoGuidoGuildLoader extends SimpleMongoLoader implements GuidoGui
         Filters.eq("_id", mongoGuidoGuild.getId()), Updates.unset("ladders." + index));
   }
 
-  public void addRange(
-      @NonNull MongoGuidoGuild mongoGuidoGuild, MongoGuidoGuild.RankRangeDocument range) {
+  public void addRange(@NonNull MongoGuidoGuild mongoGuidoGuild, MongoRankRange.Document range) {
     this.collection.updateOne(
         Filters.eq("_id", mongoGuidoGuild.getId()), Updates.push("ranges", range));
   }

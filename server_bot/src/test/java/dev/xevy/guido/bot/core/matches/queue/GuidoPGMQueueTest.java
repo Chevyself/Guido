@@ -1,6 +1,10 @@
 package dev.xevy.guido.bot.core.matches.queue;
 
 import dev.xevy.guido.bot.GuidoTestRuntime;
+import java.io.IOException;
+import java.util.concurrent.atomic.AtomicReference;
+import me.googas.api.Requests;
+import me.googas.api.immutable.ImmutableMinecraftMatch;
 import me.googas.api.links.MinecraftLinkable;
 import me.googas.api.matches.MinecraftTeamSelectionType;
 import me.googas.api.matches.ladder.Ladder;
@@ -13,8 +17,25 @@ import org.junit.jupiter.api.Test;
 public class GuidoPGMQueueTest {
 
   @Test
-  public void testReadyWithClientCall() {
+  public void testReadyWithClientCall() throws IOException {
     GuidoTestRuntime runtime = GuidoTestRuntime.createRuntime();
+    AtomicReference<ImmutableMinecraftMatch> canHostMatch = new AtomicReference<>(null);
+    AtomicReference<ImmutableMinecraftMatch> hostMatch = new AtomicReference<>(null);
+    runtime.joinWithClient(
+        runtime.listen(
+            Requests.MatchServer.CAN_HOST,
+            (context) -> {
+              canHostMatch.set(
+                  context.get(Requests.MatchServer.CAN_HOST_MATCH, ImmutableMinecraftMatch.class));
+              return true;
+            }),
+        runtime.listen(
+            Requests.MatchServer.HOST,
+            (context) -> {
+              hostMatch.set(
+                  context.get(Requests.MatchServer.HOST_MATCH, ImmutableMinecraftMatch.class));
+              return "server-ip";
+            }));
     Ladder ladder =
         runtime
             .getJdaProvider()
@@ -27,7 +48,11 @@ public class GuidoPGMQueueTest {
 
     QueueResult joinA = queue.join(linkableA);
     QueueResult joinB = queue.join(linkableB);
-    Assertions.assertFalse(joinA.isCancelled(), "Join for linkableA must not have been cancelled: " + joinA.getReason());
-    Assertions.assertFalse(joinB.isCancelled(), "Join for linkableB must not have been cancelled: " + joinB.getReason());
+    Assertions.assertFalse(
+        joinA.isCancelled(),
+        "Join for linkableA must not have been cancelled: " + joinA.getReason());
+    Assertions.assertFalse(
+        joinB.isCancelled(),
+        "Join for linkableB must not have been cancelled: " + joinB.getReason());
   }
 }

@@ -1,9 +1,13 @@
 package dev.xevy.guido.bot;
 
+import lombok.Getter;
 import lombok.NonNull;
+import me.googas.api.utility.RandomUtils;
 import me.googas.bot.GuidoBotConfig;
 
 public class JGuidoConfig implements GuidoBotConfig {
+
+  @Getter private final int port = RandomUtils.nextInt(3366, 10000);
 
   @NonNull
   private String getEnvOr(@NonNull String key, @NonNull String def) {

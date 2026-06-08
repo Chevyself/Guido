@@ -31,4 +31,12 @@ public class MongoRankRange implements RankRange {
   public MongoRankRange() {
     this("", "", 0, 0, 0);
   }
+
+  public static class Document {
+    public String ladder;
+    public String name;
+    public int min;
+    public int max;
+    public long roleId;
+  }
 }

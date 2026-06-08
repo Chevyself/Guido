@@ -1,20 +1,19 @@
 package dev.xevy.guido.mongo.types.mappers;
 
-import dev.xevy.guido.mongo.types.MongoGuidoGuild;
 import dev.xevy.guido.mongo.types.MongoRankRange;
 import lombok.NonNull;
 import me.googas.server.RankRange;
 
 public final class RankRangeMapper {
   @NonNull
-  public static RankRange fromDocument(@NonNull MongoGuidoGuild.RankRangeDocument document) {
+  public static RankRange fromDocument(@NonNull MongoRankRange.Document document) {
     return new MongoRankRange(
         document.ladder, document.name, document.min, document.max, document.roleId);
   }
 
   @NonNull
-  public static MongoGuidoGuild.RankRangeDocument toDocument(@NonNull MongoRankRange range) {
-    MongoGuidoGuild.RankRangeDocument doc = new MongoGuidoGuild.RankRangeDocument();
+  public static MongoRankRange.Document toDocument(@NonNull MongoRankRange range) {
+    MongoRankRange.Document doc = new MongoRankRange.Document();
     doc.ladder = range.getLadder();
     doc.name = range.getName();
     doc.min = range.getMin();

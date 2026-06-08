@@ -22,32 +22,39 @@ import org.jetbrains.annotations.NotNull;
 public class MongoMinecraftMatchLoader extends SimpleMongoLoader implements MinecraftMatchLoader {
 
   @NonNull @Getter private final MongoLoader loader;
-  private final MongoCollection<MongoMinecraftMatch> collection;
+  private final MongoCollection<MongoMinecraftMatch.Document> collection;
 
   public MongoMinecraftMatchLoader(
-      @NonNull MongoLoader loader, MongoCollection<MongoMinecraftMatch> collection) {
+      @NonNull MongoLoader loader, MongoCollection<MongoMinecraftMatch.Document> collection) {
     this.loader = loader;
     this.collection = collection;
   }
 
   @NonNull
-  private List<MongoMinecraftMatchTeam> mapTeams(
+  private List<MongoMinecraftMatchTeam.Document> mapTeams(
       @NonNull Collection<? extends MinecraftMatchTeam> teams) {
     return teams.stream()
         .map(
             team -> {
-              return new MongoMinecraftMatchTeam(
-                  team.getId(), mapMembers(team.getMembers()), team.getName());
+              MongoMinecraftMatchTeam.Document doc = new MongoMinecraftMatchTeam.Document();
+              doc.id = team.getId();
+              doc.members = mapMembers(team.getMembers());
+              doc.name = team.getName();
+              return doc;
             })
         .collect(Collectors.toList());
   }
 
-  private @NonNull Set<MongoMinecraftMatchTeamMember> mapMembers(
+  private @NonNull Set<MongoMinecraftMatchTeamMember.Document> mapMembers(
       @NonNull ImmutableCollection<? extends MinecraftMatchTeamMember> members) {
     return members.stream()
         .map(
             member -> {
-              return new MongoMinecraftMatchTeamMember(member.getId(), member.getRole());
+              MongoMinecraftMatchTeamMember.Document doc =
+                  new MongoMinecraftMatchTeamMember.Document();
+              doc.id = member.getId();
+              doc.role = member.getRole();
+              return doc;
             })
         .collect(Collectors.toSet());
   }
@@ -56,21 +63,22 @@ public class MongoMinecraftMatchLoader extends SimpleMongoLoader implements Mine
   @Override
   public MongoMinecraftMatch createMatch(
       @NonNull Collection<? extends MinecraftMatchTeam> teams, @NonNull String ladderName) {
-    MongoMinecraftMatch match =
-        new MongoMinecraftMatch(
-                UUID.randomUUID(), mapTeams(teams), MatchStatus.WAITING, -1, ladderName, 0, 0)
-            .setLoader(this);
-    collection.insertOne(match);
+    MongoMinecraftMatch.Document doc = new MongoMinecraftMatch.Document();
+    doc.id = UUID.randomUUID();
+    doc.teams = mapTeams(teams);
+    doc.status = MatchStatus.WAITING;
+    doc.teamWinner = -1;
+    doc.ladderName = ladderName;
+    collection.insertOne(doc);
+    MongoMinecraftMatch match = new MongoMinecraftMatch(doc, this);
     this.loader.getRuntime().getListeners().call(new MinecraftMatchLoadedEvent(match));
     return match;
   }
 
   @Override
   public @NonNull Optional<MinecraftMatch> getByRegexId(@NonNull String pattern) {
-    MongoMinecraftMatch match = collection.find(Filters.regex("_id", pattern)).first();
-    if (match != null) {
-      match.setLoader(this);
-    }
+    MongoMinecraftMatch.Document doc = collection.find(Filters.regex("_id", pattern)).first();
+    MongoMinecraftMatch match = doc == null ? null : new MongoMinecraftMatch(doc, this);
     return Optional.ofNullable(match);
   }
 

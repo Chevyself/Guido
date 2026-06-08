@@ -92,7 +92,7 @@ public class UserCommands {
       UserData data,
       GuidoBotRuntime runtime,
       @Free(name = "stats.name", description = "stats.name.desc") String nickname) {
-    Optional<MinecraftLinkable> optional =
+    Optional<? extends MinecraftLinkable> optional =
         runtime.getLoader().getMinecraftLinks().getByLinkedUser(data.getId());
     return optional
         .map(

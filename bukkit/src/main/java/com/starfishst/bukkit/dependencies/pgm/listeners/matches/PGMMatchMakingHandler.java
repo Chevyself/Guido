@@ -20,10 +20,10 @@ import lombok.Getter;
 import lombok.NonNull;
 import me.googas.api.Requests;
 import me.googas.api.client.SimpleClientLadder;
+import me.googas.api.immutable.ImmutableMinecraftMatch;
 import me.googas.api.matches.MatchStatus;
 import me.googas.api.matches.MinecraftTeamSelectionType;
 import me.googas.api.matches.ladder.Ladder;
-import me.googas.api.matches.minecraft.MinecraftMatch;
 import me.googas.api.utility.Maps;
 import me.googas.api.utility.RandomUtils;
 import me.googas.net.api.exception.MessengerListenFailException;
@@ -77,7 +77,8 @@ public class PGMMatchMakingHandler implements GuidoModule {
    * @return true if the match can be hosted
    */
   @Receptor(Requests.MatchServer.CAN_HOST)
-  public boolean canHost(@ParamName(Requests.MatchServer.CAN_HOST_MATCH) MinecraftMatch match) {
+  public boolean canHost(
+      @ParamName(Requests.MatchServer.CAN_HOST_MATCH) ImmutableMinecraftMatch match) {
     String ladderName = match.getLadderName();
     Match pgmMatch = this.getCurrentPgm();
     JsonClient connection = Guido.getClient().getConnection();
@@ -142,7 +143,7 @@ public class PGMMatchMakingHandler implements GuidoModule {
    * @return the ip of the server if it can be hosted
    */
   @Receptor(Requests.MatchServer.HOST)
-  public String host(@ParamName(Requests.MatchServer.HOST_MATCH) MinecraftMatch match) {
+  public String host(@ParamName(Requests.MatchServer.HOST_MATCH) ImmutableMinecraftMatch match) {
     if (!this.canHost(match)) return null;
     String ladderName = match.getLadderName();
     PGM pgm = PGM.get();

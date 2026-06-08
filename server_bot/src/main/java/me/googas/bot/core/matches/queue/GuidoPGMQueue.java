@@ -1,6 +1,5 @@
 package me.googas.bot.core.matches.queue;
 
-import dev.xevy.guido.mongo.types.MongoMinecraftMatchTeamMember;
 import java.util.*;
 import lombok.NonNull;
 import me.googas.api.Requests;
@@ -33,19 +32,17 @@ public class GuidoPGMQueue extends GuidoQueue {
     // TODO if there is more than 30 people playing create a queue based on elo
     // to create this we should create playlist to count people playing on it not people in queue
     if (this.getWaiting().size() >= ladder.playersPerTeam() * 2) {
-      Set<MongoMinecraftMatchTeamMember> participants = new HashSet<>();
+      Set<ImmutableMinecraftTeamMember> participants = new HashSet<>();
       for (int i = 0; i < ladder.playersPerTeam() * 2; i++) {
         MinecraftLinkable linkable = this.getWaiting().remove(i);
-        participants.add(new MongoMinecraftMatchTeamMember(linkable.getId(), TeamRole.MEMBER));
+        participants.add(new ImmutableMinecraftTeamMember(linkable.getId(), TeamRole.MEMBER));
       }
       match =
           runtime
               .getLoader()
               .getMinecraftMatches()
               .createMatch(
-                  Lots.set(
-                      new dev.xevy.guido.mongo.types.MongoMinecraftMatchTeam(
-                          -2, participants, "participants")),
+                  Lots.set(new ImmutableMinecraftMatchTeam(-2, participants, "participants")),
                   ladder.getName());
     }
     return Optional.ofNullable(match);

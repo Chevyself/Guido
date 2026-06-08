@@ -23,4 +23,10 @@ public class MongoMinecraftMatchTeam implements MinecraftMatchTeam {
   public @NonNull ImmutableCollection<MongoMinecraftMatchTeamMember> getMembers() {
     return new ImmutableCollection<>(members);
   }
+
+  public static class Document {
+    public int id;
+    public Set<MongoMinecraftMatchTeamMember.Document> members;
+    public String name;
+  }
 }

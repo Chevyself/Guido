@@ -16,33 +16,6 @@ import org.jetbrains.annotations.NotNull;
 
 public class MongoGuidoGuild implements GuidoGuild {
 
-  public static class Document {
-    @BsonId public long id;
-    public List<LadderDocument> ladders;
-    public List<RankRangeDocument> ranges;
-    public long matchesChannelId;
-    public long matchesCategoryId;
-    public long waitingVoiceChannelId;
-  }
-
-  public static class LadderDocument {
-    public String name;
-    public int playersPerTeam;
-    public int baseValue;
-    public int teamsPerMatch;
-    public double winMultiplier;
-    public double loseMultiplier;
-    public MinecraftTeamSelectionType teamSelectionType;
-  }
-
-  public static class RankRangeDocument {
-    public String ladder;
-    public String name;
-    public int min;
-    public int max;
-    public long roleId;
-  }
-
   public MongoGuidoGuild(
       @NonNull MongoGuidoGuild.Document document, @NonNull MongoGuidoGuildLoader loader) {
     this.document = document;
@@ -107,7 +80,7 @@ public class MongoGuidoGuild implements GuidoGuild {
             winMultiplier,
             loseMultiplier,
             teamSelectionType);
-    LadderDocument doc = LadderMapper.toDocument(ladder);
+    MongoLadder.Document doc = LadderMapper.toDocument(ladder);
     this.loader.addLadder(this, doc);
     this.document.ladders.add(doc);
     return Optional.of(ladder);
@@ -128,7 +101,7 @@ public class MongoGuidoGuild implements GuidoGuild {
   public Optional<MongoRankRange> addRange(
       @NonNull String ladderName, @NonNull String name, int min, int max, long roleId) {
     MongoRankRange range = new MongoRankRange(ladderName, name, min, max, roleId);
-    RankRangeDocument doc = RankRangeMapper.toDocument(range);
+    MongoRankRange.Document doc = RankRangeMapper.toDocument(range);
     this.loader.addRange(this, doc);
     this.document.ranges.add(doc);
     return Optional.of(range);
@@ -153,5 +126,14 @@ public class MongoGuidoGuild implements GuidoGuild {
   public void setWaitingVoiceChannelId(long idLong) {
     this.loader.setWaitingChannelId(this, idLong);
     this.document.waitingVoiceChannelId = idLong;
+  }
+
+  public static class Document {
+    @BsonId public long id;
+    public List<MongoLadder.Document> ladders;
+    public List<MongoRankRange.Document> ranges;
+    public long matchesChannelId;
+    public long matchesCategoryId;
+    public long waitingVoiceChannelId;
   }
 }

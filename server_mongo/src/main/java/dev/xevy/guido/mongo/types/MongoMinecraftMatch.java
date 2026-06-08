@@ -1,96 +1,87 @@
 package dev.xevy.guido.mongo.types;
 
 import dev.xevy.guido.mongo.MongoMinecraftMatchLoader;
+import dev.xevy.guido.mongo.types.mappers.MinecraftMatchTeamMapper;
+import dev.xevy.guido.mongo.types.mappers.MinecraftMatchTeamMemberMapper;
 import java.util.*;
-import java.util.function.Supplier;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import lombok.Getter;
 import lombok.NonNull;
 import me.googas.api.events.match.MinecraftMatchStatusUpdatedEvent;
 import me.googas.api.matches.MatchStatus;
 import me.googas.api.matches.MatchTeam;
 import me.googas.api.matches.minecraft.MinecraftMatch;
 import me.googas.api.utility.ImmutableCollection;
-import me.googas.starbox.logging.LoggerFactory;
+import me.googas.api.utility.Lots;
 import net.dv8tion.jda.api.EmbedBuilder;
 import org.bson.codecs.pojo.annotations.BsonId;
 
 public class MongoMinecraftMatch implements MinecraftMatch {
 
-  private static final Logger logger = LoggerFactory.getLogger(MongoMinecraftMatch.class);
-
-  @NonNull @BsonId @Getter private final UUID id;
-  @NonNull private final List<MongoMinecraftMatchTeam> teams;
-  @NonNull @Getter private MatchStatus status;
-  @Getter private int teamWinner;
-  @NonNull @Getter private String ladderName;
-  @Getter private int winnersDifference;
-  @Getter private int losersDifference;
-  private String server;
-
-  private transient MongoMinecraftMatchLoader loader;
+  @NonNull private final MongoMinecraftMatch.Document document;
+  @NonNull private final MongoMinecraftMatchLoader loader;
 
   public MongoMinecraftMatch(
-      @NonNull UUID id,
-      @NonNull List<MongoMinecraftMatchTeam> teams,
-      @NonNull MatchStatus status,
-      int teamWinner,
-      @NonNull String ladderName,
-      int winnersDifference,
-      int losersDifference) {
-    this.id = id;
-    this.teams = teams;
-    this.status = status;
-    this.teamWinner = teamWinner;
-    this.ladderName = ladderName;
-    this.winnersDifference = winnersDifference;
-    this.losersDifference = losersDifference;
-  }
-
-  @NonNull
-  public MongoMinecraftMatch setLoader(@NonNull MongoMinecraftMatchLoader loader) {
+      @NonNull MongoMinecraftMatch.Document document, @NonNull MongoMinecraftMatchLoader loader) {
+    this.document = document;
     this.loader = loader;
-    return this;
   }
 
-  private boolean noLoader(@NonNull Supplier<String> message) {
-    if (this.loader == null) return true;
-    logger.log(Level.WARNING, message.get(), new IllegalStateException());
-    return false;
+  @Override
+  public @NonNull UUID getId() {
+    return this.document.id;
   }
 
   @Override
   public @NonNull ImmutableCollection<MongoMinecraftMatchTeam> getTeams() {
-    return new ImmutableCollection<>(teams);
+    return ImmutableCollection.map(this.document.teams, MinecraftMatchTeamMapper::fromDocument);
+  }
+
+  @Override
+  public @NonNull MatchStatus getStatus() {
+    return this.document.status;
+  }
+
+  @Override
+  public int getTeamWinner() {
+    return this.document.teamWinner;
+  }
+
+  @Override
+  public @NonNull String getLadderName() {
+    return this.document.ladderName;
   }
 
   @Override
   public @NonNull ImmutableCollection<MongoMinecraftMatchTeamMember> getParticipants() {
     List<MongoMinecraftMatchTeamMember> participants = new ArrayList<>();
-    for (MongoMinecraftMatchTeam team : teams) {
-      for (MongoMinecraftMatchTeamMember member : team.getMembers()) {
-        participants.add(member);
+    for (MongoMinecraftMatchTeam.Document team : this.document.teams) {
+      for (MongoMinecraftMatchTeamMember.Document memberDoc : team.members) {
+        participants.add(MinecraftMatchTeamMemberMapper.fromDocument(memberDoc));
       }
     }
     return new ImmutableCollection<>(participants);
   }
 
   @Override
+  public int getWinnersDifference() {
+    return this.document.winnersDifference;
+  }
+
+  @Override
+  public int getLosersDifference() {
+    return this.document.losersDifference;
+  }
+
+  @Override
   public void setServer(@NonNull String name) {
-    if (this.noLoader(
-        () ->
-            String.format(
-                "Failed to set server for %s to %s, loader has not been set", this, name))) return;
     this.loader.setServer(this, name);
-    this.server = name;
+    this.document.server = name;
   }
 
   @Override
   public void appendDetails(@NonNull EmbedBuilder builder) {
     // TODO localize
-    if (server != null) {
-      builder.addField("Server", server, true);
+    if (this.document.server != null) {
+      builder.addField("Server", this.document.server, true);
     }
   }
 
@@ -102,42 +93,39 @@ public class MongoMinecraftMatch implements MinecraftMatch {
 
   @Override
   public int indexOf(@NonNull MatchTeam matchTeam) {
-    if (!(matchTeam instanceof MongoMinecraftMatchTeam)) return -1;
-    return this.teams.indexOf(matchTeam);
+    return Lots.indexOfMatching(
+        this.document.teams, (thisTeam) -> thisTeam.id == matchTeam.getId());
   }
 
   @Override
   public void setWinnersDifference(int winnersDifference) {
-    if (this.noLoader(
-        () ->
-            String.format(
-                "Failed to set winners difference for %s to %d, loader has not been set",
-                this, winnersDifference))) return;
     this.loader.setWinnersDifference(this, winnersDifference);
-    this.winnersDifference = winnersDifference;
+    this.document.winnersDifference = winnersDifference;
   }
 
   @Override
   public void setLosersDifference(int losersDifference) {
-    if (this.noLoader(
-        () ->
-            String.format(
-                "Failed to set losers difference for %s to %d, loader has not been set",
-                this, losersDifference))) return;
     this.loader.setLosersDifference(this, losersDifference);
-    this.losersDifference = losersDifference;
+    this.document.losersDifference = losersDifference;
   }
 
   @Override
   public void setStatus(@NonNull MatchStatus matchStatus) {
-    if (this.noLoader(
-        () ->
-            String.format(
-                "Failed to set match status for %s to %s, loader has not been set",
-                this, matchStatus))) return;
     this.loader.setStatus(this, matchStatus);
-    this.status = matchStatus;
-    MinecraftMatchStatusUpdatedEvent event = new MinecraftMatchStatusUpdatedEvent(this, status);
+    this.document.status = matchStatus;
+    MinecraftMatchStatusUpdatedEvent event =
+        new MinecraftMatchStatusUpdatedEvent(this, this.document.status);
     this.loader.getLoader().getRuntime().getListeners().call(event);
+  }
+
+  public static class Document {
+    @BsonId public UUID id;
+    public List<MongoMinecraftMatchTeam.Document> teams;
+    public MatchStatus status;
+    public int teamWinner;
+    public String ladderName;
+    public int winnersDifference;
+    public int losersDifference;
+    public String server;
   }
 }

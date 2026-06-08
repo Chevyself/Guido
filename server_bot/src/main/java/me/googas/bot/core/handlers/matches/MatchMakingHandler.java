@@ -230,7 +230,7 @@ public class MatchMakingHandler implements GuidoHandler {
    */
   public Collection<MinecraftMatch> getPlaying(@NonNull UserData data) {
     GuidoLoader loader = runtime.getLoader();
-    Optional<MinecraftLinkable> minecraft =
+    Optional<? extends MinecraftLinkable> minecraft =
         runtime.getLoader().getMinecraftLinks().getByLinkedUser(data.getId());
     Collection<MinecraftMatch> participating = new HashSet<>();
     if (minecraft.isEmpty()) return participating;

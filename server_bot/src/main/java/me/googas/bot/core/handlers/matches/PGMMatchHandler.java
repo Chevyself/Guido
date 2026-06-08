@@ -5,6 +5,7 @@ import lombok.NonNull;
 import me.googas.api.Requests;
 import me.googas.api.events.match.MinecraftMatchLoadedEvent;
 import me.googas.api.events.match.MinecraftMatchStatusUpdatedEvent;
+import me.googas.api.immutable.ImmutableMinecraftMatch;
 import me.googas.api.matches.MatchStatus;
 import me.googas.api.matches.minecraft.MinecraftMatch;
 import me.googas.api.matches.minecraft.MinecraftMatchTeamMember;
@@ -68,7 +69,7 @@ public class PGMMatchHandler implements MatchHandler {
     }
     Server<JsonClientThread> server = Guido.getServer();
     JsonClientThread bungee = Guido.getAuthenticator().getBungee().orElse(null);
-    Requests.MatchServer.canHost(abstractMatch)
+    Requests.MatchServer.canHost(new ImmutableMinecraftMatch(abstractMatch))
         .send(
             server,
             (messenger, canHost) -> {
@@ -93,7 +94,7 @@ public class PGMMatchHandler implements MatchHandler {
     for (MinecraftMatchTeamMember info : match.getParticipants()) {
       participants.add(info.getId());
     }
-    Requests.MatchServer.host(match)
+    Requests.MatchServer.host(new ImmutableMinecraftMatch(match))
         .send(
             messenger,
             Requests.ifPresentElse(
@@ -101,6 +102,7 @@ public class PGMMatchHandler implements MatchHandler {
                   if (bungee != null) {
                     sendParticipantsToServer(match, bungee, ip, participants);
                   }
+                  match.setServer(ip);
                 },
                 () -> this.waitingForServer.add(match)));
   }

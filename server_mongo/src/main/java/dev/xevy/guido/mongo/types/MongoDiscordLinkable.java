@@ -5,7 +5,6 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import lombok.Getter;
 import lombok.NonNull;
 import me.googas.api.links.DiscordLinkable;
 import me.googas.api.stats.Stats;
@@ -18,18 +17,17 @@ public class MongoDiscordLinkable implements DiscordLinkable {
 
   private static final Logger logger = LoggerFactory.getLogger(MongoDiscordLinkable.class);
 
-  @Getter @BsonId private final long id;
-  @NonNull private UUID linkedUserId;
-  private transient MongoDiscordLinksLoader loader;
+  @NonNull private final Document document;
+  @NonNull private final MongoDiscordLinksLoader loader;
 
-  public MongoDiscordLinkable(long id, @NonNull UUID linkedUserId) {
-    this.id = id;
-    this.linkedUserId = linkedUserId;
+  public MongoDiscordLinkable(@NonNull Document document, @NonNull MongoDiscordLinksLoader loader) {
+    this.document = document;
+    this.loader = loader;
   }
 
   @Override
   public @NonNull Optional<UUID> getLinkedUserId() {
-    return Optional.of(linkedUserId);
+    return Optional.of(this.document.linkedUserId);
   }
 
   @Override
@@ -50,12 +48,16 @@ public class MongoDiscordLinkable implements DiscordLinkable {
       return;
     }
     this.loader.setLinkedUser(this, user);
-    this.linkedUserId = user.getId();
+    this.document.linkedUserId = user.getId();
   }
 
-  @NonNull
-  public MongoDiscordLinkable setLoader(@NonNull MongoDiscordLinksLoader loader) {
-    this.loader = loader;
-    return this;
+  @Override
+  public long getId() {
+    return this.document.id;
+  }
+
+  public static class Document {
+    @BsonId public long id;
+    public UUID linkedUserId;
   }
 }

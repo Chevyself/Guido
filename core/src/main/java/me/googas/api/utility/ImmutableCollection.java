@@ -56,4 +56,15 @@ public final class ImmutableCollection<E> implements Iterable<E> {
     }
     return new ImmutableCollection<>(list, false);
   }
+
+  public static <T, R> ImmutableCollection<R> flatMap(
+      @NonNull Iterable<T> iterable, @NonNull Function<T, Iterable<? extends R>> flatMapper) {
+    List<R> list = new ArrayList<>();
+    for (T t : iterable) {
+      for (R r : flatMapper.apply(t)) {
+        list.add(r);
+      }
+    }
+    return new ImmutableCollection<R>(list, false);
+  }
 }

@@ -14,24 +14,27 @@ import org.jetbrains.annotations.NotNull;
 public class MongoUserLoader extends SimpleMongoLoader implements UserLoader {
 
   @NonNull @Getter private final MongoLoader loader;
-  private final MongoCollection<MongoUserData> collection;
+  private final MongoCollection<MongoUserData.Document> collection;
 
-  public MongoUserLoader(@NonNull MongoLoader loader, MongoCollection<MongoUserData> collection) {
+  public MongoUserLoader(
+      @NonNull MongoLoader loader, MongoCollection<MongoUserData.Document> collection) {
     this.loader = loader;
     this.collection = collection;
   }
 
   @Override
   public @NonNull Optional<MongoUserData> getById(@NonNull UUID id) {
-    MongoUserData match = collection.find(Filters.eq("_id", id)).first();
+    MongoUserData.Document doc = collection.find(Filters.eq("_id", id)).first();
+    MongoUserData match = doc == null ? null : new MongoUserData(doc);
     return Optional.ofNullable(match);
   }
 
   @Override
   public @NonNull MongoUserData create() {
-    MongoUserData data = new MongoUserData(UUID.randomUUID());
-    collection.insertOne(data);
-    return data;
+    MongoUserData.Document doc = new MongoUserData.Document();
+    doc.id = UUID.randomUUID();
+    collection.insertOne(doc);
+    return new MongoUserData(doc);
   }
 
   @Override

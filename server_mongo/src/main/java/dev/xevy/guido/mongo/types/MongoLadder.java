@@ -46,4 +46,14 @@ public class MongoLadder implements Ladder {
   public int teamsPerMatch() {
     return this.teamsPerMatch;
   }
+
+  public static class Document {
+    public String name;
+    public int playersPerTeam;
+    public int baseValue;
+    public int teamsPerMatch;
+    public double winMultiplier;
+    public double loseMultiplier;
+    public MinecraftTeamSelectionType teamSelectionType;
+  }
 }

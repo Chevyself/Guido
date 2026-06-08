@@ -37,16 +37,20 @@ public final class MongoLoader implements me.googas.server.loader.GuidoLoader {
     this.tokens =
         new MongoTokenLoader(this, this.database.getCollection("tokens", MongoToken.class));
     this.users =
-        new MongoUserLoader(this, this.database.getCollection("users", MongoUserData.class));
+        new MongoUserLoader(
+            this, this.database.getCollection("users", MongoUserData.Document.class));
     this.minecraftMatches =
         new MongoMinecraftMatchLoader(
-            this, this.database.getCollection("minecraft-matches", MongoMinecraftMatch.class));
+            this,
+            this.database.getCollection("minecraft-matches", MongoMinecraftMatch.Document.class));
     this.discordLinks =
         new MongoDiscordLinksLoader(
-            this, this.database.getCollection("discord-links", MongoDiscordLinkable.class));
+            this,
+            this.database.getCollection("discord-links", MongoDiscordLinkable.Document.class));
     this.minecraftLinks =
         new MongoMinecraftLinksLoader(
-            this, this.database.getCollection("minecraft-links", MongoMinecraftLink.class));
+            this,
+            this.database.getCollection("minecraft-links", MongoMinecraftLinkable.Document.class));
     this.guidoGuildLoader =
         new MongoGuidoGuildLoader(
             this, this.database.getCollection("guilds", MongoGuidoGuild.Document.class));
