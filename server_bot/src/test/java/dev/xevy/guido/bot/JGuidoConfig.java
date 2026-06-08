@@ -32,7 +32,7 @@ public class JGuidoConfig implements GuidoBotConfig {
 
   @Override
   public int getServerPort() {
-    return Integer.parseInt(getEnvOr("JGUIDO_SERVER_PORT", "3366"));
+    return port;
   }
 
   @Override

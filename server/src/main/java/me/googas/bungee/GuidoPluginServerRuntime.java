@@ -7,6 +7,7 @@ import lombok.NonNull;
 import me.googas.bungee.configuration.BungeeConfiguration;
 import me.googas.server.GuidoServerRuntime;
 import me.googas.starbox.ProgramArguments;
+import me.googas.starbox.events.ListenerManager;
 
 public class GuidoPluginServerRuntime implements GuidoServerRuntime {
 
@@ -33,5 +34,10 @@ public class GuidoPluginServerRuntime implements GuidoServerRuntime {
   public @NonNull InputStream getResource(@NonNull String name) {
     return Objects.requireNonNull(
         plugin.getResourceAsStream(name), "Could not find resource " + name);
+  }
+
+  @Override
+  public @NonNull ListenerManager getListeners() {
+    throw new UnsupportedOperationException();
   }
 }

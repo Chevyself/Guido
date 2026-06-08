@@ -34,8 +34,8 @@ public class GuidoPGMQueue extends GuidoQueue {
     if (this.getWaiting().size() >= ladder.playersPerTeam() * 2) {
       Set<ImmutableMinecraftTeamMember> participants = new HashSet<>();
       for (int i = ladder.playersPerTeam() - 1; i >= 0; i--) {
-        MinecraftLinkable linkable = this.getWaiting().remove(i);
-        participants.add(new ImmutableMinecraftTeamMember(linkable.getId(), TeamRole.MEMBER));
+        UUID id = this.getWaiting().remove(i);
+        participants.add(new ImmutableMinecraftTeamMember(id, TeamRole.MEMBER));
       }
       match =
           runtime

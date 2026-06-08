@@ -2,6 +2,7 @@ package me.googas.api.matches.queue;
 
 import java.util.Collection;
 import java.util.Optional;
+import java.util.UUID;
 import lombok.NonNull;
 import me.googas.api.links.MinecraftLinkable;
 import me.googas.api.matches.minecraft.MinecraftMatch;
@@ -17,7 +18,7 @@ public interface MinecraftQueue {
   QueueResult leave(@NonNull MinecraftLinkable minecraft);
 
   default boolean isWaiting(@NonNull MinecraftLinkable minecraft) {
-    return this.getWaiting().contains(minecraft);
+    return this.getWaiting().contains(minecraft.getId());
   }
 
   /**
@@ -34,7 +35,7 @@ public interface MinecraftQueue {
    * @return the linked data
    */
   @NonNull
-  Collection<? extends MinecraftLinkable> getWaiting();
+  Collection<UUID> getWaiting();
 
   /**
    * Get the ladder that this queue is playing
