@@ -1,5 +1,6 @@
 package me.googas.api.matches.minecraft;
 
+import java.util.List;
 import lombok.NonNull;
 import me.googas.api.matches.Match;
 import me.googas.api.matches.MatchStatus;
@@ -32,4 +33,16 @@ public interface MinecraftMatch extends Match {
   ImmutableCollection<? extends MinecraftMatchTeamMember> getParticipants();
 
   void setServer(@NonNull String name);
+
+  @NonNull
+  String getServer();
+
+  @NonNull
+  String getMap();
+
+  void setMap(@NonNull String mapName);
+
+  int addTeam(@NonNull MinecraftMatchTeam team);
+
+  List<? extends MinecraftMatchTeam> setTeams(@NonNull List<? extends MinecraftMatchTeam> teams);
 }

@@ -4,11 +4,8 @@ import java.util.*;
 import java.util.concurrent.TimeUnit;
 import lombok.NonNull;
 import me.googas.api.Requests;
-import me.googas.api.events.match.MinecraftMatchAddTeamEvent;
-import me.googas.api.events.match.MinecraftMatchLoadedEvent;
-import me.googas.api.events.match.MinecraftMatchRemoveTeamEvent;
-import me.googas.api.events.match.MinecraftMatchStatusUpdatedEvent;
-import me.googas.api.events.queue.MinecraftQueueJoinEvent;
+import me.googas.api.events.match.*;
+import me.googas.api.immutable.ImmutableLadder;
 import me.googas.api.lang.LocaleFile;
 import me.googas.api.links.Linkable;
 import me.googas.api.links.MinecraftLinkable;
@@ -22,9 +19,9 @@ import me.googas.api.utility.Maps;
 import me.googas.bot.api.Guido;
 import me.googas.bot.core.GuidoBotRuntime;
 import me.googas.bot.core.handlers.GuidoHandler;
-import me.googas.bot.core.handlers.queue.QueueHandler;
 import me.googas.bot.core.util.Discord;
 import me.googas.bot.core.util.Matches;
+import me.googas.net.sockets.json.ParamName;
 import me.googas.net.sockets.json.Receptor;
 import me.googas.server.GuidoGuild;
 import me.googas.server.loader.GuidoLoader;
@@ -76,22 +73,6 @@ public class MatchMakingHandler implements GuidoHandler {
   }
 
   /**
-   * Check if a match is ready when an link joins the queue
-   *
-   * @param event the event of a link joining a queue
-   */
-  @Listener(priority = ListenPriority.HIGHEST)
-  public void onQueueJoin(MinecraftQueueJoinEvent event) {
-    Optional<MinecraftMatch> optional = event.getQueue().checkReady();
-    if (optional.isEmpty()) return;
-    MinecraftMatch match = optional.get();
-    runtime.getListeners().call(new MinecraftMatchLoadedEvent(match));
-    for (MinecraftMatchTeamMember participant : match.getParticipants()) {
-      Guido.getHandlers().getHandler(QueueHandler.class).leaveQueue(participant);
-    }
-  }
-
-  /**
    * When a match is loaded create a pre game channel
    *
    * @param event the event of a match being loaded
@@ -140,6 +121,13 @@ public class MatchMakingHandler implements GuidoHandler {
     }
   }
 
+  @Listener(priority = ListenPriority.HIGHEST)
+  public void onMatchSetTeamsEvent(@NonNull MinecraftMatchSetTeamsEvent event) {
+    for (MinecraftMatchTeam team : event.getTeams()) {
+      this.createChannelForTeam(team, event.getMatch());
+    }
+  }
+
   /**
    * Listen to when a team is added to a match to create a voice channel for it
    *
@@ -150,6 +138,10 @@ public class MatchMakingHandler implements GuidoHandler {
     MinecraftMatch abstractMatch = event.getMatch();
     MinecraftMatchTeam matchTeam = event.getTeam();
 
+    this.createChannelForTeam(matchTeam, abstractMatch);
+  }
+
+  private void createChannelForTeam(MinecraftMatchTeam matchTeam, MinecraftMatch abstractMatch) {
     VoiceChannel channel =
         runtime
             .getBotJda()
@@ -252,6 +244,73 @@ public class MatchMakingHandler implements GuidoHandler {
     for (MatchHandler handler : runtime.getHandlers().getHandlers(MatchHandler.class)) {
       handler.serverReady();
     }
+  }
+
+  @Receptor(Requests.MinecraftMatches.SET_TEAMS)
+  public Requests.SetTeamsData addTeam(
+      @ParamName(Requests.MinecraftMatches.SET_TEAMS_MATCH_ID) UUID matchId,
+      @ParamName(Requests.MinecraftMatches.SET_TEAMS_TEAMS) Requests.SetTeamsData data) {
+    List<? extends MinecraftMatchTeam> result =
+        runtime
+            .getLoader()
+            .getMinecraftMatches()
+            .getById(matchId)
+            .map(match -> match.setTeams(data.getTeams()))
+            .orElseGet(ArrayList::new);
+    return new Requests.SetTeamsData(result);
+  }
+
+  @Receptor(Requests.MinecraftMatches.UPDATE_STATUS)
+  public void updateStatus(
+      @ParamName(Requests.MinecraftMatches.UPDATE_STATUS_MATCH_ID) UUID matchId,
+      @ParamName(Requests.MinecraftMatches.UPDATE_STATUS_STATUS) MatchStatus status) {
+    runtime
+        .getLoader()
+        .getMinecraftMatches()
+        .getById(matchId)
+        .ifPresent(match -> match.setStatus(status));
+  }
+
+  @Receptor(Requests.MinecraftMatches.SET_MAP)
+  public void setMap(
+      @ParamName(Requests.MinecraftMatches.SET_MAP_MATCH_ID) UUID matchId,
+      @ParamName(Requests.MinecraftMatches.SET_MAP_MAP_NAME) String mapName) {
+    runtime
+        .getLoader()
+        .getMinecraftMatches()
+        .getById(matchId)
+        .ifPresent(match -> match.setMap(mapName));
+  }
+
+  @Receptor(Requests.MinecraftMatches.ON_FINISH)
+  public void onFinish(
+      @ParamName(Requests.MinecraftMatches.ON_FINISH_MATCH_ID) UUID matchId,
+      @ParamName(Requests.MinecraftMatches.ON_FINISH_WINNERS_ID) int winnersId) {
+    runtime
+        .getLoader()
+        .getMinecraftMatches()
+        .getById(matchId)
+        .ifPresent(match -> match.finish(winnersId));
+  }
+
+  @Receptor(Requests.MinecraftMatches.LADDER)
+  public ImmutableLadder onFinish(
+      @ParamName(Requests.MinecraftMatches.LADDER_NAME) String ladderName) {
+    return runtime
+        .getBotJda()
+        .getGuidoGuild()
+        .getLadder(ladderName)
+        .map(
+            ladder ->
+                new ImmutableLadder(
+                    ladder.playersPerTeam(),
+                    ladder.baseValue(),
+                    ladder.teamsPerMatch(),
+                    ladder.getWinMultiplier(),
+                    ladder.getLoseMultiplier(),
+                    ladder.getName(),
+                    ladder.getTeamSelectionType()))
+        .orElse(null);
   }
 
   @NonNull

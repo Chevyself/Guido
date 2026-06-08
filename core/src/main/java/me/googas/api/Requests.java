@@ -1,13 +1,13 @@
 package me.googas.api;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
+import lombok.Getter;
 import lombok.NonNull;
 import me.googas.api.immutable.ImmutableLadder;
 import me.googas.api.immutable.ImmutableMinecraftMatch;
+import me.googas.api.immutable.ImmutableMinecraftMatchTeam;
 import me.googas.api.links.generic.ImmutableMinecraftLinkable;
 import me.googas.api.matches.MatchStatus;
 import me.googas.api.matches.minecraft.MinecraftMatchTeam;
@@ -99,59 +99,6 @@ public class Requests {
     public static RequestBuilder<String> linkNew(@NonNull UUID minecraftId) {
       return new RequestBuilder<>(String.class, MinecraftLinks.LINK_NEW)
           .put(MinecraftLinks.LINK_NEW_UUID, minecraftId);
-    }
-  }
-
-  public static class Matches {
-    @NonNull public static final String PREFIX = "match/";
-    @NonNull public static final String MATCH = "match";
-    @NonNull public static final String CREATE = Matches.PREFIX + "create";
-    @NonNull public static final String FINISH = Matches.PREFIX + "finish";
-    @NonNull public static final String ADD_TEAM = Matches.PREFIX + "add-team";
-    @NonNull public static final String REMOVE_TEAM = Matches.PREFIX + "remove-team";
-    @NonNull public static final String STATUS = Matches.PREFIX + "status";
-    @NonNull public static final String DETAIL = Matches.PREFIX + "detail";
-    @NonNull public static final String REMOVE_DETAIL = Matches.PREFIX + "remove-detail";
-    @NonNull public static final String LADDER = Matches.PREFIX + "ladder";
-
-    @NonNull
-    public static RequestBuilder<Boolean> finish(@NonNull String id, int team) {
-      return new RequestBuilder<>(Boolean.class, Matches.FINISH).put("id", id).put("team", team);
-    }
-
-    @NonNull
-    public static RequestBuilder<Boolean> removeTeam(@NonNull String id, int team) {
-      return new RequestBuilder<>(Boolean.class, Matches.REMOVE_TEAM)
-          .put("id", id)
-          .put("team", team);
-    }
-
-    @NonNull
-    public static RequestBuilder<Boolean> status(@NonNull String id, @NonNull MatchStatus status) {
-      return new RequestBuilder<>(Boolean.class, Matches.STATUS)
-          .put("id", id)
-          .put("status", status);
-    }
-
-    @NonNull
-    public static RequestBuilder<Boolean> detail(
-        @NonNull String id, @NonNull String key, @NonNull Object value) {
-      return new RequestBuilder<>(Boolean.class, Matches.DETAIL)
-          .put("id", id)
-          .put("key", key)
-          .put("value", value);
-    }
-
-    @NonNull
-    public static RequestBuilder<Boolean> removeDetail(@NonNull String id, @NonNull String key) {
-      return new RequestBuilder<>(Boolean.class, Matches.REMOVE_DETAIL)
-          .put("id", id)
-          .put("key", key);
-    }
-
-    @NonNull
-    public static RequestBuilder<ImmutableLadder> getLadder(@NonNull String name) {
-      return new RequestBuilder<>(ImmutableLadder.class, Matches.LADDER).put("name", name);
     }
   }
 
@@ -298,23 +245,25 @@ public class Requests {
   public static class MinecraftMatches {
 
     @NonNull public static final String PREFIX = "mcmatch/";
-    @NonNull public static final String ADD_TEAM = PREFIX + "add-team";
-    @NonNull public static final String ADD_TEAM_MATCH_ID = "match-id";
-    @NonNull public static final String ADD_TEAM_TEAM = "team";
+    @NonNull public static final String SET_TEAMS = PREFIX + "set-teams";
+    @NonNull public static final String SET_TEAMS_MATCH_ID = "match-id";
+    @NonNull public static final String SET_TEAMS_TEAMS = "team";
     @NonNull public static final String UPDATE_STATUS = PREFIX + "update-status";
     @NonNull public static final String UPDATE_STATUS_MATCH_ID = "match-id";
     @NonNull public static final String UPDATE_STATUS_STATUS = "status";
     @NonNull public static final String SET_MAP = PREFIX + "set-map";
     @NonNull public static final String SET_MAP_MATCH_ID = "match-id";
     @NonNull public static final String SET_MAP_MAP_NAME = "map_name";
-    @NonNull public static final String FINISH = PREFIX + "finish";
-    @NonNull public static final String FINISH_MATCH_ID = "match-id";
-    @NonNull public static final String FINISH_WINNERS_ID = "winners-id";
+    @NonNull public static final String ON_FINISH = PREFIX + "finish";
+    @NonNull public static final String ON_FINISH_MATCH_ID = "match-id";
+    @NonNull public static final String ON_FINISH_WINNERS_ID = "winners-id";
+    @NonNull public static final String LADDER = PREFIX + "ladder";
+    @NonNull public static final String LADDER_NAME = "ladder";
 
-    public static RequestBuilder<Integer> addTeam(@NonNull UUID matchId, MinecraftMatchTeam team) {
-      return new RequestBuilder<>(Integer.class, MinecraftMatches.ADD_TEAM)
-          .put(MinecraftMatches.ADD_TEAM_MATCH_ID, matchId)
-          .put(MinecraftMatches.ADD_TEAM_TEAM, team);
+    public static RequestBuilder<SetTeamsData> setTeams(@NonNull UUID matchId, SetTeamsData teams) {
+      return new RequestBuilder<>(SetTeamsData.class, MinecraftMatches.SET_TEAMS)
+          .put(MinecraftMatches.SET_TEAMS_MATCH_ID, matchId)
+          .put(MinecraftMatches.SET_TEAMS_TEAMS, teams);
     }
 
     public static RequestBuilder<Void> updateStatus(
@@ -330,10 +279,25 @@ public class Requests {
           .put(MinecraftMatches.SET_MAP_MAP_NAME, mapName);
     }
 
-    public static RequestBuilder<Void> finish(@NonNull UUID matchId, int winnersId) {
-      return new RequestBuilder<>(Void.class, MinecraftMatches.FINISH)
-          .put(MinecraftMatches.FINISH_MATCH_ID, matchId)
-          .put(MinecraftMatches.FINISH_WINNERS_ID, winnersId);
+    public static RequestBuilder<Void> onFinish(@NonNull UUID matchId, int winnersId) {
+      return new RequestBuilder<>(Void.class, MinecraftMatches.ON_FINISH)
+          .put(MinecraftMatches.ON_FINISH_MATCH_ID, matchId)
+          .put(MinecraftMatches.ON_FINISH_WINNERS_ID, winnersId);
+    }
+
+    @NonNull
+    public static RequestBuilder<ImmutableLadder> getLadder(@NonNull String name) {
+      return new RequestBuilder<>(ImmutableLadder.class, MinecraftMatches.LADDER)
+          .put(MinecraftMatches.LADDER_NAME, name);
+    }
+  }
+
+  public static class SetTeamsData {
+    @NonNull @Getter private final List<ImmutableMinecraftMatchTeam> teams;
+
+    public SetTeamsData(@NonNull List<? extends MinecraftMatchTeam> result) {
+      this.teams =
+          result.stream().map(ImmutableMinecraftMatchTeam::new).collect(Collectors.toList());
     }
   }
 }

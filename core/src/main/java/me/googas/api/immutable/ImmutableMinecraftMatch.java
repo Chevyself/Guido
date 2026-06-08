@@ -9,6 +9,7 @@ import lombok.NonNull;
 import me.googas.api.matches.MatchStatus;
 import me.googas.api.matches.MatchTeam;
 import me.googas.api.matches.minecraft.MinecraftMatch;
+import me.googas.api.matches.minecraft.MinecraftMatchTeam;
 import me.googas.api.utility.ImmutableCollection;
 import net.dv8tion.jda.api.EmbedBuilder;
 
@@ -25,6 +26,8 @@ public class ImmutableMinecraftMatch implements MinecraftMatch {
   @NonNull @Getter private final String ladderName;
   @Getter private final int winnersDifference;
   @Getter private final int losersDifference;
+  @NonNull @Getter private final String server;
+  @NonNull @Getter private final String map;
 
   public ImmutableMinecraftMatch(
       @NonNull UUID id,
@@ -33,7 +36,9 @@ public class ImmutableMinecraftMatch implements MinecraftMatch {
       int teamWinner,
       @NonNull String ladderName,
       int winnersDifference,
-      int losersDifference) {
+      int losersDifference,
+      @NonNull String server,
+      @NonNull String map) {
     this.id = id;
     this.teams = teams;
     this.status = status;
@@ -41,6 +46,8 @@ public class ImmutableMinecraftMatch implements MinecraftMatch {
     this.ladderName = ladderName;
     this.winnersDifference = winnersDifference;
     this.losersDifference = losersDifference;
+    this.server = server;
+    this.map = map;
   }
 
   public ImmutableMinecraftMatch(@NonNull MinecraftMatch other) {
@@ -51,7 +58,9 @@ public class ImmutableMinecraftMatch implements MinecraftMatch {
         other.getTeamWinner(),
         other.getLadderName(),
         other.getWinnersDifference(),
-        other.getLosersDifference());
+        other.getLosersDifference(),
+        "",
+        "");
   }
 
   @Override
@@ -100,6 +109,22 @@ public class ImmutableMinecraftMatch implements MinecraftMatch {
 
   @Override
   public void setServer(@NonNull String name) {
+    throw new UnsupportedOperationException();
+  }
+
+  @Override
+  public void setMap(@NonNull String mapName) {
+    throw new UnsupportedOperationException();
+  }
+
+  @Override
+  public int addTeam(@NonNull MinecraftMatchTeam team) {
+    throw new UnsupportedOperationException();
+  }
+
+  @Override
+  public List<? extends MinecraftMatchTeam> setTeams(
+      @NonNull List<? extends MinecraftMatchTeam> teams) {
     throw new UnsupportedOperationException();
   }
 

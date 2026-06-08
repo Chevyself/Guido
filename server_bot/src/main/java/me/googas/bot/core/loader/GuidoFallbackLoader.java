@@ -42,4 +42,9 @@ public class GuidoFallbackLoader implements me.googas.server.loader.GuidoLoader 
   public @NonNull me.googas.server.loader.GuidoGuildLoader getGuidoGuildLoader() {
     throw new UnsupportedOperationException("Operations are not supported by fallback loader");
   }
+
+  @Override
+  public void close() {
+    // No-op
+  }
 }

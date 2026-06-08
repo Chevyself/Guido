@@ -3,7 +3,6 @@ package dev.xevy.guido.bot;
 import com.google.gson.Gson;
 import java.io.IOException;
 import java.util.UUID;
-import java.util.function.Function;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.experimental.Delegate;
@@ -13,6 +12,7 @@ import me.googas.bot.GuidoBot;
 import me.googas.bot.GuidoBotConfig;
 import me.googas.bot.core.GuidoBotRuntime;
 import me.googas.net.api.Messenger;
+import me.googas.net.api.exception.MessengerListenFailException;
 import me.googas.net.sockets.json.JsonReceptor;
 import me.googas.net.sockets.json.ReceivedJsonRequest;
 import me.googas.net.sockets.json.client.JsonClient;
@@ -55,20 +55,26 @@ public final class GuidoTestRuntime implements GuidoBotRuntime {
   @NonNull
   public JsonClient joinWithClient(@NonNull JsonReceptor... receptors) throws IOException {
     return JsonClient.join(GuidoTestRuntime.LOCALHOST, this.config.getServerPort())
+            .maxWait(60000)
         .addReceptors(receptors)
+        .handle(Throwable::printStackTrace)
         .start();
   }
 
   @NonNull
   public JsonReceptor listen(
-      @NonNull String method, @NonNull Function<JClientContext, Object> consumer) {
+      @NonNull String method, @NonNull JsonReceptorHandleFunction<Object> consumer) {
     return new JsonReceptor() {
       @Override
       public Object execute(
           Messenger messenger,
           @NonNull ReceivedJsonRequest receivedJsonRequest,
           @NonNull Gson gson) {
-        return consumer.apply(new JClientContext(messenger, receivedJsonRequest, gson));
+        try {
+          return consumer.apply(new JClientContext(messenger, receivedJsonRequest, gson));
+        } catch (MessengerListenFailException e) {
+          throw new RuntimeException(e);
+        }
       }
 
       @Override

@@ -1,5 +1,6 @@
 package com.starfishst.bukkit.dependencies.pgm.listeners.matches;
 
+import java.util.Optional;
 import java.util.Set;
 import lombok.Getter;
 import lombok.NonNull;
@@ -7,6 +8,7 @@ import me.googas.api.matches.minecraft.MinecraftMatchTeam;
 import me.googas.api.matches.minecraft.MinecraftMatchTeamMember;
 import me.googas.api.utility.ImmutableCollection;
 
+@Deprecated
 public class PGMTeam implements MinecraftMatchTeam {
 
   @Getter private final int id;
@@ -22,5 +24,10 @@ public class PGMTeam implements MinecraftMatchTeam {
   @Override
   public @NonNull ImmutableCollection<? extends MinecraftMatchTeamMember> getMembers() {
     return new ImmutableCollection<>(members);
+  }
+
+  @Override
+  public @NonNull Optional<String> getPgmPartyId() {
+    throw new UnsupportedOperationException();
   }
 }

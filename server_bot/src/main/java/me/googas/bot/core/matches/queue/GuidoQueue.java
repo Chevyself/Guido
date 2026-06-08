@@ -6,6 +6,7 @@ import java.util.Optional;
 import java.util.UUID;
 import lombok.Getter;
 import lombok.NonNull;
+import me.googas.api.events.match.MinecraftMatchLoadedEvent;
 import me.googas.api.events.queue.MinecraftQueueJoinEvent;
 import me.googas.api.events.queue.MinecraftQueuePreJoinEvent;
 import me.googas.api.links.MinecraftLinkable;
@@ -64,7 +65,9 @@ public class GuidoQueue implements MinecraftQueue {
     if (cancelled) return new QueueResult(event.getReason());
     this.getWaiting().add(minecraft.getId());
     listeners.call(new MinecraftQueueJoinEvent(this, minecraft));
-    return new QueueResult();
+    Optional<MinecraftMatch> optional = event.getQueue().checkReady();
+    optional.ifPresent(match -> runtime.getListeners().call(new MinecraftMatchLoadedEvent(match)));
+    return new QueueResult(optional.orElse(null));
   }
 
   @Override

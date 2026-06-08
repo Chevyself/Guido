@@ -6,6 +6,7 @@ import lombok.NonNull;
 import me.googas.api.matches.minecraft.MinecraftMatchTeamMember;
 import me.googas.api.matches.team.TeamRole;
 
+@Deprecated
 public class PGMTeamMember implements MinecraftMatchTeamMember {
   @NonNull @Getter private final UUID id;
   @NonNull @Getter private final TeamRole role;

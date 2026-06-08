@@ -85,7 +85,7 @@ public class PGMMatchMakingHandler implements GuidoModule {
     if (this.check(pgmMatch) && connection != null) {
       try {
         Optional<ImmutableLadder> optional =
-            Requests.Matches.getLadder(ladderName).send(connection);
+            Requests.MinecraftMatches.getLadder(ladderName).send(connection);
         return optional.map(ladder -> !this.getSuitableMaps(ladder).isEmpty()).orElse(false);
       } catch (MessengerListenFailException e) {
         e.printStackTrace();
@@ -149,7 +149,8 @@ public class PGMMatchMakingHandler implements GuidoModule {
     PGM pgm = PGM.get();
     try {
       JsonClient connection = Guido.getClient().validatedConnection();
-      Optional<ImmutableLadder> optional = Requests.Matches.getLadder(ladderName).send(connection);
+      Optional<ImmutableLadder> optional =
+          Requests.MinecraftMatches.getLadder(ladderName).send(connection);
       if (optional.isEmpty()) return null;
       Ladder ladder = optional.get();
       List<MapInfo> maps = this.getSuitableMaps(ladder);
@@ -272,7 +273,7 @@ public class PGMMatchMakingHandler implements GuidoModule {
     if (hosted == null) return;
     int winnersId = hosted.getTeamId(this.getWinnersId(event));
     if (connection != null) {
-      Requests.MinecraftMatches.finish(hosted.getId(), winnersId).queue(connection);
+      Requests.MinecraftMatches.onFinish(hosted.getId(), winnersId).queue(connection);
       this.readyToHost(connection);
     }
     this.matches.remove(hosted);

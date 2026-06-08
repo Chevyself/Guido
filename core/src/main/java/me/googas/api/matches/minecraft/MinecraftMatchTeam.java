@@ -1,6 +1,7 @@
 package me.googas.api.matches.minecraft;
 
 import java.util.Collection;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import lombok.NonNull;
 import me.googas.api.links.MinecraftLinkable;
@@ -21,4 +22,7 @@ public interface MinecraftMatchTeam extends MatchTeam {
                 member.getLinkable(loader).map(MinecraftLinkable::getNickname).orElse("Uknown"))
         .collect(Collectors.toSet());
   }
+
+  @NonNull
+  Optional<String> getPgmPartyId();
 }

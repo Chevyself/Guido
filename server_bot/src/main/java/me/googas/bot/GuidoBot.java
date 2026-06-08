@@ -202,11 +202,13 @@ public final class GuidoBot implements GuidoBotRuntime {
   }
 
   /** Stops the bot */
-  public boolean stop() {
+  @Override
+  public void close() throws IOException {
     this.handlers.unregister();
-    JDA jda = this.jdaConnection.getJda();
-    jda.shutdown();
-    return true;
+    this.commandManager.close();
+    this.jdaConnection.close();
+    this.server.close();
+    this.loader.close();
   }
 
   @NonNull

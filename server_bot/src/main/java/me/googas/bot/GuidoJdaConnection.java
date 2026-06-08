@@ -1,5 +1,6 @@
 package me.googas.bot;
 
+import java.io.Closeable;
 import java.util.Objects;
 import java.util.Scanner;
 import lombok.CustomLog;
@@ -11,7 +12,7 @@ import net.dv8tion.jda.api.requests.GatewayIntent;
 
 /** Setups connection with JDA */
 @CustomLog
-public class GuidoJdaConnection {
+public class GuidoJdaConnection implements Closeable {
 
   /** The jda instance used by the bot. */
   private JDA jda;
@@ -75,5 +76,10 @@ public class GuidoJdaConnection {
   @NonNull
   public JDA getJda() {
     return Objects.requireNonNull(this.jda, "JDA has not been set yet");
+  }
+
+  @Override
+  public void close() {
+    if (this.jda != null) this.jda.shutdownNow();
   }
 }

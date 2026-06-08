@@ -11,13 +11,21 @@ import org.jetbrains.annotations.NotNull;
 
 public final class ImmutableCollection<E> implements Iterable<E> {
 
-  @NonNull private final Collection<E> elements;
+  @NonNull private final List<E> elements;
 
-  public ImmutableCollection(@NonNull Collection<E> elements) {
+  public ImmutableCollection() {
+    this(new ArrayList<>(), false);
+  }
+
+  public ImmutableCollection(@NonNull List<E> elements) {
     this(elements, true);
   }
 
-  private ImmutableCollection(@NonNull Collection<E> elements, boolean copy) {
+  public ImmutableCollection(@NonNull Collection<E> elements) {
+    this(List.copyOf(elements), false);
+  }
+
+  private ImmutableCollection(@NonNull List<E> elements, boolean copy) {
     if (copy) {
       this.elements = List.copyOf(elements);
     } else {
@@ -48,6 +56,10 @@ public final class ImmutableCollection<E> implements Iterable<E> {
     return elements.size();
   }
 
+  public E get(int index) {
+    return elements.get(index);
+  }
+
   public static <T, R> ImmutableCollection<R> map(
       @NonNull Iterable<T> iterable, @NonNull Function<T, R> mapper) {
     List<R> list = new ArrayList<>();
@@ -66,5 +78,9 @@ public final class ImmutableCollection<E> implements Iterable<E> {
       }
     }
     return new ImmutableCollection<R>(list, false);
+  }
+
+  public List<E> copy() {
+    return new ArrayList<>(this.elements);
   }
 }
