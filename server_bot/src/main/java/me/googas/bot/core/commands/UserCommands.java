@@ -17,10 +17,10 @@ import me.googas.api.stats.Stats;
 import me.googas.api.stats.StatsProvider;
 import me.googas.api.user.UserData;
 import me.googas.api.utility.Maps;
-import me.googas.bot.GuidoBotRuntime;
 import me.googas.bot.api.Guido;
-import me.googas.bot.core.discord.GuidoGuild;
+import me.googas.bot.core.GuidoBotRuntime;
 import me.googas.bot.core.handlers.link.LinkHandler;
+import me.googas.server.GuidoGuild;
 
 /** Commands that users can use */
 public class UserCommands {
@@ -92,7 +92,7 @@ public class UserCommands {
       UserData data,
       GuidoBotRuntime runtime,
       @Free(name = "stats.name", description = "stats.name.desc") String nickname) {
-    Optional<MinecraftLinkable> optional =
+    Optional<? extends MinecraftLinkable> optional =
         runtime.getLoader().getMinecraftLinks().getByLinkedUser(data.getId());
     return optional
         .map(

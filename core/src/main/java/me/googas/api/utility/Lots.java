@@ -1,6 +1,7 @@
 package me.googas.api.utility;
 
 import java.util.*;
+import java.util.function.Predicate;
 import lombok.NonNull;
 import me.googas.starbox.Pagination;
 
@@ -27,11 +28,21 @@ public class Lots {
     return Arrays.asList(elements);
   }
 
+  @NonNull
   public static <E> Pagination<E> pagesOf(@NonNull Iterable<E> iterable, int limit) {
     List<E> list = new ArrayList<>();
     for (E e : iterable) {
       list.add(e);
     }
     return new Pagination<>(list, limit);
+  }
+
+  public static <E> int indexOfMatching(@NonNull List<E> list, @NonNull Predicate<E> predicate) {
+    for (int i = 0; i < list.size(); i++) {
+      if (predicate.test(list.get(i))) {
+        return i;
+      }
+    }
+    return -1;
   }
 }

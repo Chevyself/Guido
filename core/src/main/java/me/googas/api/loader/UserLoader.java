@@ -12,6 +12,9 @@ public interface UserLoader extends DataLoader {
   @NonNull
   UserData ensureUserData(@NonNull User user);
 
+  @NonNull
+  UserData create();
+
   @NotNull
   Optional<? extends UserData> getById(@NonNull UUID id);
 }

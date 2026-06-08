@@ -3,7 +3,7 @@ package me.googas.bot.api.events.data.guild;
 import lombok.Getter;
 import lombok.NonNull;
 import me.googas.api.events.GuidoEvent;
-import me.googas.bot.core.discord.GuidoGuild;
+import me.googas.server.GuidoGuild;
 
 /** This object represents an event which has {@link GuidoGuild} involved */
 public class GuidoGuildEvent implements GuidoEvent {

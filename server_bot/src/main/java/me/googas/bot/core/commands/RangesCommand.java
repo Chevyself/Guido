@@ -7,9 +7,9 @@ import com.github.chevyself.starbox.result.Result;
 import me.googas.api.lang.LocaleFile;
 import me.googas.api.matches.ladder.Ladder;
 import me.googas.api.utility.Maps;
-import me.googas.bot.DiscordRankRange;
 import me.googas.bot.core.commands.middleware.GuidoJdaPermission;
-import me.googas.bot.core.discord.GuidoGuild;
+import me.googas.server.GuidoGuild;
+import me.googas.server.RankRange;
 import net.dv8tion.jda.api.entities.Role;
 
 /** Commands for ranges */
@@ -30,7 +30,7 @@ public class RangesCommand {
       LocaleFile locale,
       GuidoGuild guild,
       @Required(name = "range.role", description = "range.role.desc") Role role) {
-    DiscordRankRange range = guild.getRange(role.getIdLong());
+    RankRange range = guild.getRange(role.getIdLong());
     if (range != null) {
       return Result.of(
           locale.get(
@@ -84,7 +84,7 @@ public class RangesCommand {
    *
    * @param locale the locale of the command sender
    * @param guild the guild to delete the range from
-   * @param role the role to remove the range from
+   * @param name the name of the range to delete
    * @return the result of the command
    */
   @GuidoJdaPermission("guido.range.delete")
@@ -94,15 +94,11 @@ public class RangesCommand {
   public Result set(
       LocaleFile locale,
       GuidoGuild guild,
-      @Required(name = "range.del.role", description = "range.del.role.desc") Role role) {
-    DiscordRankRange range = guild.getRange(role.getIdLong());
-    if (range != null) {
-      guild.removeRange(range);
-      return Result.of(
-          locale.get("range.del.success", Maps.singleton("mention", role.getAsMention())));
+      @Required(name = "range.del.name", description = "range.del.name.desc") String name) {
+    if (guild.removeRangeByName(name)) {
+      return Result.of(locale.get("range.del.success", Maps.singleton("mention", name)));
     } else {
-      return Result.of(
-          locale.get("range.del.not-found", Maps.singleton("mention", role.getAsMention())));
+      return Result.of(locale.get("range.del.not-found", Maps.singleton("mention", name)));
     }
   }
 }

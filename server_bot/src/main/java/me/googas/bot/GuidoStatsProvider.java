@@ -4,6 +4,7 @@ import lombok.NonNull;
 import me.googas.api.matches.minecraft.MinecraftMatchTeamMember;
 import me.googas.api.stats.Stats;
 import me.googas.api.stats.StatsProvider;
+import me.googas.bot.core.GuidoBotRuntime;
 
 public class GuidoStatsProvider implements StatsProvider {
 

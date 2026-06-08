@@ -18,5 +18,5 @@ public interface DiscordLinkableLoader extends DataLoader {
   }
 
   @NonNull
-  Optional<DiscordLinkable> getByLinkedUser(@NonNull UUID linkedUserId);
+  Optional<? extends DiscordLinkable> getByLinkedUser(@NonNull UUID linkedUserId);
 }

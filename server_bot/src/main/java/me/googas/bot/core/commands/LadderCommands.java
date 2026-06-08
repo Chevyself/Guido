@@ -13,8 +13,7 @@ import me.googas.api.matches.ladder.Ladder;
 import me.googas.api.utility.Lots;
 import me.googas.api.utility.Maps;
 import me.googas.bot.core.commands.middleware.GuidoJdaPermission;
-import me.googas.bot.core.discord.GuidoGuild;
-import me.googas.bot.core.matches.ladder.PlayableLadder;
+import me.googas.server.GuidoGuild;
 import me.googas.starbox.Pagination;
 import me.googas.starbox.builders.MapBuilder;
 
@@ -40,7 +39,7 @@ public class LadderCommands {
     if (guild.getLadders().isEmpty()) {
       return Result.of(locale.get("ladders.empty"));
     } else {
-      Pagination<? extends PlayableLadder> pagination = Lots.pagesOf(guild.getLadders(), 10);
+      Pagination<? extends Ladder> pagination = Lots.pagesOf(guild.getLadders(), 10);
       if (page < 1) {
         page = 1;
       } else if (page > pagination.maxPage()) {

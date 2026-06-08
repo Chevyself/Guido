@@ -10,7 +10,7 @@ import me.googas.api.token.AuthLevel;
 import me.googas.api.token.AuthToken;
 import me.googas.api.user.UserData;
 import me.googas.api.utility.Maps;
-import me.googas.bot.GuidoBotRuntime;
+import me.googas.bot.core.GuidoBotRuntime;
 import me.googas.bot.core.commands.middleware.GuidoJdaPermission;
 
 /** Commands for token generation */

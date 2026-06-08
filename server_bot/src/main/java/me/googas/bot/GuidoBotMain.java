@@ -9,6 +9,7 @@ import lombok.extern.slf4j.Slf4j;
 import me.googas.server.GuidoServerRuntime;
 import me.googas.starbox.CoreFiles;
 import me.googas.starbox.ProgramArguments;
+import me.googas.starbox.events.ListenerManager;
 
 @Slf4j
 public class GuidoBotMain {
@@ -34,6 +35,11 @@ public class GuidoBotMain {
     @Override
     public @NonNull InputStream getResource(@NonNull String name) {
       return CoreFiles.getResource(name);
+    }
+
+    @Override
+    public @NonNull ListenerManager getListeners() {
+      throw new UnsupportedOperationException("Cannot use listener handler from singleton");
     }
   }
 

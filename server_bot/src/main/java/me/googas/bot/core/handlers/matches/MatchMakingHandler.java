@@ -19,15 +19,15 @@ import me.googas.api.matches.minecraft.MinecraftMatchTeamMember;
 import me.googas.api.user.UserData;
 import me.googas.api.utility.Lots;
 import me.googas.api.utility.Maps;
-import me.googas.bot.GuidoBotRuntime;
 import me.googas.bot.api.Guido;
-import me.googas.bot.core.discord.GuidoGuild;
+import me.googas.bot.core.GuidoBotRuntime;
 import me.googas.bot.core.handlers.GuidoHandler;
 import me.googas.bot.core.handlers.queue.QueueHandler;
-import me.googas.bot.core.loader.GuidoLoader;
 import me.googas.bot.core.util.Discord;
 import me.googas.bot.core.util.Matches;
 import me.googas.net.sockets.json.Receptor;
+import me.googas.server.GuidoGuild;
+import me.googas.server.loader.GuidoLoader;
 import me.googas.starbox.events.ListenPriority;
 import me.googas.starbox.events.Listener;
 import net.dv8tion.jda.api.EmbedBuilder;
@@ -60,7 +60,11 @@ public class MatchMakingHandler implements GuidoHandler {
   public void onMatchStatusUpdatedEvent(@NonNull MinecraftMatchStatusUpdatedEvent event) {
     if (!MatchMakingHandler.announce.contains(event.getStatus())) return;
     MinecraftMatch match = event.getMatch();
-    TextChannel channel = runtime.getBotJda().getGuidoGuild().getMatchesTextChannel();
+    TextChannel channel =
+        runtime
+            .getBotJda()
+            .getGuidoGuild()
+            .getMatchesTextChannel(runtime.getJdaConnection().getJda());
     LocaleFile locale = Guido.getHandlers().getLanguageHandler().getDefault();
     EmbedBuilder information = Matches.getInformation(match, locale, runtime.getLoader());
     if (event.getStatus() == MatchStatus.FINISHED) {
@@ -98,7 +102,7 @@ public class MatchMakingHandler implements GuidoHandler {
     GuidoGuild guild = runtime.getBotJda().getGuidoGuild();
     VoiceChannel channel =
         guild
-            .getMatchesCategory()
+            .getMatchesCategory(runtime.getJdaConnection().getJda())
             .createVoiceChannel("Pre-Game " + minecraftMatch.getId())
             .complete();
     this.channels().putPreMatch(channel.getIdLong(), minecraftMatch.getId());
@@ -126,7 +130,7 @@ public class MatchMakingHandler implements GuidoHandler {
                       if (state != null) {
                         if (state.getChannel() != null) {
                           guild
-                              .toDiscord()
+                              .toDiscord(runtime.getJdaConnection().getJda())
                               .moveVoiceMember(member, channel)
                               .queueAfter(500, TimeUnit.MILLISECONDS);
                         }
@@ -150,7 +154,7 @@ public class MatchMakingHandler implements GuidoHandler {
         runtime
             .getBotJda()
             .getGuidoGuild()
-            .getMatchesCategory()
+            .getMatchesCategory(runtime.getJdaConnection().getJda())
             .createVoiceChannel(matchTeam.getName())
             .complete();
     this.channels().getVoices(abstractMatch.getId()).put(matchTeam.getId(), channel.getIdLong());
@@ -226,7 +230,7 @@ public class MatchMakingHandler implements GuidoHandler {
    */
   public Collection<MinecraftMatch> getPlaying(@NonNull UserData data) {
     GuidoLoader loader = runtime.getLoader();
-    Optional<MinecraftLinkable> minecraft =
+    Optional<? extends MinecraftLinkable> minecraft =
         runtime.getLoader().getMinecraftLinks().getByLinkedUser(data.getId());
     Collection<MinecraftMatch> participating = new HashSet<>();
     if (minecraft.isEmpty()) return participating;

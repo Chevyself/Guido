@@ -6,8 +6,8 @@ import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 import lombok.NonNull;
 import me.googas.api.matches.minecraft.MinecraftMatch;
-import me.googas.bot.GuidoBotRuntime;
 import me.googas.bot.api.Guido;
+import me.googas.bot.core.GuidoBotRuntime;
 import me.googas.bot.core.handlers.GuidoHandler;
 import me.googas.bot.core.util.Discord;
 import net.dv8tion.jda.api.entities.Member;
@@ -114,7 +114,11 @@ public class MatchMakingChannelsHandler implements GuidoHandler {
    * @param channel the channel itself
    */
   public void deleteAndMove(VoiceChannel channel) {
-    VoiceChannel waiting = runtime.getBotJda().getGuidoGuild().getWaitingVoiceChannel();
+    VoiceChannel waiting =
+        runtime
+            .getBotJda()
+            .getGuidoGuild()
+            .getWaitingVoiceChannel(runtime.getJdaConnection().getJda());
     if (channel != null) {
       for (Member member : channel.getMembers()) {
         if (member.getVoiceState() != null && member.getVoiceState().getChannel() != null) {

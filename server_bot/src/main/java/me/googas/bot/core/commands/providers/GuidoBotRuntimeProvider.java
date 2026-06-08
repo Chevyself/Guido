@@ -4,7 +4,7 @@ import com.github.chevyself.starbox.exceptions.ArgumentProviderException;
 import com.github.chevyself.starbox.jda.context.CommandContext;
 import com.github.chevyself.starbox.jda.providers.type.JdaExtraArgumentProvider;
 import lombok.NonNull;
-import me.googas.bot.GuidoBotRuntime;
+import me.googas.bot.core.GuidoBotRuntime;
 import org.jetbrains.annotations.NotNull;
 
 public class GuidoBotRuntimeProvider implements JdaExtraArgumentProvider<GuidoBotRuntime> {

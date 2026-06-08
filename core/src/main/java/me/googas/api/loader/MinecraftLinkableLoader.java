@@ -7,14 +7,18 @@ import me.googas.api.links.MinecraftLinkable;
 
 public interface MinecraftLinkableLoader extends DataLoader {
   @NonNull
-  Optional<MinecraftLinkable> getByNickname(@NonNull String nickname);
+  Optional<? extends MinecraftLinkable> getByNickname(@NonNull String nickname);
 
   @NonNull
-  Optional<MinecraftLinkable> getByIdRegex(@NonNull String id);
+  Optional<? extends MinecraftLinkable> getByIdRegex(@NonNull String id);
 
   @NonNull
-  Optional<MinecraftLinkable> getById(@NonNull UUID minecraftId);
+  Optional<? extends MinecraftLinkable> getById(@NonNull UUID minecraftId);
 
   @NonNull
-  Optional<MinecraftLinkable> getByLinkedUser(@NonNull UUID linkedUserId);
+  Optional<? extends MinecraftLinkable> getByLinkedUser(@NonNull UUID linkedUserId);
+
+  @NonNull
+  MinecraftLinkable updateOrCreate(
+      @NonNull UUID minecraftId, @NonNull String nickname, @NonNull String ip, boolean online);
 }

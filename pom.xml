@@ -18,6 +18,7 @@
         <module>server</module>
         <module>server_commons</module>
         <module>server_bot</module>
+        <module>server_mongo</module>
     </modules>
 
     <build>

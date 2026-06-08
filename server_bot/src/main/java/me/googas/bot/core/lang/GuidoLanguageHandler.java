@@ -11,7 +11,6 @@ import lombok.CustomLog;
 import lombok.NonNull;
 import me.googas.api.lang.LocaleFile;
 import me.googas.api.lang.Localized;
-import me.googas.api.loader.Loader;
 import me.googas.api.utility.Maps;
 import me.googas.bot.core.handlers.GuidoHandler;
 import me.googas.server.GuidoServerRuntime;
@@ -25,10 +24,7 @@ public class GuidoLanguageHandler implements JdaMessagesProvider, GuidoHandler {
   /** The files that this handler is using */
   @NonNull private final Set<GuidoLocaleFile> files = new HashSet<>();
 
-
-  /**
-   * Create the guido localization handler
-   */
+  /** Create the guido localization handler */
   public GuidoLanguageHandler(@NonNull GuidoServerRuntime runtime) {
     this.runtime = runtime;
   }

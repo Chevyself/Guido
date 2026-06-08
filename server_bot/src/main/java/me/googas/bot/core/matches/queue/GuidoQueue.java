@@ -13,7 +13,7 @@ import me.googas.api.matches.minecraft.MinecraftMatch;
 import me.googas.api.matches.minecraft.MinecraftMatchTeamMember;
 import me.googas.api.matches.queue.MinecraftQueue;
 import me.googas.api.matches.queue.QueueResult;
-import me.googas.bot.GuidoBotRuntime;
+import me.googas.bot.core.GuidoBotRuntime;
 import me.googas.starbox.events.ListenerManager;
 import org.jetbrains.annotations.NotNull;
 

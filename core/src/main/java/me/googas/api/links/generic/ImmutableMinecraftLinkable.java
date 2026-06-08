@@ -18,13 +18,19 @@ public class ImmutableMinecraftLinkable implements MinecraftLinkable {
   private final UUID id;
 
   @NonNull @Getter private final String nickname;
+  @NonNull @Getter private final String ip;
   private final boolean online;
   private final UUID linkedUserId;
 
   public ImmutableMinecraftLinkable(
-      @NonNull UUID id, @NonNull String nickname, boolean online, UUID linkedUserId) {
+      @NonNull UUID id,
+      @NonNull String nickname,
+      @NonNull String ip,
+      boolean online,
+      UUID linkedUserId) {
     this.id = id;
     this.nickname = nickname;
+    this.ip = ip;
     this.online = online;
     this.linkedUserId = linkedUserId;
   }

@@ -7,6 +7,7 @@ import com.github.chevyself.starbox.jda.commands.JdaCommand;
 import com.github.chevyself.starbox.jda.context.CommandContext;
 import com.github.chevyself.starbox.registry.MiddlewareRegistry;
 import com.github.chevyself.starbox.registry.ProvidersRegistry;
+import dev.xevy.guido.mongo.MongoLoader;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -20,19 +21,19 @@ import lombok.NonNull;
 import me.googas.api.server.GuidoAuthenticator;
 import me.googas.api.server.receptors.*;
 import me.googas.bot.api.Guido;
+import me.googas.bot.core.GuidoBotRuntime;
 import me.googas.bot.core.commands.*;
 import me.googas.bot.core.commands.administrative.*;
 import me.googas.bot.core.commands.middleware.EmbededResultHandler;
 import me.googas.bot.core.commands.providers.*;
 import me.googas.bot.core.handlers.GuidoHandler;
 import me.googas.bot.core.loader.GuidoFallbackLoader;
-import me.googas.bot.core.loader.GuidoLoader;
-import me.googas.bot.core.loader.mongo.MongoLoader;
 import me.googas.bot.core.server.GuidoFallbackServer;
 import me.googas.net.api.Server;
 import me.googas.net.sockets.json.server.JsonClientThread;
 import me.googas.net.sockets.json.server.JsonSocketServer;
 import me.googas.server.GuidoServerRuntime;
+import me.googas.server.loader.GuidoLoader;
 import me.googas.starbox.ProgramArguments;
 import me.googas.starbox.events.ListenerManager;
 import me.googas.starbox.logging.CustomFormatter;
@@ -43,7 +44,7 @@ import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.hooks.AnnotatedEventManager;
 
 /** The match making bot */
-public class GuidoBot implements GuidoBotRuntime {
+public final class GuidoBot implements GuidoBotRuntime {
 
   @NonNull @Getter private static final Formatter formatter = new CustomFormatter();
 
@@ -136,7 +137,6 @@ public class GuidoBot implements GuidoBotRuntime {
                 new MinecraftLinkableProvider(this),
                 new MinecraftMatchProvider(this),
                 new MinecraftTeamSelectionTypeProvider(),
-                new PlayableLadderArgumentProvider(this),
                 new UserDataProvider(this),
                 new UserDataSenderProvider(this));
     this.commandManager =

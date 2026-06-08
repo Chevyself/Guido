@@ -11,10 +11,8 @@ import me.googas.api.matches.queue.QueueResult;
 import me.googas.api.matches.team.TeamRole;
 import me.googas.api.user.UserData;
 import me.googas.api.utility.Lots;
-import me.googas.bot.GuidoBotRuntime;
 import me.googas.bot.api.Guido;
-import me.googas.bot.core.loader.types.GenericMinecraftMatchTeam;
-import me.googas.bot.core.loader.types.GenericMinecraftMatchTeamMember;
+import me.googas.bot.core.GuidoBotRuntime;
 import me.googas.bot.core.util.Lang;
 import me.googas.net.api.exception.MessengerListenFailException;
 import org.jetbrains.annotations.NotNull;
@@ -34,17 +32,17 @@ public class GuidoPGMQueue extends GuidoQueue {
     // TODO if there is more than 30 people playing create a queue based on elo
     // to create this we should create playlist to count people playing on it not people in queue
     if (this.getWaiting().size() >= ladder.playersPerTeam() * 2) {
-      Set<GenericMinecraftMatchTeamMember> participants = new HashSet<>();
+      Set<ImmutableMinecraftTeamMember> participants = new HashSet<>();
       for (int i = 0; i < ladder.playersPerTeam() * 2; i++) {
         MinecraftLinkable linkable = this.getWaiting().remove(i);
-        participants.add(new GenericMinecraftMatchTeamMember(linkable.getId(), TeamRole.MEMBER));
+        participants.add(new ImmutableMinecraftTeamMember(linkable.getId(), TeamRole.MEMBER));
       }
       match =
           runtime
               .getLoader()
               .getMinecraftMatches()
               .createMatch(
-                  Lots.set(new GenericMinecraftMatchTeam(-2, participants, "participants")),
+                  Lots.set(new ImmutableMinecraftMatchTeam(-2, participants, "participants")),
                   ladder.getName());
     }
     return Optional.ofNullable(match);

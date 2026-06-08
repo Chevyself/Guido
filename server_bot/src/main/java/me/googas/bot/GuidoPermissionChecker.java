@@ -10,7 +10,7 @@ import java.util.Optional;
 import java.util.Set;
 import lombok.NonNull;
 import me.googas.api.utility.Lots;
-import me.googas.bot.core.loader.GuidoLoader;
+import me.googas.server.loader.GuidoLoader;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Member;
 

@@ -7,9 +7,9 @@ import java.util.UUID;
 import java.util.function.Consumer;
 import lombok.NonNull;
 import me.googas.api.client.SimpleClientLadder;
+import me.googas.api.immutable.ImmutableMinecraftMatch;
 import me.googas.api.links.generic.ImmutableMinecraftLinkable;
 import me.googas.api.matches.MatchStatus;
-import me.googas.api.matches.minecraft.MinecraftMatch;
 import me.googas.api.matches.minecraft.MinecraftMatchTeam;
 import me.googas.net.api.messages.RequestBuilder;
 
@@ -202,11 +202,11 @@ public class Requests {
       return new RequestBuilder<>(Boolean.class, MatchServer.SERVER_READY);
     }
 
-    public static RequestBuilder<Boolean> canHost(@NonNull MinecraftMatch match) {
+    public static RequestBuilder<Boolean> canHost(@NonNull ImmutableMinecraftMatch match) {
       return new RequestBuilder<>(Boolean.class, MatchServer.CAN_HOST).put(CAN_HOST_MATCH, match);
     }
 
-    public static RequestBuilder<String> host(@NonNull MinecraftMatch match) {
+    public static RequestBuilder<String> host(@NonNull ImmutableMinecraftMatch match) {
       return new RequestBuilder<>(String.class, MatchServer.HOST).put(HOST_MATCH, match);
     }
   }

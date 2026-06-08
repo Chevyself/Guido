@@ -5,10 +5,10 @@ import java.util.Optional;
 import lombok.Getter;
 import lombok.NonNull;
 import me.googas.api.events.queue.MinecraftQueueLeaveEvent;
-import me.googas.bot.GuidoBotRuntime;
 import me.googas.bot.api.Guido;
-import me.googas.bot.core.discord.GuidoGuild;
+import me.googas.bot.core.GuidoBotRuntime;
 import me.googas.bot.core.handlers.GuidoHandler;
+import me.googas.server.GuidoGuild;
 import me.googas.starbox.events.ListenPriority;
 import me.googas.starbox.events.Listener;
 import net.dv8tion.jda.api.entities.Guild;
@@ -130,7 +130,7 @@ public class QueueChannelsHandler implements GuidoHandler {
       channel = guild.getVoiceChannelById(this.waiting);
     }
     if (channel == null) {
-      channel = guildData.getMatchesCategory().createVoiceChannel("Queue").complete();
+      channel = guildData.getMatchesCategory(guild.getJDA()).createVoiceChannel("Queue").complete();
       this.waiting = channel.getIdLong();
     }
     return channel;
