@@ -26,7 +26,7 @@ import tc.oc.pgm.wool.PlayerWoolPlaceEvent;
 public class PGMStatsHandler implements Module {
 
   /** The map containing the stats of a player */
-  @NonNull private final Map<UUID, Map<String, Float>> stats = new HashMap<>();
+  @NonNull private final Map<UUID, Map<String, Double>> stats = new HashMap<>();
 
   /**
    * Listen to the death of a player to add the stat to the killer and the death
@@ -119,7 +119,8 @@ public class PGMStatsHandler implements Module {
     JsonClient connection = Guido.getClient().getConnection();
     if (connection != null) {
       this.stats.forEach(
-          (uuid, statsMap) -> Requests.MinecraftLinks.saveStats(uuid, statsMap).queue(connection));
+          (uuid, statsMap) ->
+              Requests.MinecraftLinks.saveStats(uuid, context, statsMap).queue(connection));
     }
     this.stats.clear();
   }
@@ -163,7 +164,7 @@ public class PGMStatsHandler implements Module {
    * @return the stats of the player
    */
   @NonNull
-  private Map<String, Float> getStats(@NonNull UUID uuid) {
+  private Map<String, Double> getStats(@NonNull UUID uuid) {
     return this.stats.computeIfAbsent(uuid, k -> new HashMap<>());
   }
 
@@ -174,8 +175,8 @@ public class PGMStatsHandler implements Module {
    * @param key the key of the stat to increase
    */
   private void increase(@NonNull UUID uuid, @NonNull String key) {
-    Map<String, Float> stats = this.getStats(uuid);
-    stats.put(key, stats.getOrDefault(key, 0f) + 1);
+    Map<String, Double> stats = this.getStats(uuid);
+    stats.put(key, stats.getOrDefault(key, 0d) + 1);
   }
 
   @Override

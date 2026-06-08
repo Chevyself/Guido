@@ -16,6 +16,8 @@ import org.bson.conversions.Bson;
 public class MongoMinecraftLinksLoader extends SimpleMongoLoader
     implements MinecraftLinkableLoader {
 
+  @NonNull public static final String NICKNAME = "nickname";
+
   @NonNull @Getter private final MongoLoader loader;
   @NonNull private final MongoCollection<MongoMinecraftLinkable.Document> collection;
 

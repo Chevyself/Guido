@@ -5,7 +5,7 @@ import java.util.Map;
 import java.util.function.BiConsumer;
 import lombok.NonNull;
 
-public class ImmutableMap<K, V> {
+public final class ImmutableMap<K, V> {
 
   @NonNull private final Map<K, V> map;
 
@@ -15,5 +15,9 @@ public class ImmutableMap<K, V> {
 
   public void forEach(@NonNull BiConsumer<? super K, ? super V> action) {
     this.map.forEach(action);
+  }
+
+  public boolean isEmpty() {
+    return map.isEmpty();
   }
 }
