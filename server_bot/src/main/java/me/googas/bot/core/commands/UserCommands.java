@@ -3,7 +3,6 @@ package me.googas.bot.core.commands;
 import com.github.chevyself.starbox.annotations.Command;
 import com.github.chevyself.starbox.annotations.Free;
 import com.github.chevyself.starbox.annotations.Required;
-import com.github.chevyself.starbox.jda.context.CommandContext;
 import com.github.chevyself.starbox.result.Result;
 import java.time.Duration;
 import java.util.Collection;
@@ -14,7 +13,6 @@ import me.googas.api.lang.LocaleFile;
 import me.googas.api.links.Linkable;
 import me.googas.api.links.MinecraftLinkable;
 import me.googas.api.stats.Stats;
-import me.googas.api.stats.StatsProvider;
 import me.googas.api.user.UserData;
 import me.googas.api.utility.Maps;
 import me.googas.bot.api.Guido;
@@ -86,7 +84,6 @@ public class UserCommands {
 
   @Command(aliases = "stats", description = "guido.stats.desc")
   public Result stats(
-      CommandContext context,
       GuidoGuild guild,
       LocaleFile locale,
       UserData data,
@@ -95,18 +92,13 @@ public class UserCommands {
     Optional<? extends MinecraftLinkable> optional =
         runtime.getLoader().getMinecraftLinks().getByLinkedUser(data.getId());
     return optional
-        .map(
-            linkable ->
-                Result.of(
-                    this.buildStats(guild, runtime.getStatsProvider(), locale, context, linkable)))
+        .map(linkable -> Result.of(this.buildStats(runtime, locale, linkable)))
         .orElseGet(() -> Result.of(locale.get("stats.not-linked")));
   }
 
   private String buildStats(
-      GuidoGuild guild,
-      @NonNull StatsProvider statsProvider,
+      @NonNull GuidoBotRuntime runtime,
       @NonNull LocaleFile locale,
-      @NonNull CommandContext context,
       @NonNull MinecraftLinkable linkable) {
     String nickname = linkable.getNickname();
     StringBuilder stringBuilder =
@@ -116,7 +108,7 @@ public class UserCommands {
     // query.setThumbnail("https://minotar.net/helm/" + nickname + "/100.png");
 
     // SortedStats organized = linkable.getOrganized(guild.getLadders());
-    Stats stats = linkable.getStats(statsProvider);
+    Stats stats = runtime.getLoader().getStats().getForMinecraftLink(linkable, Stats.EMPTY_CONTEXT);
     stats
         .getMap()
         .forEach(

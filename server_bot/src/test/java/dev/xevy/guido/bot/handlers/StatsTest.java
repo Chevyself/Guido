@@ -1,4 +1,4 @@
-package dev.xevy.guido.bot.core.matches.queue;
+package dev.xevy.guido.bot.handlers;
 
 import dev.xevy.guido.bot.GuidoTestRuntime;
 import java.io.IOException;

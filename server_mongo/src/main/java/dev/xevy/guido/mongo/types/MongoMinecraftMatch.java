@@ -4,6 +4,7 @@ import dev.xevy.guido.mongo.MongoMinecraftMatchLoader;
 import dev.xevy.guido.mongo.types.mappers.MinecraftMatchTeamMapper;
 import dev.xevy.guido.mongo.types.mappers.MinecraftMatchTeamMemberMapper;
 import java.util.*;
+import java.util.logging.Logger;
 import lombok.NonNull;
 import me.googas.api.events.match.MinecraftMatchAddTeamEvent;
 import me.googas.api.events.match.MinecraftMatchSetTeamsEvent;
@@ -15,10 +16,13 @@ import me.googas.api.matches.minecraft.MinecraftMatchTeam;
 import me.googas.api.utility.ImmutableCollection;
 import me.googas.api.utility.Lots;
 import me.googas.api.utility.UUIDUtils;
+import me.googas.starbox.logging.LoggerFactory;
 import net.dv8tion.jda.api.EmbedBuilder;
 import org.bson.codecs.pojo.annotations.BsonId;
 
 public class MongoMinecraftMatch implements MinecraftMatch {
+
+  @NonNull private static final Logger logger = LoggerFactory.getLogger(MongoMinecraftMatch.class);
 
   @NonNull private final MongoMinecraftMatchLoader loader;
   @NonNull private MongoMinecraftMatch.Document document;
@@ -174,10 +178,14 @@ public class MongoMinecraftMatch implements MinecraftMatch {
   public void finish(int winningTeam) {
     this.loader
         .finish(this, winningTeam)
-        .ifPresent(
+        .ifPresentOrElse(
             doc -> {
               this.document = doc;
               this.callStatusUpdatedEvent();
+            },
+            () -> {
+              logger.severe(
+                  String.format("Failed to finish match %s to %s", this.getId(), winningTeam));
             });
   }
 

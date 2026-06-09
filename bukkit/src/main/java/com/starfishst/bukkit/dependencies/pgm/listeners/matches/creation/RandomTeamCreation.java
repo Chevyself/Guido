@@ -6,6 +6,7 @@ import com.starfishst.bukkit.dependencies.pgm.listeners.matches.PGMMatchMakingHa
 import com.starfishst.bukkit.matches.HostedPlayer;
 import java.time.Duration;
 import java.util.*;
+import java.util.concurrent.ExecutionException;
 import lombok.NonNull;
 import me.googas.api.Requests;
 import me.googas.api.immutable.ImmutableMinecraftMatchTeam;
@@ -14,7 +15,6 @@ import me.googas.api.matches.MatchStatus;
 import me.googas.api.matches.MatchTeam;
 import me.googas.api.matches.team.TeamRole;
 import me.googas.api.utility.RandomUtils;
-import me.googas.net.api.exception.MessengerListenFailException;
 import me.googas.net.sockets.json.client.JsonClient;
 import tc.oc.pgm.api.match.Match;
 import tc.oc.pgm.api.party.Party;
@@ -53,7 +53,7 @@ public class RandomTeamCreation implements TeamCreation {
   public void createTeams(
       @NonNull PGMMatchMakingHandler listener,
       @NonNull PGMHostedMatch hosted,
-      @NonNull Match match) throws MessengerListenFailException {
+      @NonNull Match match) {
     Set<HostedPlayer> left = new HashSet<>(hosted.getParticipants());
     Map<Party, List<HostedPlayer>> teams = new HashMap<>();
     int perTeam = hosted.getPlayersPerTeam();
@@ -76,15 +76,34 @@ public class RandomTeamCreation implements TeamCreation {
       party.setName(name);
       index++;
     }
-    List<ImmutableMinecraftMatchTeam> resultTeams = Requests.MinecraftMatches.setTeams(hosted.getId(), new Requests.SetTeamsData(requestTeams))
-            .send(connection).orElseThrow().getTeams();
-    for (ImmutableMinecraftMatchTeam resultTeam : resultTeams) {
-      resultTeam.getPgmPartyId().ifPresent(pgmPartyId -> {
-        hosted.getTeams().put(pgmPartyId, resultTeam);
-      });
+    try {
+      tryStartMatch(hosted, match, requestTeams, connection);
+    } catch (ExecutionException | InterruptedException e) {
+      // TODO error handling
+      e.printStackTrace();
     }
-    Requests.MinecraftMatches.updateStatus(hosted.getId(), MatchStatus.STARTING)
-            .queue(connection);
+  }
+
+  private static void tryStartMatch(
+      @NonNull PGMHostedMatch hosted,
+      @NonNull Match match,
+      List<ImmutableMinecraftMatchTeam> requestTeams,
+      JsonClient connection)
+      throws ExecutionException, InterruptedException {
+    List<ImmutableMinecraftMatchTeam> resultTeams =
+        Requests.MinecraftMatches.setTeams(hosted.getId(), new Requests.SetTeamsData(requestTeams))
+            .future(connection)
+            .get()
+            .getTeams();
+    for (ImmutableMinecraftMatchTeam resultTeam : resultTeams) {
+      resultTeam
+          .getPgmPartyId()
+          .ifPresent(
+              pgmPartyId -> {
+                hosted.getTeams().put(pgmPartyId, resultTeam);
+              });
+    }
+    Requests.MinecraftMatches.updateStatus(hosted.getId(), MatchStatus.STARTING).future(connection);
     match
         .needModule(StartMatchModule.class)
         .forceStartCountdown(

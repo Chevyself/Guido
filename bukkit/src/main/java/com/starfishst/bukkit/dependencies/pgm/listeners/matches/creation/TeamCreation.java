@@ -5,7 +5,6 @@ import com.starfishst.bukkit.dependencies.pgm.PGMHostedMatch;
 import com.starfishst.bukkit.dependencies.pgm.listeners.matches.PGMMatchMakingHandler;
 import com.starfishst.bukkit.matches.HostedPlayer;
 import lombok.NonNull;
-import me.googas.net.api.exception.MessengerListenFailException;
 import tc.oc.pgm.api.match.Match;
 import tc.oc.pgm.api.player.MatchPlayer;
 import tc.oc.pgm.teams.Team;
@@ -23,7 +22,7 @@ public interface TeamCreation {
   void createTeams(
       @NonNull PGMMatchMakingHandler listener,
       @NonNull PGMHostedMatch PGMHostedMatch,
-      @NonNull Match match) throws MessengerListenFailException;
+      @NonNull Match match);
 
   default void setParty(@NonNull HostedPlayer hosted, Team party, Match match) {
     MatchPlayer player = match.getPlayer(hosted.getId());

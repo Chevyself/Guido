@@ -1,8 +1,8 @@
 package dev.xevy.guido.bot;
 
+import java.util.concurrent.ExecutionException;
 import lombok.NonNull;
-import me.googas.net.api.exception.MessengerListenFailException;
 
 public interface JsonReceptorHandleFunction<O> {
-  O apply(@NonNull JClientContext context) throws MessengerListenFailException;
+  O apply(@NonNull JClientContext context) throws ExecutionException, InterruptedException;
 }

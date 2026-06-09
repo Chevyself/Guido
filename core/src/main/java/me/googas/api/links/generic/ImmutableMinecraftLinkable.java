@@ -6,8 +6,6 @@ import java.util.UUID;
 import lombok.Getter;
 import lombok.NonNull;
 import me.googas.api.links.MinecraftLinkable;
-import me.googas.api.stats.Stats;
-import me.googas.api.stats.StatsProvider;
 import me.googas.api.user.UserData;
 
 public class ImmutableMinecraftLinkable implements MinecraftLinkable {
@@ -43,12 +41,6 @@ public class ImmutableMinecraftLinkable implements MinecraftLinkable {
   @Override
   public @NonNull Optional<UUID> getLinkedUserId() {
     return Optional.ofNullable(linkedUserId);
-  }
-
-  @Override
-  public Stats getStats(@NonNull StatsProvider statsProvider) {
-    // TODO
-    return null;
   }
 
   @Override
