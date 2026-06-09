@@ -21,10 +21,5 @@ public class BukkitClient extends Client {
   }
 
   @Override
-  public void onAuthentication(boolean authenticated) {
-    if (authenticated) {
-      // FIXME
-      // Guido.getModuleRegistry().require(GroupsHandler.class).loadGroups(null);
-    }
-  }
+  public void onAuthentication(boolean authenticated) {}
 }
