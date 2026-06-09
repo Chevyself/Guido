@@ -102,40 +102,6 @@ public class Requests {
     }
   }
 
-  public static class Punishments {
-    @NonNull public static final String PREFIX = "punishment/";
-    @NonNull public static final String PUNISHMENT = "punishment";
-    @NonNull public static final String PUNISHMENTS = Punishments.PREFIX + "punishments";
-    @NonNull public static final String CREATE = Punishments.PREFIX + "create";
-    @NonNull public static final String STATUS = Punishments.PREFIX + "status";
-    @NonNull public static final String EXPIRES = Punishments.PREFIX + "getExpires";
-    @NonNull public static final String DETAIL = Punishments.PREFIX + "detail";
-    @NonNull public static final String REMOVE_DETAIL = Punishments.PREFIX + "remove-detail";
-
-    @NonNull
-    public static RequestBuilder<Boolean> expires(@NonNull String id, long expires) {
-      return new RequestBuilder<>(Boolean.class, Punishments.EXPIRES)
-          .put("id", id)
-          .put("getExpires", expires);
-    }
-
-    @NonNull
-    public static RequestBuilder<Boolean> addDetail(
-        @NonNull String id, @NonNull String key, @NonNull Object value) {
-      return new RequestBuilder<>(Boolean.class, Punishments.DETAIL)
-          .put("id", id)
-          .put("key", key)
-          .put("value", value);
-    }
-
-    @NonNull
-    public static RequestBuilder<Boolean> removeDetail(@NonNull String id, @NonNull String key) {
-      return new RequestBuilder<>(Boolean.class, Punishments.REMOVE_DETAIL)
-          .put("id", id)
-          .put("key", key);
-    }
-  }
-
   public static class MatchServer {
 
     @NonNull public static final String PREFIX = "server/";
@@ -222,13 +188,6 @@ public class Requests {
     public static RequestBuilder<String> serverName(@NonNull String ip) {
       return new RequestBuilder<>(String.class, Bungee.SERVER_NAME).put("ip", ip);
     }
-  }
-
-  public static class Deploy {
-
-    @NonNull public static final String PREFIX = "deploy/";
-    @NonNull public static final String ADD_PERMISSION = Deploy.PREFIX + "add-permission";
-    @NonNull public static final String REMOVE_PERMISSION = Deploy.PREFIX + "remove-permission";
   }
 
   public static class Client {

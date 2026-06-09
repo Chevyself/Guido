@@ -120,8 +120,18 @@ public class LinkHandler implements GuidoHandler {
     }
   }
 
+  @Receptor(Requests.MinecraftLinks.IS_LINKED)
+  public boolean isLinked(@ParamName(Requests.MinecraftLinks.IS_LINKED_UUID) UUID minecraftId) {
+    return runtime
+        .getLoader()
+        .getMinecraftLinks()
+        .getById(minecraftId)
+        .flatMap(Linkable::getLinkedUserId)
+        .isPresent();
+  }
+
   @Receptor(Requests.MinecraftLinks.LINK_NEW)
-  public String linkCode(@ParamName(Requests.MinecraftLinks.LINK_NEW) UUID minecraftId) {
+  public String linkCode(@ParamName(Requests.MinecraftLinks.LINK_NEW_UUID) UUID minecraftId) {
     return runtime
         .getLoader()
         .getMinecraftLinks()
