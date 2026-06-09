@@ -4,8 +4,6 @@ import java.util.Optional;
 import java.util.UUID;
 import lombok.NonNull;
 import me.googas.api.loader.Loader;
-import me.googas.api.stats.Stats;
-import me.googas.api.stats.StatsProvider;
 import me.googas.api.user.UserData;
 
 /** This object represents data or an account that can be linked to a user */
@@ -13,9 +11,6 @@ public interface Linkable {
 
   @NonNull
   Optional<UUID> getLinkedUserId();
-
-  @Deprecated
-  Stats getStats(@NonNull StatsProvider statsProvider);
 
   @NonNull
   String getPublicDisplayName(@NonNull Loader loader);

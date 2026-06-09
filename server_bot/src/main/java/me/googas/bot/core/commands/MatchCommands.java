@@ -8,6 +8,8 @@ import com.github.chevyself.starbox.jda.context.CommandContext;
 import com.github.chevyself.starbox.result.Result;
 import java.util.*;
 import lombok.NonNull;
+import me.googas.api.immutable.ImmutableMinecraftMatchTeam;
+import me.googas.api.immutable.ImmutableMinecraftMatchTeamMember;
 import me.googas.api.lang.LocaleFile;
 import me.googas.api.links.DiscordLinkable;
 import me.googas.api.links.MinecraftLinkable;
@@ -29,8 +31,6 @@ import me.googas.bot.core.handlers.matches.MatchEloCalculator;
 import me.googas.bot.core.handlers.matches.MatchMakingHandler;
 import me.googas.bot.core.handlers.matches.PGMMatchHandler;
 import me.googas.bot.core.handlers.ranks.RanksHandler;
-import me.googas.bot.core.matches.queue.ImmutableMinecraftMatchTeam;
-import me.googas.bot.core.matches.queue.ImmutableMinecraftTeamMember;
 import me.googas.bot.core.util.Matches;
 import me.googas.server.GuidoGuild;
 import net.dv8tion.jda.api.entities.Member;
@@ -60,12 +60,12 @@ public class MatchCommands {
               Maps.builder("given", String.valueOf(participants.length))
                   .put("expected", String.valueOf(ladder.baseValue() * 2))));
     }
-    Set<ImmutableMinecraftTeamMember> members1 = new HashSet<>();
-    Set<ImmutableMinecraftTeamMember> members2 = new HashSet<>();
+    Set<ImmutableMinecraftMatchTeamMember> members1 = new HashSet<>();
+    Set<ImmutableMinecraftMatchTeamMember> members2 = new HashSet<>();
     for (int i = 0; i < participants.length; i++) {
       MinecraftLinkable participant = participants[i];
-      ImmutableMinecraftTeamMember member =
-          new ImmutableMinecraftTeamMember(participant.getId(), TeamRole.MEMBER);
+      ImmutableMinecraftMatchTeamMember member =
+          new ImmutableMinecraftMatchTeamMember(participant.getId(), TeamRole.MEMBER);
       if (i > ladder.playersPerTeam() - 1) {
         members2.add(member);
       } else {

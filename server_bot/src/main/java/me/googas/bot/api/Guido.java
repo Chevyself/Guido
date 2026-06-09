@@ -3,6 +3,7 @@ package me.googas.bot.api;
 import com.github.chevyself.starbox.CommandManager;
 import com.github.chevyself.starbox.jda.commands.JdaCommand;
 import com.github.chevyself.starbox.jda.context.CommandContext;
+import java.io.IOException;
 import java.util.Objects;
 import java.util.logging.Logger;
 import lombok.Getter;
@@ -31,8 +32,14 @@ public class Guido {
     return Guido.validated().closeServer();
   }
 
+  @Deprecated
   public static boolean stop() {
-    return Guido.validated().stop();
+    try {
+      Guido.validated().close();
+      return true;
+    } catch (IOException e) {
+      throw new RuntimeException(e);
+    }
   }
 
   public static void setInstance(@NonNull GuidoBot bot) {

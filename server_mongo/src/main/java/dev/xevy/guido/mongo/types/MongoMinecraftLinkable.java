@@ -8,8 +8,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import lombok.NonNull;
 import me.googas.api.links.MinecraftLinkable;
-import me.googas.api.stats.Stats;
-import me.googas.api.stats.StatsProvider;
 import me.googas.api.user.UserData;
 import me.googas.starbox.logging.LoggerFactory;
 import org.bson.codecs.pojo.annotations.BsonId;
@@ -50,12 +48,6 @@ public class MongoMinecraftLinkable implements MinecraftLinkable {
   @Override
   public @NonNull Optional<UUID> getLinkedUserId() {
     return Optional.ofNullable(this.document.linkedUserId);
-  }
-
-  @Override
-  public Stats getStats(@NonNull StatsProvider statsProvider) {
-    // TODO
-    throw new UnsupportedOperationException("TODO");
   }
 
   private boolean noLoader(@NonNull Supplier<String> message) {

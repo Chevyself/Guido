@@ -41,6 +41,11 @@ public class GuidoBotMain {
     public @NonNull ListenerManager getListeners() {
       throw new UnsupportedOperationException("Cannot use listener handler from singleton");
     }
+
+    @Override
+    public void close() throws IOException {
+      // No-op
+    }
   }
 
   static class SingletonGuidoBotConfig implements GuidoBotConfig {

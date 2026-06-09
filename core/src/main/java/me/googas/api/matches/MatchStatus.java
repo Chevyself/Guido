@@ -1,5 +1,7 @@
 package me.googas.api.matches;
 
+import java.util.List;
+
 /** The status of the match */
 public enum MatchStatus {
   /** When the match is being prepared */
@@ -13,5 +15,7 @@ public enum MatchStatus {
   /** Means that the match should be forgot */
   VOIDED,
   /** When the match is finished */
-  FINISHED,
+  FINISHED;
+
+  public static List<MatchStatus> FINISHABLE_STATUSES = List.of(PLAYING);
 }

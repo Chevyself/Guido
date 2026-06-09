@@ -3,8 +3,6 @@ package com.starfishst.bukkit.dependencies.pgm.listeners.matches.creation;
 import com.starfishst.bukkit.Guido;
 import com.starfishst.bukkit.dependencies.pgm.PGMHostedMatch;
 import com.starfishst.bukkit.dependencies.pgm.listeners.matches.PGMMatchMakingHandler;
-import com.starfishst.bukkit.dependencies.pgm.listeners.matches.PGMTeam;
-import com.starfishst.bukkit.dependencies.pgm.listeners.matches.PGMTeamMember;
 import com.starfishst.bukkit.lang.BukkitLocaleFile;
 import com.starfishst.bukkit.matches.HostedPlayer;
 import java.time.Duration;
@@ -16,10 +14,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.atomic.AtomicInteger;
 import lombok.Getter;
 import lombok.NonNull;
 import me.googas.api.Requests;
+import me.googas.api.immutable.ImmutableMinecraftMatchTeam;
+import me.googas.api.immutable.ImmutableMinecraftMatchTeamMember;
 import me.googas.api.matches.MatchStatus;
 import me.googas.api.matches.minecraft.MinecraftMatchTeamMember;
 import me.googas.api.matches.team.TeamRole;
@@ -99,11 +100,11 @@ public class PickTeamSelection implements TeamCreation {
    * @return the random leaders
    */
   @NonNull
-  public Map<HostedPlayer, PGMTeamMember> pickLeaders(@NonNull UUID matchId) {
-    Map<HostedPlayer, PGMTeamMember> captains = new HashMap<>();
+  public Map<HostedPlayer, ImmutableMinecraftMatchTeamMember> pickLeaders(@NonNull UUID matchId) {
+    Map<HostedPlayer, ImmutableMinecraftMatchTeamMember> captains = new HashMap<>();
     Set<HostedPlayer> playersLeft = this.getPlayersLeft(matchId);
     for (HostedPlayer hosted : RandomUtils.getRandom(new ArrayList<>(playersLeft), 2)) {
-      captains.put(hosted, new PGMTeamMember(hosted.getId(), TeamRole.LEADER));
+      captains.put(hosted, new ImmutableMinecraftMatchTeamMember(hosted.getId(), TeamRole.LEADER));
       playersLeft.remove(hosted);
     }
     return captains;
@@ -157,7 +158,8 @@ public class PickTeamSelection implements TeamCreation {
         countdown.cancel();
         this.tasks.remove(uuid);
       }
-      PGMTeamMember teamMember = new PGMTeamMember(hosted.getId(), TeamRole.MEMBER);
+      ImmutableMinecraftMatchTeamMember teamMember =
+          new ImmutableMinecraftMatchTeamMember(hosted.getId(), TeamRole.MEMBER);
       selecting.getMembers().add(teamMember);
       Team party = selecting.getParty();
       Match match = party.getMatch();
@@ -196,24 +198,15 @@ public class PickTeamSelection implements TeamCreation {
           .needModule(StartMatchModule.class)
           .forceStartCountdown(
               Duration.ofSeconds(PGMMatchMakingHandler.secondsToStart), Duration.ZERO);
-      for (SelectingTeam selectingTeam : this.getTeams(matchId)) {
-        PGMTeam construct = selectingTeam.build();
-        JsonClient connection = Guido.getClient().getConnection();
-        Requests.MinecraftMatches.addTeam(matchId, construct)
-            .send(
-                connection,
-                optional -> {
-                  optional.ifPresent(
-                      id ->
-                          match
-                              .getTeams()
-                              .put(
-                                  selectingTeam.getParty().getId(),
-                                  selectingTeam.setId(id).build()));
-                });
-        Requests.MinecraftMatches.updateStatus(matchId, MatchStatus.STARTING).queue(connection);
+      List<ImmutableMinecraftMatchTeam> requestTeams =
+          this.getTeams(matchId).stream().map(SelectingTeam::build).toList();
+      JsonClient connection = Guido.getClient().getConnection();
+      try {
+        this.tryStartMatch(matchId, requestTeams, connection, match);
+      } catch (ExecutionException | InterruptedException e) {
+        // TODO better error handling
+        e.printStackTrace();
       }
-      this.clear(matchId);
     } else if (playersLeft.size() == 2) {
       this.nextLeader(matchId, team.getLeader());
     } else {
@@ -228,6 +221,29 @@ public class PickTeamSelection implements TeamCreation {
         this.nextLeader(matchId, this.getNext(matchId, team).getLeader());
       }
     }
+  }
+
+  private void tryStartMatch(
+      @NonNull UUID matchId,
+      List<ImmutableMinecraftMatchTeam> requestTeams,
+      JsonClient connection,
+      PGMHostedMatch match)
+      throws ExecutionException, InterruptedException {
+    List<ImmutableMinecraftMatchTeam> resultTeams =
+        Requests.MinecraftMatches.setTeams(matchId, new Requests.SetTeamsData(requestTeams))
+            .future(connection)
+            .get()
+            .getTeams();
+    for (ImmutableMinecraftMatchTeam resultTeam : resultTeams) {
+      resultTeam
+          .getPgmPartyId()
+          .ifPresent(
+              pgmPartyId -> {
+                match.getTeams().put(pgmPartyId, resultTeam);
+              });
+    }
+    Requests.MinecraftMatches.updateStatus(matchId, MatchStatus.STARTING).future(connection);
+    this.clear(matchId);
   }
 
   private void clear(@NonNull UUID id) {
@@ -378,7 +394,8 @@ public class PickTeamSelection implements TeamCreation {
       @NonNull PGMHostedMatch hostedMatch,
       @NonNull Match match) {
     this.playersLeft.put(hostedMatch.getId(), hostedMatch.getParticipants());
-    Map<HostedPlayer, PGMTeamMember> leaders = this.pickLeaders(hostedMatch.getId());
+    Map<HostedPlayer, ImmutableMinecraftMatchTeamMember> leaders =
+        this.pickLeaders(hostedMatch.getId());
     AtomicInteger index = new AtomicInteger(1);
     leaders.forEach(
         (hosted, leader) -> {
@@ -402,16 +419,17 @@ public class PickTeamSelection implements TeamCreation {
    * This object represents a team which is going to play the match but it is still selecting
    * players
    */
-  public class SelectingTeam implements Builder<PGMTeam> {
+  public class SelectingTeam implements Builder<ImmutableMinecraftMatchTeam> {
 
     /** The pgm party assigned to this team */
     @NonNull @Getter private final Team party;
 
     /** The leader of the team */
-    @NonNull @Getter private final PGMTeamMember leader;
+    @NonNull @Getter private final ImmutableMinecraftMatchTeamMember leader;
 
     /** The member of the team */
-    @NonNull @Getter private final Collection<PGMTeamMember> members = new HashSet<>();
+    @NonNull @Getter
+    private final Collection<ImmutableMinecraftMatchTeamMember> members = new HashSet<>();
 
     /** The actual id of the team */
     @Getter private int id = -3;
@@ -422,7 +440,7 @@ public class PickTeamSelection implements TeamCreation {
      * @param party the pgm party assigned to this team
      * @param leader the leader which is selecting players
      */
-    SelectingTeam(@NonNull Team party, @NonNull PGMTeamMember leader) {
+    SelectingTeam(@NonNull Team party, @NonNull ImmutableMinecraftMatchTeamMember leader) {
       this.party = party;
       this.leader = leader;
     }
@@ -438,10 +456,11 @@ public class PickTeamSelection implements TeamCreation {
     }
 
     @Override
-    public @NonNull PGMTeam build() {
-      Set<PGMTeamMember> copy = new HashSet<>(this.members);
+    public @NonNull ImmutableMinecraftMatchTeam build() {
+      Set<ImmutableMinecraftMatchTeamMember> copy = new HashSet<>(this.members);
       copy.add(this.leader);
-      return new PGMTeam(this.id, copy, this.party.getNameLegacy());
+      return new ImmutableMinecraftMatchTeam(
+          this.id, copy, this.party.getNameLegacy(), this.party.getId());
     }
   }
 }

@@ -40,4 +40,9 @@ public class GuidoPluginServerRuntime implements GuidoServerRuntime {
   public @NonNull ListenerManager getListeners() {
     throw new UnsupportedOperationException();
   }
+
+  @Override
+  public void close() {
+    // No-op
+  }
 }

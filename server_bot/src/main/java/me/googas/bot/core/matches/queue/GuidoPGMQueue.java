@@ -3,6 +3,8 @@ package me.googas.bot.core.matches.queue;
 import java.util.*;
 import lombok.NonNull;
 import me.googas.api.Requests;
+import me.googas.api.immutable.ImmutableMinecraftMatchTeam;
+import me.googas.api.immutable.ImmutableMinecraftMatchTeamMember;
 import me.googas.api.lang.LocaleFile;
 import me.googas.api.links.MinecraftLinkable;
 import me.googas.api.matches.ladder.Ladder;
@@ -31,11 +33,11 @@ public class GuidoPGMQueue extends GuidoQueue {
     MinecraftMatch match = null;
     // TODO if there is more than 30 people playing create a queue based on elo
     // to create this we should create playlist to count people playing on it not people in queue
-    if (this.getWaiting().size() >= ladder.playersPerTeam() * 2) {
-      Set<ImmutableMinecraftTeamMember> participants = new HashSet<>();
-      for (int i = ladder.playersPerTeam() - 1; i >= 0; i--) {
+    if (this.getWaiting().size() >= ladder.playersPerTeam() * ladder.teamsPerMatch()) {
+      Set<ImmutableMinecraftMatchTeamMember> participants = new HashSet<>();
+      for (int i = ladder.playersPerTeam() * ladder.teamsPerMatch() - 1; i >= 0; i--) {
         UUID id = this.getWaiting().remove(i);
-        participants.add(new ImmutableMinecraftTeamMember(id, TeamRole.MEMBER));
+        participants.add(new ImmutableMinecraftMatchTeamMember(id, TeamRole.MEMBER));
       }
       match =
           runtime
@@ -86,7 +88,7 @@ public class GuidoPGMQueue extends GuidoQueue {
       Guido.getAuthenticator()
           .getBungee()
           .ifPresent(bungee -> Requests.Bungee.addQueue(minecraft.getId()).queue(bungee));
-      return new QueueResult();
+      return new QueueResult(join.getMatch().orElse(null));
     } else {
       return new QueueResult(locale.get("pgm-queue.join-server"));
     }

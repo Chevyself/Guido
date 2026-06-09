@@ -8,11 +8,12 @@ import lombok.Getter;
 import lombok.NonNull;
 import me.googas.api.events.match.MinecraftMatchStatusUpdatedEvent;
 import me.googas.api.links.*;
-import me.googas.api.matches.Match;
-import me.googas.api.matches.MatchTeam;
-import me.googas.api.matches.MatchTeamMember;
 import me.googas.api.matches.ladder.GlobalLadder;
 import me.googas.api.matches.ladder.Ladder;
+import me.googas.api.matches.minecraft.MinecraftMatch;
+import me.googas.api.matches.minecraft.MinecraftMatchTeam;
+import me.googas.api.matches.minecraft.MinecraftMatchTeamMember;
+import me.googas.api.stats.Stats;
 import me.googas.api.utility.ImmutableCollection;
 import me.googas.api.utility.Stateables;
 import me.googas.bot.GuidoJdaProvider;
@@ -54,17 +55,18 @@ public class RanksHandler implements GuidoHandler {
    * @param match the abstractMatch to update the ranks
    * @param event whether to call the event of ranks updated
    */
-  public void update(@NonNull Match match, boolean event) {
-    for (MatchTeam matchTeam : match.getTeams()) {
-      for (MatchTeamMember teamMember : matchTeam.getMembers()) {
-        Optional<? extends Linkable> optional = teamMember.getLinkable(runtime.getLoader());
+  public void update(@NonNull MinecraftMatch match, boolean event) {
+    for (MinecraftMatchTeam matchTeam : match.getTeams()) {
+      for (MinecraftMatchTeamMember teamMember : matchTeam.getMembers()) {
+        Optional<? extends MinecraftLinkable> optional =
+            teamMember.getLinkable(runtime.getLoader());
         if (optional.isEmpty()) {
           logger.warning(
               String.format(
                   "Failed to update team member %s, could not find linkable", teamMember));
           return;
         }
-        Linkable data = optional.get();
+        MinecraftLinkable data = optional.get();
         UpdateResult update = this.update(data);
         if (event) runtime.getListeners().call(new LinkableRankUpdatedEvent(data, update));
       }
@@ -72,12 +74,17 @@ public class RanksHandler implements GuidoHandler {
   }
 
   @NonNull
-  public UpdateResult update(@NonNull Linkable linkable) {
+  public UpdateResult update(@NonNull MinecraftLinkable linkable) {
     UpdateResult result = new UpdateResult();
     ImmutableCollection<? extends Ladder> ladders = runtime.getLadderProvider().getLadders();
     ImmutableCollection<? extends RankRange> ranges = runtime.getRanksProvider().getRanks();
     for (Ladder ladder : ladders) {
-      double elo = linkable.getStats(runtime.getStatsProvider()).getElo(ladder, ladders);
+      double elo =
+          runtime
+              .getLoader()
+              .getStats()
+              .getForMinecraftLink(linkable, Stats.EMPTY_CONTEXT)
+              .getElo(ladder);
       result.append(this.update(elo, ranges));
     }
     Optional<DiscordLinkable> optional =
@@ -98,7 +105,7 @@ public class RanksHandler implements GuidoHandler {
   }
 
   public void updateDiscord(
-      @NonNull Linkable linkable,
+      @NonNull MinecraftLinkable linkable,
       UpdateResult result,
       @NonNull DiscordLinkable discord,
       ImmutableCollection<? extends Ladder> ladders) {
@@ -142,15 +149,19 @@ public class RanksHandler implements GuidoHandler {
   }
 
   public void updateNickname(
-      @NonNull Linkable linkable, Member member, ImmutableCollection<? extends Ladder> ladders) {
+      @NonNull MinecraftLinkable linkable,
+      Member member,
+      ImmutableCollection<? extends Ladder> ladders) {
     if (!member.isOwner()) {
       String nick = linkable.getPublicDisplayName(runtime.getLoader());
       member
           .modifyNickname(
               "["
                   + (int)
-                      linkable
-                          .getStats(runtime.getStatsProvider())
+                      runtime
+                          .getLoader()
+                          .getStats()
+                          .getForMinecraftLink(linkable, Stats.EMPTY_CONTEXT)
                           .getElo(GlobalLadder.INSTANCE, ladders)
                   + "] - "
                   + nick)

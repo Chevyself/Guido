@@ -5,6 +5,8 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 import lombok.NonNull;
+import me.googas.api.matches.minecraft.MinecraftMatchTeamMember;
+import me.googas.api.utility.ImmutableCollection;
 
 public final class MinecraftMatchTeamMemberMapper {
 
@@ -22,5 +24,22 @@ public final class MinecraftMatchTeamMemberMapper {
       members.add(MinecraftMatchTeamMemberMapper.fromDocument(doc));
     }
     return members;
+  }
+
+  public static @NonNull Set<MongoMinecraftMatchTeamMember.Document> toDocuments(
+      @NonNull ImmutableCollection<? extends MinecraftMatchTeamMember> members) {
+    Set<MongoMinecraftMatchTeamMember.Document> docs = new HashSet<>(members.size());
+    for (MinecraftMatchTeamMember member : members) {
+      docs.add(MinecraftMatchTeamMemberMapper.toDocument(member));
+    }
+    return docs;
+  }
+
+  private static @NonNull MongoMinecraftMatchTeamMember.Document toDocument(
+      @NonNull MinecraftMatchTeamMember member) {
+    MongoMinecraftMatchTeamMember.Document doc = new MongoMinecraftMatchTeamMember.Document();
+    doc.id = member.getId();
+    doc.role = member.getRole();
+    return doc;
   }
 }

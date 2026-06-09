@@ -34,4 +34,9 @@ public class JGuidoRuntime implements GuidoServerRuntime {
   public @NonNull ListenerManager getListeners() {
     throw new UnsupportedOperationException("Can't provide listeners from parent JUnit runtime");
   }
+
+  @Override
+  public void close() {
+    // No-op
+  }
 }

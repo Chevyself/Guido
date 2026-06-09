@@ -24,7 +24,7 @@ public class MongoMinecraftMatchTeamMember implements MinecraftMatchTeamMember {
   }
 
   public static class Document {
-    public UUID id;
-    public TeamRole role;
+    @NonNull public UUID id = UUID.randomUUID();
+    @NonNull public TeamRole role = TeamRole.MEMBER;
   }
 }

@@ -77,4 +77,9 @@ public final class MongoLoader implements me.googas.server.loader.GuidoLoader {
     MongoClient mongoClient = MongoClients.create(settings);
     return new MongoLoader(runtime, mongoClient, mongoClient.getDatabase(databaseName));
   }
+
+  @Override
+  public void close() {
+    this.client.close();
+  }
 }

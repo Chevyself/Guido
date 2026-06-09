@@ -7,8 +7,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import lombok.NonNull;
 import me.googas.api.links.DiscordLinkable;
-import me.googas.api.stats.Stats;
-import me.googas.api.stats.StatsProvider;
 import me.googas.api.user.UserData;
 import me.googas.starbox.logging.LoggerFactory;
 import org.bson.codecs.pojo.annotations.BsonId;
@@ -28,12 +26,6 @@ public class MongoDiscordLinkable implements DiscordLinkable {
   @Override
   public @NonNull Optional<UUID> getLinkedUserId() {
     return Optional.of(this.document.linkedUserId);
-  }
-
-  @Override
-  public Stats getStats(@NonNull StatsProvider statsProvider) {
-    // TODO
-    throw new UnsupportedOperationException("TODO");
   }
 
   @Override

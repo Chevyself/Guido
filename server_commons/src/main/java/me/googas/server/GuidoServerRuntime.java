@@ -1,12 +1,13 @@
 package me.googas.server;
 
+import java.io.Closeable;
 import java.io.File;
 import java.io.InputStream;
 import lombok.NonNull;
 import me.googas.starbox.ProgramArguments;
 import me.googas.starbox.events.ListenerManager;
 
-public interface GuidoServerRuntime {
+public interface GuidoServerRuntime extends Closeable {
   /**
    * Gets the arguments of the runtime
    *

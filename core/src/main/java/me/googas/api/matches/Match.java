@@ -7,8 +7,6 @@ import me.googas.api.utility.ImmutableCollection;
 import net.dv8tion.jda.api.EmbedBuilder;
 
 public interface Match {
-  static int NO_TEAM = -1;
-  static int PARTICIPANTS = -3;
 
   @NonNull
   UUID getId();
@@ -61,7 +59,7 @@ public interface Match {
   void finish(int winningTeam);
 
   default void finish() {
-    this.finish(Match.NO_TEAM);
+    this.finish(MatchTeam.NO_TEAM);
   }
 
   @NonNull
