@@ -40,31 +40,21 @@ public class QueueHandler implements GuidoHandler {
    */
   public void joinQueueFromVoice(AudioChannelUnion channelJoined, @NonNull Member member) {
     if (channelJoined == null) return;
-    /*TODO
     GuidoGuild guild = runtime.getBotJda().getGuidoGuild();
-    String key = guild.getVoiceChannel(channelJoined.getIdLong());
-    if (key != null && key.startsWith("join-")) {
-      String ladderName = key.substring(5);
-      guild.getLadder(ladderName)
-              .ifPresent(ladder -> {
-                QueueResult result = this.joinQueue(guild, member, ladder);
-                if (result.isCancelled())
-                  member
-                          .getUser()
-                          .openPrivateChannel()
-                          .queue(
-                                  channel -> {
-                                    channel.sendMessage(result.getReason()).queue();
-                                  });
-              });
-    }*/
+    Optional<? extends Ladder> optional = guild.getLadderToJoin(channelJoined.getIdLong());
+    optional.ifPresent(
+        ladder -> {
+          QueueResult result = this.joinQueue(guild, member, ladder);
+          if (result.isCancelled())
+            member
+                .getUser()
+                .openPrivateChannel()
+                .queue(
+                    channel -> {
+                      channel.sendMessage(result.getReason()).queue();
+                    });
+        });
   }
-
-  /*
-  @SubscribeEvent
-  public void onGuildVoiceJoinEvent(@NonNull GuildVoiceUpdateEvent event) {
-    this.joinQueueFromVoice(event.getChannelJoined(), event.getMember());
-  }*/
 
   /**
    * Makes the given info leave all the queues where it is waiting

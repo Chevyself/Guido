@@ -120,4 +120,9 @@ public interface GuidoGuild {
     }
     return channel;
   }
+
+  @NonNull
+  Optional<? extends Ladder> getLadderToJoin(long idLong);
+
+  void setLadderToJoin(long idLong, @NonNull Ladder ladder);
 }
