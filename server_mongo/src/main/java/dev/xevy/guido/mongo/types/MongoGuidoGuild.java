@@ -17,13 +17,13 @@ import org.jetbrains.annotations.NotNull;
 public class MongoGuidoGuild implements GuidoGuild {
 
   public MongoGuidoGuild(
-      @NonNull MongoGuidoGuild.Document document, @NonNull MongoGuidoGuildLoader loader) {
+      @NonNull MongoGuidoGuildLoader loader, @NonNull MongoGuidoGuild.Document document) {
     this.document = document;
     this.loader = loader;
   }
 
-  @NonNull private final MongoGuidoGuild.Document document;
   @NonNull private final MongoGuidoGuildLoader loader;
+  @NonNull private MongoGuidoGuild.Document document;
 
   @Override
   public long getId() {
@@ -47,8 +47,7 @@ public class MongoGuidoGuild implements GuidoGuild {
 
   @Override
   public void setMatchesChannelId(long idLong) {
-    this.loader.setMatchesChannelId(this, idLong);
-    this.document.matchesChannelId = idLong;
+    this.loader.setMatchesChannelId(this, idLong).ifPresent(doc -> this.document = doc);
   }
 
   @Override
@@ -58,8 +57,7 @@ public class MongoGuidoGuild implements GuidoGuild {
 
   @Override
   public void setMatchesCategoryId(long idLong) {
-    this.loader.setMatchesCategoryId(this, idLong);
-    this.document.matchesCategoryId = idLong;
+    this.loader.setMatchesCategoryId(this, idLong).ifPresent(doc -> this.document = doc);
   }
 
   @Override
@@ -79,9 +77,13 @@ public class MongoGuidoGuild implements GuidoGuild {
     doc.winMultiplier = winMultiplier;
     doc.loseMultiplier = loseMultiplier;
     doc.teamSelectionType = teamSelectionType;
-    this.loader.addLadder(this, doc);
-    this.document.ladders.add(doc);
-    return Optional.of(new MongoLadder(doc));
+    return this.loader
+        .addLadder(this, doc)
+        .map(
+            guildDoc -> {
+              this.document = guildDoc;
+              return new MongoLadder(doc);
+            });
   }
 
   @Override
@@ -89,9 +91,14 @@ public class MongoGuidoGuild implements GuidoGuild {
     int index =
         Lots.indexOfMatching(document.ladders, ladderDoc -> ladderDoc.name.equalsIgnoreCase(name));
     if (index == -1) return false;
-    this.loader.removeLadder(this, index);
-    this.document.ladders.remove(index);
-    return true;
+    return this.loader
+        .removeLadder(this, index)
+        .map(
+            doc -> {
+              this.document = doc;
+              return true;
+            })
+        .orElse(false);
   }
 
   @NotNull
@@ -104,9 +111,13 @@ public class MongoGuidoGuild implements GuidoGuild {
     doc.min = min;
     doc.max = max;
     doc.roleId = roleId;
-    this.loader.addRange(this, doc);
-    this.document.ranges.add(doc);
-    return Optional.of(new MongoRankRange(doc));
+    return this.loader
+        .addRange(this, doc)
+        .map(
+            guildDoc -> {
+              this.document = guildDoc;
+              return new MongoRankRange(doc);
+            });
   }
 
   @Override
@@ -114,9 +125,14 @@ public class MongoGuidoGuild implements GuidoGuild {
     int index =
         Lots.indexOfMatching(document.ranges, (rangeDoc) -> rangeDoc.name.equalsIgnoreCase(name));
     if (index == -1) return false;
-    this.loader.removeRange(this, index);
-    this.document.ladders.remove(index);
-    return true;
+    return this.loader
+        .removeRange(this, index)
+        .map(
+            doc -> {
+              this.document = doc;
+              return true;
+            })
+        .orElse(false);
   }
 
   @Override
@@ -126,8 +142,20 @@ public class MongoGuidoGuild implements GuidoGuild {
 
   @Override
   public void setWaitingVoiceChannelId(long idLong) {
-    this.loader.setWaitingChannelId(this, idLong);
-    this.document.waitingVoiceChannelId = idLong;
+    this.loader.setWaitingChannelId(this, idLong).ifPresent(doc -> this.document = doc);
+  }
+
+  @Override
+  public @NonNull Optional<? extends Ladder> getLadderToJoin(long idLong) {
+    String ladderName = this.document.voiceToLadder.get(idLong);
+    return this.getLadder(ladderName);
+  }
+
+  @Override
+  public void setLadderToJoin(long idLong, @NonNull Ladder ladder) {
+    this.loader
+        .setLadderToJoin(this, idLong, ladder.getName())
+        .ifPresent(doc -> this.document = doc);
   }
 
   public static class Document {
@@ -137,5 +165,6 @@ public class MongoGuidoGuild implements GuidoGuild {
     public long matchesChannelId = 0;
     public long matchesCategoryId = 0;
     public long waitingVoiceChannelId = 0;
+    public Map<Long, String> voiceToLadder = new HashMap<>();
   }
 }

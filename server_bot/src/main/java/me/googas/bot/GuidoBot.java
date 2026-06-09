@@ -157,7 +157,8 @@ public final class GuidoBot implements GuidoBotRuntime {
         new RangesCommand(),
         new TeamCommands(),
         new TokenCommands(),
-        new UserCommands());
+        new UserCommands(),
+        new VoiceChannelCommands());
   }
 
   public void start() {
