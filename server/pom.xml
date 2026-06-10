@@ -87,12 +87,6 @@
             <artifactId>bungee</artifactId>
             <version>${starbox-commands.version}</version>
         </dependency>
-        <!-- Mongo dependency -->
-        <dependency>
-            <groupId>org.mongodb</groupId>
-            <artifactId>mongo-java-driver</artifactId>
-            <version>3.12.7</version>
-        </dependency>
         <!--<dependency>
             <groupId>net.sf.trove4j</groupId>
             <artifactId>core</artifactId>

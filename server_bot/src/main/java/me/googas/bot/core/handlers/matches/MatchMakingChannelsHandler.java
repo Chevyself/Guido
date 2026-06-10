@@ -80,16 +80,6 @@ public class MatchMakingChannelsHandler implements GuidoHandler {
   }
 
   /**
-   * Listen to when a member leaves a voice channel to check if it is a pregame channel to delete it
-   *
-   * @param event the event of a member leaving a voice channel
-   */
-  @SubscribeEvent
-  public void onGuildVoiceLeave(@NonNull GuildVoiceUpdateEvent event) {
-    this.checkDeletePreGame(event.getChannelLeft());
-  }
-
-  /**
    * Put a new pre match channel in the pre match map
    *
    * @param idLong the id of the pre match channel

@@ -39,6 +39,7 @@ import tc.oc.pgm.api.map.MapInfo;
 import tc.oc.pgm.api.match.Match;
 import tc.oc.pgm.api.match.MatchPhase;
 import tc.oc.pgm.api.match.event.MatchFinishEvent;
+import tc.oc.pgm.api.match.event.MatchStartEvent;
 import tc.oc.pgm.api.party.Competitor;
 import tc.oc.pgm.api.party.Party;
 import tc.oc.pgm.api.player.MatchPlayer;
@@ -261,6 +262,14 @@ public class PGMMatchMakingHandler implements GuidoModule {
     }
   }
 
+  @EventHandler
+  public void onMatchStart(MatchStartEvent event) {
+    JsonClient connection = Guido.getClient().getConnection();
+    PGMHostedMatch hosted = this.getMatchByPgm(event.getMatch().getId());
+    if (hosted == null) return;
+    Requests.MinecraftMatches.updateStatus(hosted.getId(), MatchStatus.PLAYING).future(connection);
+  }
+
   /**
    * When the match is finished save the data to bot
    *
@@ -273,7 +282,7 @@ public class PGMMatchMakingHandler implements GuidoModule {
     if (hosted == null) return;
     int winnersId = hosted.getTeamId(this.getWinnersId(event));
     if (connection != null) {
-      Requests.MinecraftMatches.onFinish(hosted.getId(), winnersId).queue(connection);
+      Requests.MinecraftMatches.onFinish(hosted.getId(), winnersId).future(connection);
       this.readyToHost(connection);
     }
     this.matches.remove(hosted);

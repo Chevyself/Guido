@@ -147,7 +147,8 @@ public class MongoGuidoGuild implements GuidoGuild {
 
   @Override
   public @NonNull Optional<? extends Ladder> getLadderToJoin(long idLong) {
-    String ladderName = this.document.voiceToLadder.get(idLong);
+    String ladderName = this.document.voiceToLadder.get(String.valueOf(idLong));
+    if (ladderName == null) return Optional.empty();
     return this.getLadder(ladderName);
   }
 
@@ -165,6 +166,6 @@ public class MongoGuidoGuild implements GuidoGuild {
     public long matchesChannelId = 0;
     public long matchesCategoryId = 0;
     public long waitingVoiceChannelId = 0;
-    public Map<Long, String> voiceToLadder = new HashMap<>();
+    public Map<String, String> voiceToLadder = new HashMap<>();
   }
 }

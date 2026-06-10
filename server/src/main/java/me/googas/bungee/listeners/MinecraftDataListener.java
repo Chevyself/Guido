@@ -2,8 +2,8 @@ package me.googas.bungee.listeners;
 
 import lombok.NonNull;
 import me.googas.api.Requests;
+import me.googas.bungee.GuidoBungeeRuntime;
 import me.googas.bungee.events.GuidoListener;
-import me.googas.starbox.UUIDUtils;
 import net.md_5.bungee.api.connection.PendingConnection;
 import net.md_5.bungee.api.event.LoginEvent;
 import net.md_5.bungee.api.event.PlayerDisconnectEvent;
@@ -13,19 +13,25 @@ import net.md_5.bungee.event.EventPriority;
 /** This listener keeps the minecraft data up-to-date in the database */
 public class MinecraftDataListener implements GuidoListener {
 
+  @NonNull private final GuidoBungeeRuntime runtime;
+
+  public MinecraftDataListener(@NonNull GuidoBungeeRuntime runtime) {
+    this.runtime = runtime;
+  }
+
   @EventHandler(priority = EventPriority.LOWEST)
   public void onPreLoginEvent(LoginEvent event) {
     PendingConnection connection = event.getConnection();
     String nickname = connection.getName();
     String ip = connection.getSocketAddress().toString();
-
-    Requests.MinecraftLinks.updateStatus(connection.getUniqueId(), nickname, ip, true);
+    Requests.MinecraftLinks.updateStatus(connection.getUniqueId(), nickname, ip, true)
+        .future(runtime.getClient());
   }
 
   @EventHandler(priority = EventPriority.HIGHEST)
   public void onPlayerDisconnect(PlayerDisconnectEvent event) {
-    String trim = UUIDUtils.trim(event.getPlayer().getUniqueId());
-    Requests.MinecraftLinks.updateOnline(event.getPlayer().getUniqueId(), false);
+    Requests.MinecraftLinks.updateOnline(event.getPlayer().getUniqueId(), false)
+        .future(runtime.getClient());
   }
 
   @Override

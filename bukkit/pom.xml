@@ -40,8 +40,7 @@
                                     <exclude>META-INF/**</exclude>
                                 </excludes>
                                 <includes>
-                                    <include>com.starfishst.guido:simple</include>
-                                    <include>me.googas.messaging:Commons-Messaging</include>
+                                    <include>com.starfishst.guido:core</include>
                                 </includes>
                             </artifactSet>
                         </configuration>

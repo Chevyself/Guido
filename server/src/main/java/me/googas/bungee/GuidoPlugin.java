@@ -10,6 +10,7 @@ import com.github.chevyself.starbox.registry.MiddlewareRegistry;
 import com.github.chevyself.starbox.registry.ProvidersRegistry;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.InetSocketAddress;
 import java.util.List;
 import java.util.Objects;
@@ -40,8 +41,9 @@ import me.googas.net.api.Server;
 import me.googas.net.sockets.json.client.JsonClient;
 import me.googas.net.sockets.json.server.JsonClientThread;
 import me.googas.net.sockets.json.server.JsonSocketServer;
-import me.googas.server.GuidoServerRuntime;
 import me.googas.starbox.CoreFiles;
+import me.googas.starbox.ProgramArguments;
+import me.googas.starbox.events.ListenerManager;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.config.ServerInfo;
 import net.md_5.bungee.api.plugin.Plugin;
@@ -49,7 +51,7 @@ import net.md_5.bungee.config.ConfigurationProvider;
 import net.md_5.bungee.config.YamlConfiguration;
 
 /** The guido plugin for Bungee */
-public class GuidoPlugin extends Plugin {
+public class GuidoPlugin extends Plugin implements GuidoBungeeRuntime {
 
   // @NonNull @Getter private final Scheduler scheduler = new BungeeScheduler(this);
   /** The bungee language handler */
@@ -72,15 +74,13 @@ public class GuidoPlugin extends Plugin {
   /** The bungeeConfiguration that the plugin will use */
   @NonNull @Getter private BungeeConfiguration configuration = loadConfiguration();
 
-  @NonNull
-  private GuidoServerRuntime runtime = new GuidoPluginServerRuntime(this, this.configuration);
   /** The listeners being used by the plugin */
   @NonNull @Getter
   private final List<GuidoListener> listeners =
       Lots.list(
           this.languageHandler,
-          new MinecraftDataListener(),
-          new MotdListener(runtime),
+          new MinecraftDataListener(this),
+          new MotdListener(this),
           new TipsListener());
 
   private JsonClient client = null;
@@ -145,7 +145,7 @@ public class GuidoPlugin extends Plugin {
   public void onEnable() {
     GuidoBungee.setPlugin(this);
     GuidoBungeeConfiguration guidoBungeeConfiguration = this.loadConfiguration();
-    new GuidoBot(this.runtime, guidoBungeeConfiguration).start();
+    new GuidoBot(this, guidoBungeeConfiguration).start();
     Server<JsonClientThread> server = Guido.getServer();
     if (server instanceof JsonSocketServer) {
       ((JsonSocketServer) server)
@@ -156,7 +156,7 @@ public class GuidoPlugin extends Plugin {
               new BungeeReceptors());
     }
     try {
-      client = JsonClient.join("localhost", 3000).start();
+      client = JsonClient.join("localhost", 3366).start();
     } catch (IOException e) {
       getLogger().severe("Failed to init json client");
     }
@@ -172,7 +172,34 @@ public class GuidoPlugin extends Plugin {
     super.onEnable();
   }
 
+  @Override
   public @NonNull JsonClient getClient() {
     return Objects.requireNonNull(client, "Client may not have been initialized yet");
+  }
+
+  @Override
+  public @NonNull ProgramArguments getArguments() {
+    return ProgramArguments.construct(this.configuration.getBotArguments());
+  }
+
+  @Override
+  public @NonNull File currentDirectory() {
+    return this.getDataFolder();
+  }
+
+  @Override
+  public @NonNull InputStream getResource(@NonNull String name) {
+    return Objects.requireNonNull(
+        this.getResourceAsStream(name), "Could not find resource " + name);
+  }
+
+  @Override
+  public void close() throws IOException {
+    // No-op
+  }
+
+  @Override
+  public @NonNull ListenerManager getListeners() {
+    throw new UnsupportedOperationException();
   }
 }

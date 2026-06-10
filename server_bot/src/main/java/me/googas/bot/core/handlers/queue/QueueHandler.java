@@ -116,7 +116,7 @@ public class QueueHandler implements GuidoHandler {
             .flatMap(
                 linkedUserId ->
                     runtime.getLoader().getMinecraftLinks().getByLinkedUser(linkedUserId));
-    if (optional.isEmpty()) return new QueueResult();
+    if (optional.isEmpty()) return new QueueResult("No Minecraft account");
     QueueResult join = queue.join(optional.get());
     if (join.isCancelled()) return join;
     Guild discord = guild.toDiscord(member.getJDA());
