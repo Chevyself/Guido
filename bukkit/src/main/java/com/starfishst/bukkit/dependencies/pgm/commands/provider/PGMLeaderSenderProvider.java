@@ -11,6 +11,7 @@ import com.starfishst.bukkit.dependencies.pgm.listeners.matches.creation.PickTea
 import com.starfishst.bukkit.dependencies.pgm.listeners.matches.creation.TeamCreation;
 import com.starfishst.bukkit.lang.BukkitLocaleFile;
 import lombok.NonNull;
+import me.googas.api.matches.MinecraftTeamSelectionType;
 import org.bukkit.entity.Player;
 
 public class PGMLeaderSenderProvider implements BukkitExtraArgumentProvider<PGMLeader> {
@@ -25,7 +26,7 @@ public class PGMLeaderSenderProvider implements BukkitExtraArgumentProvider<PGML
     PGMMatchMakingHandler listener = Guido.getModuleRegistry().require(PGMMatchMakingHandler.class);
     BukkitLocaleFile locale = Guido.getLanguageHandler().getFile(context);
     if (context.getSender() instanceof Player) {
-      TeamCreation pick = listener.getCreation("pick");
+      TeamCreation pick = listener.getCreation(MinecraftTeamSelectionType.PICK).orElse(null);
       PGMHostedMatch match = listener.getMatch(context.getSender());
       if (match == null) throw new IllegalArgumentException(locale.get("participant-only"));
       if (pick instanceof PickTeamSelection) {

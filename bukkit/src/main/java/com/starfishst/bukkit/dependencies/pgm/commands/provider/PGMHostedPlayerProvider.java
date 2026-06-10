@@ -14,6 +14,7 @@ import com.starfishst.bukkit.matches.HostedPlayer;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.NonNull;
+import me.googas.api.matches.MinecraftTeamSelectionType;
 import me.googas.api.utility.Maps;
 
 public class PGMHostedPlayerProvider implements BukkitArgumentProvider<PGMHostedPlayer> {
@@ -27,7 +28,7 @@ public class PGMHostedPlayerProvider implements BukkitArgumentProvider<PGMHosted
       throws ArgumentProviderException {
     BukkitLocaleFile locale = Guido.getLanguageHandler().getFile(context);
     PGMMatchMakingHandler listener = Guido.getModuleRegistry().require(PGMMatchMakingHandler.class);
-    TeamCreation creation = listener.getCreation("pick");
+    TeamCreation creation = listener.getCreation(MinecraftTeamSelectionType.PICK).orElse(null);
     PGMHostedMatch match = listener.getMatch(context.getSender());
     if (match == null) throw new IllegalArgumentException(locale.get("participant-only"));
     if (creation instanceof PickTeamSelection) {
@@ -45,7 +46,7 @@ public class PGMHostedPlayerProvider implements BukkitArgumentProvider<PGMHosted
   public @NonNull List<String> getSuggestions(@NonNull String s, CommandContext context) {
     List<String> names = new ArrayList<>();
     PGMMatchMakingHandler listener = Guido.getModuleRegistry().require(PGMMatchMakingHandler.class);
-    TeamCreation creation = listener.getCreation("pick");
+    TeamCreation creation = listener.getCreation(MinecraftTeamSelectionType.PICK).orElse(null);
     PGMHostedMatch match = listener.getMatch(context.getSender());
     if (creation instanceof PickTeamSelection && match != null) {
       return ((PickTeamSelection) creation).getParticipantsNames(match.getId());

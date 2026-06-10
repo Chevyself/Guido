@@ -1,10 +1,9 @@
 package me.googas.api.client;
 
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
+import java.util.concurrent.CompletableFuture;
+import java.util.logging.Logger;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.Setter;
@@ -16,6 +15,8 @@ import me.googas.net.sockets.json.client.JsonClient;
 /** The client used by implementation to connect with Guido */
 public class Client {
 
+  @NonNull private static final Logger logger = Logger.getLogger(Client.class.getName());
+
   /** An static instance of client to use */
   @Getter @Setter private static Client instance;
 
@@ -26,22 +27,6 @@ public class Client {
 
   /** The ip of the server of the bot */
   @NonNull @Getter @Setter private String ip;
-
-  /**
-   * Get the validated connection from {@link #validatedConnection()} but if it throws the
-   * IOException it will throw a null pointer
-   *
-   * @return the validated connection
-   * @throws NullPointerException if there's no connection and no connection could be stabilised
-   */
-  @NonNull
-  public JsonClient validated() {
-    try {
-      return this.validatedConnection();
-    } catch (IOException e) {
-      throw new NullPointerException("Could not validate connection with Guido-Bot!");
-    }
-  }
 
   /** The port of the server ofo the bot */
   @Getter @Setter private int port;
@@ -78,23 +63,22 @@ public class Client {
   /**
    * Connects the client with the bot
    *
-   * @return the stabilised connection
+   * @return the future with the auth result
    * @throws IOException if the bot cannot be reached
    */
   @NonNull
-  public JsonClient startConnection() throws IOException {
+  public CompletableFuture<Boolean> startConnection() throws IOException {
     connect();
-    Requests.Server.auth(this.token)
-        .send(
-            this.connection,
-            optional -> {
-              if (optional.isPresent()) {
-                this.onAuthentication(optional.get());
-              } else {
+    return Requests.Server.auth(this.token)
+        .future(this.connection)
+        .whenComplete(
+            ((result, ignoredException) -> {
+              if (result == null || ignoredException != null) {
                 this.onAuthentication(false);
+                return;
               }
-            });
-    return this.connection;
+              this.onAuthentication(result);
+            }));
   }
 
   /**
@@ -113,31 +97,16 @@ public class Client {
     System.out.println("Client has been disconnected");
   }
 
-  /**
-   * The validated connection with the server
-   *
-   * @return the validated connection
-   * @throws IOException if the connection could not be stabilised
-   */
-  @NonNull
-  public JsonClient validatedConnection() throws IOException {
-    if (this.connection != null && !this.connection.isClosed()) {
-      return this.connection;
-    } else {
-      return this.startConnection();
-    }
-  }
-
   @SuppressWarnings("unused")
   public interface ClientMethods {
     void addReceptors(Object... receptors);
   }
 
-  public JsonClient getConnection() {
+  public Optional<JsonClient> getConnection() {
     if (this.connection != null && this.connection.isClosed()) {
       this.connection = null;
     }
-    return this.connection;
+    return Optional.ofNullable(this.connection);
   }
 
   /**
@@ -156,8 +125,10 @@ public class Client {
 
   /** Disconnects the client */
   public void disconnect() {
-    JsonClient connection = this.getConnection();
-    if (connection == null) return;
-    Requests.Server.disconnect().queue(connection);
+    this.getConnection()
+        .ifPresent(
+            connection -> {
+              Requests.Server.disconnect().future(connection);
+            });
   }
 }

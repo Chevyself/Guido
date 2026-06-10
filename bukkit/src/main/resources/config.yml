@@ -2,6 +2,10 @@
 context: Bukkit
 # The token to authenticate in the bot
 token: none
+# The host to connect with the bot
+host: localhost
+# The port to connect with the bot
+port: 3366
 ## The list of commands that can be enabled:
 ## - fly: allows players to fly
 ## - ping: allows players to see their ping

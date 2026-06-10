@@ -4,6 +4,7 @@ import com.github.chevyself.starbox.bukkit.commands.BukkitAnnotatedCommand;
 import com.github.chevyself.starbox.bukkit.commands.BukkitCommand;
 import com.github.chevyself.starbox.bukkit.utils.BukkitUtils;
 import com.starfishst.bukkit.Guido;
+import com.starfishst.bukkit.GuidoBukkitRuntime;
 import com.starfishst.bukkit.dependencies.pgm.PGMHostedMatch;
 import com.starfishst.bukkit.dependencies.pgm.commands.ReadyCommand;
 import com.starfishst.bukkit.dependencies.pgm.listeners.matches.creation.PickTeamSelection;
@@ -12,10 +13,12 @@ import com.starfishst.bukkit.dependencies.pgm.listeners.matches.creation.TeamCre
 import com.starfishst.bukkit.matches.HostedPlayer;
 import com.starfishst.bukkit.modules.GuidoModule;
 import com.starfishst.bukkit.util.ServerUtil;
-import com.starfishst.bukkit.util.Tasks;
-import java.io.IOException;
+
 import java.util.*;
 import java.util.concurrent.ExecutionException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 import lombok.Getter;
 import lombok.NonNull;
 import me.googas.api.Requests;
@@ -26,7 +29,6 @@ import me.googas.api.matches.MinecraftTeamSelectionType;
 import me.googas.api.matches.ladder.Ladder;
 import me.googas.api.utility.Maps;
 import me.googas.api.utility.RandomUtils;
-import me.googas.net.api.exception.MessengerListenFailException;
 import me.googas.net.sockets.json.ParamName;
 import me.googas.net.sockets.json.Receptor;
 import me.googas.net.sockets.json.client.JsonClient;
@@ -51,28 +53,32 @@ import tc.oc.pgm.teams.Team;
 /** Creates matches for the bot */
 public class PGMMatchMakingHandler implements GuidoModule {
 
-  /** The seconds to start the matches */
-  // TODO configurable
-  public static final int secondsToStart = 120;
-
-  /** The team creators for matches */
-  @NonNull
-  private final Map<MinecraftTeamSelectionType, TeamCreation> creator =
-      Maps.builder(MinecraftTeamSelectionType.RANDOM, (TeamCreation) new RandomTeamCreation())
-          .put(MinecraftTeamSelectionType.PICK, new PickTeamSelection())
-          .build();
+  @NonNull private static final Logger logger = Logger.getLogger(PGMMatchMakingHandler.class.getName());
 
   /** The list of matches hosted by the server */
   @NonNull @Getter private final List<PGMHostedMatch> matches = new ArrayList<>();
-
   /**
    * The set of uuids of players to ignore in {@link
    * #onParticipationStart(PlayerParticipationStartEvent)}
    */
   @NonNull private final Set<UUID> ignore = new HashSet<>();
 
+  @NonNull private final GuidoBukkitRuntime runtime;
+  /** The team creators for matches */
+  @NonNull private final Map<MinecraftTeamSelectionType, TeamCreation> creator;
+  private final int secondsToStart;
+
+  public PGMMatchMakingHandler(@NonNull GuidoBukkitRuntime runtime) {
+    this.runtime = runtime;
+    this.creator =
+        Maps.builder(MinecraftTeamSelectionType.RANDOM, (TeamCreation) new RandomTeamCreation(runtime))
+            .put(MinecraftTeamSelectionType.PICK, new PickTeamSelection(runtime))
+            .build();
+    this.secondsToStart = getSettings().getInt("seconds-to-start", 120);
+  }
+
   /**
-   * Checks whether this match maker can host a match
+   * Checks whether this matchmaker can host a match
    *
    * @param match the match querying to be hosted
    * @return true if the match can be hosted
@@ -82,17 +88,16 @@ public class PGMMatchMakingHandler implements GuidoModule {
       @ParamName(Requests.MatchServer.CAN_HOST_MATCH) ImmutableMinecraftMatch match) {
     String ladderName = match.getLadderName();
     Match pgmMatch = this.getCurrentPgm();
-    JsonClient connection = Guido.getClient().getConnection();
-    if (this.check(pgmMatch) && connection != null) {
-      try {
-        Optional<ImmutableLadder> optional =
-            Requests.MinecraftMatches.getLadder(ladderName).send(connection);
-        return optional.map(ladder -> !this.getSuitableMaps(ladder).isEmpty()).orElse(false);
-      } catch (MessengerListenFailException e) {
-        e.printStackTrace();
-      }
-    }
-    return false;
+    if (!this.check(pgmMatch)) return false;
+    return runtime.getConnection()
+            .map((connection) -> {
+              return Requests.MinecraftMatches.getLadder(ladderName).future(connection)
+                      .join();
+            })
+            .map(ladder -> {
+              return !this.getSuitableMaps(ladder).isEmpty();
+            })
+            .orElse(false);
   }
 
   public boolean check(Match pgmMatch) {
@@ -121,7 +126,6 @@ public class PGMMatchMakingHandler implements GuidoModule {
    */
   @NonNull
   public List<MapInfo> getSuitableMaps(@NonNull Ladder ladder) {
-    // TODO add a cache to this
     List<MapInfo> suitableMaps = new ArrayList<>();
     Iterator<MapInfo> iterator = PGM.get().getMapLibrary().getMaps();
     while (iterator.hasNext()) {
@@ -148,38 +152,38 @@ public class PGMMatchMakingHandler implements GuidoModule {
     if (!this.canHost(match)) return null;
     String ladderName = match.getLadderName();
     PGM pgm = PGM.get();
+    JsonClient connection = runtime.getConnection().orElse(null);
+    if (connection == null) return null;
     try {
-      JsonClient connection = Guido.getClient().validatedConnection();
-      Optional<ImmutableLadder> optional =
-          Requests.MinecraftMatches.getLadder(ladderName).send(connection);
-      if (optional.isEmpty()) return null;
-      Ladder ladder = optional.get();
+      ImmutableLadder ladder = Requests.MinecraftMatches.getLadder(ladderName).future(connection).get();
+      if (ladder == null) return null;
       List<MapInfo> maps = this.getSuitableMaps(ladder);
       if (maps.isEmpty()) return null;
       MapInfo random = RandomUtils.getRandom(maps);
       Match loaded = pgm.getMatchManager().createMatch(random.getId()).get();
       PGMHostedMatch hostedMatch =
-          new PGMHostedMatch(
-              match.getId(),
-              HostedPlayer.parse(match.getParticipants()),
-              ladderName,
-              random,
-              loaded.getId(),
-              ladder.playersPerTeam(),
-              ladder.getTeamSelectionType());
+              new PGMHostedMatch(
+                      match.getId(),
+                      HostedPlayer.parse(match.getParticipants()),
+                      ladderName,
+                      random,
+                      loaded.getId(),
+                      ladder.playersPerTeam(),
+                      ladder.getTeamSelectionType());
       this.matches.add(hostedMatch);
       Requests.MinecraftMatches.updateStatus(hostedMatch.getId(), MatchStatus.READY)
-          .queue(connection);
-      Requests.MinecraftMatches.setMap(hostedMatch.getId(), random.getName()).queue(connection);
-      Tasks.sync(() -> this.getTeamCreation(hostedMatch).createTeams(this, hostedMatch, loaded));
+              .future(connection)
+              .get();
+      Requests.MinecraftMatches.setMap(hostedMatch.getId(), random.getName()).future(connection)
+              .whenComplete((ignoredVoid, e) -> {
+                if (e != null) logger.log(Level.WARNING, "Failed to update map", e);
+              });
+      runtime.sync(() -> this.getTeamCreation(hostedMatch).createTeams(this, hostedMatch, loaded));
       return ServerUtil.getIp();
-    } catch (MessengerListenFailException
-        | IOException
-        | ExecutionException
-        | InterruptedException e) {
-      e.printStackTrace();
+    } catch (ExecutionException | InterruptedException e) {
+      logger.log(Level.SEVERE, "Failed to host match", e);
+      return null;
     }
-    return null;
   }
 
   @NonNull
@@ -187,20 +191,6 @@ public class PGMMatchMakingHandler implements GuidoModule {
     TeamCreation teamCreation = this.creator.get(hostedMatch.getTeamSelectionType());
     if (teamCreation == null) return this.creator.get(MinecraftTeamSelectionType.RANDOM);
     return teamCreation;
-  }
-
-  /**
-   * Get the map that is going to be played in the match
-   *
-   * @param pgm the pgm instance to set the next map
-   * @param maps the maps available for the match
-   * @return the random selected map
-   */
-  @NonNull
-  public MapInfo getMatchMap(@NonNull PGM pgm, @NonNull List<MapInfo> maps) {
-    MapInfo random = RandomUtils.getRandom(maps);
-    pgm.getMapOrder().setNextMap(random);
-    return random;
   }
 
   /**
@@ -234,7 +224,10 @@ public class PGMMatchMakingHandler implements GuidoModule {
 
   /** Called when the server is ready to host a match */
   public void readyToHost(@NonNull JsonClient client) {
-    Requests.MatchServer.serverReady().queue(client);
+    Requests.MatchServer.serverReady().future(client)
+            .whenComplete((ignoredVoid, e) -> {
+              if (e != null) logger.log(Level.WARNING, "Failed to send ready", e);
+            });
   }
 
   /**
@@ -247,9 +240,8 @@ public class PGMMatchMakingHandler implements GuidoModule {
     PGMHostedMatch match = this.getMatch(event.getPlayer().getBukkit());
     if (match == null) return;
     Team team = match.getParty(event.getPlayer().getId());
-    if (team != null) {
-      event.setInitialParty(team);
-    }
+    if (team == null) return;
+    event.setInitialParty(team);
   }
 
   @EventHandler
@@ -264,10 +256,17 @@ public class PGMMatchMakingHandler implements GuidoModule {
 
   @EventHandler
   public void onMatchStart(MatchStartEvent event) {
-    JsonClient connection = Guido.getClient().getConnection();
+    JsonClient connection = this.runtime.getConnection().orElse(null);
+    if (connection == null) {
+      logger.severe("Match started with no connection");
+      return;
+    }
     PGMHostedMatch hosted = this.getMatchByPgm(event.getMatch().getId());
     if (hosted == null) return;
-    Requests.MinecraftMatches.updateStatus(hosted.getId(), MatchStatus.PLAYING).future(connection);
+    Requests.MinecraftMatches.updateStatus(hosted.getId(), MatchStatus.PLAYING).future(connection)
+            .whenComplete((ignoredVoid, e) -> {
+              logger.log(Level.SEVERE, "Failed to update status for match", e);
+            });
   }
 
   /**
@@ -277,15 +276,17 @@ public class PGMMatchMakingHandler implements GuidoModule {
    */
   @EventHandler
   public void onMatchFinish(MatchFinishEvent event) {
-    JsonClient connection = Guido.getClient().getConnection();
+    JsonClient connection = runtime.getConnection().orElse(null);
+    if (connection == null) {
+      logger.severe("Match finished with no connection");
+      return;
+    }
     PGMHostedMatch hosted = this.getMatchByPgm(event.getMatch().getId());
     if (hosted == null) return;
     int winnersId = hosted.getTeamId(this.getWinnersId(event));
-    if (connection != null) {
       Requests.MinecraftMatches.onFinish(hosted.getId(), winnersId).future(connection);
       this.readyToHost(connection);
-    }
-    this.matches.remove(hosted);
+      this.matches.remove(hosted);
     this.clearTeamsReady();
     this.cleanCreators();
   }
@@ -312,10 +313,9 @@ public class PGMMatchMakingHandler implements GuidoModule {
 
   /** Clear all the teams that are ready. This is used so the command /ready can be used */
   public void clearTeamsReady() {
-    for (BukkitCommand command : Guido.getCommandManager().getCommands()) {
-      if (!(command instanceof BukkitAnnotatedCommand)) continue;
-      BukkitAnnotatedCommand annotated = (BukkitAnnotatedCommand) command;
-      if (annotated.getObject() instanceof ReadyCommand) {
+    for (BukkitCommand command : runtime.getCommandManager().getCommands()) {
+      if (!(command instanceof BukkitAnnotatedCommand annotated)) continue;
+        if (annotated.getObject() instanceof ReadyCommand) {
         ((ReadyCommand) annotated.getObject()).clear();
         break;
       }
@@ -328,8 +328,9 @@ public class PGMMatchMakingHandler implements GuidoModule {
    * @param key the key to getId what team creation is assigned to
    * @return the team creation which is assigned to the key
    */
-  public TeamCreation getCreation(@NonNull String key) {
-    return this.creator.get(key);
+  @NonNull
+  public Optional<TeamCreation> getCreation(@NonNull MinecraftTeamSelectionType key) {
+    return Optional.ofNullable(this.creator.get(key));
   }
 
   /**
@@ -380,7 +381,7 @@ public class PGMMatchMakingHandler implements GuidoModule {
 
   @Override
   public void onEnable() {
-    Guido.getClient().addReceptors(this);
+    runtime.getClient().addReceptors(this);
   }
 
   @Override

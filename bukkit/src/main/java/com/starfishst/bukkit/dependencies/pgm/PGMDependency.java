@@ -5,6 +5,7 @@ import com.github.chevyself.starbox.bukkit.context.CommandContext;
 import com.github.chevyself.starbox.parsers.CommandParser;
 import com.github.chevyself.starbox.providers.StarboxContextualProvider;
 import com.starfishst.bukkit.Guido;
+import com.starfishst.bukkit.GuidoBukkitRuntime;
 import com.starfishst.bukkit.dependencies.pgm.commands.PickCommands;
 import com.starfishst.bukkit.dependencies.pgm.commands.ReadyCommand;
 import com.starfishst.bukkit.dependencies.pgm.commands.provider.PGMHostedMatchProvider;
@@ -14,7 +15,6 @@ import com.starfishst.bukkit.dependencies.pgm.commands.provider.PartyProvider;
 import com.starfishst.bukkit.dependencies.pgm.listeners.PGMStatsHandler;
 import com.starfishst.bukkit.dependencies.pgm.listeners.matches.PGMMatchMakingHandler;
 import java.util.Collection;
-import java.util.Optional;
 import java.util.stream.Collectors;
 import lombok.NonNull;
 import me.googas.api.utility.Lots;
@@ -28,6 +28,12 @@ public class PGMDependency implements Compatibility {
 
   /** Whether pgm is loaded in the class path */
   private boolean enabled = false;
+
+  @NonNull private final GuidoBukkitRuntime runtime;
+
+  public PGMDependency(@NonNull GuidoBukkitRuntime runtime) {
+    this.runtime = runtime;
+  }
 
   @Override
   public @NonNull String getName() {
@@ -76,15 +82,16 @@ public class PGMDependency implements Compatibility {
 
   @Override
   public @NonNull Collection<Module> getModules(@NonNull Plugin plugin) {
-    return Lots.list(new PGMMatchMakingHandler(), new PGMStatsHandler());
+    return Lots.list(new PGMMatchMakingHandler(runtime), new PGMStatsHandler(runtime));
   }
 
   @Override
   public void onEnable() {
-    Optional<PGMMatchMakingHandler> optional =
-        Guido.getModuleRegistry().get(PGMMatchMakingHandler.class);
-    JsonClient connection = Guido.getClient().getConnection();
-    if (optional.isEmpty() || !optional.get().isEnabled() || connection == null) return;
-    optional.get().readyToHost(connection);
+    JsonClient connection = runtime.getConnection().orElse(null);
+    if (connection == null) return;
+    runtime
+        .getModuleRegistry()
+        .get(PGMMatchMakingHandler.class)
+        .ifPresent(handler -> handler.readyToHost(connection));
   }
 }

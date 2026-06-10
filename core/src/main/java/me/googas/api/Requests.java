@@ -112,8 +112,8 @@ public class Requests {
     @NonNull public static final String SERVER_READY = MatchServer.PREFIX + "server-ready";
 
     @NonNull
-    public static RequestBuilder<Boolean> serverReady() {
-      return new RequestBuilder<>(Boolean.class, MatchServer.SERVER_READY);
+    public static RequestBuilder<Void> serverReady() {
+      return new RequestBuilder<>(Void.class, MatchServer.SERVER_READY);
     }
 
     public static RequestBuilder<Boolean> canHost(@NonNull ImmutableMinecraftMatch match) {

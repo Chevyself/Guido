@@ -1,12 +1,12 @@
 package com.starfishst.bukkit.dependencies.pgm.listeners;
 
 import com.starfishst.bukkit.Guido;
+import com.starfishst.bukkit.GuidoBukkitRuntime;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 import lombok.NonNull;
 import me.googas.api.Requests;
-import me.googas.net.sockets.json.client.JsonClient;
 import me.googas.starbox.modules.Module;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -27,6 +27,12 @@ public class PGMStatsHandler implements Module {
 
   /** The map containing the stats of a player */
   @NonNull private final Map<UUID, Map<String, Double>> stats = new HashMap<>();
+
+  @NonNull private final GuidoBukkitRuntime runtime;
+
+  public PGMStatsHandler(@NonNull GuidoBukkitRuntime runtime) {
+    this.runtime = runtime;
+  }
 
   /**
    * Listen to the death of a player to add the stat to the killer and the death
@@ -116,12 +122,14 @@ public class PGMStatsHandler implements Module {
       }
     }
     // Save them after we gave them the win and lose stats
-    JsonClient connection = Guido.getClient().getConnection();
-    if (connection != null) {
-      this.stats.forEach(
-          (uuid, statsMap) ->
-              Requests.MinecraftLinks.saveStats(uuid, context, statsMap).queue(connection));
-    }
+    runtime
+        .getConnection()
+        .ifPresent(
+            (connection) -> {
+              this.stats.forEach(
+                  (uuid, statsMap) ->
+                      Requests.MinecraftLinks.saveStats(uuid, context, statsMap).queue(connection));
+            });
     this.stats.clear();
   }
 

@@ -1,13 +1,16 @@
 package com.starfishst.bukkit.dependencies.pgm.listeners.matches.creation;
 
-import com.starfishst.bukkit.Guido;
+import com.starfishst.bukkit.GuidoBukkitRuntime;
 import com.starfishst.bukkit.dependencies.pgm.PGMHostedMatch;
 import com.starfishst.bukkit.dependencies.pgm.listeners.matches.PGMMatchMakingHandler;
 import com.starfishst.bukkit.matches.HostedPlayer;
 import java.time.Duration;
 import java.util.*;
 import java.util.concurrent.ExecutionException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import lombok.NonNull;
+import lombok.extern.slf4j.Slf4j;
 import me.googas.api.Requests;
 import me.googas.api.immutable.ImmutableMinecraftMatchTeam;
 import me.googas.api.immutable.ImmutableMinecraftMatchTeamMember;
@@ -22,7 +25,17 @@ import tc.oc.pgm.start.StartMatchModule;
 import tc.oc.pgm.teams.Team;
 
 /** Creates teams by randomly selecting players */
+@Slf4j
 public class RandomTeamCreation implements TeamCreation {
+
+  @NonNull
+  private static final Logger logger = Logger.getLogger(RandomTeamCreation.class.getName());
+
+  @NonNull private final GuidoBukkitRuntime runtime;
+
+  public RandomTeamCreation(@NonNull GuidoBukkitRuntime runtime) {
+    this.runtime = runtime;
+  }
 
   private Team getAvailableParty(Map<Party, List<HostedPlayer>> teams, Match match) {
     Party observers = match.getDefaultParty();
@@ -59,7 +72,11 @@ public class RandomTeamCreation implements TeamCreation {
     int perTeam = hosted.getPlayersPerTeam();
     int index = 1;
     List<ImmutableMinecraftMatchTeam> requestTeams = new ArrayList<>();
-    JsonClient connection = Guido.getClient().getConnection();
+    JsonClient connection = runtime.getConnection().orElse(null);
+    if (connection == null) {
+      logger.severe("Failed to create teams with random team selection");
+      return;
+    }
     for (int i = 0; i < (hosted.getParticipants().size() / perTeam); i++) {
       Team party = this.getAvailableParty(teams, match);
       if (party == null) continue;
@@ -79,16 +96,15 @@ public class RandomTeamCreation implements TeamCreation {
     try {
       tryStartMatch(hosted, match, requestTeams, connection);
     } catch (ExecutionException | InterruptedException e) {
-      // TODO error handling
-      e.printStackTrace();
+      logger.log(Level.SEVERE, "Failed to start match with random team creation", e);
     }
   }
 
   private static void tryStartMatch(
       @NonNull PGMHostedMatch hosted,
       @NonNull Match match,
-      List<ImmutableMinecraftMatchTeam> requestTeams,
-      JsonClient connection)
+      @NonNull List<ImmutableMinecraftMatchTeam> requestTeams,
+      @NonNull JsonClient connection)
       throws ExecutionException, InterruptedException {
     List<ImmutableMinecraftMatchTeam> resultTeams =
         Requests.MinecraftMatches.setTeams(hosted.getId(), new Requests.SetTeamsData(requestTeams))
@@ -103,7 +119,9 @@ public class RandomTeamCreation implements TeamCreation {
                 hosted.getTeams().put(pgmPartyId, resultTeam);
               });
     }
-    Requests.MinecraftMatches.updateStatus(hosted.getId(), MatchStatus.STARTING).future(connection);
+    Requests.MinecraftMatches.updateStatus(hosted.getId(), MatchStatus.STARTING)
+        .future(connection)
+        .get();
     match
         .needModule(StartMatchModule.class)
         .forceStartCountdown(

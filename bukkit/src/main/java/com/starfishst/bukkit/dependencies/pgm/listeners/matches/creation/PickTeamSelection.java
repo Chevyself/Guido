@@ -1,6 +1,7 @@
 package com.starfishst.bukkit.dependencies.pgm.listeners.matches.creation;
 
 import com.starfishst.bukkit.Guido;
+import com.starfishst.bukkit.GuidoBukkitRuntime;
 import com.starfishst.bukkit.dependencies.pgm.PGMHostedMatch;
 import com.starfishst.bukkit.dependencies.pgm.listeners.matches.PGMMatchMakingHandler;
 import com.starfishst.bukkit.lang.BukkitLocaleFile;
@@ -16,6 +17,8 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import lombok.Getter;
 import lombok.NonNull;
 import me.googas.api.Requests;
@@ -42,6 +45,9 @@ import tc.oc.pgm.teams.Team;
 /** Select a teammate by picking it */
 public class PickTeamSelection implements TeamCreation {
 
+  @NonNull private static final Logger logger = Logger.getLogger(PickTeamSelection.class.getName());
+
+  @NonNull private final GuidoBukkitRuntime runtime;
   /** The time for a leader to pick */
   private static final Time timeToPick = Time.parse("1m", true);
 
@@ -55,6 +61,10 @@ public class PickTeamSelection implements TeamCreation {
   @NonNull private final Map<UUID, UUID> currently = new HashMap<>();
 
   @NonNull private final Map<UUID, Countdown> tasks = new HashMap<>();
+
+  public PickTeamSelection(@NonNull GuidoBukkitRuntime runtime) {
+    this.runtime = runtime;
+  }
 
   /**
    * Get the appropriated team name
@@ -200,12 +210,15 @@ public class PickTeamSelection implements TeamCreation {
               Duration.ofSeconds(PGMMatchMakingHandler.secondsToStart), Duration.ZERO);
       List<ImmutableMinecraftMatchTeam> requestTeams =
           this.getTeams(matchId).stream().map(SelectingTeam::build).toList();
-      JsonClient connection = Guido.getClient().getConnection();
+      JsonClient connection = runtime.getConnection().orElse(null);
       try {
+        if (connection == null) {
+          logger.severe("Failed to try to start match on pick team selection");
+          return;
+        }
         this.tryStartMatch(matchId, requestTeams, connection, match);
       } catch (ExecutionException | InterruptedException e) {
-        // TODO better error handling
-        e.printStackTrace();
+        logger.log(Level.SEVERE, "Failed to start match", e);
       }
     } else if (playersLeft.size() == 2) {
       this.nextLeader(matchId, team.getLeader());
@@ -225,9 +238,9 @@ public class PickTeamSelection implements TeamCreation {
 
   private void tryStartMatch(
       @NonNull UUID matchId,
-      List<ImmutableMinecraftMatchTeam> requestTeams,
-      JsonClient connection,
-      PGMHostedMatch match)
+      @NonNull List<ImmutableMinecraftMatchTeam> requestTeams,
+      @NonNull JsonClient connection,
+      @NonNull PGMHostedMatch match)
       throws ExecutionException, InterruptedException {
     List<ImmutableMinecraftMatchTeam> resultTeams =
         Requests.MinecraftMatches.setTeams(matchId, new Requests.SetTeamsData(requestTeams))
@@ -237,10 +250,7 @@ public class PickTeamSelection implements TeamCreation {
     for (ImmutableMinecraftMatchTeam resultTeam : resultTeams) {
       resultTeam
           .getPgmPartyId()
-          .ifPresent(
-              pgmPartyId -> {
-                match.getTeams().put(pgmPartyId, resultTeam);
-              });
+          .ifPresent(pgmPartyId -> match.getTeams().put(pgmPartyId, resultTeam));
     }
     Requests.MinecraftMatches.updateStatus(matchId, MatchStatus.STARTING).future(connection);
     this.clear(matchId);
@@ -280,7 +290,7 @@ public class PickTeamSelection implements TeamCreation {
   public SelectingTeam getNext(@NonNull UUID matchId, @NonNull SelectingTeam team) {
     List<SelectingTeam> teams = this.getTeams(matchId);
     if (teams.indexOf(team) == teams.size() - 1) {
-      return teams.get(0);
+      return teams.getFirst();
     } else {
       return teams.get(teams.indexOf(team) + 1);
     }

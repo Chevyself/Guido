@@ -4,6 +4,7 @@ import com.starfishst.bukkit.Guido;
 import lombok.NonNull;
 import org.bukkit.Bukkit;
 
+@Deprecated
 public class Tasks {
 
   public static void sync(@NonNull Runnable runnable) {

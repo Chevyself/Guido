@@ -13,6 +13,7 @@ import com.starfishst.bukkit.dependencies.pgm.listeners.matches.creation.PickTea
 import com.starfishst.bukkit.dependencies.pgm.listeners.matches.creation.TeamCreation;
 import com.starfishst.bukkit.lang.BukkitLocaleFile;
 import lombok.NonNull;
+import me.googas.api.matches.MinecraftTeamSelectionType;
 import me.googas.api.utility.Maps;
 
 public class PickCommands implements GuidoCommand {
@@ -24,7 +25,7 @@ public class PickCommands implements GuidoCommand {
       PGMLeader leader,
       @Required(name = "pick.player", description = "pick.player.desc") PGMHostedPlayer player) {
     PGMMatchMakingHandler listener = Guido.getModuleRegistry().require(PGMMatchMakingHandler.class);
-    TeamCreation creation = listener.getCreation("pick");
+    TeamCreation creation = listener.getCreation(MinecraftTeamSelectionType.PICK).orElse(null);
     if (creation instanceof PickTeamSelection) {
       if (((PickTeamSelection) creation).isPicking(match.getId(), leader.validated())) {
         ((PickTeamSelection) creation).pick(match.getId(), leader.validated(), player.validated());

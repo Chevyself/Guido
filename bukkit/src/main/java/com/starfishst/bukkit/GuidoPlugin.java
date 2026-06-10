@@ -5,6 +5,7 @@ import com.github.chevyself.starbox.CommandManagerBuilder;
 import com.github.chevyself.starbox.bukkit.BukkitAdapter;
 import com.github.chevyself.starbox.bukkit.commands.BukkitCommand;
 import com.github.chevyself.starbox.bukkit.context.CommandContext;
+import com.github.chevyself.starbox.registry.ProvidersRegistry;
 import com.starfishst.bukkit.client.BukkitClient;
 import com.starfishst.bukkit.commands.FlyCommand;
 import com.starfishst.bukkit.commands.GameModeCommand;
@@ -12,11 +13,15 @@ import com.starfishst.bukkit.commands.GuidoCommand;
 import com.starfishst.bukkit.commands.SudoCommand;
 import com.starfishst.bukkit.commands.TeleportCommand;
 import com.starfishst.bukkit.commands.TestCommands;
+import com.starfishst.bukkit.commands.providers.BukkitLocaleFileProvider;
+import com.starfishst.bukkit.commands.providers.GameModeProvider;
 import com.starfishst.bukkit.configuration.GuidoConfiguration;
 import com.starfishst.bukkit.dependencies.GuidoCompatibilities;
 import com.starfishst.bukkit.lang.BukkitLanguageHandler;
 import java.io.IOException;
+import java.util.Objects;
 import java.util.Set;
+import java.util.logging.Level;
 import lombok.Getter;
 import lombok.NonNull;
 import me.googas.api.utility.Lots;
@@ -27,11 +32,13 @@ import me.googas.starbox.modules.ModuleRegistry;
 import me.googas.starbox.modules.language.LanguageModule;
 import me.googas.starbox.scheduler.Scheduler;
 import me.googas.starbox.time.StarboxBukkitScheduler;
+import org.bukkit.Bukkit;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.scheduler.BukkitScheduler;
 
 /** Guido implementation for Bukkit */
-public class GuidoPlugin extends JavaPlugin {
+public class GuidoPlugin extends JavaPlugin implements GuidoBukkitRuntime {
 
   /** Whether the plugin was set to use in the api */
   private final boolean set = Guido.setPlugin(this);
@@ -43,13 +50,14 @@ public class GuidoPlugin extends JavaPlugin {
   private final BukkitLanguageHandler bukkitLanguageHandler =
       new BukkitLanguageHandler().loadResources(this, "en");
 
-  // TODO separate command manager and commands to a class such as handler registry
   /** The command manager that the implementation is using to register commands */
   @Getter
-  private final @NonNull CommandManager<CommandContext, BukkitCommand> manager =
+  private final @NonNull CommandManager<CommandContext, BukkitCommand> commandManager =
       new CommandManagerBuilder<>(new BukkitAdapter(this, true))
           .setMessagesProvider(this.bukkitLanguageHandler)
-          // TODO add providers registry
+          .setProvidersRegistry(
+              new ProvidersRegistry<CommandContext>()
+                  .addProviders(new BukkitLocaleFileProvider(), new GameModeProvider()))
           .build();
   /** The set of commands that the implementation is using */
   @NonNull
@@ -64,10 +72,10 @@ public class GuidoPlugin extends JavaPlugin {
    * The dependencies that the plugin can use. Those are soft dependencies meaning that it can run
    * without them. The boolean is whether they are active
    */
-  @NonNull @Getter private final GuidoCompatibilities compatibilities = new GuidoCompatibilities();
-  /** The client that the plugin is using */
   @NonNull @Getter
-  private final BukkitClient client = new BukkitClient("NSfE4O69MiDHJD9s", "localhost", 3366);
+  private final GuidoCompatibilities compatibilities = new GuidoCompatibilities(this);
+  /** The client that the plugin is using */
+  private BukkitClient client;
   /** The guidoConfiguration that the implementation is using */
   @NonNull @Getter private GuidoConfiguration configuration = new GuidoConfiguration();
   /** Starbox scheduler */
@@ -85,7 +93,7 @@ public class GuidoPlugin extends JavaPlugin {
         }
       }
       if (command.isEnabled()) {
-        this.manager.parseAndRegisterAll(command);
+        this.commandManager.parseAndRegisterAll(command);
       }
     }
   }
@@ -95,23 +103,38 @@ public class GuidoPlugin extends JavaPlugin {
     try {
       this.configuration = GuidoConfiguration.load(this);
     } catch (IOException | InvalidConfigurationException e) {
-      e.printStackTrace();
+      this.getLogger().log(Level.SEVERE, "Failed to load configuration", e);
     }
   }
 
   /** Start the connection with the bot */
   private void startConnection() {
-    this.getClient().startTask().setToken(this.configuration.getToken());
     try {
-      this.getClient().startConnection();
+      this.client =
+          new BukkitClient(
+                  this.configuration.getToken(),
+                  this.configuration.getHost(),
+                  this.configuration.getPort(),
+                  this)
+              .startTask();
+      this.client
+          .startConnection()
+          .whenComplete(
+              (result, e) -> {
+                if (e != null) {
+                  this.getLogger().log(Level.SEVERE, "Failed to auth client", e);
+                  return;
+                }
+                this.getLogger().info("Received client auth " + result);
+              });
     } catch (IOException e) {
-      e.printStackTrace();
+      this.getLogger().log(Level.SEVERE, "Failed to initialize client", e);
     }
   }
 
   @Override
   public void onDisable() {
-    this.manager.close();
+    this.commandManager.close();
     this.moduleRegistry.disengage();
     this.client.disconnect();
     Guido.setPlugin(null);
@@ -138,8 +161,8 @@ public class GuidoPlugin extends JavaPlugin {
         .forEach(
             compatibility -> {
               this.moduleRegistry.engage(compatibility.getModules(this));
-              this.manager.registerAll(compatibility.getCommands());
-              this.manager.getProvidersRegistry().addProviders(compatibility.getProviders());
+              this.commandManager.registerAll(compatibility.getCommands());
+              this.commandManager.getProvidersRegistry().addProviders(compatibility.getProviders());
             });
     this.setupStarbox();
     this.loadConfiguration();
@@ -158,13 +181,18 @@ public class GuidoPlugin extends JavaPlugin {
     return this.bukkitLanguageHandler;
   }
 
-  /**
-   * Get the command manager that the bot is using
-   *
-   * @return the command manager
-   */
+  @Override
+  public @NonNull BukkitScheduler getBukkitScheduler() {
+    return Bukkit.getScheduler();
+  }
+
   @NonNull
-  public CommandManager<CommandContext, BukkitCommand> getCommandManager() {
-    return this.manager;
+  public BukkitClient getClient() {
+    return Objects.requireNonNull(this.client, "Client may not have been initialized yet");
+  }
+
+  @Override
+  public void sync(@NonNull Runnable runnable) {
+    this.getBukkitScheduler().runTask(this, runnable);
   }
 }

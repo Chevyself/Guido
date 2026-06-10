@@ -4,7 +4,6 @@ import lombok.NonNull;
 import me.googas.api.Requests;
 import me.googas.api.client.Client;
 import me.googas.net.sockets.json.Receptor;
-import me.googas.net.sockets.json.client.JsonClient;
 
 public class SimpleReceptors {
 
@@ -26,11 +25,13 @@ public class SimpleReceptors {
    */
   @Receptor(Requests.Client.DISCONNECTED)
   public boolean disconnected() {
-    JsonClient connection = this.client.getConnection();
-    if (connection != null) {
-      this.client.onDisconnection();
-      return true;
-    }
-    return false;
+    return this.client
+        .getConnection()
+        .map(
+            connection -> {
+              this.client.onDisconnection();
+              return true;
+            })
+        .orElse(false);
   }
 }

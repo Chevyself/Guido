@@ -15,6 +15,7 @@ import me.googas.starbox.scheduler.Scheduler;
 import org.bukkit.Bukkit;
 
 /** Static utilities for guido */
+@Deprecated
 public class Guido {
 
   /** The instance of the guido plugin */
@@ -86,7 +87,7 @@ public class Guido {
 
   @NonNull
   public static CommandManager<CommandContext, BukkitCommand> getManager() {
-    return Guido.getPlugin().getManager();
+    return Guido.getPlugin().getCommandManager();
   }
 
   public static @NonNull BukkitClient getClient() {

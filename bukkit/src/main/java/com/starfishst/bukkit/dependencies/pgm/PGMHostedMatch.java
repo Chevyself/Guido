@@ -34,7 +34,6 @@ public class PGMHostedMatch extends HostedMatch {
   /** The id of the pgm match */
   @NonNull @Getter private final String pgm;
 
-  @Getter private final int playersPerTeam;
   @Getter private final MinecraftTeamSelectionType teamSelectionType;
 
   public PGMHostedMatch(
@@ -43,12 +42,10 @@ public class PGMHostedMatch extends HostedMatch {
       String ladder,
       @NonNull MapInfo map,
       @NonNull String pgm,
-      int playersPerTeam,
       MinecraftTeamSelectionType teamSelectionType) {
     super(id, participants, ladder);
     this.map = map;
     this.pgm = pgm;
-    this.playersPerTeam = playersPerTeam;
     this.teamSelectionType = teamSelectionType;
   }
 
@@ -123,9 +120,5 @@ public class PGMHostedMatch extends HostedMatch {
 
   public int getPlayersPerTeam() {
     return 1;
-  }
-
-  public MinecraftTeamSelectionType getTeamSelectionType() {
-    return null;
   }
 }

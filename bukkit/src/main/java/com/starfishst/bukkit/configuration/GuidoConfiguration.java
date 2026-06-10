@@ -19,11 +19,16 @@ import org.bukkit.plugin.Plugin;
 /** The configuration for the pgm implementation */
 public class GuidoConfiguration {
 
+  @NonNull private static final String CONFIG_NAME = "config.yml";
+
   /** The context in which the server is on */
   @NonNull @Getter private final String context;
   /** The token to connect with the bot */
   @NonNull @Getter private final String token;
-
+  /** The host to connect with the bot */
+  @NonNull @Getter private final String host;
+  /** The port to connect with the bot */
+  @Getter private final int port;
   /** The set of enabled commands */
   @NonNull @Getter private final List<String> commands;
   /** The listener settings of the bot */
@@ -32,16 +37,20 @@ public class GuidoConfiguration {
   public GuidoConfiguration(
       @NonNull String context,
       @NonNull String token,
+      @NonNull String host,
+      int port,
       @NonNull List<String> commands,
       @NonNull List<ModuleSettings> modulesSettings) {
     this.context = context;
     this.token = token;
+    this.host = host;
+    this.port = port;
     this.commands = commands;
     this.modulesSettings = modulesSettings;
   }
 
   public GuidoConfiguration() {
-    this("", "", new ArrayList<>(), new ArrayList<>());
+    this("", "", "localhost", 3366, new ArrayList<>(), new ArrayList<>());
   }
 
   @NonNull
@@ -50,6 +59,8 @@ public class GuidoConfiguration {
     return new GuidoConfiguration(
         section.getString("context", "Bukkit"),
         section.getString("token", "none"),
+        section.getString("host", "localhost"),
+        section.getInt("port", 3366),
         section.getStringList("commands"),
         ModuleSettings.loadAll(section.getConfigurationSection("modules")));
   }
@@ -57,31 +68,21 @@ public class GuidoConfiguration {
   @NonNull
   public static GuidoConfiguration load(@NonNull Plugin plugin)
       throws IOException, InvalidConfigurationException {
-    // TODO add exceptions to fallback
-    String name = "config.yml"; // This could be configurable maybe
-    InputStream resource = plugin.getResource(name);
+    InputStream resource = plugin.getResource(CONFIG_NAME);
     if (resource == null)
-      throw new IllegalArgumentException(plugin + " does not have the resource `" + name + "`");
-    InputStreamReader reader = new InputStreamReader(resource);
-    YamlConfiguration defaults = new YamlConfiguration();
-    try {
+      throw new IllegalArgumentException(
+          plugin + " does not have the resource `" + CONFIG_NAME + "`");
+    try (InputStreamReader reader = new InputStreamReader(resource)) {
+      YamlConfiguration defaults = new YamlConfiguration();
       defaults.load(reader);
-    } catch (InvalidConfigurationException | IOException e) {
-      e.printStackTrace();
+      File file = CoreFiles.getFileOrResource(plugin.getDataFolder().getPath(), "config.yml");
+      YamlConfiguration yaml = new YamlConfiguration();
+      yaml.load(file);
+      yaml.setDefaults(defaults);
+      yaml.options().copyDefaults(true);
+      yaml.save(file);
+      return GuidoConfiguration.load(yaml);
     }
-    try {
-      reader.close();
-    } catch (IOException e) {
-      e.printStackTrace();
-    }
-    // Exception thrown by the method starts here
-    File file = CoreFiles.getFileOrResource(plugin.getDataFolder().getPath(), "config.yml");
-    YamlConfiguration yaml = new YamlConfiguration();
-    yaml.load(file);
-    yaml.setDefaults(defaults);
-    yaml.options().copyDefaults(true);
-    yaml.save(file);
-    return GuidoConfiguration.load(yaml);
   }
 
   @NonNull
