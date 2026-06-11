@@ -95,7 +95,7 @@ public class GuidoBotMain {
   @NonNull private static final String BOT_PROPERTIES_FILE_NAME = "bot.properties";
 
   /**
-   * The main method of the bot. x
+   * The main method of the bot.
    *
    * <p>Arguments include:
    *

@@ -129,16 +129,8 @@ public class MatchCommands {
   public Result game(
       LocaleFile locale,
       GuidoBotRuntime runtime,
-      @Required(name = "game.id", description = "game.id.desc") String id) {
-    return runtime
-        .getLoader()
-        .getMinecraftMatches()
-        .getByRegexId(id)
-        .map(
-            match ->
-                (Result)
-                    new EmbededResult(Matches.getInformation(match, locale, runtime.getLoader())))
-        .orElse(Result.of(locale.get("game.not-found", Maps.singleton("id", id))));
+      @Required(name = "game.id", description = "game.id.desc") MinecraftMatch match) {
+    return new EmbededResult(Matches.getInformation(match, locale, runtime.getLoader()));
   }
 
   @GuidoJdaPermission("guido.finish")

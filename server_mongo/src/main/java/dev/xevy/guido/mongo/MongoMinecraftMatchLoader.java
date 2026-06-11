@@ -82,11 +82,6 @@ public class MongoMinecraftMatchLoader extends SimpleMongoLoader implements Mine
   }
 
   @Override
-  public @NonNull Optional<MongoMinecraftMatch> getByRegexId(@NonNull String pattern) {
-    return this.getBy(Filters.regex("_id", pattern));
-  }
-
-  @Override
   public @NonNull Collection<? extends MinecraftMatch> getParticipating(
       @NonNull UUID id, MatchStatus... statuses) {
     // TODO

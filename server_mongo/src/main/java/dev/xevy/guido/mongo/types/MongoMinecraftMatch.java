@@ -172,6 +172,9 @@ public class MongoMinecraftMatch implements MinecraftMatch {
     if (!this.document.server.isBlank()) {
       builder.addField("Server", this.document.server, true);
     }
+    if (!this.document.map.isBlank()) {
+      builder.addField("Map", this.document.map, true);
+    }
   }
 
   @Override

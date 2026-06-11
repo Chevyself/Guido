@@ -3,8 +3,6 @@ package dev.xevy.guido.mongo.types;
 import dev.xevy.guido.mongo.MongoMinecraftLinksLoader;
 import java.util.Optional;
 import java.util.UUID;
-import java.util.function.Supplier;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 import lombok.NonNull;
 import me.googas.api.links.MinecraftLinkable;
@@ -48,11 +46,6 @@ public class MongoMinecraftLinkable implements MinecraftLinkable {
   @Override
   public @NonNull Optional<UUID> getLinkedUserId() {
     return Optional.ofNullable(this.document.linkedUserId);
-  }
-
-  private boolean noLoader(@NonNull Supplier<String> message) {
-    logger.log(Level.WARNING, message.get(), new IllegalStateException());
-    return false;
   }
 
   @Override

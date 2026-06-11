@@ -24,7 +24,7 @@ import me.googas.bot.api.Guido;
 import me.googas.bot.core.GuidoBotRuntime;
 import me.googas.bot.core.commands.*;
 import me.googas.bot.core.commands.administrative.*;
-import me.googas.bot.core.commands.middleware.EmbededResultHandler;
+import me.googas.bot.core.commands.middleware.EmbedResultHandler;
 import me.googas.bot.core.commands.providers.*;
 import me.googas.bot.core.handlers.GuidoHandler;
 import me.googas.bot.core.loader.GuidoFallbackLoader;
@@ -122,7 +122,7 @@ public final class GuidoBot implements GuidoBotRuntime {
         new MiddlewareRegistry<CommandContext>()
             .addGlobalMiddlewares(
                 new GuidoPermissionChecker(registry.getLanguageHandler(), this.loader),
-                new EmbededResultHandler());
+                new EmbedResultHandler());
     ProvidersRegistry<CommandContext> providersRegistry =
         new ProvidersRegistry<CommandContext>()
             .addProviders(
@@ -147,7 +147,6 @@ public final class GuidoBot implements GuidoBotRuntime {
             .setCommandMetadataParser(new GuidoMetadataParser())
             .build();
     commandManager.parseAndRegisterAll(
-        new StopCommand(),
         new HelpCommand(),
         new LadderCommands(),
         new LangCommands(),

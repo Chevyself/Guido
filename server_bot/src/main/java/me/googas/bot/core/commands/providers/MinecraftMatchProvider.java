@@ -10,6 +10,8 @@ import me.googas.bot.core.GuidoBotRuntime;
 import me.googas.bot.core.util.Lang;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.UUID;
+
 public class MinecraftMatchProvider implements JdaArgumentProvider<MinecraftMatch> {
 
   @NonNull private final GuidoBotRuntime runtime;
@@ -22,12 +24,18 @@ public class MinecraftMatchProvider implements JdaArgumentProvider<MinecraftMatc
   @Override
   public MinecraftMatch fromString(@NonNull String s, @NotNull CommandContext commandContext)
       throws ArgumentProviderException {
-    return runtime
-        .getLoader()
-        .getMinecraftMatches()
-        .getByRegexId(s)
-        .orElseThrow(
-            () -> Lang.getException("invalid.match", Maps.singleton("string", s), commandContext));
+    try {
+      UUID uuid = UUID.fromString(s);
+      return runtime
+              .getLoader()
+              .getMinecraftMatches()
+              .getById(uuid)
+              .orElseThrow(
+                      () -> Lang.getException("invalid.match", Maps.singleton("string", s), commandContext));
+
+    } catch (IllegalArgumentException e) {
+      throw Lang.getException("invalid.uuid", Maps.singleton("string", s), commandContext);
+    }
   }
 
   @Override

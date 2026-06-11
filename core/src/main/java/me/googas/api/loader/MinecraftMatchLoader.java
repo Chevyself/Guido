@@ -15,9 +15,6 @@ public interface MinecraftMatchLoader extends DataLoader {
       @NonNull Collection<? extends MinecraftMatchTeam> teams, @NonNull String ladderName);
 
   @NonNull
-  Optional<? extends MinecraftMatch> getByRegexId(@NonNull String pattern);
-
-  @NonNull
   Collection<? extends MinecraftMatch> getParticipating(
       @NonNull UUID id, @NonNull MatchStatus... statuses);
 

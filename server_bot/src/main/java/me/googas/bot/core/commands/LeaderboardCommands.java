@@ -49,7 +49,7 @@ public class LeaderboardCommands {
                 .put("max", String.valueOf(max))
                 .put("ladder", ladder.getName())));
     Map<Integer, ? extends LeaderboardEntry> leaderboard =
-        loader.getStats().getLeaderboard(Stats.EMPTY_CONTEXT, ladder, page, 10);
+        loader.getStats().getLeaderboard(Stats.EMPTY_CONTEXT, ladder, page, LeaderboardCommands.LIMIT_PER_PAGE);
     leaderboard.forEach(
         (index, data) ->
             builder.append(
@@ -72,7 +72,7 @@ public class LeaderboardCommands {
       @Required(name = "table.stat", description = "table.stat.desc") String stat,
       @Free(name = "table.page", description = "table.page.desc", suggestions = "0") int page) {
     GuidoLoader loader = runtime.getLoader();
-    long max = loader.getStats().maxPageLeaderboard(Stats.EMPTY_CONTEXT, stat, 20);
+    long max = loader.getStats().maxPageLeaderboard(Stats.EMPTY_CONTEXT, stat, LeaderboardCommands.LIMIT_PER_PAGE_RANKING);
     if (page < 0) {
       page = 0;
     }

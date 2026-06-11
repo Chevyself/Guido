@@ -6,12 +6,12 @@ import com.github.chevyself.starbox.result.Result;
 import me.googas.bot.core.commands.types.EmbededResult;
 import org.jetbrains.annotations.NotNull;
 
-public class EmbededResultHandler implements Middleware<CommandContext> {
+public class EmbedResultHandler implements Middleware<CommandContext> {
 
     @Override
     public void next(@NotNull CommandContext context, Result result) {
-        if (result instanceof EmbededResult embeded) {
-            context.getChannel().ifPresent(channel -> channel.sendMessageEmbeds(embeded.build()).queue());
+        if (result instanceof EmbededResult embed) {
+            context.getChannel().ifPresent(channel -> channel.sendMessageEmbeds(embed.build()).queue());
         }
     }
 }
