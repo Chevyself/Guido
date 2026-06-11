@@ -16,11 +16,11 @@ public class MongoMinecraftLinkable implements MinecraftLinkable {
 
   private static final Logger logger = LoggerFactory.getLogger(MongoMinecraftLinkable.class);
 
-  @NonNull private final Document document;
   @NonNull private final MongoMinecraftLinksLoader loader;
+  @NonNull private Document document;
 
   public MongoMinecraftLinkable(
-      @NonNull Document document, @NonNull MongoMinecraftLinksLoader loader) {
+      @NonNull MongoMinecraftLinksLoader loader, @NonNull Document document) {
     this.document = document;
     this.loader = loader;
   }
@@ -62,8 +62,7 @@ public class MongoMinecraftLinkable implements MinecraftLinkable {
   }
 
   public void update(@NonNull String nickname, @NonNull String ip, boolean online) {
-    // TODO
-    // this.loader.update(this, nickname, ip, online);
+    this.loader.update(this, nickname, ip, online).ifPresent(doc -> this.document = doc);
   }
 
   public static class Document {

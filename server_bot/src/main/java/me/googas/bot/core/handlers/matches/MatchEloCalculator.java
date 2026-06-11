@@ -122,6 +122,7 @@ public class MatchEloCalculator implements GuidoHandler {
         (int)
             ((oldElo - this.newElo(oldElo, expected, 0))
                 * ladder.getLoseMultiplier());
+    losersDifference = -losersDifference;
     this.setElo(minecraftLink, stats, winner, ladder, winnersDifference, losersDifference, event);
   }
 
@@ -144,7 +145,7 @@ public class MatchEloCalculator implements GuidoHandler {
           this.runtime
                   .getStatsProvider()
                   .getFor(member)
-                          .decreaseElo(ladder, match.getWinnersDifference());
+                          .decreaseElo(ladder, -match.getWinnersDifference());
         }
       } else {
 
@@ -152,7 +153,7 @@ public class MatchEloCalculator implements GuidoHandler {
           this.runtime
                   .getStatsProvider()
                   .getFor(member)
-                  .increaseElo(ladder, match.getLosersDifference());
+                  .increaseElo(ladder, -match.getLosersDifference());
         }
       }
     }

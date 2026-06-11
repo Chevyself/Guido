@@ -5,13 +5,11 @@ import java.nio.file.Path;
 import java.util.Properties;
 import lombok.Getter;
 import lombok.NonNull;
-import lombok.extern.slf4j.Slf4j;
 import me.googas.server.GuidoServerRuntime;
 import me.googas.starbox.CoreFiles;
 import me.googas.starbox.ProgramArguments;
 import me.googas.starbox.events.ListenerManager;
 
-@Slf4j
 public class GuidoBotMain {
 
   private static class SingletonServerRuntime implements GuidoServerRuntime {

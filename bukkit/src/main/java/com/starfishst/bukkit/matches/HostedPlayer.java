@@ -7,6 +7,7 @@ import lombok.NonNull;
 import me.googas.api.matches.minecraft.MinecraftMatchTeamMember;
 import me.googas.api.utility.ImmutableCollection;
 import org.bukkit.Bukkit;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 
 /** This is basically a minecraft linkable information */
@@ -29,7 +30,10 @@ public class HostedPlayer {
   @NonNull
   public String getNickname() {
     Player player = Bukkit.getPlayer(id);
-    return player == null ? "Offline" : player.getDisplayName();
+    if (player != null) return player.getName();
+    OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(id);
+    if (offlinePlayer != null) return offlinePlayer.getName();
+    return "Offline";
   }
 
   public static Set<HostedPlayer> parse(

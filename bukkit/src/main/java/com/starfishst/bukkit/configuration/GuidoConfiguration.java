@@ -75,7 +75,9 @@ public class GuidoConfiguration {
     try (InputStreamReader reader = new InputStreamReader(resource)) {
       YamlConfiguration defaults = new YamlConfiguration();
       defaults.load(reader);
-      File file = CoreFiles.getFileOrResource(plugin.getDataFolder().getPath(), "config.yml");
+      File file =
+          CoreFiles.getFileOrResource(
+              plugin.getDataFolder().getPath(), "config.yml", plugin.getResource("config.yml"));
       YamlConfiguration yaml = new YamlConfiguration();
       yaml.load(file);
       yaml.setDefaults(defaults);

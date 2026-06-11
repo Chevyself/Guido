@@ -31,7 +31,7 @@ public interface StatsProvider {
     double sum = 0;
     int size = 0;
     for (MinecraftMatchTeam team : match.getTeams()) {
-      if (team == winners) continue;
+      if (team.getId() == winners.getId()) continue;
       for (MinecraftMatchTeamMember member : team.getMembers()) {
         sum += stats.getFor(member).getElo(ladder);
         size++;

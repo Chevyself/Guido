@@ -156,6 +156,7 @@ public class GuidoPlugin extends JavaPlugin implements GuidoBukkitRuntime {
 
   @Override
   public void onEnable() {
+    this.startConnection();
     this.compatibilities.check().getCompatibilities().stream()
         .filter(Compatibility::isEnabled)
         .forEach(
@@ -167,7 +168,6 @@ public class GuidoPlugin extends JavaPlugin implements GuidoBukkitRuntime {
     this.setupStarbox();
     this.loadConfiguration();
     this.registerCommands();
-    this.startConnection();
     super.onEnable();
   }
 

@@ -2,16 +2,21 @@ package me.googas.bot.core.commands;
 
 import com.github.chevyself.starbox.annotations.Command;
 import com.github.chevyself.starbox.annotations.Free;
+import com.github.chevyself.starbox.annotations.Parent;
 import com.github.chevyself.starbox.annotations.Required;
 import com.github.chevyself.starbox.result.Result;
+import java.time.Duration;
 import java.util.Collection;
 import java.util.UUID;
 import me.googas.api.lang.LocaleFile;
+import me.googas.api.links.MinecraftLinkable;
+import me.googas.api.links.NamedMinecraftLinkable;
 import me.googas.api.matches.ladder.Ladder;
 import me.googas.api.matches.queue.QueueResult;
 import me.googas.api.user.UserData;
 import me.googas.api.utility.Maps;
 import me.googas.bot.api.Guido;
+import me.googas.bot.core.GuidoBotRuntime;
 import me.googas.bot.core.commands.middleware.GuidoJdaPermission;
 import me.googas.bot.core.handlers.matches.MatchMakingHandler;
 import me.googas.bot.core.handlers.queue.QueueHandler;
@@ -32,6 +37,7 @@ public class QueueCommands {
    * @param ladder the ladder that the member wants to play
    * @return whether the player joined the queue
    */
+  @Parent
   @Command(
       aliases = {"queue", "play", "jugar"},
       description = "queue.desc")
@@ -60,31 +66,40 @@ public class QueueCommands {
     }
   }
 
-  /**
-   * See the people that is in queue
-   *
-   * @param locale the locale of the sender
-   * @param guild the guild that will create the match
-   * @param ladder the ladder to create the match
-   * @return the people in the queue
-   */
-  @Command(aliases = {"inQueue", "iq", "q"})
-  public Result inQueue(
+  @Command(aliases = {"in", "i"})
+  public Result in(
       LocaleFile locale,
       GuidoGuild guild,
+      GuidoBotRuntime runtime,
       @Required(name = "iq.ladder", description = "iq.ladder.desc") Ladder ladder) {
     Collection<UUID> waiting =
-        Guido.getHandlers().getHandler(QueueHandler.class).getQueue(ladder).getWaiting();
+        runtime.getHandlers().getHandler(QueueHandler.class).getQueue(ladder).getWaiting();
     if (waiting.isEmpty()) {
       return Result.of(locale.get("iq.empty", Maps.singleton("ladder", ladder.getName())));
     } else {
       StringBuilder builder = new StringBuilder();
       builder.append(locale.get("iq.title", Maps.singleton("ladder", ladder.getName())));
-      // TODO
-      // for (MinecraftLinkable queueable : waiting) {
-      //  builder.append("\n - ").append(queueable.getNickname());
-      // }
-      return Result.of(builder.toString());
+      for (NamedMinecraftLinkable minecraft :
+          runtime.getLoader().getMinecraftLinks().getNicknamesFor(waiting)) {
+        builder.append("\n - ").append(minecraft.getNickname());
+      }
+      return Result.of(builder.toString(), Duration.ofSeconds(10));
+    }
+  }
+
+  @Command(aliases = {"force"})
+  @GuidoJdaPermission("force")
+  public Result force(
+      // TODO localize
+      GuidoBotRuntime runtime,
+      @Required(name = "force.user", description = "force.user.desc") MinecraftLinkable minecraft,
+      @Required(name = "force.ladder", description = "force.ladder.desc") Ladder ladder) {
+    QueueResult join =
+        runtime.getHandlers().getHandler(QueueHandler.class).getQueue(ladder).join(minecraft);
+    if (join.isCancelled()) {
+      return Result.of("Cancelled " + join.getReason());
+    } else {
+      return Result.of("Done");
     }
   }
 

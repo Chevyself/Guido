@@ -64,10 +64,10 @@ public class Matches {
     if (winners == null) {
       return team.getName() + " (+0)";
     }
-    if (team.equals(winners)) {
+    if (team.getId() == winners.getId()) {
       return team.getName() + " (+" + match.getWinnersDifference() + ")";
     } else {
-      return team.getName() + " (-" + match.getLosersDifference() + ")";
+      return team.getName() + " (" + match.getLosersDifference() + ")";
     }
   }
 

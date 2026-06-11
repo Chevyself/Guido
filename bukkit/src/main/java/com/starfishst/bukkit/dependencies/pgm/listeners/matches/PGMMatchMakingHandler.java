@@ -66,7 +66,7 @@ public class PGMMatchMakingHandler implements GuidoModule {
   @NonNull private final GuidoBukkitRuntime runtime;
   /** The team creators for matches */
   @NonNull private final Map<MinecraftTeamSelectionType, TeamCreation> creator;
-  private final int secondsToStart;
+  public static final int secondsToStart = 120;
 
   public PGMMatchMakingHandler(@NonNull GuidoBukkitRuntime runtime) {
     this.runtime = runtime;
@@ -74,7 +74,6 @@ public class PGMMatchMakingHandler implements GuidoModule {
         Maps.builder(MinecraftTeamSelectionType.RANDOM, (TeamCreation) new RandomTeamCreation(runtime))
             .put(MinecraftTeamSelectionType.PICK, new PickTeamSelection(runtime))
             .build();
-    this.secondsToStart = getSettings().getInt("seconds-to-start", 120);
   }
 
   /**
@@ -168,7 +167,6 @@ public class PGMMatchMakingHandler implements GuidoModule {
                       ladderName,
                       random,
                       loaded.getId(),
-                      ladder.playersPerTeam(),
                       ladder.getTeamSelectionType());
       this.matches.add(hostedMatch);
       Requests.MinecraftMatches.updateStatus(hostedMatch.getId(), MatchStatus.READY)

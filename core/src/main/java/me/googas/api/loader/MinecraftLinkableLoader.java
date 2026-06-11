@@ -1,9 +1,12 @@
 package me.googas.api.loader;
 
+import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import lombok.NonNull;
 import me.googas.api.links.MinecraftLinkable;
+import me.googas.api.links.NamedMinecraftLinkable;
 
 public interface MinecraftLinkableLoader extends DataLoader {
   @NonNull
@@ -21,4 +24,7 @@ public interface MinecraftLinkableLoader extends DataLoader {
   @NonNull
   MinecraftLinkable updateOrCreate(
       @NonNull UUID minecraftId, @NonNull String nickname, @NonNull String ip, boolean online);
+
+  @NonNull
+  List<? extends NamedMinecraftLinkable> getNicknamesFor(@NonNull Collection<UUID> ids);
 }

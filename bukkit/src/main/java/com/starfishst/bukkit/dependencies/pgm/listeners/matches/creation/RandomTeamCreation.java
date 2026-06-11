@@ -10,7 +10,6 @@ import java.util.concurrent.ExecutionException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import lombok.NonNull;
-import lombok.extern.slf4j.Slf4j;
 import me.googas.api.Requests;
 import me.googas.api.immutable.ImmutableMinecraftMatchTeam;
 import me.googas.api.immutable.ImmutableMinecraftMatchTeamMember;
@@ -25,7 +24,6 @@ import tc.oc.pgm.start.StartMatchModule;
 import tc.oc.pgm.teams.Team;
 
 /** Creates teams by randomly selecting players */
-@Slf4j
 public class RandomTeamCreation implements TeamCreation {
 
   @NonNull
