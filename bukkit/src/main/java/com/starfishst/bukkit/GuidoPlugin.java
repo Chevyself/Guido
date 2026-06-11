@@ -27,6 +27,7 @@ import java.util.logging.Level;
 import lombok.Getter;
 import lombok.NonNull;
 import me.googas.api.utility.Lots;
+import me.googas.bot.GuidoBot;
 import me.googas.starbox.BukkitYamlLanguage;
 import me.googas.starbox.Starbox;
 import me.googas.starbox.compatibilities.Compatibility;
@@ -162,6 +163,16 @@ public class GuidoPlugin extends JavaPlugin implements GuidoBukkitRuntime {
 
   @Override
   public void onEnable() {
+    this.loadConfiguration();
+
+    boolean runningBungee = Bukkit.spigot().getConfig().getBoolean("spigot.settings.bungeecord");
+    if (!runningBungee) {
+      new GuidoBot(
+              new BukkitServerRuntime(this, this.getConfiguration()),
+              new BotConfigProxy(this.getConfiguration().getBotConfiguration()))
+          .start();
+    }
+
     this.startConnection();
     this.compatibilities.check().getCompatibilities().stream()
         .filter(Compatibility::isEnabled)
@@ -172,7 +183,6 @@ public class GuidoPlugin extends JavaPlugin implements GuidoBukkitRuntime {
               this.commandManager.getProvidersRegistry().addProviders(compatibility.getProviders());
             });
     this.setupStarbox();
-    this.loadConfiguration();
     this.registerCommands();
     super.onEnable();
   }

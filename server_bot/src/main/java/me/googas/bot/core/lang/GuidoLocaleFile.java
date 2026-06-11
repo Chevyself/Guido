@@ -9,11 +9,12 @@ import java.util.Objects;
 import java.util.Properties;
 import lombok.NonNull;
 import me.googas.api.lang.LocaleFile;
-import me.googas.starbox.CoreFiles;
+import me.googas.server.GuidoServerRuntime;
 
 /** The locale file for the guido bot. It is loaded using {@link Properties} */
 public class GuidoLocaleFile implements LocaleFile {
 
+  @NonNull private final GuidoServerRuntime runtime;
   /** The actual file that this is using */
   @NonNull private final File file;
   /** The properties used to getId the strings */
@@ -25,7 +26,9 @@ public class GuidoLocaleFile implements LocaleFile {
    * @param file the properties file to getId the properties
    * @throws IOException in case that the properties file cannot be read
    */
-  public GuidoLocaleFile(@NonNull File file) throws IOException {
+  public GuidoLocaleFile(@NonNull GuidoServerRuntime runtime, @NonNull File file)
+      throws IOException {
+    this.runtime = runtime;
     this.file = file;
     Reader reader = new FileReader(this.file);
     this.properties.load(reader);
@@ -37,7 +40,7 @@ public class GuidoLocaleFile implements LocaleFile {
   public void copyDefaults() {
     try {
       Properties defaults = new Properties();
-      defaults.load(CoreFiles.getResource("lang/" + this.getLang() + ".properties"));
+      defaults.load(runtime.getResource("lang/" + this.getLang() + ".properties"));
       for (Object key : defaults.keySet()) {
         if (this.properties.get(key) == null) {
           this.properties.put(key, defaults.get(key));

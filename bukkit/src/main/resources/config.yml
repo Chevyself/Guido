@@ -16,6 +16,13 @@ commands:
   - fly
   - ping
   - gamemode
+## Config for standalone server running bot
+bot:
+  mongo-uri: "mongodb://localhost:27017"
+  mongo-database: "guido"
+  token: "https://discord.com/developers/"
+  timeout: 10000
+  guild: 1511402659767128291
 ## The settings for certain listeners
 modules:
   #  <---------------------------------------------------------------------------------------->

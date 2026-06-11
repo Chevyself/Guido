@@ -23,24 +23,69 @@
                 <version>3.2.1</version>
                 <executions>
                     <execution>
+                        <id>shade-light</id>
                         <phase>package</phase>
                         <goals>
                             <goal>shade</goal>
                         </goals>
                         <configuration>
-                            <filters>
-                                <filter>
-                                    <artifact>*:*</artifact>
-                                </filter>
-                            </filters>
                             <createDependencyReducedPom>false</createDependencyReducedPom>
                             <outputFile>../output/Guido-${project.artifactId}.jar</outputFile>
                             <artifactSet>
-                                <excludes>
-                                    <exclude>META-INF/**</exclude>
-                                </excludes>
                                 <includes>
                                     <include>com.starfishst.guido:core</include>
+                                    <include>com.starfishst.guido:bukkit_commons</include>
+                                    <include>com.starfishst.guido:bukkit_pgm</include>
+                                    <include>net.dv8tion:JDA</include>
+                                </includes>
+                            </artifactSet>
+                        </configuration>
+                    </execution>
+
+                    <execution>
+                        <id>shade-fat</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>shade</goal>
+                        </goals>
+                        <configuration>
+                            <createDependencyReducedPom>false</createDependencyReducedPom>
+                            <outputFile>../output/Guido-${project.artifactId}-standalone.jar</outputFile>
+                            <artifactSet>
+                                <includes>
+                                    <!-- Guido modules -->
+                                    <include>com.starfishst.guido:core</include>
+                                    <include>com.starfishst.guido:bukkit_commons</include>
+                                    <include>com.starfishst.guido:bukkit_pgm</include>
+                                    <include>com.starfishst.guido:server_bot</include>
+                                    <include>com.starfishst.guido:server_commons</include>
+                                    <include>com.starfishst.guido:server_mongo</include>
+                                    <!-- JDA and its deps -->
+                                    <include>net.dv8tion:JDA</include>
+                                    <include>org.slf4j:slf4j-api</include>
+                                    <include>com.neovisionaries:nv-websocket-client</include>
+                                    <include>com.squareup.okhttp3:okhttp</include>
+                                    <include>com.squareup.okio:okio</include>
+                                    <include>org.jetbrains.kotlin:kotlin-stdlib-common</include>
+                                    <include>org.jetbrains.kotlin:kotlin-stdlib</include>
+                                    <include>org.jetbrains:annotations</include>
+                                    <include>club.minnced:opus-java</include>
+                                    <include>club.minnced:opus-java-api</include>
+                                    <include>net.java.dev.jna:jna</include>
+                                    <include>club.minnced:opus-java-natives</include>
+                                    <include>org.apache.commons:commons-collections4</include>
+                                    <include>net.sf.trove4j:trove4j</include>
+                                    <include>com.fasterxml.jackson.core:jackson-core</include>
+                                    <include>com.fasterxml.jackson.core:jackson-databind</include>
+                                    <include>com.fasterxml.jackson.core:jackson-annotations</include>
+                                    <!-- MongoDB and its deps -->
+                                    <include>org.mongodb:mongodb-driver-sync</include>
+                                    <include>org.mongodb:bson</include>
+                                    <include>org.mongodb:mongodb-driver-core</include>
+                                    <include>org.mongodb:bson-record-codec</include>
+                                    <!-- JDA related dependencies not provided by Bukkit or Starbox -->
+                                    <include>com.github.chevyself.starbox-commands:jda</include>
+                                    <include>me.googas.starbox:jda</include>
                                 </includes>
                             </artifactSet>
                         </configuration>
@@ -79,17 +124,25 @@
                 </exclusion>
             </exclusions>
         </dependency>
+        <!-- Bukkit commons -->
         <dependency>
             <groupId>com.starfishst.guido</groupId>
             <artifactId>bukkit_commons</artifactId>
             <version>1.2.1</version>
             <scope>compile</scope>
         </dependency>
+        <!-- PGM, Events -->
         <dependency>
             <groupId>com.starfishst.guido</groupId>
             <artifactId>bukkit_pgm</artifactId>
             <version>1.2.1</version>
             <scope>compile</scope>
+        </dependency>
+        <!-- Server bot -->
+        <dependency>
+            <groupId>com.starfishst.guido</groupId>
+            <artifactId>server_bot</artifactId>
+            <version>1.2.1</version>
         </dependency>
     </dependencies>
 </project>

@@ -40,6 +40,7 @@ public class GuidoLanguageHandler implements JdaMessagesProvider, GuidoHandler {
       try {
         this.files.add(
             new GuidoLocaleFile(
+                runtime,
                 CoreFiles.getFileOrResource(
                     runtime.currentDirectory() + "/assets/lang/" + lang + ".properties",
                     runtime.getResource("lang/" + lang + ".properties"))));

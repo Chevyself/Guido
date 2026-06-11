@@ -2,11 +2,7 @@ package dev.xevy.guido.bukkit.pgm;
 
 import dev.xevy.bukkit.HostedMatch;
 import dev.xevy.bukkit.HostedPlayer;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
 import lombok.Getter;
 import lombok.NonNull;
@@ -18,6 +14,7 @@ import org.bukkit.entity.Player;
 import tc.oc.pgm.api.PGM;
 import tc.oc.pgm.api.map.MapInfo;
 import tc.oc.pgm.api.match.Match;
+import tc.oc.pgm.api.party.Competitor;
 import tc.oc.pgm.api.party.Party;
 import tc.oc.pgm.teams.Team;
 
@@ -70,15 +67,10 @@ public class PGMHostedMatch extends HostedMatch {
     return false;
   }
 
-  /**
-   * Get the id of the team that matches the pgm team
-   *
-   * @param pgmTeam the id of the pgm team
-   * @return the id of the team that matches the pgm team
-   */
-  public int getTeamId(String pgmTeam) {
-    if (pgmTeam == null) return -1;
-    return this.teams.get(pgmTeam).getId();
+  public int getTeamId(Competitor competitor) {
+    if (competitor == null) return -1;
+    MinecraftMatchTeam team = this.teams.get(competitor.getId());
+    return team == null ? -1 : team.getId();
   }
 
   /**

@@ -26,42 +26,67 @@ public class GuidoConfiguration {
   @NonNull @Getter private final String token;
   /** The host to connect with the bot */
   @NonNull @Getter private final String host;
+
+  @NonNull @Getter private final String botArguments;
   /** The port to connect with the bot */
   @Getter private final int port;
+
+  @NonNull @Getter private final GuidoBukkitBotConfiguration botConfiguration;
   /** The set of enabled commands */
   @NonNull @Getter private final List<String> commands;
   /** The listener settings of the bot */
-  @NonNull @Getter private final List<dev.xevy.bukkit.ModuleSettings> modulesSettings;
+  @NonNull @Getter private final List<ModuleSettings> modulesSettings;
 
   public GuidoConfiguration(
       @NonNull String context,
       @NonNull String token,
       @NonNull String host,
+      @NonNull String botArguments,
       int port,
+      @NonNull GuidoBukkitBotConfiguration botConfiguration,
       @NonNull List<String> commands,
-      @NonNull List<dev.xevy.bukkit.ModuleSettings> modulesSettings) {
+      @NonNull List<ModuleSettings> modulesSettings) {
     this.context = context;
     this.token = token;
     this.host = host;
+    this.botArguments = botArguments;
     this.port = port;
+    this.botConfiguration = botConfiguration;
     this.commands = commands;
     this.modulesSettings = modulesSettings;
   }
 
   public GuidoConfiguration() {
-    this("", "", "localhost", 3366, new ArrayList<>(), new ArrayList<>());
+    this(
+        "",
+        "",
+        "localhost",
+        "",
+        3366,
+        new GuidoBukkitBotConfiguration(),
+        new ArrayList<>(),
+        new ArrayList<>());
   }
 
   @NonNull
   public static GuidoConfiguration load(ConfigurationSection section) {
     if (section == null) return new GuidoConfiguration();
+    int port = section.getInt("port", 3366);
     return new GuidoConfiguration(
         section.getString("context", "Bukkit"),
         section.getString("token", "none"),
         section.getString("host", "localhost"),
-        section.getInt("port", 3366),
+        section.getString("bot-arguments", ""),
+        port,
+        new GuidoBukkitBotConfiguration(
+            section.getString("bot.mongo-uri", "mongodb://localhost:27017"),
+            section.getString("bot.mongo-database", "guido"),
+            section.getString("bot.token", "https://discord.com/developers/"),
+            port,
+            section.getLong("bot.timeout", 10000),
+            section.getLong("bot.guild", 1511402659767128291L)),
         section.getStringList("commands"),
-        dev.xevy.bukkit.ModuleSettings.loadAll(section.getConfigurationSection("modules")));
+        ModuleSettings.loadAll(section.getConfigurationSection("modules")));
   }
 
   @NonNull
@@ -87,10 +112,10 @@ public class GuidoConfiguration {
   }
 
   @NonNull
-  public dev.xevy.bukkit.ModuleSettings getModulesSettings(@NonNull GuidoModule module) {
-    for (dev.xevy.bukkit.ModuleSettings settings : this.getModulesSettings()) {
+  public ModuleSettings getModulesSettings(@NonNull GuidoModule module) {
+    for (ModuleSettings settings : this.getModulesSettings()) {
       if (settings.getName().equalsIgnoreCase(module.getName())) return settings;
     }
-    return new dev.xevy.bukkit.ModuleSettings(module.getName(), new HashMap<>(), null);
+    return new ModuleSettings(module.getName(), new HashMap<>(), null);
   }
 }

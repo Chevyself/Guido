@@ -279,7 +279,12 @@ public class PGMMatchMakingHandler extends AbstractGuidoModule {
     }
     PGMHostedMatch hosted = this.getMatchByPgm(event.getMatch().getId());
     if (hosted == null) return;
-    int winnersId = hosted.getTeamId(this.getWinnersId(event));
+    Competitor winners = this.getWinners(event);
+    int winnersId = hosted.getTeamId(winners);
+    if (winnersId == -1) {
+      logger.severe("Failed to find id for winners in " + event.getWinners());
+      return;
+    }
       Requests.MinecraftMatches.onFinish(hosted.getId(), winnersId).future(connection);
       this.readyToHost(connection);
       this.matches.remove(hosted);
@@ -293,9 +298,9 @@ public class PGMMatchMakingHandler extends AbstractGuidoModule {
    * @param event the event of a match finishing
    * @return the id of the winners of the match
    */
-  public String getWinnersId(@NonNull MatchFinishEvent event) {
+  public Competitor getWinners(@NonNull MatchFinishEvent event) {
     for (Competitor winner : event.getWinners()) {
-      return winner.getId();
+      return winner;
     }
     return null;
   }
