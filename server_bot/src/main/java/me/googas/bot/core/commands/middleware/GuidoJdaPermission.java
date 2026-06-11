@@ -1,9 +1,8 @@
 package me.googas.bot.core.commands.middleware;
 
-import lombok.NonNull;
-
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
+import lombok.NonNull;
 
 @Retention(RetentionPolicy.RUNTIME)
 public @interface GuidoJdaPermission {

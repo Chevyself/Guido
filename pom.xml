@@ -19,6 +19,7 @@
         <module>server_commons</module>
         <module>server_bot</module>
         <module>server_mongo</module>
+        <module>server_mc-cmd</module>
     </modules>
 
     <build>
@@ -59,6 +60,13 @@
         <lombok.version>1.18.30</lombok.version>
         <starbox-commands.version>1b75b68e7c</starbox-commands.version>
     </properties>
+
+    <repositories>
+        <repository>
+            <id>jitpack.io</id>
+            <url>https://jitpack.io</url>
+        </repository>
+    </repositories>
 
     <dependencyManagement>
         <dependencies>

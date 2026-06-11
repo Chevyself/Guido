@@ -8,6 +8,7 @@ import com.github.chevyself.starbox.bungee.context.CommandContext;
 import com.github.chevyself.starbox.bungee.middleware.BungeeResultHandlingMiddleware;
 import com.github.chevyself.starbox.registry.MiddlewareRegistry;
 import com.github.chevyself.starbox.registry.ProvidersRegistry;
+import dev.xevy.guido.mc.LinkCommand;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -20,10 +21,11 @@ import me.googas.api.utility.Lots;
 import me.googas.bot.GuidoBot;
 import me.googas.bot.api.Guido;
 import me.googas.bungee.commands.GuidoCommands;
-import me.googas.bungee.commands.LinkCommand;
 import me.googas.bungee.commands.ServerCommands;
 import me.googas.bungee.commands.providers.BungeeLocaleFileProvider;
 import me.googas.bungee.commands.providers.JsonClientProvider;
+import me.googas.bungee.commands.providers.MinecraftPlayerProvider;
+import me.googas.bungee.commands.providers.MinecraftResultProviderExtraArgumentProvider;
 import me.googas.bungee.configuration.BungeeConfiguration;
 import me.googas.bungee.configuration.GuidoBungeeConfiguration;
 import me.googas.bungee.configuration.GuidoServer;
@@ -59,6 +61,9 @@ public class GuidoPlugin extends Plugin implements GuidoBungeeRuntime {
   private final BungeeLanguageHandler languageHandler =
       new BungeeLanguageHandler().loadResources(this, "en");
 
+  @NonNull
+  private final BungeeResultProvider resultProvider = new BungeeResultProvider(languageHandler);
+
   /** The command manager */
   @Getter
   private final @NonNull CommandManager<CommandContext, BungeeCommand> manager =
@@ -69,7 +74,11 @@ public class GuidoPlugin extends Plugin implements GuidoBungeeRuntime {
                   .addGlobalMiddleware(new BungeeResultHandlingMiddleware()))
           .setProvidersRegistry(
               new ProvidersRegistry<CommandContext>()
-                  .addProviders(new BungeeLocaleFileProvider(), new JsonClientProvider()))
+                  .addProviders(
+                      new BungeeLocaleFileProvider(),
+                      new JsonClientProvider(),
+                      new MinecraftPlayerProvider(),
+                      new MinecraftResultProviderExtraArgumentProvider(resultProvider)))
           .build();
   /** The bungeeConfiguration that the plugin will use */
   @NonNull @Getter private BungeeConfiguration configuration = loadConfiguration();

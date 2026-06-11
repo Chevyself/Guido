@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
 import lombok.Getter;
 import lombok.NonNull;
 import me.googas.api.utility.Lots;
@@ -29,7 +28,7 @@ public class GuidoHandlerRegistry {
 
   @NonNull private static final Logger logger = LoggerFactory.getLogger(GuidoHandlerRegistry.class);
 
-    /** Handlers that must be registered first */
+  /** Handlers that must be registered first */
   @NonNull private final Set<GuidoHandler> primaryHandlers;
 
   @NonNull private final Set<GuidoHandler> defaultHandlers;
@@ -37,7 +36,7 @@ public class GuidoHandlerRegistry {
   @NonNull @Getter private final Set<GuidoHandler> registered = new HashSet<>();
 
   public GuidoHandlerRegistry(@NonNull GuidoBotRuntime runtime) {
-      this.primaryHandlers = Set.of(new GuidoLanguageHandler(runtime));
+    this.primaryHandlers = Set.of(new GuidoLanguageHandler(runtime));
     this.defaultHandlers =
         Lots.set(
             new DeployHandler(),
