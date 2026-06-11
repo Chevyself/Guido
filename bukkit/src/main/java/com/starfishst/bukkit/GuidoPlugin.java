@@ -6,18 +6,20 @@ import com.github.chevyself.starbox.bukkit.BukkitAdapter;
 import com.github.chevyself.starbox.bukkit.commands.BukkitCommand;
 import com.github.chevyself.starbox.bukkit.context.CommandContext;
 import com.github.chevyself.starbox.registry.ProvidersRegistry;
-import com.starfishst.bukkit.client.BukkitClient;
 import com.starfishst.bukkit.commands.FlyCommand;
 import com.starfishst.bukkit.commands.GameModeCommand;
-import com.starfishst.bukkit.commands.GuidoCommand;
 import com.starfishst.bukkit.commands.SudoCommand;
 import com.starfishst.bukkit.commands.TeleportCommand;
 import com.starfishst.bukkit.commands.TestCommands;
 import com.starfishst.bukkit.commands.providers.BukkitLocaleFileProvider;
 import com.starfishst.bukkit.commands.providers.GameModeProvider;
-import com.starfishst.bukkit.configuration.GuidoConfiguration;
-import com.starfishst.bukkit.dependencies.GuidoCompatibilities;
-import com.starfishst.bukkit.lang.BukkitLanguageHandler;
+import com.starfishst.bukkit.commands.providers.GuidoBukkitRuntimeProvider;
+import dev.xevy.bukkit.GuidoBukkitRuntime;
+import dev.xevy.bukkit.GuidoCommand;
+import dev.xevy.bukkit.GuidoConfiguration;
+import dev.xevy.bukkit.client.BukkitClient;
+import dev.xevy.bukkit.lang.BukkitLanguageHandler;
+import dev.xevy.guido.bukkit.GuidoCompatibilities;
 import java.io.IOException;
 import java.util.Objects;
 import java.util.Set;
@@ -34,6 +36,7 @@ import me.googas.starbox.scheduler.Scheduler;
 import me.googas.starbox.time.StarboxBukkitScheduler;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.InvalidConfigurationException;
+import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitScheduler;
 
@@ -48,7 +51,7 @@ public class GuidoPlugin extends JavaPlugin implements GuidoBukkitRuntime {
   /** The language handler for localized messages */
   @NonNull @Getter
   private final BukkitLanguageHandler bukkitLanguageHandler =
-      new BukkitLanguageHandler().loadResources(this, "en");
+      new BukkitLanguageHandler(this).loadResources(this, "en");
 
   /** The command manager that the implementation is using to register commands */
   @Getter
@@ -57,7 +60,10 @@ public class GuidoPlugin extends JavaPlugin implements GuidoBukkitRuntime {
           .setMessagesProvider(this.bukkitLanguageHandler)
           .setProvidersRegistry(
               new ProvidersRegistry<CommandContext>()
-                  .addProviders(new BukkitLocaleFileProvider(), new GameModeProvider()))
+                  .addProviders(
+                      new BukkitLocaleFileProvider(),
+                      new GameModeProvider(),
+                      new GuidoBukkitRuntimeProvider(this)))
           .build();
   /** The set of commands that the implementation is using */
   @NonNull
@@ -179,6 +185,11 @@ public class GuidoPlugin extends JavaPlugin implements GuidoBukkitRuntime {
   @NonNull
   public BukkitLanguageHandler getLanguageHandler() {
     return this.bukkitLanguageHandler;
+  }
+
+  @Override
+  public @NonNull Plugin getPlugin() {
+    return this;
   }
 
   @Override

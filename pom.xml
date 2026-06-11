@@ -62,6 +62,12 @@
     </properties>
 
     <repositories>
+        <!-- Bukkit -->
+        <repository>
+            <id>spigot-repo</id>
+            <url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
+        </repository>
+        <!-- Jitpack -->
         <repository>
             <id>jitpack.io</id>
             <url>https://jitpack.io</url>

@@ -1,0 +1,387 @@
+package dev.xevy.guido.bukkit.pgm.listeners.matches;
+
+import com.github.chevyself.starbox.bukkit.commands.BukkitAnnotatedCommand;
+import com.github.chevyself.starbox.bukkit.commands.BukkitCommand;
+import com.github.chevyself.starbox.bukkit.utils.BukkitUtils;
+import dev.xevy.bukkit.AbstractGuidoModule;
+import dev.xevy.bukkit.GuidoBukkitRuntime;
+import dev.xevy.bukkit.HostedPlayer;
+import dev.xevy.bukkit.util.ServerUtil;
+import dev.xevy.guido.bukkit.pgm.PGMHostedMatch;
+import dev.xevy.guido.bukkit.pgm.commands.ReadyCommand;
+import dev.xevy.guido.bukkit.pgm.listeners.matches.creation.PickTeamSelection;
+import dev.xevy.guido.bukkit.pgm.listeners.matches.creation.RandomTeamCreation;
+import dev.xevy.guido.bukkit.pgm.listeners.matches.creation.TeamCreation;
+
+import java.util.*;
+import java.util.concurrent.ExecutionException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+import lombok.Getter;
+import lombok.NonNull;
+import me.googas.api.Requests;
+import me.googas.api.immutable.ImmutableLadder;
+import me.googas.api.immutable.ImmutableMinecraftMatch;
+import me.googas.api.matches.MatchStatus;
+import me.googas.api.matches.MinecraftTeamSelectionType;
+import me.googas.api.matches.ladder.Ladder;
+import me.googas.api.utility.Maps;
+import me.googas.api.utility.RandomUtils;
+import me.googas.net.sockets.json.ParamName;
+import me.googas.net.sockets.json.Receptor;
+import me.googas.net.sockets.json.client.JsonClient;
+import org.bukkit.Bukkit;
+import org.bukkit.command.CommandSender;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
+import tc.oc.pgm.api.PGM;
+import tc.oc.pgm.api.map.MapInfo;
+import tc.oc.pgm.api.match.Match;
+import tc.oc.pgm.api.match.MatchPhase;
+import tc.oc.pgm.api.match.event.MatchFinishEvent;
+import tc.oc.pgm.api.match.event.MatchStartEvent;
+import tc.oc.pgm.api.party.Competitor;
+import tc.oc.pgm.api.party.Party;
+import tc.oc.pgm.api.player.MatchPlayer;
+import tc.oc.pgm.api.player.event.MatchPlayerAddEvent;
+import tc.oc.pgm.events.PlayerParticipationStartEvent;
+import tc.oc.pgm.restart.RestartManager;
+import tc.oc.pgm.teams.Team;
+
+/** Creates matches for the bot */
+public class PGMMatchMakingHandler extends AbstractGuidoModule {
+
+  @NonNull private static final Logger logger = Logger.getLogger(PGMMatchMakingHandler.class.getName());
+
+  /** The list of matches hosted by the server */
+  @NonNull @Getter private final List<PGMHostedMatch> matches = new ArrayList<>();
+  /**
+   * The set of uuids of players to ignore in {@link
+   * #onParticipationStart(PlayerParticipationStartEvent)}
+   */
+  @NonNull private final Set<UUID> ignore = new HashSet<>();
+
+  /** The team creators for matches */
+  @NonNull private final Map<MinecraftTeamSelectionType, TeamCreation> creator;
+  public static final int secondsToStart = 120;
+
+  public PGMMatchMakingHandler(@NonNull GuidoBukkitRuntime runtime) {
+    super(runtime);
+    this.creator =
+        Maps.builder(MinecraftTeamSelectionType.RANDOM, (TeamCreation) new RandomTeamCreation(runtime))
+            .put(MinecraftTeamSelectionType.PICK, new PickTeamSelection(runtime))
+            .build();
+  }
+
+  /**
+   * Checks whether this matchmaker can host a match
+   *
+   * @param match the match querying to be hosted
+   * @return true if the match can be hosted
+   */
+  @Receptor(Requests.MatchServer.CAN_HOST)
+  public boolean canHost(
+      @ParamName(Requests.MatchServer.CAN_HOST_MATCH) ImmutableMinecraftMatch match) {
+    String ladderName = match.getLadderName();
+    Match pgmMatch = this.getCurrentPgm();
+    if (!this.check(pgmMatch)) return false;
+    return runtime.getConnection()
+            .map((connection) -> {
+              return Requests.MinecraftMatches.getLadder(ladderName).future(connection)
+                      .join();
+            })
+            .map(ladder -> {
+              return !this.getSuitableMaps(ladder).isEmpty();
+            })
+            .orElse(false);
+  }
+
+  public boolean check(Match pgmMatch) {
+    return PGM.get().isEnabled()
+        && !RestartManager.isQueued()
+        && (pgmMatch == null
+            || pgmMatch.getPhase() == MatchPhase.FINISHED
+            || !this.isMatch(pgmMatch));
+  }
+
+  /**
+   * Check whether a pgm match is a simple match
+   *
+   * @param match the pgm match to check
+   * @return true if the match is a host
+   */
+  private boolean isMatch(@NonNull Match match) {
+    return this.getMatchByPgm(match.getId()) != null;
+  }
+
+  /**
+   * getId all the map that are suitable for a ladder
+   *
+   * @param ladder the ladder
+   * @return the list of suitable maps
+   */
+  @NonNull
+  public List<MapInfo> getSuitableMaps(@NonNull Ladder ladder) {
+    List<MapInfo> suitableMaps = new ArrayList<>();
+    Iterator<MapInfo> iterator = PGM.get().getMapLibrary().getMaps();
+    while (iterator.hasNext()) {
+      MapInfo map = iterator.next();
+      Collection<Integer> maxPlayers = map.getMaxPlayers();
+      if (maxPlayers.size() == 2) {
+        int sum = 0;
+        int required = ladder.playersPerTeam() * 2;
+        for (int maxPlayer : maxPlayers) sum += maxPlayer;
+        if (sum == required) suitableMaps.add(map);
+      }
+    }
+    return suitableMaps;
+  }
+
+  /**
+   * Reads host requests
+   *
+   * @param match the match requesting to be hosted
+   * @return the ip of the server if it can be hosted
+   */
+  @Receptor(Requests.MatchServer.HOST)
+  public String host(@ParamName(Requests.MatchServer.HOST_MATCH) ImmutableMinecraftMatch match) {
+    if (!this.canHost(match)) return null;
+    String ladderName = match.getLadderName();
+    PGM pgm = PGM.get();
+    JsonClient connection = runtime.getConnection().orElse(null);
+    if (connection == null) return null;
+    try {
+      ImmutableLadder ladder = Requests.MinecraftMatches.getLadder(ladderName).future(connection).get();
+      if (ladder == null) return null;
+      List<MapInfo> maps = this.getSuitableMaps(ladder);
+      if (maps.isEmpty()) return null;
+      MapInfo random = RandomUtils.getRandom(maps);
+      Match loaded = pgm.getMatchManager().createMatch(random.getId()).get();
+      PGMHostedMatch hostedMatch =
+              new PGMHostedMatch(
+                      match.getId(),
+                      HostedPlayer.parse(match.getParticipants()),
+                      ladderName,
+                      random,
+                      loaded.getId(),
+                      ladder.getTeamSelectionType());
+      this.matches.add(hostedMatch);
+      Requests.MinecraftMatches.updateStatus(hostedMatch.getId(), MatchStatus.READY)
+              .future(connection)
+              .get();
+      Requests.MinecraftMatches.setMap(hostedMatch.getId(), random.getName()).future(connection)
+              .whenComplete((ignoredVoid, e) -> {
+                if (e != null) logger.log(Level.WARNING, "Failed to update map", e);
+              });
+      runtime.sync(() -> this.getTeamCreation(hostedMatch).createTeams(this, hostedMatch, loaded));
+      return ServerUtil.getIp();
+    } catch (ExecutionException | InterruptedException e) {
+      logger.log(Level.SEVERE, "Failed to host match", e);
+      return null;
+    }
+  }
+
+  @NonNull
+  public TeamCreation getTeamCreation(PGMHostedMatch hostedMatch) {
+    TeamCreation teamCreation = this.creator.get(hostedMatch.getTeamSelectionType());
+    if (teamCreation == null) return this.creator.get(MinecraftTeamSelectionType.RANDOM);
+    return teamCreation;
+  }
+
+  /**
+   * Get a hosted match by its id
+   *
+   * @param matchId the id of the match to getId
+   * @return the match if found null otherwise
+   */
+  public PGMHostedMatch getMatch(@NonNull UUID matchId) {
+    for (PGMHostedMatch match : this.matches) {
+      if (match.getId().equals(matchId)) return match;
+    }
+    return null;
+  }
+
+  /**
+   * Get the match where a command sender is participating
+   *
+   * @param sender the sender to getId the match
+   */
+  public PGMHostedMatch getMatch(@NonNull CommandSender sender) {
+    for (PGMHostedMatch match : this.matches) {
+      if (match.isParticipating(sender)) return match;
+    }
+    Match match = PGM.get().getMatchManager().getMatch(sender);
+    if (match != null) {
+      return this.getMatchByPgm(match.getId());
+    }
+    return null;
+  }
+
+  /** Called when the server is ready to host a match */
+  public void readyToHost(@NonNull JsonClient client) {
+    Requests.MatchServer.serverReady().future(client)
+            .whenComplete((ignoredVoid, e) -> {
+              if (e != null) logger.log(Level.WARNING, "Failed to send ready", e);
+            });
+  }
+
+  /**
+   * Listen to when a player joins the map to add them to its team
+   *
+   * @param event the event of
+   */
+  @EventHandler(priority = EventPriority.LOWEST)
+  public void onMatchPlayerAdded(MatchPlayerAddEvent event) {
+    PGMHostedMatch match = this.getMatch(event.getPlayer().getBukkit());
+    if (match == null) return;
+    Team team = match.getParty(event.getPlayer().getId());
+    if (team == null) return;
+    event.setInitialParty(team);
+  }
+
+  @EventHandler
+  public void onParticipationStart(PlayerParticipationStartEvent event) {
+    PGMHostedMatch match = this.getMatchByPgm(event.getMatch().getId());
+    if (match == null || this.ignore.contains(event.getPlayer().getId())) return;
+    Team party = match.getParty(event.getPlayer().getId());
+    if (party == null || !party.equals(event.getCompetitor())) {
+      event.setCancelled(true);
+    }
+  }
+
+  @EventHandler
+  public void onMatchStart(MatchStartEvent event) {
+    JsonClient connection = this.runtime.getConnection().orElse(null);
+    if (connection == null) {
+      logger.severe("Match started with no connection");
+      return;
+    }
+    PGMHostedMatch hosted = this.getMatchByPgm(event.getMatch().getId());
+    if (hosted == null) return;
+    Requests.MinecraftMatches.updateStatus(hosted.getId(), MatchStatus.PLAYING).future(connection)
+            .whenComplete((ignoredVoid, e) -> {
+              logger.log(Level.SEVERE, "Failed to update status for match", e);
+            });
+  }
+
+  /**
+   * When the match is finished save the data to bot
+   *
+   * @param event the event of a match finishing
+   */
+  @EventHandler
+  public void onMatchFinish(MatchFinishEvent event) {
+    JsonClient connection = runtime.getConnection().orElse(null);
+    if (connection == null) {
+      logger.severe("Match finished with no connection");
+      return;
+    }
+    PGMHostedMatch hosted = this.getMatchByPgm(event.getMatch().getId());
+    if (hosted == null) return;
+    int winnersId = hosted.getTeamId(this.getWinnersId(event));
+      Requests.MinecraftMatches.onFinish(hosted.getId(), winnersId).future(connection);
+      this.readyToHost(connection);
+      this.matches.remove(hosted);
+    this.clearTeamsReady();
+    this.cleanCreators();
+  }
+
+  /**
+   * Get the id of the team that won the match
+   *
+   * @param event the event of a match finishing
+   * @return the id of the winners of the match
+   */
+  public String getWinnersId(@NonNull MatchFinishEvent event) {
+    for (Competitor winner : event.getWinners()) {
+      return winner.getId();
+    }
+    return null;
+  }
+
+  /** Clean the team creators */
+  public void cleanCreators() {
+    for (TeamCreation value : this.creator.values()) {
+      value.clear();
+    }
+  }
+
+  /** Clear all the teams that are ready. This is used so the command /ready can be used */
+  public void clearTeamsReady() {
+    for (BukkitCommand command : runtime.getCommandManager().getCommands()) {
+      if (!(command instanceof BukkitAnnotatedCommand annotated)) continue;
+        if (annotated.getObject() instanceof ReadyCommand) {
+        ((ReadyCommand) annotated.getObject()).clear();
+        break;
+      }
+    }
+  }
+
+  /**
+   * Get the team creation for the given key
+   *
+   * @param key the key to getId what team creation is assigned to
+   * @return the team creation which is assigned to the key
+   */
+  @NonNull
+  public Optional<TeamCreation> getCreation(@NonNull MinecraftTeamSelectionType key) {
+    return Optional.ofNullable(this.creator.get(key));
+  }
+
+  /**
+   * Get a match by the id of the pgm match id that is hosting it
+   *
+   * @param pgmId the id of the pgm match
+   * @return the match if found else null
+   */
+  public PGMHostedMatch getMatchByPgm(@NonNull String pgmId) {
+    for (PGMHostedMatch match : this.matches) {
+      if (match.getPgm().equals(pgmId)) return match;
+    }
+    return null;
+  }
+
+  public void add(@NonNull Match match, @NonNull Party team, @NonNull MatchPlayer player) {
+    this.ignore.add(player.getId());
+    match.setParty(player, team);
+    this.ignore.remove(player.getId());
+  }
+
+  /**
+   * In case that the server is suspended this will take care of it.
+   *
+   * <p>This might be deleted in the future as PGM developers expect to remove dependency in
+   * SportPaper
+   */
+  @Deprecated
+  public void wakeUpServer() {
+    Bukkit.getScheduler()
+        .runTask(
+            runtime.getPlugin(),
+            () -> BukkitUtils.dispatch(Bukkit.getConsoleSender(), "suspend false"));
+  }
+
+  /**
+   * Get the current match that is being played by pgm
+   *
+   * @return the current match being played in pgm
+   */
+  private Match getCurrentPgm() {
+    Iterator<Match> matches = PGM.get().getMatchManager().getMatches();
+    if (matches.hasNext()) {
+      return matches.next();
+    }
+    return null;
+  }
+
+  @Override
+  public void onEnable() {
+    runtime.getClient().addReceptors(this);
+  }
+
+  @Override
+  public @NonNull String getName() {
+    return "match-making";
+  }
+}

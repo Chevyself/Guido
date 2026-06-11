@@ -7,7 +7,7 @@ import com.github.chevyself.starbox.common.CommandPermission;
 import lombok.NonNull;
 import org.bukkit.entity.Player;
 
-public class TeleportCommand implements GuidoCommand {
+public class TeleportCommand implements dev.xevy.bukkit.GuidoCommand {
 
   private boolean enabled = false;
 

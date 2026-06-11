@@ -3,7 +3,7 @@ package com.starfishst.bukkit.commands.providers;
 import com.github.chevyself.starbox.bukkit.context.CommandContext;
 import com.github.chevyself.starbox.bukkit.providers.type.BukkitExtraArgumentProvider;
 import com.starfishst.bukkit.Guido;
-import com.starfishst.bukkit.lang.BukkitLocaleFile;
+import dev.xevy.bukkit.BukkitLocaleFile;
 import lombok.NonNull;
 
 /** Provides the locale file in commands */

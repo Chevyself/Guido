@@ -8,7 +8,7 @@ import lombok.NonNull;
 import lombok.Setter;
 import org.bukkit.entity.Player;
 
-public class SudoCommand implements GuidoCommand {
+public class SudoCommand implements dev.xevy.bukkit.GuidoCommand {
 
   @Getter @Setter private boolean enabled;
 

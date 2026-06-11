@@ -9,7 +9,7 @@ import lombok.NonNull;
 import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
 
-public class GameModeCommand implements GuidoCommand {
+public class GameModeCommand implements dev.xevy.bukkit.GuidoCommand {
 
   private boolean enabled = false;
 

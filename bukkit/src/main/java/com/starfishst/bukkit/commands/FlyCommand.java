@@ -10,7 +10,7 @@ import me.googas.api.utility.Maps;
 import org.bukkit.entity.Player;
 
 /** Commands used for flight */
-public class FlyCommand implements GuidoCommand {
+public class FlyCommand implements dev.xevy.bukkit.GuidoCommand {
 
   private boolean enabled = false;
 

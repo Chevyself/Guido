@@ -1,7 +1,7 @@
-package com.starfishst.bukkit.dependencies;
+package dev.xevy.guido.bukkit;
 
-import com.starfishst.bukkit.GuidoBukkitRuntime;
-import com.starfishst.bukkit.dependencies.pgm.PGMDependency;
+import dev.xevy.bukkit.GuidoBukkitRuntime;
+import dev.xevy.guido.bukkit.pgm.PGMDependency;
 import java.util.List;
 import lombok.NonNull;
 import me.googas.starbox.compatibilities.CompatibilityManager;

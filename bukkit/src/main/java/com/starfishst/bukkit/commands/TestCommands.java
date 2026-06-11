@@ -5,7 +5,7 @@ import com.github.chevyself.starbox.result.Result;
 import lombok.NonNull;
 
 /** Commands for testing */
-public class TestCommands implements GuidoCommand {
+public class TestCommands implements dev.xevy.bukkit.GuidoCommand {
 
   @Command(aliases = "test")
   public Result test() {
