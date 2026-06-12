@@ -3,6 +3,7 @@ package me.googas.api.client;
 import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import lombok.Getter;
 import lombok.NonNull;
@@ -32,6 +33,8 @@ public class Client {
   @Getter @Setter private int port;
   /** The token that will give access to read or writing */
   @NonNull @Getter @Setter private String token;
+
+  private final long timeout;
   /** The client to connect with the bot */
   @Setter private JsonClient connection;
 
@@ -42,10 +45,11 @@ public class Client {
    * @param ip the ip of the server of the bot
    * @param port the port of the server of the bot
    */
-  public Client(@NonNull String token, @NonNull String ip, int port) {
+  public Client(@NonNull String token, @NonNull String ip, int port, long timeout) {
     this.token = token;
     this.ip = ip;
     this.port = port;
+    this.timeout = timeout;
   }
 
   private void connect() throws IOException {
@@ -57,6 +61,11 @@ public class Client {
         JsonClient.join(this.ip, this.port)
             .setGson(Adapters.buildClient())
             .addReceptors(this.receptors.toArray())
+            .handle(
+                e -> {
+                  logger.log(Level.SEVERE, "Error on client", e);
+                })
+            .maxWait(this.timeout)
             .start();
   }
 

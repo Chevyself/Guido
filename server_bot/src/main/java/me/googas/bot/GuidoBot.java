@@ -182,6 +182,10 @@ public final class GuidoBot implements GuidoBotRuntime {
       JsonSocketServer.ServerBuilder serverBuilder =
           JsonSocketServer.listen(port)
               .maxWait(timeout)
+              .handle(
+                  e -> {
+                    logger.log(Level.SEVERE, "Error on server", e);
+                  })
               .addReceptors(new GuidoServerReceptors(this.authenticator), this.authenticator);
       return serverBuilder.start();
     } catch (IOException | NumberFormatException e) {

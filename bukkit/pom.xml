@@ -60,6 +60,7 @@
                                     <include>com.starfishst.guido:server_bot</include>
                                     <include>com.starfishst.guido:server_commons</include>
                                     <include>com.starfishst.guido:server_mongo</include>
+                                    <include>com.starfishst.guido:server_mc-cmd</include>
                                     <!-- JDA and its deps -->
                                     <include>net.dv8tion:JDA</include>
                                     <include>org.slf4j:slf4j-api</include>
@@ -142,6 +143,12 @@
         <dependency>
             <groupId>com.starfishst.guido</groupId>
             <artifactId>server_bot</artifactId>
+            <version>1.2.1</version>
+        </dependency>
+        <!-- Server MC Commands -->
+        <dependency>
+            <groupId>com.starfishst.guido</groupId>
+            <artifactId>server_mc-cmd</artifactId>
             <version>1.2.1</version>
         </dependency>
     </dependencies>

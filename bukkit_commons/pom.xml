@@ -35,9 +35,9 @@
         </dependency>
         <!-- Starbox -->
         <dependency>
-            <groupId>com.github.chevyself.legacy-starbox</groupId>
+            <groupId>me.googas.starbox</groupId>
             <artifactId>bukkit</artifactId>
-            <version>546a2fdcf3</version>
+            <version>1.0.0</version>
         </dependency>
     </dependencies>
 

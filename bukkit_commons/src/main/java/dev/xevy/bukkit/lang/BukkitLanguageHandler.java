@@ -4,6 +4,7 @@ import com.github.chevyself.starbox.bukkit.commands.BukkitCommand;
 import com.github.chevyself.starbox.bukkit.context.CommandContext;
 import com.github.chevyself.starbox.bukkit.messages.BukkitMessagesProvider;
 import dev.xevy.bukkit.AbstractGuidoModule;
+import dev.xevy.bukkit.BukkitLocaleFile;
 import dev.xevy.bukkit.GuidoBukkitRuntime;
 import java.io.IOException;
 import java.io.InputStream;
@@ -28,7 +29,7 @@ import org.bukkit.plugin.Plugin;
 public class BukkitLanguageHandler extends AbstractGuidoModule implements BukkitMessagesProvider {
 
   /** The loaded locale files */
-  @NonNull private final List<dev.xevy.bukkit.BukkitLocaleFile> files = new ArrayList<>();
+  @NonNull private final List<BukkitLocaleFile> files = new ArrayList<>();
 
   public BukkitLanguageHandler(@NonNull GuidoBukkitRuntime runtime) {
     super(runtime);
@@ -48,7 +49,7 @@ public class BukkitLanguageHandler extends AbstractGuidoModule implements Bukkit
       try {
         YamlConfiguration configuration = new YamlConfiguration();
         configuration.load(reader);
-        this.files.add(new dev.xevy.bukkit.BukkitLocaleFile(configuration));
+        this.files.add(new BukkitLocaleFile(configuration));
       } catch (IOException | InvalidConfigurationException e) {
         e.printStackTrace();
       }
@@ -78,8 +79,8 @@ public class BukkitLanguageHandler extends AbstractGuidoModule implements Bukkit
    * @return the file
    */
   @NonNull
-  private dev.xevy.bukkit.BukkitLocaleFile getFile(@NonNull String locale) {
-    for (dev.xevy.bukkit.BukkitLocaleFile localeFile : this.files) {
+  public BukkitLocaleFile getFile(@NonNull String locale) {
+    for (BukkitLocaleFile localeFile : this.files) {
       if (localeFile.getLang().equalsIgnoreCase(locale)) {
         return localeFile;
       }
@@ -94,7 +95,7 @@ public class BukkitLanguageHandler extends AbstractGuidoModule implements Bukkit
    * @return the file or 'en' if not found
    */
   @NonNull
-  public dev.xevy.bukkit.BukkitLocaleFile getFile(@NonNull CommandSender sender) {
+  public BukkitLocaleFile getFile(@NonNull CommandSender sender) {
     return this.getFile(
         sender instanceof Player ? ((Player) sender).spigot().getLocale().split("_")[0] : "en");
   }
@@ -106,7 +107,7 @@ public class BukkitLanguageHandler extends AbstractGuidoModule implements Bukkit
    * @return the language of the context or 'en' by default
    */
   @NonNull
-  public dev.xevy.bukkit.BukkitLocaleFile getFile(@NonNull CommandContext context) {
+  public BukkitLocaleFile getFile(@NonNull CommandContext context) {
     return this.getFile(context.getSender());
   }
 
@@ -123,12 +124,12 @@ public class BukkitLanguageHandler extends AbstractGuidoModule implements Bukkit
   }
 
   @NonNull
-  public dev.xevy.bukkit.BukkitLocaleFile getFile(@NonNull Player player) {
+  public BukkitLocaleFile getFile(@NonNull Player player) {
     return this.getFile(player.spigot().getLocale().split("_")[0]);
   }
 
   @NonNull
-  public dev.xevy.bukkit.BukkitLocaleFile getFile(@NonNull OfflinePlayer player) {
+  public BukkitLocaleFile getFile(@NonNull OfflinePlayer player) {
     Player onlinePlayer = player.getPlayer();
     if (onlinePlayer != null) return this.getFile((CommandSender) onlinePlayer);
     return this.getDefault();
@@ -140,7 +141,7 @@ public class BukkitLanguageHandler extends AbstractGuidoModule implements Bukkit
    * @return the default locale file which is 'en'
    */
   @NonNull
-  private dev.xevy.bukkit.BukkitLocaleFile getDefault() {
+  private BukkitLocaleFile getDefault() {
     return this.getFile("en");
   }
 

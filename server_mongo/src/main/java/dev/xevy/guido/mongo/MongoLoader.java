@@ -2,6 +2,7 @@ package dev.xevy.guido.mongo;
 
 import com.mongodb.ConnectionString;
 import com.mongodb.MongoClientSettings;
+import com.mongodb.MongoTimeoutException;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoDatabase;
@@ -9,6 +10,7 @@ import dev.xevy.guido.mongo.types.*;
 import lombok.Getter;
 import lombok.NonNull;
 import me.googas.server.GuidoServerRuntime;
+import org.bson.Document;
 import org.bson.UuidRepresentation;
 import org.bson.codecs.configuration.CodecRegistries;
 import org.bson.codecs.configuration.CodecRegistry;
@@ -37,7 +39,8 @@ public final class MongoLoader implements me.googas.server.loader.GuidoLoader {
     this.client = client;
     this.database = database;
     this.tokens =
-        new MongoTokenLoader(this, this.database.getCollection("tokens", MongoToken.class));
+        new MongoTokenLoader(
+            this, this.database.getCollection("tokens", MongoToken.Document.class));
     this.users =
         new MongoUserLoader(
             this, this.database.getCollection("users", MongoUserData.Document.class));
@@ -61,6 +64,15 @@ public final class MongoLoader implements me.googas.server.loader.GuidoLoader {
         new MongoStatsLoader(this, this.database.getCollection("stats", MongoStats.Document.class));
   }
 
+  private static void awaitMongoReady(@NonNull MongoDatabase database) {
+    try {
+      database.runCommand(
+          new Document("ping", 1)); // blocks until success or server selection times out
+    } catch (MongoTimeoutException e) {
+      throw new IllegalStateException("Failed to init mongo", e);
+    }
+  }
+
   @NonNull
   public static MongoLoader join(
       @NonNull GuidoServerRuntime runtime, @NonNull String uri, @NonNull String databaseName) {
@@ -75,7 +87,9 @@ public final class MongoLoader implements me.googas.server.loader.GuidoLoader {
             .uuidRepresentation(UuidRepresentation.STANDARD)
             .build();
     MongoClient mongoClient = MongoClients.create(settings);
-    return new MongoLoader(runtime, mongoClient, mongoClient.getDatabase(databaseName));
+    MongoDatabase mongoDb = mongoClient.getDatabase(databaseName);
+    awaitMongoReady(mongoDb);
+    return new MongoLoader(runtime, mongoClient, mongoDb);
   }
 
   @Override

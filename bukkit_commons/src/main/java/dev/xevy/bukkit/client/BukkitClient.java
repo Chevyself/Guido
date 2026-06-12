@@ -13,7 +13,7 @@ public class BukkitClient extends Client {
 
   public BukkitClient(
       @NonNull String token, @NonNull String ip, int port, @NonNull GuidoBukkitRuntime runtime) {
-    super(token, ip, port);
+    super(token, ip, port, runtime.getConfiguration().getBotConfiguration().getTimeout());
     this.runtime = runtime;
   }
 

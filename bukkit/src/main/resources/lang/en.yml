@@ -15,6 +15,11 @@ not-allowed: "&cYou are not allowed to use this command"
 captain-only: "&cThis command may be used by a captain only!"
 participant-only: "&cYou must be participating in the match to execute this command"
 # Help topic of the plugin
+link:
+  linked: "&6⚠ &cYour account is already linked"
+  failed: "&6⚠ &cThere's been an error while trying to generate the code"
+  code: "&aYour code is &e%code% &asend it in the &ediscord server &aor directly to the GR bot!"
+  failede: "&6⚠ &cThere's been an internal error"
 # TODO the help topic of the plugin needs to be done
 help-topic:
   plugin:

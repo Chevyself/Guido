@@ -20,9 +20,10 @@ public class MongoTokenLoader extends SimpleMongoLoader implements TokenLoader {
   @NonNull private static final Logger logger = LoggerFactory.getLogger(MongoTokenLoader.class);
 
   @NonNull @Getter private final MongoLoader loader;
-  private final MongoCollection<MongoToken> collection;
+  private final MongoCollection<MongoToken.Document> collection;
 
-  public MongoTokenLoader(@NonNull MongoLoader loader, MongoCollection<MongoToken> collection) {
+  public MongoTokenLoader(
+      @NonNull MongoLoader loader, MongoCollection<MongoToken.Document> collection) {
     this.loader = loader;
     this.collection = collection;
   }
@@ -30,16 +31,18 @@ public class MongoTokenLoader extends SimpleMongoLoader implements TokenLoader {
   @Override
   @NonNull
   public Optional<AuthToken> getAuthToken(@NonNull String token) {
-    MongoToken match = this.collection.find(Filters.eq("token", token)).first();
-    return Optional.ofNullable(match);
+    MongoToken.Document match = this.collection.find(Filters.eq("token", token)).first();
+    MongoToken value = match == null ? null : new MongoToken(match);
+    return Optional.ofNullable(value);
   }
 
   @Override
   public @NonNull Collection<MongoToken> getTokens(@NonNull UUID userId) {
     List<MongoToken> match = new ArrayList<>();
-    try (MongoCursor<MongoToken> cursor = collection.find(Filters.eq("userId", userId)).cursor()) {
+    try (MongoCursor<MongoToken.Document> cursor =
+        collection.find(Filters.eq("userId", userId)).cursor()) {
       while (cursor.hasNext()) {
-        match.add(cursor.next());
+        match.add(new MongoToken(cursor.next()));
       }
     } catch (Exception e) {
       logger.log(Level.SEVERE, "Failed to get groups", e);
@@ -49,8 +52,13 @@ public class MongoTokenLoader extends SimpleMongoLoader implements TokenLoader {
 
   @Override
   public @NonNull MongoToken create(@NonNull UUID userId, @NonNull AuthLevel level) {
-    MongoToken token = new MongoToken(UUID.randomUUID(), RandomUtils.nextString(16), userId, level);
-    collection.insertOne(token);
+    MongoToken.Document doc = new MongoToken.Document();
+    doc.id = UUID.randomUUID();
+    doc.token = RandomUtils.nextString(16);
+    doc.userId = userId;
+    doc.authLevel = level;
+    MongoToken token = new MongoToken(doc);
+    collection.insertOne(doc);
     return token;
   }
 }

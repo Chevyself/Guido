@@ -11,18 +11,18 @@ import com.starfishst.bukkit.commands.GameModeCommand;
 import com.starfishst.bukkit.commands.SudoCommand;
 import com.starfishst.bukkit.commands.TeleportCommand;
 import com.starfishst.bukkit.commands.TestCommands;
-import com.starfishst.bukkit.commands.providers.BukkitLocaleFileProvider;
-import com.starfishst.bukkit.commands.providers.GameModeProvider;
-import com.starfishst.bukkit.commands.providers.GuidoBukkitRuntimeProvider;
+import com.starfishst.bukkit.commands.providers.*;
 import dev.xevy.bukkit.GuidoBukkitRuntime;
 import dev.xevy.bukkit.GuidoCommand;
 import dev.xevy.bukkit.GuidoConfiguration;
 import dev.xevy.bukkit.client.BukkitClient;
 import dev.xevy.bukkit.lang.BukkitLanguageHandler;
 import dev.xevy.guido.bukkit.GuidoCompatibilities;
+import dev.xevy.guido.mc.LinkCommand;
 import java.io.IOException;
 import java.util.Objects;
 import java.util.Set;
+import java.util.concurrent.ExecutionException;
 import java.util.logging.Level;
 import lombok.Getter;
 import lombok.NonNull;
@@ -54,6 +54,10 @@ public class GuidoPlugin extends JavaPlugin implements GuidoBukkitRuntime {
   private final BukkitLanguageHandler bukkitLanguageHandler =
       new BukkitLanguageHandler(this).loadResources(this, "en");
 
+  @NonNull
+  private final BukkitResultProvider resultProvider =
+      new BukkitResultProvider(bukkitLanguageHandler);
+
   /** The command manager that the implementation is using to register commands */
   @Getter
   private final @NonNull CommandManager<CommandContext, BukkitCommand> commandManager =
@@ -64,7 +68,10 @@ public class GuidoPlugin extends JavaPlugin implements GuidoBukkitRuntime {
                   .addProviders(
                       new BukkitLocaleFileProvider(),
                       new GameModeProvider(),
-                      new GuidoBukkitRuntimeProvider(this)))
+                      new GuidoBukkitRuntimeProvider(this),
+                      new JsonClientProvider(this),
+                      new MinecraftPlayerProvider(),
+                      new MinecraftResultProviderExtraArgumentProvider(resultProvider)))
           .build();
   /** The set of commands that the implementation is using */
   @NonNull
@@ -103,6 +110,7 @@ public class GuidoPlugin extends JavaPlugin implements GuidoBukkitRuntime {
         this.commandManager.parseAndRegisterAll(command);
       }
     }
+    this.commandManager.parseAndRegisterAll(new LinkCommand());
   }
 
   /** Load the config.yml. This can be used also to reload the guidoConfiguration */
@@ -124,17 +132,9 @@ public class GuidoPlugin extends JavaPlugin implements GuidoBukkitRuntime {
                   this.configuration.getPort(),
                   this)
               .startTask();
-      this.client
-          .startConnection()
-          .whenComplete(
-              (result, e) -> {
-                if (e != null) {
-                  this.getLogger().log(Level.SEVERE, "Failed to auth client", e);
-                  return;
-                }
-                this.getLogger().info("Received client auth " + result);
-              });
-    } catch (IOException e) {
+      boolean auth = this.client.startConnection().get();
+      this.getLogger().info("Received client auth " + auth);
+    } catch (IOException | InterruptedException | ExecutionException e) {
       this.getLogger().log(Level.SEVERE, "Failed to initialize client", e);
     }
   }

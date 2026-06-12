@@ -1,6 +1,8 @@
 package me.googas.bot.core.handlers.matches;
 
 import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import lombok.NonNull;
 import me.googas.api.Requests;
 import me.googas.api.events.match.MinecraftMatchLoadedEvent;
@@ -15,10 +17,13 @@ import me.googas.net.sockets.json.JsonMessenger;
 import me.googas.net.sockets.json.server.JsonClientThread;
 import me.googas.starbox.events.ListenPriority;
 import me.googas.starbox.events.Listener;
+import me.googas.starbox.logging.LoggerFactory;
 
 /** Handles matches for PGM */
 // TODO fix this handler and PGM queue
 public class PGMMatchHandler implements MatchHandler {
+
+  @NonNull private final Logger logger = LoggerFactory.getLogger(PGMMatchHandler.class);
 
   /** All the matches that are looking for a server */
   @NonNull private final Set<MinecraftMatch> waitingForServer = new HashSet<>();
@@ -58,26 +63,31 @@ public class PGMMatchHandler implements MatchHandler {
   }
 
   /**
-   * Look for a server where the abstractMatch can be played
+   * Look for a server where the match can be played
    *
-   * @param abstractMatch the abstractMatch looking for the server
+   * @param match the match looking for the server
    */
-  public void lookForServer(@NonNull MinecraftMatch abstractMatch) {
-    if (abstractMatch.getStatus() != MatchStatus.WAITING) {
-      this.waitingForServer.remove(abstractMatch);
+  public void lookForServer(@NonNull MinecraftMatch match) {
+    if (match.getStatus() != MatchStatus.WAITING) {
+      this.waitingForServer.remove(match);
       return;
     }
     Server<JsonClientThread> server = Guido.getServer();
     JsonClientThread bungee = Guido.getAuthenticator().getBungee().orElse(null);
-    Requests.MatchServer.canHost(new ImmutableMinecraftMatch(abstractMatch))
-        .send(
-            server,
-            (messenger, canHost) -> {
-              if (canHost.isEmpty()) return;
-              if (this.waitingForServer.contains(abstractMatch) && canHost.get()) {
-                this.waitingForServer.remove(abstractMatch);
-                this.pleaseHost(abstractMatch, bungee, messenger);
+    Requests.MatchServer.canHost(new ImmutableMinecraftMatch(match))
+        .future(server)
+        .whenComplete(
+            (map, e) -> {
+              if (e != null) {
+                logger.log(Level.SEVERE, "Failed while looking for servers for hosting", e);
               }
+              map.forEach(
+                  (client, canHost) -> {
+                    if (!canHost) return;
+                    if (this.waitingForServer.remove(match)) {
+                      this.pleaseHost(match, bungee, client);
+                    }
+                  });
             });
   }
 
@@ -95,16 +105,18 @@ public class PGMMatchHandler implements MatchHandler {
       participants.add(info.getId());
     }
     Requests.MatchServer.host(new ImmutableMinecraftMatch(match))
-        .send(
-            messenger,
-            Requests.ifPresentElse(
-                ip -> {
-                  if (bungee != null) {
-                    sendParticipantsToServer(match, bungee, ip, participants);
-                  }
-                  match.setServer(ip);
-                },
-                () -> this.waitingForServer.add(match)));
+        .future(messenger)
+        .whenComplete(
+            (ip, e) -> {
+              if (e != null) {
+                logger.log(Level.SEVERE, "Failed to send host request to client " + messenger, e);
+              }
+              if (ip == null) return;
+              if (bungee != null) {
+                sendParticipantsToServer(match, bungee, ip, participants);
+              }
+              match.setServer(ip);
+            });
   }
 
   private void sendParticipantsToServer(
