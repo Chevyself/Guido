@@ -222,6 +222,7 @@ public class MatchEloCalculator implements GuidoHandler {
             (int) ((newWinners - winnersElo) * ladder.getWinMultiplier());
     int losersDifference =
             (int) ((losersElo - newLosers) * ladder.getLoseMultiplier());
+    losersDifference = -losersDifference;
     match.setWinnersDifference(winnersDifference);
     match.setLosersDifference(losersDifference);
     this.setElo(match, winners, ladder, winnersDifference, losersDifference, event);

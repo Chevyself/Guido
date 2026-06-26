@@ -1,4 +1,4 @@
-package dev.xevy.guido.bukkit;
+package com.starfishst.bukkit.dependencies;
 
 import dev.xevy.bukkit.GuidoBukkitRuntime;
 import dev.xevy.guido.bukkit.pgm.PGMDependency;

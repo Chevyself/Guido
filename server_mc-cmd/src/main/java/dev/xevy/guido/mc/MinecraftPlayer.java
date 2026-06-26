@@ -9,4 +9,10 @@ public interface MinecraftPlayer {
 
   @NonNull
   String getLocale();
+
+  @NonNull
+  String getNickname();
+
+  @NonNull
+  String getIp();
 }

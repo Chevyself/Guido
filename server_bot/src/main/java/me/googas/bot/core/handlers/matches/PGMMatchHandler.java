@@ -75,19 +75,14 @@ public class PGMMatchHandler implements MatchHandler {
     Server<JsonClientThread> server = Guido.getServer();
     JsonClientThread bungee = Guido.getAuthenticator().getBungee().orElse(null);
     Requests.MatchServer.canHost(new ImmutableMinecraftMatch(match))
-        .future(server)
-        .whenComplete(
-            (map, e) -> {
-              if (e != null) {
-                logger.log(Level.SEVERE, "Failed while looking for servers for hosting", e);
+        .send(server)
+        .forEach(
+            (client, optional) -> {
+              boolean canHost = optional.orElse(false);
+              if (!canHost) return;
+              if (this.waitingForServer.remove(match)) {
+                this.pleaseHost(match, bungee, client);
               }
-              map.forEach(
-                  (client, canHost) -> {
-                    if (!canHost) return;
-                    if (this.waitingForServer.remove(match)) {
-                      this.pleaseHost(match, bungee, client);
-                    }
-                  });
             });
   }
 

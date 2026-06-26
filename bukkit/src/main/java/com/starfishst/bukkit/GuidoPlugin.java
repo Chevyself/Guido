@@ -12,12 +12,13 @@ import com.starfishst.bukkit.commands.SudoCommand;
 import com.starfishst.bukkit.commands.TeleportCommand;
 import com.starfishst.bukkit.commands.TestCommands;
 import com.starfishst.bukkit.commands.providers.*;
+import com.starfishst.bukkit.dependencies.GuidoCompatibilities;
+import com.starfishst.bukkit.modules.MinecraftDataListener;
 import dev.xevy.bukkit.GuidoBukkitRuntime;
 import dev.xevy.bukkit.GuidoCommand;
 import dev.xevy.bukkit.GuidoConfiguration;
 import dev.xevy.bukkit.client.BukkitClient;
 import dev.xevy.bukkit.lang.BukkitLanguageHandler;
-import dev.xevy.guido.bukkit.GuidoCompatibilities;
 import dev.xevy.guido.mc.LinkCommand;
 import java.io.IOException;
 import java.util.Objects;
@@ -174,6 +175,7 @@ public class GuidoPlugin extends JavaPlugin implements GuidoBukkitRuntime {
     }
 
     this.startConnection();
+    this.moduleRegistry.engage(new MinecraftDataListener(this));
     this.compatibilities.check().getCompatibilities().stream()
         .filter(Compatibility::isEnabled)
         .forEach(
