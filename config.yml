@@ -1,0 +1,22 @@
+# 
+# The token to authenticate in the bot
+context: Bukkit
+token: NSfE4O69MiDHJD9s
+host: localhost
+port: 3366
+commands:
+- fly
+- ping
+- gamemode
+modules:
+  command-execution:
+    enabled: true
+    permission: guido.adminchat.cmd
+    chat: '[&6A&r] %player_display% &6executed &r%command%'
+    banned:
+    - tell
+    - msg
+  pgm-stats:
+    enabled: false
+  match-making:
+    enabled: true
