@@ -9,6 +9,7 @@ import me.googas.api.immutable.ImmutableLadder;
 import me.googas.api.immutable.ImmutableMinecraftMatch;
 import me.googas.api.immutable.ImmutableMinecraftMatchTeam;
 import me.googas.api.links.generic.ImmutableMinecraftLinkable;
+import me.googas.api.stats.PlayerStatsResponse;
 import me.googas.api.matches.MatchStatus;
 import me.googas.api.matches.minecraft.MinecraftMatchTeam;
 import me.googas.net.api.messages.RequestBuilder;
@@ -63,6 +64,27 @@ public class Requests {
     @NonNull public static final String IS_LINKED_UUID = "uuid";
     @NonNull public static final String LINK_NEW = PREFIX + "link-new";
     @NonNull public static final String LINK_NEW_UUID = "uuid";
+    @NonNull public static final String GET_STATS = PREFIX + "get-stats";
+    @NonNull public static final String GET_STATS_UUID = "uuid";
+    @NonNull public static final String GET_STATS_CONTEXT = "context";
+    @NonNull public static final String GET_STATS_BY_NICKNAME = PREFIX + "get-stats-by-nickname";
+    @NonNull public static final String GET_STATS_NICKNAME = "nickname";
+
+    @NonNull
+    public static RequestBuilder<PlayerStatsResponse> getStats(
+        @NonNull UUID uuid, @NonNull String context) {
+      return new RequestBuilder<>(PlayerStatsResponse.class, MinecraftLinks.GET_STATS)
+          .put(MinecraftLinks.GET_STATS_UUID, uuid)
+          .put(MinecraftLinks.GET_STATS_CONTEXT, context);
+    }
+
+    @NonNull
+    public static RequestBuilder<PlayerStatsResponse> getStatsByNickname(
+        @NonNull String nickname, @NonNull String context) {
+      return new RequestBuilder<>(PlayerStatsResponse.class, MinecraftLinks.GET_STATS_BY_NICKNAME)
+          .put(MinecraftLinks.GET_STATS_NICKNAME, nickname)
+          .put(MinecraftLinks.GET_STATS_CONTEXT, context);
+    }
 
     @NonNull
     public static RequestBuilder<Void> saveStats(

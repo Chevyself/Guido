@@ -1,5 +1,6 @@
 package me.googas.bot.core.handlers.link;
 
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -9,12 +10,15 @@ import lombok.NonNull;
 import me.googas.api.Requests;
 import me.googas.api.links.Linkable;
 import me.googas.api.links.MinecraftLinkable;
+import me.googas.api.stats.PlayerStatsResponse;
+import me.googas.api.stats.Stats;
 import me.googas.api.utility.RandomUtils;
 import me.googas.bot.api.Guido;
 import me.googas.bot.core.GuidoBotRuntime;
 import me.googas.bot.core.handlers.GuidoHandler;
 import me.googas.net.sockets.json.ParamName;
 import me.googas.net.sockets.json.Receptor;
+import me.googas.net.sockets.json.exception.JsonExternalCommunicationException;
 import me.googas.starbox.time.Time;
 import me.googas.starbox.time.unit.Unit;
 
@@ -161,6 +165,55 @@ public class LinkHandler implements GuidoHandler {
       @ParamName(Requests.MinecraftLinks.SAVE_STATS_CONTEXT) String context,
       @ParamName(Requests.MinecraftLinks.SAVE_STATS_STATS) Map<String, Double> stats) {
     runtime.getLoader().getStats().saveForMinecraftLink(id, context, stats);
+  }
+
+  @Receptor(Requests.MinecraftLinks.GET_STATS)
+  public PlayerStatsResponse getStats(
+      @ParamName(Requests.MinecraftLinks.GET_STATS_UUID) UUID uuid,
+      @ParamName(Requests.MinecraftLinks.GET_STATS_CONTEXT) String context) {
+    MinecraftLinkable linkable =
+        runtime
+            .getLoader()
+            .getMinecraftLinks()
+            .getById(uuid)
+            .orElseThrow(() -> new JsonExternalCommunicationException("stats.player-not-found"));
+    return buildStatsResponse(linkable, resolveContext(context));
+  }
+
+  @Receptor(Requests.MinecraftLinks.GET_STATS_BY_NICKNAME)
+  public PlayerStatsResponse getStatsByNickname(
+      @ParamName(Requests.MinecraftLinks.GET_STATS_NICKNAME) String nickname,
+      @ParamName(Requests.MinecraftLinks.GET_STATS_CONTEXT) String context) {
+    MinecraftLinkable linkable =
+        runtime
+            .getLoader()
+            .getMinecraftLinks()
+            .getByNickname(nickname)
+            .orElseThrow(() -> new JsonExternalCommunicationException("stats.player-not-found"));
+    return buildStatsResponse(linkable, resolveContext(context));
+  }
+
+  @NonNull
+  private String resolveContext(String context) {
+    if (context == null || context.isBlank()) {
+      return Stats.EMPTY_CONTEXT;
+    }
+    return context;
+  }
+
+  @NonNull
+  private PlayerStatsResponse buildStatsResponse(
+      @NonNull MinecraftLinkable linkable, @NonNull String context) {
+    Stats stats = runtime.getLoader().getStats().getForMinecraftLink(linkable, context);
+    Map<String, Double> statsMap = new HashMap<>();
+    stats.getMap().forEach(statsMap::put);
+    return new PlayerStatsResponse(
+        linkable.getId(),
+        linkable.getNickname(),
+        context,
+        linkable.isLinked(),
+        linkable.isOnline(),
+        statsMap);
   }
 
   @Override
